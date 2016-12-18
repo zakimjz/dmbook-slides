@@ -1,2 +1,2 @@
 # dmbook-slides
-Data Mining Book Slides 
+Latex Sources for the slides for Data Mining and Analysis
