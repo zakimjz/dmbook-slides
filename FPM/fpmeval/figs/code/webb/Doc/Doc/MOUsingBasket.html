@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+  <meta name="Author" content="Geoff Webb">
+  <meta name="KeyWords"
+ content="Association Rule Learning, Association Rules, Magnum Opus, Data Mining, G. I. Webb &amp; Associates">
+  <title>Using transaction data</title>
+</head>
+<body>
+<h1><font color="#000080">Using Magnum Opus with transaction data: a
+tutorial</font></h1>
+<p>The following tutorial steps through the process of analyzing the
+example transaction
+data distributed with Magnum Opus. This simple data represents the type
+of data that might
+be collected by a supermarket about customer transactions. In this
+context it is known as <em>basket
+data</em>.&nbsp; As Magnum Opus supports two alternative transaction
+data file formats,
+the same data has been provided in each format.&nbsp; The file
+tutorial.idi describes the
+transactions in <a href="MOId-ItemFile.html">identifier-item file</a>
+format.&nbsp; The
+file tutorial.itl describes the data in <a href="MOItemListFile.html">item
+list file</a>
+format.&nbsp; Commands are presented for processing both file
+formats.&nbsp; Identical
+results can be obtained using either format. </p>
+<p>This tutorial is designed to be used with Magnum Opus. Carry out the
+instructions with
+Magnum Opus as you read through the tutorial. </p>
+<p>The identifier-item file, tutorial.idi, contains 2583 lines starting
+with the
+following. </p>
+<blockquote> <tt>ID001, bananas</tt> <br>
+  <tt>ID002, plums</tt> <br>
+  <tt>ID002, lettuce</tt> <br>
+  <tt>ID002, tomatoes</tt> <br>
+  <tt>ID003, celery</tt> <br>
+  <tt>ID003, confectionery</tt> <br>
+  <tt>ID004, confectionery</tt> <br>
+  <tt>ID005, apples</tt> <br>
+  <tt>ID005, carrots</tt> <br>
+  <tt>ID005, tomatoes</tt> <br>
+  <tt>ID005, potatoes</tt>
+</blockquote>
+<p>These first 11 lines describe five transactions, each with a
+separate identifier.&nbsp;
+In all, 1000 transactions are described in the file. </p>
+<p>The item-list file, tutorial.itl, contains 1000 lines starting with
+the following.</p>
+<blockquote>
+  <p><tt>bananas <br>
+plums, lettuce, tomatoes <br>
+celery, confectionery <br>
+confectionery <br>
+apples, carrots, tomatoes, potatoes </tt></p>
+</blockquote>
+<p>These five lines describe the same five transactions described in
+the first eleven
+lines of tutorial.idi (but does not include transaction identifiers). </p>
+<p>In the first transaction, ID001, one item only was purchased,
+bananas.&nbsp; In the
+second transaction, ID002, three items were purchased, plums, lettuce,
+and tomatoes.</p>
+<h3><a name="tut_run"></a>Search by Leverage</h3>
+<p>For the first search we will use the default search mode setting and
+perform <a href="MOsearch_mode.html">search by leverage</a>. For ease
+of demonstration we will limit
+the search to find only ten rules. Because we are performing search by
+leverage,
+these will be the ten rules with the highest values for leverage that
+fulfil all
+other specified constraints. </p>
+<p>Execute either of the following to process tutorial.idi or
+tutorial.itl, respectively.</p>
+<blockquote>
+  <p><tt>mocl identifier-item-file=tutorial.idi max-results=10 <br>
+mocl item-list-file=tutorial.itl max-results=10</tt></p>
+</blockquote>
+<p>While the search executes, progress reports will be displayed to
+standard error. Note
+that different stages of the complex searches performed by Magnum Opus
+may have varying
+degrees of difficulty. Hence, the rate of progress may vary from time
+to time. <br>
+&nbsp; </p>
+<h3><a name="tut_view_output"></a>Viewing the output</h3>
+<p>When the search is completed, the rules are output to the standard
+output.&nbsp;
+The output log lists </p>
+<ul>
+  <li>the name of the data file, </li>
+  <li>the number of cases loaded from the data file, </li>
+  <li>the number of attribute values in the data, </li>
+  <li>the time at which the search commenced, and </li>
+  <li>the settings used for the search. </li>
+</ul>
+<p>These are followed by a list of <a href="MOassociation_rule.html">rules</a>
+that were found. </p>
+<p>The output of the search by leverage is as follows. A detailed
+examination of one of
+these rules is provided below. </p>
+<p><tt>Magnum Opus: Setting new standards for pattern discovery<br>
+Command Line System Version 3.0<br>
+Copyright 1999-2005 G I Webb &amp; Associates Pty Ltd.<br>
+Fri Sep&nbsp; 2 11:07:46 2005<br>
+<br>
+identifier-item-file=tutorial.idi<br>
+maximum-results=10<br>
+<br>
+Imported 1000 cases/0 holdout cases/16 items<br>
+<br>
+<br>
+Found 10 rules<br>
+<br>
+tomatoes<br>
+is associated with lettuce<br>
+with strength = 0.422<br>
+coverage = 0.263: 263 cases satisfy the LHS<br>
+support = 0.111: 111 cases satisfy both the LHS and the RHS<br>
+lift 1.94: the strength is 1.94 times greater than the strength if
+there were no association<br>
+leverage = 0.0539: the support is 0.0539 (53.9 cases) greater than if
+there were no association<br>
+<br>
+lettuce<br>
+is associated with tomatoes<br>
+with strength = 0.512<br>
+coverage = 0.217: 217 cases satisfy the LHS<br>
+support = 0.111: 111 cases satisfy both the LHS and the RHS<br>
+lift 1.94: the strength is 1.94 times greater than the strength if
+there were no association<br>
+leverage = 0.0539: the support is 0.0539 (53.9 cases) greater than if
+there were no association<br>
+<br>
+carrots<br>
+is associated with tomatoes<br>
+with strength = 0.486<br>
+coverage = 0.175: 175 cases satisfy the LHS<br>
+support = 0.085: 85 cases satisfy both the LHS and the RHS<br>
+lift 1.85: the strength is 1.85 times greater than the strength if
+there were no association<br>
+leverage = 0.0390: the support is 0.0390 (39.0 cases) greater than if
+there were no association<br>
+<br>
+tomatoes<br>
+is associated with carrots<br>
+with strength = 0.323<br>
+coverage = 0.263: 263 cases satisfy the LHS<br>
+support = 0.085: 85 cases satisfy both the LHS and the RHS<br>
+lift 1.85: the strength is 1.85 times greater than the strength if
+there were no association<br>
+leverage = 0.0390: the support is 0.0390 (39.0 cases) greater than if
+there were no association<br>
+<br>
+potatoes<br>
+is associated with onions<br>
+with strength = 0.290<br>
+coverage = 0.283: 283 cases satisfy the LHS<br>
+support = 0.082: 82 cases satisfy both the LHS and the RHS<br>
+lift 1.53: the strength is 1.53 times greater than the strength if
+there were no association<br>
+leverage = 0.0285: the support is 0.0285 (28.5 cases) greater than if
+there were no association<br>
+<br>
+onions<br>
+is associated with potatoes<br>
+with strength = 0.434<br>
+coverage = 0.189: 189 cases satisfy the LHS<br>
+support = 0.082: 82 cases satisfy both the LHS and the RHS<br>
+lift 1.53: the strength is 1.53 times greater than the strength if
+there were no association<br>
+leverage = 0.0285: the support is 0.0285 (28.5 cases) greater than if
+there were no association<br>
+<br>
+lettuce &amp; carrots<br>
+are associated with tomatoes<br>
+with strength = 0.867<br>
+coverage = 0.045: 45 cases satisfy the LHS<br>
+support = 0.039: 39 cases satisfy both the LHS and the RHS<br>
+lift 3.30: the strength is 3.30 times greater than the strength if
+there were no association<br>
+leverage = 0.0272: the support is 0.0272 (27.2 cases) greater than if
+there were no association<br>
+<br>
+tomatoes &amp; potatoes<br>
+are associated with lettuce<br>
+with strength = 0.558<br>
+coverage = 0.077: 77 cases satisfy the LHS<br>
+support = 0.043: 43 cases satisfy both the LHS and the RHS<br>
+lift 2.57: the strength is 2.57 times greater than the strength if
+there were no association<br>
+leverage = 0.0263: the support is 0.0263 (26.3 cases) greater than if
+there were no association<br>
+<br>
+bananas<br>
+is associated with peaches<br>
+with strength = 0.315<br>
+coverage = 0.127: 127 cases satisfy the LHS<br>
+support = 0.040: 40 cases satisfy both the LHS and the RHS<br>
+lift 2.42: the strength is 2.42 times greater than the strength if
+there were no association<br>
+leverage = 0.0235: the support is 0.0235 (23.5 cases) greater than if
+there were no association<br>
+<br>
+peaches<br>
+is associated with bananas<br>
+with strength = 0.308<br>
+coverage = 0.130: 130 cases satisfy the LHS<br>
+support = 0.040: 40 cases satisfy both the LHS and the RHS<br>
+lift 2.42: the strength is 2.42 times greater than the strength if
+there were no association<br>
+leverage = 0.0235: the support is 0.0235 (23.5 cases) greater than if
+there were no association<br>
+</tt><br>
+&nbsp; </p>
+<h3><a name="tut_assoc_rule"></a>Dissection of a rule</h3>
+<p>The first rule is the following.</p>
+<blockquote>
+  <p><tt>tomatoes<br>
+is associated with lettuce<br>
+with strength = 0.422<br>
+coverage = 0.263: 263 cases satisfy the LHS<br>
+support = 0.111: 111 cases satisfy both the LHS and the RHS<br>
+lift 1.94: the strength is 1.94 times greater than the strength if
+there were no association<br>
+leverage = 0.0539: the support is 0.0539 (53.9 cases) greater than if
+there were no association</tt></p>
+</blockquote>
+<p>The <a href="MOassociation_rule.html">left-hand-side</a> of this
+rule is presented on the first line. The <a
+ href="MOassociation_rule.html">right-hand-side</a>
+follows the words 'is associated with'. This rule indicates that
+tomatoes are associated with lettuces more frequently than is the
+average over all
+transactions. That is, the frequency of association between
+transactions that contain both
+the left and right hand sides is greater than would normally be
+expected. </p>
+<p>The following information about the association is displayed in
+brackets.</p>
+<blockquote>
+  <p><tt>Coverage=0.263&nbsp;</tt> The coverage is the proportion of
+all transactions that contain the LHS of the rule (tomatoes). This is
+also expressed as the absolute number of transactions that this
+represents. 263 transactions contain the LHS.&nbsp; There are 1000
+transactions in the data set. </p>
+  <p><tt>Support=0.111 </tt>The support indicates the proportion of
+all transactions that contain both the LHS and the RHS of the rule
+(tomatoes and lettuce). This is also expressed as the absolute number
+of transactions that this represents. 111 transactions contain the
+LHS.&nbsp; There are 1000 transactions in the data set. </p>
+  <p><tt>Strength=0.422</tt>&nbsp; This indicates the proportion of
+those transactions that contain the LHS that also contain the RHS. 263
+transactions contain the LHS and 111 of those also satisfy the RHS, so
+Strength is calculated as 111/263. </p>
+  <p><tt>Lift=1.94</tt>&nbsp; Lift is a measure of how much stronger
+than normal is the association between the LHS and RHS. Out of all the
+data, 217 transactions contain the RHS. Therefore the strength of
+association that would be expected if the LHS and RHS were independent
+of each other is 217/1000. Dividing the actual strength by this value
+we obtain (111/263)/(217/1000) = 1.94. </p>
+  <p><tt>Leverage=0.0539 </tt>Leverage is a measure of the magnitude
+of the effect created by the association. This is the proportion of
+transactions that exhibit the association in excess of those that would
+be expected if the LHS and RHS were independent of each other. If the
+two items were independent of each other then the expected proportion
+of transactions containing both would be the proportion containing the
+LHS (0.263) times the proportion exhibiting the RHS (0.217) = 0.0571.
+The proportion exhibiting the association is 0.1110. The difference
+between these values is 0.0539. This is also expressed as the number of
+cases that this leverage represents (53.9).</p>
+</blockquote>
+<h3><a name="tut_run_lift"></a>Run a search by lift</h3>
+<p>Next we will run a search by lift. The first search found the ten
+rules with the
+highest value for leverage, within the other constraints imposed. This
+next search will find the ten rules with the
+highest value for lift.&nbsp; </p>
+<p>The following commands execute this search on tutorial.idi or
+tutorial.itl,
+respectively.</p>
+<blockquote>
+  <p><tt>mocl identifier-item-file=tutorial.idi max-results=10
+search-mode=lift <br>
+mocl item-list-file=tutorial.itl max-results=10 search-mode=lift</tt></p>
+</blockquote>
+<p>&nbsp; </p>
+<h3><a name="tut_lift1_output"></a>Output from search by lift</h3>
+<p>The output of the search by lift is as follows. </p>
+<p><tt>Magnum Opus: Setting new standards for pattern discovery<br>
+Command Line System Version 3.0<br>
+Copyright 1999-2005 G I Webb &amp; Associates Pty Ltd.<br>
+Fri Sep&nbsp; 2 11:17:01 2005<br>
+<br>
+identifier-item-file=tutorial.idi<br>
+maximum-results=10<br>
+search-mode=lift<br>
+<br>
+Imported 1000 cases/0 holdout cases/16 items<br>
+<br>
+<br>
+Found 10 rules<br>
+<br>
+bananas &amp; apples<br>
+are associated with peaches<br>
+with strength = 0.586<br>
+coverage = 0.029: 29 cases satisfy the LHS<br>
+support = 0.017: 17 cases satisfy both the LHS and the RHS<br>
+lift 4.51: the strength is 4.51 times greater than the strength if
+there were no association<br>
+leverage = 0.0132: the support is 0.0132 (13.2 cases) greater than if
+there were no association<br>
+<br>
+bananas &amp; oranges<br>
+are associated with peaches<br>
+with strength = 0.577<br>
+coverage = 0.026: 26 cases satisfy the LHS<br>
+support = 0.015: 15 cases satisfy both the LHS and the RHS<br>
+lift 4.44: the strength is 4.44 times greater than the strength if
+there were no association<br>
+leverage = 0.0116: the support is 0.0116 (11.6 cases) greater than if
+there were no association<br>
+<br>
+carrots &amp; corn<br>
+are associated with lettuce<br>
+with strength = 0.833<br>
+coverage = 0.006: 6 cases satisfy the LHS<br>
+support = 0.005: 5 cases satisfy both the LHS and the RHS<br>
+lift 3.84: the strength is 3.84 times greater than the strength if
+there were no association<br>
+leverage = 0.0037: the support is 0.0037 (3.7 cases) greater than if
+there were no association<br>
+<br>
+lettuce &amp; carrots<br>
+are associated with tomatoes<br>
+with strength = 0.867<br>
+coverage = 0.045: 45 cases satisfy the LHS<br>
+support = 0.039: 39 cases satisfy both the LHS and the RHS<br>
+lift 3.30: the strength is 3.30 times greater than the strength if
+there were no association<br>
+leverage = 0.0272: the support is 0.0272 (27.2 cases) greater than if
+there were no association<br>
+<br>
+tomatoes &amp; potatoes<br>
+are associated with lettuce<br>
+with strength = 0.558<br>
+coverage = 0.077: 77 cases satisfy the LHS<br>
+support = 0.043: 43 cases satisfy both the LHS and the RHS<br>
+lift 2.57: the strength is 2.57 times greater than the strength if
+there were no association<br>
+leverage = 0.0263: the support is 0.0263 (26.3 cases) greater than if
+there were no association<br>
+<br>
+peaches<br>
+is associated with bananas<br>
+with strength = 0.308<br>
+coverage = 0.130: 130 cases satisfy the LHS<br>
+support = 0.040: 40 cases satisfy both the LHS and the RHS<br>
+lift 2.42: the strength is 2.42 times greater than the strength if
+there were no association<br>
+leverage = 0.0235: the support is 0.0235 (23.5 cases) greater than if
+there were no association<br>
+<br>
+bananas<br>
+is associated with peaches<br>
+with strength = 0.315<br>
+coverage = 0.127: 127 cases satisfy the LHS<br>
+support = 0.040: 40 cases satisfy both the LHS and the RHS<br>
+lift 2.42: the strength is 2.42 times greater than the strength if
+there were no association<br>
+leverage = 0.0235: the support is 0.0235 (23.5 cases) greater than if
+there were no association<br>
+<br>
+carrots &amp; onions<br>
+are associated with potatoes<br>
+with strength = 0.610<br>
+coverage = 0.041: 41 cases satisfy the LHS<br>
+support = 0.025: 25 cases satisfy both the LHS and the RHS<br>
+lift 2.15: the strength is 2.15 times greater than the strength if
+there were no association<br>
+leverage = 0.0134: the support is 0.0134 (13.4 cases) greater than if
+there were no association<br>
+<br>
+tomatoes<br>
+is associated with lettuce<br>
+with strength = 0.422<br>
+coverage = 0.263: 263 cases satisfy the LHS<br>
+support = 0.111: 111 cases satisfy both the LHS and the RHS<br>
+lift 1.94: the strength is 1.94 times greater than the strength if
+there were no association<br>
+leverage = 0.0539: the support is 0.0539 (53.9 cases) greater than if
+there were no association<br>
+<br>
+lettuce<br>
+is associated with tomatoes<br>
+with strength = 0.512<br>
+coverage = 0.217: 217 cases satisfy the LHS<br>
+support = 0.111: 111 cases satisfy both the LHS and the RHS<br>
+lift 1.94: the strength is 1.94 times greater than the strength if
+there were no association<br>
+leverage = 0.0539: the support is 0.0539 (53.9 cases) greater than if
+there were no association<br>
+</tt> <br>
+Note the difference in the types of rules discovered by each type of
+search.&nbsp; Search by leverage tends to find rules with higher
+coverage while search by lift tends to find rules with higher strength.<br>
+<br>
+</p>
+<h3><a name="tut_filtering"></a>The effect of filtering</h3>
+<p>The examples so far have used the default <a href="MOfiltering.html">filter
+mode</a>,
+Insignificant. This discards rules that appear to be spurious,
+occurring due to
+the random effect of adding another item to the left-hand-side of a
+genuine association
+between items.&nbsp; To illustrate the effect of this feature, we next
+re-run the previous
+command with filtering disabled, using one of the following commands.</p>
+<blockquote>
+  <p><tt>mocl identifier-item-file=tutorial.idi max-results=10
+search-mode=lift filter-mode=none <br>
+mocl item-list-file=tutorial.itl max-results=10 search-mode=lift
+filter-mode=none</tt></p>
+</blockquote>
+<p>The following output is generated. </p>
+<p><tt>Magnum Opus: Setting new standards for pattern discovery<br>
+Command Line System Version 3.0<br>
+Copyright 1999-2005 G I Webb &amp; Associates Pty Ltd.<br>
+Fri Sep&nbsp; 2 11:23:15 2005<br>
+<br>
+identifier-item-file=tutorial.idi<br>
+maximum-results=10<br>
+search-mode=lift<br>
+filter-mode=none<br>
+<br>
+Imported 1000 cases/0 holdout cases/16 items<br>
+<br>
+<br>
+Found 10 rules<br>
+<br>
+lettuce &amp; carrots &amp; potatoes &amp; beans<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+lettuce &amp; potatoes &amp; oranges &amp; beans<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+confectionery &amp; potatoes &amp; oranges &amp; beans<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+tomatoes &amp; potatoes &amp; oranges &amp; beans<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+lettuce &amp; apples &amp; carrots &amp; grapes<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+confectionery &amp; oranges &amp; peaches &amp; onions<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+lettuce &amp; confectionery &amp; oranges &amp; peaches<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+lettuce &amp; confectionery &amp; peaches &amp; onions<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+confectionery &amp; potatoes &amp; peaches &amp; onions<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+<br>
+confectionery &amp; peaches &amp; onions<br>
+are associated with celery<br>
+with strength = 1.000<br>
+coverage = 0.001: 1 case satisfies the LHS<br>
+support = 0.001: 1 case satisfies both the LHS and the RHS<br>
+lift 23.26: the strength is 23.26 times greater than the strength if
+there were no association<br>
+leverage = 0.0010: the support is 0.0010 (1.0 case) greater than if
+there were no association<br>
+</tt> <br>
+</p>
+<p>These rules illustrate the value of filtering out spurious
+rules. Each contains a combination of items that happens to only occur
+once in the data and happens to co-occur with the least frequent item,
+celery.&nbsp; As every time the combination occurs it is associated
+with celery, the strength is 1.0, resulting in the highest possible
+lift. <br>
+<br>
+</p>
+<h3><a name="tut_itemsets"></a>Search for itemsets<br>
+</h3>
+<p>The examples so far have found rules.&nbsp; These identify groups of
+items that have a particular influence on a single further item.&nbsp;
+Sometimes, however, there is no need to identify a particular RHS
+item.&nbsp; Rather, the interest is in what groups of items
+co-occur.&nbsp; Search for itemsets performs this type of
+analysis.&nbsp; The default search mode is search by leverage.&nbsp;
+The leverage of an itemset is the number of items it covers in excess
+of the maximum that can be account for by assuming independence between
+any subsets of the itemset.&nbsp; <br>
+</p>
+To illustrate this, run one of the following commands.
+<blockquote>
+  <p><tt>mocl identifier-item-file=tutorial.idi find-itemsets </tt><tt>max-results=10
+  </tt><br>
+  <tt>mocl item-list-file=tutorial.itl </tt><tt>find-itemsets </tt><tt>max-results=10
+  </tt></p>
+</blockquote>
+<p>The following output is generated.<br>
+</p>
+<p><tt>Magnum Opus: Setting new standards for pattern discovery<br>
+Command Line System Version 3.0<br>
+Copyright 1999-2005 G I Webb &amp; Associates Pty Ltd.<br>
+Fri Sep&nbsp; 2 11:36:19 2005<br>
+<br>
+identifier-item-file=tutorial.idi<br>
+find-itemsets<br>
+maximum-results=10<br>
+<br>
+Imported 1000 cases/0 holdout cases/16 items<br>
+<br>
+<br>
+Found 10 itemsets<br>
+<br>
+lettuce &amp; tomatoes<br>
+coverage = 0.111: 111 cases satisfy these conditions<br>
+leverage = 0.0539: the coverage is 0.0539 (53.9 cases) greater than if
+there were no association within these conditions<br>
+<br>
+tomatoes &amp; carrots<br>
+coverage = 0.085: 85 cases satisfy these conditions<br>
+leverage = 0.0390: the coverage is 0.0390 (39.0 cases) greater than if
+there were no association within these conditions<br>
+<br>
+potatoes &amp; onions<br>
+coverage = 0.082: 82 cases satisfy these conditions<br>
+leverage = 0.0285: the coverage is 0.0285 (28.5 cases) greater than if
+there were no association within these conditions<br>
+<br>
+bananas &amp; peaches<br>
+coverage = 0.040: 40 cases satisfy these conditions<br>
+leverage = 0.0235: the coverage is 0.0235 (23.5 cases) greater than if
+there were no association within these conditions<br>
+<br>
+lettuce &amp; tomatoes &amp; carrots<br>
+coverage = 0.039: 39 cases satisfy these conditions<br>
+leverage = 0.0196: the coverage is 0.0196 (19.6 cases) greater than if
+there were no association within these conditions<br>
+<br>
+carrots &amp; potatoes<br>
+coverage = 0.068: 68 cases satisfy these conditions<br>
+leverage = 0.0185: the coverage is 0.0185 (18.5 cases) greater than if
+there were no association within these conditions<br>
+<br>
+apples &amp; peaches<br>
+coverage = 0.044: 44 cases satisfy these conditions<br>
+leverage = 0.0153: the coverage is 0.0153 (15.3 cases) greater than if
+there were no association within these conditions<br>
+<br>
+oranges &amp; peaches<br>
+coverage = 0.039: 39 cases satisfy these conditions<br>
+leverage = 0.0149: the coverage is 0.0149 (14.9 cases) greater than if
+there were no association within these conditions<br>
+<br>
+lettuce &amp; peas<br>
+coverage = 0.031: 31 cases satisfy these conditions<br>
+leverage = 0.0126: the coverage is 0.0126 (12.6 cases) greater than if
+there were no association within these conditions<br>
+<br>
+lettuce &amp; tomatoes &amp; potatoes<br>
+coverage = 0.043: 43 cases satisfy these conditions<br>
+leverage = 0.0116: the coverage is 0.0116 (11.6 cases) greater than if
+there were no association within these conditions<br>
+<br>
+</tt>
+</p>
+<p>To illustrate how leverage is calculated for itemsets, consider the
+last of these itemsets.&nbsp; The subset <tt>lettuce &amp; tomatoes</tt>
+occurs in 0.111 of all transactions and the item <tt>potatoes</tt>
+occurs in 0.283 of all transactions.&nbsp; hence, if they were
+independent of each other, they would co-occur in 0.0264 of all
+transactions.&nbsp; This is the highest expected coverage obtained by
+any combination of subsets of the itemset, so the leverage is the
+coverage of the itemset less this amount.<br>
+<br>
+</p>
+<h3><a name="tut_conclusion"></a>Conclusion</h3>
+<p>This concludes the introductory tutorial. Further examples are
+provided by the settings
+files included in the examples directory. To execute, for example, the
+settings in
+example1.mos use the command <tt>mocl settings=example1.mos</tt>.<br>
+</p>
+<p>&nbsp; <br>
+<b>&copy; <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2005</font></b>
+</p>
+</body>
+</html>

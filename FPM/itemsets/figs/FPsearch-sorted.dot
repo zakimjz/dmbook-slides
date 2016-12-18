@@ -1,0 +1,206 @@
+digraph "G" {
+      compound=true;
+      ranksep=1;
+      nodesep=2;
+      fontsize=24;
+      subgraph cluster0 {
+       		label = "Project: {}";
+		 {node [label="{}"] empty;}
+        	 {node [label="A(4)"] A;}
+        	 {node [label="B(6)"] B;}
+        	 {node [label="C(1)"] C;}
+        	 {node [label="C(2)"] Cb;}
+        	 {node [label="C(1)"] Cc;}
+        	 {node [label="D(1)"] D;}
+        	 {node [label="D(1)"] Db;}
+        	 {node [label="D(2)"] Dc;}
+        	 {node [label="E(5)"] E;}
+		{edge [arrowhead=none] empty->B->C->D;
+		B->E->A->Cb->Db;
+		A->Dc;
+		E->Cc;
+		}
+      }
+
+     subgraph cluster1 {	
+       		label = "Project: D(4)";
+		 {node [label="{}"] empty1;}
+        	 {node [label="A(3)"] A1;}
+        	 {node [label="B(4)"] B1;}
+        	 {node [label="C(1)"] C1;}
+        	 {node [label="C(1)"] C1b;}
+        	 {node [label="E(3)"] E1;}
+		 {edge [arrowhead=none]
+		empty1->B1->C1;
+		B1->E1->A1->C1b;
+		}
+      }
+
+      Db->empty1 [ltail=cluster0, lhead=cluster1, minlen=1.5];
+      
+
+     subgraph cluster11 {	
+       		label = "Project: DA(3)";
+		 {node [label="{}"] empty11;}
+        	 {node [label="B(3)"] B11;}
+        	 {node [label="E(3)"] E11;}
+		 {edge [arrowhead=none]		
+		 empty11->B11->E11;
+		 }
+      }
+
+      C1b->empty11 [ltail=cluster1, lhead=cluster11, minlen=1.5];
+
+
+     subgraph cluster111 {	
+       		label = "Project: DAE(3)";
+		 {node [label="{}"] empty111;}
+        	 {node [label="B(3)"] B111;}
+		 {edge [arrowhead=none]
+		empty111->B111;
+		}
+      }
+
+      E11->empty111 [ltail=cluster11, lhead=cluster111, minlen=1.5];
+
+     subgraph cluster1111 {	
+       		label = "Project: DAEB(3)";
+		 {node [label="{}"] empty1111;}
+      }
+
+      B111->empty1111 [ltail=cluster111, lhead=cluster1111, minlen=1.5];
+
+
+     subgraph cluster112 {	
+       		label = "Project: DAB(3)";
+		 {node [label="{}"] empty112;}
+      }
+
+      E11->empty112 [ltail=cluster11, lhead=cluster112, minlen=1.5];
+
+
+     subgraph cluster12 {	
+       		label = "Project: DE(3)";
+		 {node [label="{}"] empty12;}
+        	 {node [label="B(3)"] B12;}
+		 {edge [arrowhead=none]
+		empty12->B12;
+		}
+      }
+
+      C1b->empty12 [ltail=cluster1, lhead=cluster12, minlen=1.5];
+
+     subgraph cluster121 {	
+       		label = "Project: DEB(3)";
+		 {node [label="{}"] empty121;}
+		 {edge [arrowhead=none]
+		}
+      }
+      B12->empty121 [ltail=cluster12, lhead=cluster121, minlen=1.5];
+
+     subgraph cluster13 {	
+       		label = "Project: DB(4)";
+		 {node [label="{}"] empty13;}
+		 {edge [arrowhead=none]
+		}
+      }
+
+      C1b->empty13 [ltail=cluster1, lhead=cluster13, minlen=1.5];
+
+      subgraph cluster2 {	
+       		label = "Project: C(4)";
+		 {node [label="{}"] empty2;}
+        	 {node [label="A(2)"] A2;}
+        	 {node [label="B(4)"] B2;}
+        	 {node [label="E(3)"] E2;}
+		 {edge [arrowhead=none]
+		empty2->B2->E2->A2;
+		}
+      }
+
+      Db->empty2 [ltail=cluster0, lhead=cluster2, minlen=1.5];
+
+      subgraph cluster21 {	
+       		label = "Project: CE(3)";
+		 {node [label="{}"] empty21;}
+        	 {node [label="B(3)"] B21;}
+		 {edge [arrowhead=none]
+		empty21->B21;
+		}
+      }
+
+      A2->empty21 [ltail=cluster2, lhead=cluster21, len=1.5];
+
+     subgraph cluster211 {	
+       		label = "Project: CEB(3)";
+		 {node [label="{}"] empty211;}
+      }
+
+      B21->empty211 [ltail=cluster21, lhead=cluster211, minlen=1.5];
+
+     subgraph cluster22 {	
+       		label = "Project: CB(4)";
+		 {node [label="{}"] empty22;}
+      }
+
+      A2->empty22 [ltail=cluster2, lhead=cluster22, minlen=1.5];
+
+
+      subgraph cluster3 {	
+       		label = "Project: A(4)";
+		 {node [label="{}"] empty3;}
+        	 {node [label="B(4)"] B3;}
+        	 {node [label="E(4)"] E3;}
+		 {edge [arrowhead=none]
+		empty3->B3->E3;
+		}
+      }
+
+      Db->empty3 [ltail=cluster0, lhead=cluster3, minlen=1.5];
+
+
+     subgraph cluster31 {	
+       		label = "Project: AE(4)";
+		 {node [label="{}"] empty31;}
+        	 {node [label="B(4)"] B31;}
+		 {edge [arrowhead=none]
+		empty31->B31;
+		}
+      }
+
+      E3->empty31 [ltail=cluster3, lhead=cluster31, minlen=1.5];	
+
+     subgraph cluster311 {	
+       		label = "Project: AEB(4)";
+		 {node [label="{}"] empty311;}
+      }
+
+      B31->empty311 [ltail=cluster31, lhead=cluster311, minlen=1.5];	
+
+
+
+      subgraph cluster4 {	
+       		label = "Project: E(5)";
+		 {node [label="{}"] empty4;}
+        	 {node [label="B(4)"] B4;}
+		 {edge [arrowhead=none]
+		empty4->B4;
+		}
+      }
+
+      Db->empty4 [ltail=cluster0, lhead=cluster4, minlen=1.5];
+
+     subgraph cluster41 {	
+       		label = "Project: EB(5)";
+		 {node [label="{}"] empty41;}
+      }
+
+      B4->empty41 [ltail=cluster4, lhead=cluster41, minlen=1.5];
+
+     subgraph cluster5 {	
+       		label = "Project: B(6)";
+		 {node [label="{}"] empty5;}
+      }
+
+      Db->empty5 [ltail=cluster0, lhead=cluster5, minlen=1.5];
+}

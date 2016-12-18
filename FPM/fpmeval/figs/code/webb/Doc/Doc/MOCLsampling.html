@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Sampling</title>
+</head>
+
+<body>
+
+<h1><font color="#000080">Sampling</font></h1>
+
+<p>While <b>Magnum Opus</b> is designed for analyzing large data sets, when the data set
+is too large to be retained in memory, processing is dramatically slowed. </p>
+
+<p>The <tt>proportion</tt> option instructs <b>Magnum Opus</b> to sample the data as it is
+imported. The argument to this option is a number between 0.0 and 1.0. This indicates the
+proportion of cases in the data that should be randomly included in the analysis. For
+example, <tt>mocl item-list-file=tutorial.itl proportion=0.1</tt> will include in the
+analysis 0.1 (10%) of the cases in the data.</p>
+
+<p>If the <tt>out-of-sample-holdout-evaluation</tt> <a href="MOCLcommands.html">command line
+argument</a> is specified, the data that is not included in the sample will be used for <a
+href="MOCLholdout.html">holdout evaluation</a>.</p>
+
+<p>&nbsp;<br>
+<b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></p>
+</body>
+</html>

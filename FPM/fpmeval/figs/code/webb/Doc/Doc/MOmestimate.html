@@ -1,0 +1,64 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="Geoff Webb">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<title>M-estimates</title>
+</head>
+
+<body>
+
+<h1><font color="#000080">  M-estimates</font></h1>
+
+<p>Calculating the <a href="MOstrength.html">strength</a> and <a href="MOlift.html">lift</a> of a <a href="MOassociation_rule.html">rule</a>
+directly from the available data will often result in values that do not reflect
+likely strength and lift on future data. For example, consider a database in
+which the records relate to customers and, among other information, the age and
+gender are recorded. For ease of explanation we will assume that half the
+customers are male and half female. Suppose, however, that there is only one
+customer who is ninety years old and that this customer happens to be female. As
+all ninety-year-olds in the data are female, the rule <tt>age=90
+-&gt; female</tt> will have strength=1.0 and hence lift=2.0.
+While it might be the case that for our application all ninety-year-olds will be
+female, in the absence of further relevant information this single example does
+not warrant concluding so. Typically we would want many more examples before we
+would conclude that the likely strength was even close to 1.0. Note, however,
+that this one example does provide some evidence that more ninety-year-olds will
+be female than male as it rules out the possibility that no ninety-year-olds are
+female, but does not rule out the possibility that no ninety-year-olds are male.</p>
+<p>The m-estimate provides a form of Bayesian estimate of the likely value of
+strength and lift for a rule given a finite sample of cases. It takes into
+account the number of examples that the rule <a href="MOcover.html">covers</a>, the strength
+of the rule given those examples, and the frequency of the RHS in the data as a
+whole. It adjusts the observed strength toward the latter value. The size of the
+adjustment depends upon the cover of the rule and on a user-specified value <i>m</i>.
+The formulae are</p>
+<i>
+<p ALIGN="CENTER">Strength estimate</i> = (<i>support</i> + <i>m</i> * <i>prior</i>)
+/ (<i>coverage</i> + <i>m</i>)</p>
+<i>
+<p ALIGN="CENTER">Lift estimate</i> = <i>strength estimate</i> / <i>prior</p>
+</i>
+<p>where <i>prior</i> is the frequency of the RHS in the data as a whole.</p>
+<p>For our example rule <tt>age=90 -&gt;
+female</tt>, <i>support </i>= 1 (because there is one female
+ninety-year-old), <i>coverage</i> = 1 (because there is one ninety-year-old) and
+<i>prior</i> = 0.5 (because half the customers are female). If <i>m</i> = 2, <i>strength
+estimate </i>= 0.75 and <i>lift estimate</i> = 1.5. If <i>m</i> is increased
+then more weight is placed on the prior. For example, with <i>m</i> = 10, <i>strength
+estimate</i> = 0.545 and <i>lift estimate</i> = 1.091.</p>
+<p>In the interactive system the m-estimate check box is used to control whether 
+an m-estimate is used.&nbsp; In the commend line system the <tt>m</tt> command 
+is used.</p>
+<p>&nbsp;</p>
+
+<table WIDTH="100%">
+  <tr>
+    <td ALIGN="left"><b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></td>
+    <td ALIGN="right"></td>
+  </tr>
+</table>
+</body>
+</html>

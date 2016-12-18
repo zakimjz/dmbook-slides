@@ -1,0 +1,47 @@
+%%%
+%%% Copyright Newgen Imaging systems pvt ltd.
+%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{lenval}[2003/07/22 v1.4 value equivalent for length parameters(dimensions)]
+
+\RequirePackage{ifthen}
+
+\newlength{\LV@len}
+\newlength{\LV@leni}
+\newlength{\LV@lenii}
+\newlength{\LV@leniii}
+
+\newcounter{LV@cntri}
+\newcounter{LV@cntrii}
+\newcounter{LV@cntriii}
+
+
+\newcommand{\LV@value}{}%
+
+\newcommand{\lenval}[1]{%
+    \setcounter{LV@cntri}{0}%
+    \setcounter{LV@cntrii}{0}%
+    \setcounter{LV@cntriii}{0}%
+    \setlength{\LV@len}{#1}%
+    \setlength{\LV@leni}{\the\LV@len}%
+    \whiledo{\not \(\lengthtest{\LV@leni < 1pt}\)}%
+    {%
+        \stepcounter{LV@cntri}%
+        \addtolength{\LV@leni}{-1pt}%
+        }%
+    \setlength{\LV@lenii}{10\LV@leni}%
+    \whiledo{\not \(\lengthtest{\LV@lenii < 1pt}\)}%
+    {%
+        \stepcounter{LV@cntrii}%
+        \addtolength{\LV@lenii}{-1pt}%
+        }%
+    \setlength{\LV@leniii}{10\LV@lenii}%
+    \whiledo{\not \(\lengthtest{\LV@leniii < 1pt}\)}%
+    {%
+        \stepcounter{LV@cntriii}%
+        \addtolength{\LV@leniii}{-1pt}%
+        }%
+    \ifthenelse{\value{LV@cntriii}>4}{\stepcounter{LV@cntrii}}{\relax}%
+    \renewcommand{\LV@value}{\arabic{LV@cntri}.\arabic{LV@cntrii}}%%
+}%

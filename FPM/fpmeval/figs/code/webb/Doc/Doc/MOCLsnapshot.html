@@ -1,0 +1,50 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<meta name="Author" content="Geoff Webb">
+<meta name="KeyWords"
+content="Association Rule Learning, Association Rules, Magnum Opus, Data Mining, G. I. Webb &amp; Associates">
+<title>Snapshots</title>
+</head>
+
+<body>
+
+<h1><font color="#000080">Taking snapshots while Magnum Opus is running</font></h1>
+
+<p><strong>Magnum Opus</strong> includes a unique facility to examine the current best
+rules while rule discovery is in progress.&nbsp; When <strong>Magnum Opus</strong>
+receives the SIGUSR1 signal it writes the best rules found so far during the search to the
+file <tt>snapshot.out</tt> and then resumes the rule discovery process.</p>
+
+<p>Example:</p>
+
+<blockquote>
+  <p><tt>% mocl item-list-file=difficult.itl no-progress-reports &gt; difficult.out &amp;<br>
+  [1] 16365<br>
+  % kill -s SIGUSR1 16365<br>
+  % cat snapshot.out<br>
+  Rule Discovery Snapshot
+  </tt></p>
+  <p><tt>Search 11% complete<br>
+  <br>
+  ST05 -> WA4<br>
+[Coverage=0.997 (579415); Support=0.936 (544044); Strength=0.939; Lift=1.00; Leverage=0.0026 (1495.4); p<4.94E-324]<br><br>
+  ST25=0 -> WA2=0<br>
+[Coverage=0.999 (580538); Support=0.949 (551128); Strength=0.949; Lift=1.00; Leverage=0.0008 (449.6); p<4.94E-324]
+<br>
+  </tt></p>
+</blockquote>
+
+<p>&nbsp;
+
+<table WIDTH="100%">
+  <tr>
+    <td ALIGN="LEFT"><b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></td>
+    <td ALIGN="RIGHT"></td>
+  </tr>
+</table>
+</body>
+</html>

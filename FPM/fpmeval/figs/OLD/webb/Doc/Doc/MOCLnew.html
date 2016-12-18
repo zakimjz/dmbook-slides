@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+  <title>New features</title>
+</head>
+<body>
+<h1><font color="#000066">New in Magnum Opus command line version 4.6.3</font></h1>
+<h3>Default filters</h3>
+The default filter mode now varies depending on whether holdout evaluation is being performed. If holdout evaluation is performed, the filter mode defaults to insignificant, as in previous versions.  If holdout evaluation is not performed, the filter mode now defaults to unsound.
+<h3>Change to Search by Strength and Lift</h3>
+Previous versions required that values be set for at least one of minimum-support, minimum-coverage, or minimum-leverage when search-mode was strength or lift. This requirement has now been removed.
+<h2><font color="#000066">New in version 4.6.2</font></h2><p>Version 4.6.2 fixes an issue whereby the automated division of numeric attributes into more than three sub-ranges could occassionally fail.</p>
+<h2><font color="#000066">New in version 4.6.1</font></h2>
+<p>Version 4.6.1 was a Windows only release, which addressed some issues with the Windows interface.</p>
+<h2><font color="#000066">New in version 4.6</font></h2>
+<h3>Holdout evaluation</h3>
+<p>An issue has been resolved that in previous versions could cause <b>Magnum
+Opus</b> to crash when performing holdout evaluation.</p>
+<h2><font color="#000066">New in version 4.5</font></h2>
+<h3>Faster data import</h3>
+<p>The data import process has been re-engineered, resulting in very substantial speed-up of data import for transaction data.</p>
+<h2><font color="#000066">New in version 4.4</font></h2>
+<h3>Even faster</h3>
+<p>A number of improvements result in even greater reductions in <b>Magnum Opus</b>' 
+industry best compute times.&nbsp; These are particularly apparent in the 64-bit 
+Linux version.</p>
+
+<h3>Improved Insignificant and Unsound filters</h3>
+<p>An error has been fixed in earlier versions that caused occasional errors in 
+results of the insignificant and unsound filters.</p>
+<h3>Improved error reporting</h3>
+<p>There has been a major enhancement to the error reporting in <b>Magnum Opus 4.4</b>.&nbsp; 
+More detail is provided in most error messages and the <a href="MOerrors.html">documentation on error 
+messages</a> has been substantially enhanced..</p>
+<h2><font color="#000066">New in version 4.3</font></h2>
+<h3>Faster than ever</h3>
+<p>A breakthrough in our proprietary search technologies means that the time 
+taken for association discovery is decreased dramatically for some discovery 
+tasks.&nbsp; Speed-ups should be especially noticeable when searching by 
+strength or lift. </p>
+
+<h3>Improved Unsound Filter for Itemsets</h3>
+<p>As itemsets of size 1 cannot be sound, the search space for itemsets of size 
+1 is no longer considered when setting the critical values for use with the
+<a href="../../Doc/Doc/MOfiltering.html">unsound filter</a> during search of itemsets.</p>
+
+<h3>Default critical value for significance tests</h3>
+<p>The default critical value used for significance tests has been altered from 
+0.01 to 0.05.&nbsp; This will affect the rules and itemsets that are found using 
+both the insignificant and unsound <a href="MOfiltering.html">filters</a>.&nbsp; 
+This value can be altered using the <a href="MOCLcommands.html#sig">
+signficance-level command</a>.</p>
+<h2><font color="#000066">New in version 4.2</font></h2>
+<h3>New holdout evaluation test for itemsets</h3>
+<p><b>Magnum Opus 4.2</b> incorporates a test for <i>self-sufficient</i> 
+itemsets.&nbsp; An itemset is self-sufficient if its coverage is higher than can be 
+accounted for solely in terms of the coverage of either its subsets or 
+supersets.&nbsp; For example, the last of the following itemsets is not 
+self-sufficient because it has exactly the coverage that should be expected 
+given the coverage of each of the items it contains.&nbsp; Note that such an itemset 
+fails the test for improvement that is required when a test for self-sufficiency 
+is performed.</p>
+<blockquote>
+	<p><tt>a [Coverage=0.500 (500); Leverage=0.0000 (0.0); p=0.000000]<br>
+	b [Coverage=0.500 (500); Leverage=0.0000 (0.0); p=0.000000]<br>
+	a &amp; b [Coverage=0.250 (250); Leverage=0.0000 (0.0); p=0.525212]</tt></p>
+</blockquote>
+<p>Nor is the first of the next two itemsets self-sufficient.&nbsp; In this case it 
+is because the second itemset, which is a superset of the first, accounts for 
+all of the coverage of the first.</p>
+<blockquote>
+	<p><tt>a &amp; b [Coverage=0.500 (500); Leverage=0.0000 (0.0); p=0.000000]<br>
+	a &amp; b &amp; c [Coverage=0.500 (500); Leverage=0.0000 (0.0); p=0.000000]</tt></p>
+</blockquote>
+<h3>Improved progress reports</h3>
+<p>As rules or itemsets are being found, <b>Magnum Opus 4.2</b> reports on the 
+number found so far and the minimum and maximum value for the target metric of 
+those found.</p>
+<h3>Change to default holdout tests for itemsets</h3>
+<p>Holdout evaluation for itemsets has been altered to make <tt>
+test-improvement=yes</tt> the default.&nbsp; This test is not included by default 
+during holdout evaluation for rules.</p>
+<h3>Bug fix</h3>
+<p><b>Magnum Opus 4.1</b> fixes a bug in versions 3.0 to 4.1 that could result 
+in itemsets containing more than 3 items being incorrectly identified as failing 
+a test for improvement.</p>
+<h2><font color="#000066">New in version 4.1</font></h2>
+<h3>More powerful holdout evaluation for rules</h3>
+
+<p><b>Magnum Opus 4.1</b> treats any two rules X -&gt; Y and Y -&gt; X (that is, two 
+rules in which the LHS and RHS are swapped) as a single pattern unless holdout 
+tests are applied for minimum lift, strength or coverage.&nbsp; This  
+increases the numbers of rules that are usually accepted by holdout evaluation 
+while strictly bounding the risk of accepting any spurious rules at the 
+user-specified confidence level.</p>
+<h3>Improved performance for itemset discovery</h3>
+
+<p>Performance has been improved when using the filters None, Redundant or 
+Unproductive for itemset discovery .</p>
+<h2><font color="#000066">New in version 4.0</font></h2><p><b>Magnum Opus 4.0</b> introduces a number of significant enhancements to 
+functionality.</p>
+<h3>Greater support for detection and removal of spurious rules</h3>
+<p>Most pattern discovery systems incorporate an inherent risk of discovering 
+large numbers of spurious patterns.&nbsp; These are apparent patterns that appear in 
+the available data by chance alone.&nbsp; <b>Magnum Opus 4.0 </b>provides unique 
+facilities to control this risk.&nbsp; In addition to support for
+<a href="MOCLholdout.html">holdout evaluation</a>, it provides a new
+<a href="MOfiltering.html">filter for unsound rules</a>.&nbsp; This allows the risk 
+of any spurious discoveries to be strictly controlled without recourse to 
+holdout evaluation.</p>
+<h3>Speedup of itemset discovery</h3>
+<p>Major enhancements to the <a href="MOitemset.html">itemset</a> discovery 
+engine have resulted in substantial reductions in both compute time and memory 
+requirements.</p>
+<h3>Generalizations</h3>
+<p>It is now possible to define hierarchies of values for
+<a href="MOnames_file.html">discrete valued attributes</a>.</p>
+<h3><i>P </i>values output</h3>
+<p>When the insignificant or unsound <a href="MOfiltering.html">filters</a> are 
+employed, the <i>p</i>-values of the significance test are included with the 
+other statistics for a rule or itemset.</p>
+<h3>New default output format</h3>
+<p>The default output format has been changed to <i>Concise, 2 lines per rule</i>.</p>
+<h3>Redundant rules</h3>
+<p>Trivial rules have been renamed <i><a href="MOfiltering.html">redundant</a></i> 
+in keeping with general practice in the wider pattern discovery community.</p>
+<h3>Tutorial</h3>
+<p>A new <a target="_blank" href="../Tutorial.pdf">tutorial</a> introduction 
+provides an introduction to key features of the system.</p>
+<h2><font color="#000080">New in  version 3.0</font></h2>
+<p><b>Magnum Opus 3.0</b> uses new proprietary data mining technologies
+to deliver substantially faster processing of most rule discovery
+tasks, increasing the size and complexity of the data that can be
+processed.&nbsp; Its flexibility and power are now brought to bear on <a
+ href="MOitemset.html">itemset</a> as well as
+<a href="MOassociation_rule.html">rule</a> discovery.&nbsp; The
+<a href="MOCLholdout.html">holdout evaluation</a> capabilities have been
+greatly expanded.&nbsp; The power of the default filter has been
+substantially upgraded.&nbsp; Finally, a facility has been added for
+compiling a list of all attribute-values or items together with counts
+of the number of times each appears in the data.</p>
+<h3>Itemset discovery</h3>
+<p>An itemset is a set of attribute-values or items.&nbsp; <b>Magnum
+Opus 3.0</b> can now find the <i>k-</i>optimal itemsets using either
+of two metrics,
+<a href="MOcoverage.html">coverage</a> or <a href="MOleverage.html">leverage</a>.&nbsp;
+The system's ability to search for itemsets that maximize leverage
+provides a unique capability to identify itemsets that occur more
+frequently in the data than can be accounted for by any collection of
+independent sub-itemsets.</p>
+<h3>Holdout evaluation</h3>
+<p><b>Magnum Opus</b>' unique <a href="MOCLholdout.html">holdout
+evaluation</a> process supports statistically sound exploratory data
+mining.&nbsp; Version 3.0 allows the user to select from a suite of
+statistical tests to be applied during holdout evaluation.&nbsp; The
+risk of any rule or itemset being accepted that does not satisfy all
+specified tests is no more than the selected significance level.&nbsp;
+The user can now set the desired significance level.</p>
+<h3>More powerful significance filter</h3>
+<p>The <a href="MOfiltering.html">significance filter</a> now uses the
+Fisher exact test in place of the less powerful binomial sign test,
+enabling the discovery of more subtle patterns.</p>
+<h3>Compiling value counts</h3>
+<p>It is often useful to know the frequency of each individual
+attribute-value or item, if only for comparison with how those
+frequencies are affected by the other values in a rule or
+itemset.&nbsp; A new option creates a reference list of
+attribute-values and their frequencies.</p>
+<p>&nbsp;</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left"><b>&copy; <font size="-1">G I WEBB &amp;
+ASSOCIATES 2000-2009</font></b></td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

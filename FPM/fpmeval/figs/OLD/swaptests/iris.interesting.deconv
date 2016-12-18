@@ -1,0 +1,4 @@
+sw=(-inf-2.95] pl=(2.45-4.75] pw=(0.8-1.75] cl=Iris-versicolor
+sl=(-inf-5.55] sw=(2.95-3.35] pl=(-inf-2.45] pw=(-inf-0.8] cl=Iris-setosa
+sl=(-inf-5.55] sw=(-inf-2.95]
+sw=(2.95-3.35] pw=(0.8-1.75]

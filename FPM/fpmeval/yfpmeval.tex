@@ -1,0 +1,1121 @@
+\lecture{fpmeval}{fpmeval}
+
+\date{Chap.\ 12: Pattern and Rule Assessment}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\newcommand{\lift}{\mathit{lift}}
+\newcommand{\leverage}{leverage}
+\newcommand{\oddsratio}{oddsratio}
+\newcommand{\jaccard}{jaccard}
+\newcommand{\conviction}{conv}
+\newcommand{\cover}{cover}
+\newcommand{\productive}{productive}
+
+\begin{frame}{Rule Assessment Measures: Support and Confidence}
+
+{\bf Support:}
+The {\em support} of the rule \index{association rule! support} is def\/{i}ned as the
+number of transactions that contain both $X$ and $Y$, that is,
+\begin{align*}
+  \supp(X \arule Y) = \supp(\mathit{XY}) = \card{\vT(\mathit{XY})}
+\end{align*}
+
+\medskip
+The {\em relative support} is
+the fraction of transactions that contain both $X$
+and $Y$, that is, the empirical
+joint probability of the items comprising the rule
+\begin{align*}
+  \rsupp(X\arule Y) = P(\mathit{XY}) = \rsupp(\mathit{XY}) = \frac{\supp(\mathit{XY})}{\card{\bD}}
+\end{align*}
+
+\bigskip
+{\bf Conf\/{i}dence:}
+The {\em conf\/{i}dence} of a rule
+is the conditional probability that
+a transaction contains the consequent $Y$ given that it contains the
+antecedent $X$:
+\begin{align*}
+\conff(X \arule Y) = P(Y|X) = \frac{P(\mathit{XY})}{P(X)} =
+\frac{\rsupp(\mathit{XY})}{\rsupp (X)} =
+\frac{\supp(\mathit{XY})}{\supp (X)}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Example Dataset: Support and Confidence}
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+Tid & Items \\ \hline
+1 & {\it ABDE}\\ \hline
+2 & {\it BCE}\\ \hline
+3 & {\it ABDE}\\ \hline
+4 & {\it ABCE}\\ \hline
+5 & {\it ABCDE}\\ \hline
+6 & {\it BCD}\\ \hline
+\end{tabular}
+\end{center}
+
+\begin{columns}
+  \column{0.5\textwidth}
+\begin{center}
+  \scalebox{0.9}{
+\begin{tabular}{|c|c|c|}
+  \multicolumn{3}{c}{Frequent itemsets: $\minsup=3$}\\
+\hline
+$\supp$ & $\rsupp$ & Itemsets \\ \hline
+3 & 0.5 & $\mathit{ABD}$, $\mathit{ABDE}$, $\mathit{AD}$,
+$\mathit{ADE}$\\
+& & $\mathit{BCE}$, $\mathit{BDE}$, $\mathit{CE}$, $\mathit{DE}$  
+\\ \hline
+4 & $0.67$ & $\mathit{A}$, $\mathit{C}$, $\mathit{D}$, $\mathit{AB}$, $\mathit{ABE}$, $\mathit{AE}$, $\mathit{BC}$, $\mathit{BD}$   \\ \hline
+5 & $0.83$ & $\mathit{E}$, $\mathit{BE}$ \\ \hline
+6 & $1.0$ & $\mathit{B}$ \\ \hline
+\end{tabular}
+}
+\end{center}
+\column{0.5\textwidth}
+\begin{center}
+  \scalebox{0.9}{
+\begin{tabular}{|r>{\centering}m{0.2in}l|r|}
+  \multicolumn{4}{c}{Rule confidence}\\
+\hline
+\multicolumn{3}{|c|}{Rule} & $\conff$ \\ \hline
+$\mathit{A}$ & $\arule$ & $\mathit{E}$ & 1.00 \\ \hline
+$\mathit{E}$ & $\arule$ & $\mathit{A}$ & 0.80 \\ \hline \hline
+$\mathit{B}$ & $\arule$ & $\mathit{E}$ & 0.83 \\ \hline
+$\mathit{E}$ & $\arule$ & $\mathit{B}$ & 1.00 \\ \hline \hline
+$\mathit{E}$ & $\arule$ & $\mathit{BC}$ & 0.60 \\ \hline
+$\mathit{BC}$ & $\arule$ & $\mathit{E}$ & 0.75 \\ \hline
+\end{tabular}
+}
+\end{center}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Rule Assessment Measures: Lift, Leverage and Jaccard}
+
+  {\bf Lift:}
+Lift 
+is def\/{i}ned as the ratio of the observed joint
+probability of $X$ and $Y$ to the expected joint probability if they
+were statistically independent, that is,
+\begin{align*}
+   \lift (X \arule Y) = \frac{P(\mathit{XY})}{P(X) \cdot P(Y)} =
+   \frac{\rsupp(\mathit{XY})}{\rsupp(X)\cdot\rsupp(Y)} = \frac{\conff(X\arule
+   Y)}{\rsupp(Y)}
+\end{align*}
+
+\medskip
+{\bf Leverage:}
+Leverage 
+measures the difference between the
+observed and expected joint probability of $XY$ assuming that $X$ and
+$Y$ are independent
+\begin{align*}
+  \leverage (X \arule Y) = P(\mathit{XY}) - P(X) \cdot P(Y) = \rsupp(\mathit{XY}) -
+  \rsupp(X) \cdot \rsupp(Y)
+\end{align*}
+
+{\bf Jaccard:}
+The Jaccard coeff\/{i}cient
+measures the similarity
+between
+two sets. When applied as a rule assessment measure it computes the
+similarity between the tidsets of $X$ and $Y$:
+\begin{align*}
+\jaccard (X \arule Y) & =
+\frac{\card{\vT(X) \cap \vT(Y)}}{\card{\vT(X) \cup \vT(Y)}}\\
+& = \frac{P(\mathit{XY})}{P(X)+P(Y)-P(\mathit{XY})}
+\end{align*}
+
+
+\end{frame}
+
+
+\begin{frame}{Lift, Leverage, Jaccard, Support and Confidence}
+  \begin{columns}
+
+	\column{0.5\textwidth}
+\begin{center}
+\begin{tabular}{|r>{\centering}m{0.2in}l|r|}
+\hline
+\multicolumn{3}{|c|}{Rule} & $\lift$ \\ \hline
+$\mathit{AE}$ & $\arule$ & $\mathit{BC}$ & 0.75 \\ \hline
+$\mathit{CE}$ & $\arule$ & $\mathit{AB}$ & 1.00 \\ \hline
+$\mathit{BE}$ & $\arule$ & $\mathit{AC}$ & 1.20 \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|}
+\hline
+\multicolumn{3}{|c|}{Rule} & $\rsupp$ & $\conff$ & $\lift$ \\ \hline
+$\mathit{E}$ & $\arule$ & $\mathit{AC}$ & 0.33 & 0.40 & 1.20\\ \hline
+$\mathit{E}$ & $\arule$ & $\mathit{AB}$ & 0.67 & 0.80 & 1.20\\ \hline
+$\mathit{B}$ & $\arule$ & $\mathit{E}$ & 0.83 & 0.83 & 1.00\\ \hline
+\end{tabular}
+\end{center}
+	
+\column{0.5\textwidth}
+\begin{center}
+	\scalebox{0.8}{
+\begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|}
+\hline
+\multicolumn{3}{|c|}{Rule} & $\rsupp$ & $\lift$ & $\leverage$ \\ \hline
+$\mathit{ACD}$ & $\arule$ & $\mathit{E}$ & 0.17 & 1.20 & 0.03\\ \hline
+$\mathit{AC}$ & $\arule$ & $\mathit{E}$ &  0.33 & 1.20 & 0.06\\ \hline
+$\mathit{AB}$ & $\arule$ & $\mathit{D}$ &  0.50 & 1.12 & 0.06\\ \hline
+$\mathit{A}$ & $\arule$ & $\mathit{E}$ &   0.67 & 1.20 & 0.11\\ \hline
+\end{tabular}
+}
+\end{center}
+\begin{center}
+\begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|r|}
+\hline
+\multicolumn{3}{|c|}{Rule} & $\rsupp$ & $\lift$ & $\jaccard$\\ \hline
+$\mathit{A}$ & $\arule$ & $\mathit{C}$ & 0.33 & 0.75 & 0.33 \\ \hline
+\end{tabular}
+\end{center}
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}{Contingency Table for {\it X} and {\it Y}}
+\begin{center}
+\begin{tabular}{|c|cc||c|}
+    \hline
+    & $Y$ & $\neg Y$ & \\
+    \hline
+  $X$ & $\supp(\mathit{XY})$ & $\supp(X\neg Y)$ & $\supp(X)$\\
+  $\neg X$ & $\supp(\neg \mathit{XY})$ & $\supp(\neg X\neg Y)$ & $\supp(\neg X)$\\
+  \hline\hline
+  & $\supp(Y)$ & $\supp(\neg Y)$ & $\card{\bD}$\\
+  \hline
+  \end{tabular}%}{}
+\end{center}
+\end{frame}
+
+\begin{frame}{Rule Assessment Measures: Conviction}
+
+Def\/{i}ne $\neg X$ to be the
+event that $X$ is not contained in a transaction, that is,  $X
+\not\subseteq t\in \cT$, and likewise for $\neg Y$.  There are, in
+general, four possible events depending on the occurrence or
+non-occurrence of the itemsets $X$ and $Y$ as depicted in the
+contingency table.
+
+\medskip
+Conviction 
+measures the expected error of the rule, that is, how often
+$X$ occurs in a transaction where $Y$ does not.
+It is thus a measure of the strength of a rule with respect to the
+complement of the consequent, def\/{i}ned as
+\begin{align*}
+  \conviction(X \arule Y) &
+  = \frac{P(X) \cdot P(\neg Y)}{P(X \neg Y)}
+  = \frac{1}{\lift(X \arule \neg Y)}
+\end{align*}
+If the joint
+probability of $X\neg Y$ is less than that expected under independence
+of $X$ and $\neg Y$, then
+conviction is high, and vice versa. 
+\end{frame}
+
+
+\begin{frame}{Rule Conviction}
+\begin{center}
+\begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|r|}
+\hline
+\multicolumn{3}{|c|}{Rule}     & $\rsupp$ & $\conff$ & $\lift$    & $\conviction$\\ \hline
+$\mathit{A}$   & $\arule$ & $\mathit{DE}$   & 0.50    & 0.75       & 1.50    & 2.00     \\ \hline
+$\mathit{DE}$  & $\arule$ & $\mathit{A}$    & 0.50    & 1.00      & 1.50    & $\infty$ \\ \hline
+$\mathit{E}$   & $\arule$ & $\mathit{C}$    & 0.50    & 0.60       & 0.90    & 0.83 \\ \hline
+$\mathit{C}$   & $\arule$ & $\mathit{E}$    & 0.50    & 0.75       & 0.90    & 0.68 \\ \hline
+\end{tabular}%}{}
+\end{center}
+\end{frame}
+
+\begin{frame}{Rule Assessment Measures: Odds Ratio}
+The odds ratio utilizes all
+four entries from the contingency table.
+Let
+us divide the dataset into two groups of transactions -- those
+that contain $X$ and those that do not contain $X$. Def\/{i}ne the
+odds of $Y$ in these two groups as follows:
+\begin{align*}
+  odds(Y|X) &= \frac{P(\mathit{XY})/P(X)}{P(X\neg Y)/P(X)}
+  =\frac{P(\mathit{XY})}{P(X\neg Y)}\\
+  odds(Y|\neg X) &=
+  \frac{P(\neg \mathit{XY})/P(\neg X)}{P(\neg X\neg Y)/P(\neg X)}
+  =\frac{P(\neg \mathit{XY})}{P(\neg X\neg Y)}
+\end{align*}
+
+The odds ratio is then def\/{i}ned as the ratio of these two odds:
+\begin{align*}
+  \oddsratio(X \arule Y) &= \frac{odds(Y|X)}{odds(Y|\neg X)}
+   =
+   \frac{P(\mathit{XY}) \cdot P(\neg  X \neg Y)}{P(X \neg Y) \cdot P(\neg \mathit{XY})}\\
+   & = \frac{\supp(\mathit{XY}) \cdot \supp(\neg X\neg Y)}
+    {\supp(X\neg Y)\cdot \supp(\neg \mathit{XY})}
+\end{align*}
+
+If $X$ and $Y$ are
+independent, then odds ratio has value 1. 
+\end{frame}
+
+
+\begin{frame}{Odds Ratio}
+Let us compare the odds ratio for two rules, $C \arule A$ and $D
+\arule A$.
+The
+contingency tables for $A$ and $C$, and for $A$ and $D$, are given
+below:
+
+\vspace*{8pt}
+\centerline{
+\begin{tabular}{ccc}
+\begin{tabular}{|c|c|c|}
+  \hline
+  & $C$ & $\neg C$\\
+  \hline
+  $A$ & 2 & 2\\
+$\neg A$ & 2 & 0\\
+\hline
+\end{tabular} & &
+\begin{tabular}{|c|c|c|}
+  \hline
+  & $D$ & $\neg D$\\
+  \hline
+  $A$ & 3 & 1\\
+$\neg A$ & 1 & 1\\
+\hline
+\end{tabular}\\
+& &\\
+\end{tabular}
+}
+
+\noindent The odds ratio values for the two rules are given as
+\begin{align*}
+   \oddsratio (C \arule A) & =
+   \frac{\supp(\mathit{AC}) \cdot \supp(\neg  A \neg C)}{\supp(A \neg C) \cdot
+   \supp (\neg \mathit{AC})} = \frac{2 \times 0}{2 \times 2} =
+   0\\
+   \oddsratio (D \arule A) & =
+   \frac{\supp(\mathit{AD}) \cdot \supp(\neg  A \neg D)}{\supp(A \neg D) \cdot
+   \supp(\neg \mathit{AD})} = \frac{3 \times 1}{1 \times 1} = 3
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Iris Data: Discretization}
+\begin{center}
+\begin{tabular}{|l|c|l|}
+\hline
+Attribute & Range or value & Label \\ \hline
+\multirow{3}{*}{Sepal length} & 4.30--5.55 & $sl_1$ \\
+& 5.55--6.15 & $sl_2$ \\
+& 6.15--7.90 & $sl_3$ \\ \hline
+\multirow{3}{*}{Sepal width}  & 2.00--2.95 & $sw_1$ \\
+& 2.95--3.35 & $sw_2$ \\
+& 3.35--4.40 & $sw_3$ \\ \hline
+\multirow{3}{*}{Petal length} & 1.00--2.45 & $pl_1$ \\
+& 2.45--4.75 & $pl_2$ \\
+& 4.75--6.90 & $pl_3$ \\ \hline
+\multirow{4}{*}{Petal width}  & 0.10--0.80 & $pw_1$ \\
+& 0.80--1.75 & $pw_2$ \\
+& 1.75--2.50 & $pw_3$ \\ \hline
+\multirow{3}{*}{Class} & Iris-setosa  & $c_1$ \\
+& Iris-versicolor  & $c_2$ \\
+& Iris-virginica  & $c_3$ \\ \hline
+\end{tabular}%}{}\vspace*{-6pt}
+\end{center}
+\end{frame}
+  
+
+\captionsetup[subfloat]{captionskip=0.5in}
+\begin{frame}[fragile]{Iris: Support vs.\ Conf\/{i}dence, and Conviction
+  vs. Lift}
+\begin{figure}
+\centerline{
+        \hspace{0.2in}
+\subfloat[Support vs.\ conf\/{i}dence]{
+\label{fig:fpm:fpmeval:irissuppconfclass} \scalebox{0.95}{
+\readdata{\dataSLWa}{FPM/fpmeval/figs/irissuppconfclass1.dat}
+\readdata{\dataSLWb}{FPM/fpmeval/figs/irissuppconfclass2.dat}
+\readdata{\dataSLWc}{FPM/fpmeval/figs/irissuppconfclass3.dat}
+        \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,
+                                arrowscale=2,PointName=none}
+        \psset{xAxisLabel= $\rsupp$, yAxisLabel= $\conff$,
+        xAxisLabelPos={c,-0.4in}}%, yAxisLabelPos={-0.5in,c}}
+        \psgraph[tickstyle=bottom,Dx=0.1,Dy=0.25,
+                 Ox=0,Oy=0,subticks=2]{->}(0.0,0.0)(0.0,0.0)(0.5,1.1){2in}{2in}%
+        \dataplot[plotstyle=dots,showpoints=true]{\dataSLWa}
+        \dataplot[plotstyle=dots,dotstyle=Bsquare,showpoints=true]{\dataSLWb}
+        \dataplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true]{\dataSLWc}
+      % legend
+        \psdot[showpoints=true](0.18,0.24)
+        \rput[l](0.2,0.24){Iris-setosa ($c_1$)}
+        \psdot[dotstyle=Bsquare,showpoints=true](0.18,0.15)
+        \rput[l](0.2,0.15){Iris-versicolor ($c_2$)}
+        \psdot[dotstyle=Btriangle,showpoints=true](0.18,0.06)
+        \rput[l](0.2,0.06){Iris-virginica ($c_3$)}
+      % best rules
+      \psset{dotscale=2}
+        \psdot[fillcolor=white](0.333,1.0)
+        \psdot[dotstyle=Bsquare,fillcolor=white](0.327,0.91)
+        \psdot[dotstyle=Btriangle,fillcolor=white](0.333,0.89)
+        \endpsgraph
+        }}
+        \hspace{0.7in}
+\subfloat[Lift vs.\ conviction]{
+\label{fig:fpm:fpmeval:irisliftconvclass} \scalebox{0.95}{
+\readdata{\dataSLWa}{FPM/fpmeval/figs/irisliftconvclass1.dat}
+\readdata{\dataSLWb}{FPM/fpmeval/figs/irisliftconvclass2.dat}
+\readdata{\dataSLWc}{FPM/fpmeval/figs/irisliftconvclass3.dat}
+        \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,
+                                arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$\lift$, yAxisLabel= $\conviction$,
+        xAxisLabelPos={c,-0.4in}}%, yAxisLabelPos={-0.5in,c}}
+        \psgraph[tickstyle=bottom,Dx=0.5,Dy=5.0,
+                 Ox=0,Oy=0,subticks=2]{->}(0.0,0.0)(0.0,0.0)(3.4,34.0){2in}{2in}%
+        \dataplot[plotstyle=dots,showpoints=true]{\dataSLWa}
+        \dataplot[plotstyle=dots,dotstyle=Bsquare,showpoints=true]{\dataSLWb}
+        \dataplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true]{\dataSLWc}
+      %legend
+        \psdot[showpoints=true](0.25,31)
+        \rput[l](0.36,31){Iris-setosa ($c_1$)}
+        \psdot[dotstyle=Bsquare,showpoints=true](0.25,28)
+        \rput[l](0.36,28){Iris-versicolor ($c_2$)}
+        \psdot[dotstyle=Btriangle,showpoints=true](0.25,25)
+        \rput[l](0.36,25){Iris-virginica ($c_3$)}
+      % best rules
+      \psset{dotscale=2}
+        \psdot[fillcolor=white](3.0,33.33)
+        \psdot[dotstyle=Bsquare,fillcolor=white](2.93,15.00)
+        \psdot[dotstyle=Btriangle,fillcolor=white](3.0,24.67)
+        \endpsgraph
+        }}}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Iris Data: Best Class-specific Rules}
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+  \multicolumn{5}{c}{Best Rules by Support and Confidence}\\
+\hline
+Rule & $\rsupp$ & $\conff$ & $\lift$ & $\conviction$ \\ \hline \hline
+$\{pl_1, pw_1\} \arule c_1$ & 0.333 & 1.00 & 3.00 & 33.33 \\ \hline
+$pw_2 \arule c_2$           & 0.327 & 0.91 & 2.72 & 6.00 \\ \hline
+$pl_3 \arule c_3$           & 0.327 & 0.89 & 2.67 & 5.24 \\ \hline
+\end{tabular}%}{}
+\end{center}
+\vspace{0.25in}
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+  \multicolumn{5}{c}{Best Rules by Lift and Conviction}\\
+\hline
+Rule & $\rsupp$ & $\conff$ & $\lift$ & $\conviction$ \\ \hline \hline
+$\{pl_1, pw_1\} \arule c_1$ & 0.33 & 1.00 & 3.00 & 33.33 \\ \hline
+$\{pl_2, pw_2\} \arule c_2$ & 0.29 & 0.98 & 2.93 & 15.00 \\ \hline
+$\{sl_3, pl_3, pw_3\} \arule c_3$ & 0.25 & 1.00 & 3.00 & 24.67 \\ \hline
+\end{tabular}%}{}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Pattern Assessment Measures: Support and Lift}
+
+  {\bf Support:} The most basic measures are support and relative
+  support, giving the number and fraction of transactions in $\bD$ that
+  contain the itemset $X$:
+\begin{align*}
+  \supp(X) & = \card{\vT(X)} &
+  \rsupp(X) & = \frac{\supp(X)}{\card{\bD}}
+\end{align*}
+
+\medskip
+{\bf Lift:} The {\em lift} of a $k$-itemset
+$X=\{x_1,x_2,\ldots,x_k\}$ is def\/{i}ned as
+\begin{align*}
+  \lift(X, \bD) &= \frac{P(X)}{\prod_{i=1}^k P(x_i)}
+  = \frac{\rsupp(X)}{\prod_{i=1}^k \rsupp(x_i)}
+\end{align*}
+
+\medskip
+{\bf Generalized Lift:} 
+Assume that
+$\{X_1,X_2,\ldots,X_q\}$ is a $q$-partition of $X$, i.e., a
+partitioning of $X$ into $q$ nonempty and disjoint itemsets $X_i$.
+Def\/{i}ne
+the generalized lift of $X$ over partitions of size $q$ as
+follows:
+\begin{align*}
+  \lift_q(X)  & = \min_{X_1,\ldots,X_q}
+  \biggl\{ \frac{P(X)}{\prod_{i=1}^q P(X_i)} \biggr\}
+\end{align*}
+This is, the least value of lift over all $q$-partitions
+$X$.
+\end{frame}
+
+
+\begin{frame}{Pattern Assessment Measures: Rule-based Measures}
+Let $\Theta$ be some rule assessment measure.
+We
+generate all possible rules from $X$ of the form
+$X_1 \arule X_2$ and $X_2 \arule X_1$, where
+the set $\{X_1,X_2\}$ is a 2-partition, or a bipartition, of $X$.
+
+\medskip
+We then compute the measure $\Theta$ for each such rule, and
+use summary statistics such as the mean, maximum, and minimum to characterize $X$.
+
+\medskip
+For example, if $\Theta$ is rule lift, then we can def\/{i}ne the average,
+maximum, and minimum lift values for $X$ as follows:
+\begin{align*}
+  \mathit{AvgLift(X)} & =
+  \mathop{\avg}_{X_1,X_2} \Bigl\{ \lift(X_1\arule X_2) \Bigr\}\\
+  \mathit{MaxLift(X)} &
+  = \max_{X_1,X_2} \Bigl\{ \lift(X_1\arule X_2) \Bigr\}\\
+  \mathit{MinLift(X)} &
+  = \min_{X_1,X_2} \Bigl\{ \lift(X_1\arule X_2) \Bigr\}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Iris Data: Support Values for $\{pl_2, pw_2, c_2\}$ and
+  its Subsets}
+\begin{center}
+\begin{tabular}{|l|c|l|}
+\hline
+Itemset & $\supp$ & $\rsupp$ \\ \hline
+$\{pl_2, pw_2, c_2\}$ &  44 & 0.293\\ \hline\hline
+$\{pl_2, pw_2\}$ &  45 & 0.300\\ \hline
+$\{pl_2, c_2\}$ &  44 & 0.293\\ \hline
+$\{pw_2, c_2\}$ &  49 & 0.327\\ \hline
+$\{pl_2\}$ &  45 & 0.300\\ \hline
+$\{pw_2\}$ &  54 & 0.360\\ \hline
+$\{c_2\}$ &  50 & 0.333\\ \hline
+\end{tabular}%}{}\vspace*{-3pt}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Rules Generated from $\{pl_2, pw_2, c_2\}$}
+\begin{center}
+\begin{tabular}{|c|l|l|l|l|}
+\hline
+Bipartition & Rule & $\lift$ &
+$\leverage$ & $\conff$\\\hline\hline
+\multirow{2}{*}{$\Bigl\{\{pl_2\}, \{pw_2, c_2\}\Bigr\}$} &
+$pl_2 \arule \{pw_2, c_2\}$ & 2.993 & 0.195 & 0.978\\ \cline{2-5}
+& $\{pw_2, c_2\} \arule pl_2$ & 2.993 &0.195 & 0.898  \\ \hline
+\multirow{2}{*}{$\Bigl\{\{pw_2\}, \{pl_2, c_2\}\Bigr\}$} &
+$pw_2 \arule \{ pl_2, c_2\}$ & 2.778 & 0.188 & 0.815 \\ \cline{2-5}
+& $\{pl_2, c_2\} \arule pw_2$ & 2.778 &0.188 & 1.000 \\ \hline
+\multirow{2}{*}{$\Bigl\{\{c_2\}, \{pl_2, pw_2\}\Bigr\}$} &
+$c_2\arule \{pl_2, pw_2\}$ & 2.933 &0.193 & 0.880\\ \cline{2-5}
+& $\{pl_2, pw_2\} \arule c_2$ & 2.933 &0.193 & 0.978\\ \hline
+\end{tabular}%}{}\vspace*{-3pt}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{Iris: Relative Support and Average Lift of Patterns} 
+\readdata{\dataSLW}{FPM/fpmeval/figs/irisliftsupp.dat}
+\begin{figure}%[!t]\vspace*{16pt}
+        \centering
+        \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,
+              arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$\rsupp$, yAxisLabel= $\mathit{AvgLift}$,
+        xAxisLabelPos={c,-0.4in}}%, yAxisLabelPos={-0.5in,c}}
+        \psgraph[tickstyle=bottom,Dx=0.05,Dy=1.0,
+                 Ox=0,Oy=0,subticks=2]{->}(0.0,0.0)(0.0,0.0)(0.36,7.5){3.5in}{2.5in}%
+        \dataplot[plotstyle=dots,showpoints=true]{\dataSLW}
+        \psline[linestyle=dashed](0,3)(0.35,3)
+        \psline[linestyle=dashed](0.1,0)(0.1,7)
+        \endpsgraph
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Comparing Itemsets: Maximal Itemsets}
+An frequent itemset $X$ is {\em maximal}
+\index{itemsets! maximal}
+if all of its supersets are not frequent, that is, $X$ is maximal iff
+\begin{align*}
+  \supp(X) \ge \minsup, \text{ and for all } Y \supset X, \supp(Y) < \minsup
+\end{align*}
+
+Given a collection of frequent itemsets, we may choose to retain only
+the maximal ones, especially among those that already satisfy some other
+constraints on pattern assessment measures like lift or leverage.
+\end{frame}
+
+
+\begin{frame}{Iris: Maximal Patterns for Average~Lift}
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+Pattern & Avg.\ lift\\ \hline
+$\{sl_1, sw_2, pl_1, pw_1, c_1\}$ & 2.90 \\ \hline
+$\{sl_1, sw_3, pl_1, pw_1, c_1\}$ & 2.86 \\ \hline
+$\{sl_2, sw_1, pl_2, pw_2, c_2\}$ & 2.83 \\ \hline
+$\{sl_3, sw_2, pl_3, pw_3, c_3\}$ & 2.88 \\ \hline
+$\{sw_1, pl_3, pw_3, c_3\}$ & 2.52 \\ \hline
+\end{tabular}%}{}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Closed Itemsets and Minimal Generators}
+An itemset $X$ is {\em closed}
+if all of its supersets have strictly
+less support, that is,
+\begin{align*}
+  \supp(X) > \supp(Y), \text{ for all } Y \supset X
+\end{align*}
+
+\medskip
+An itemset $X$ is a {\em minimal generator}
+if all its subsets
+have strictly
+higher support, that is,
+\begin{align*}
+  \supp(X) < \supp(Y), \text{ for all } Y \subset X
+\end{align*}
+
+\medskip
+If an itemset $X$ is not a minimal generator, then
+it implies that it has some redundant items, that is,
+we can f\/{i}nd some subset $Y \subset X$, which can be replaced
+with an
+even smaller subset $W \subset Y$ without
+changing the support of $X$, that is, there exists a $W \subset Y$, such
+that
+$$\supp(X) =
+\supp(Y \cup (X\setminus Y)) =
+\supp(W \cup (X \setminus Y))$$
+
+\medskip
+One can show that all subsets of a minimal generator must themselves be
+minimal generators.
+\end{frame}
+
+\begin{frame}{Closed Itemsets and Minimal Generators}
+\begin{center}
+\begin{tabular}{|c|l|l|}
+\hline
+$\supp$ & Closed Itemset & Minimal Generators \\ \hline
+3 & $\mathit{ABDE}$ & $\mathit{AD}$, $\mathit{DE}$\\
+3 & $\mathit{BCE}$ & $\mathit{CE}$\\
+4 & $\mathit{ABE}$ & $A$\\
+4 & $\mathit{BC}$ & $C$\\
+4 & $\mathit{BD}$ & $D$\\
+5 & $\mathit{BE}$ & $E$\\
+6 & $B$ & $B$\\ \hline
+\end{tabular}%}{}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Comparing Itemsets: Productive Itemsets}
+An itemset $X$ is {\em productive}
+if its
+relative support is higher than the expected
+relative support over all of its bipartitions,
+assuming they are independent.
+
+More formally, let $\card{X} \ge 2$, and let
+$\{X_1,X_2\}$ be a bipartition of $X$.
+We say that $X$ is productive provided
+\begin{align*}
+\rsupp(X) > \rsupp(X_1) \times \rsupp(X_2),
+\text{ for all bipartitions } \{X_1, X_2\} \text{ of } X
+\end{align*}
+
+\bigskip
+This immediately implies that
+$X$ is productive if its minimum lift is greater than one, as
+\begin{align*}
+  \mathit{MinLift}(X) & =
+  \min_{X_1,X_2} \biggl\{ \frac{\rsupp(X)}{\rsupp(X_1) \cdot
+  \rsupp(X_2)} \biggr\}
+  > 1
+\end{align*}
+In terms of leverage, $X$ is productive if its minimum leverage is above
+zero because
+\begin{align*}
+MinLeverage(X) =
+\min_{X_1,X_2} \Bigl\{
+\rsupp(X) - \rsupp(X_1) \times \rsupp(X_2)
+\Bigr\} > 0
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Comparing Rules}
+Given two rules $R: X \arule Y$ and $R': W \arule Y$ that have the same
+consequent, we say that $R$ is {\em more specif\/{i}c} than $R'$, or
+equivalently, that $R'$ is {\em more general} than $R$
+provided $W \subset X$.
+
+\medskip
+{\bf Nonredundant Rules:} We say that a rule $R: X \arule Y$
+is {\em redundant} provided there exists a more general rule
+$R': W \arule Y$ that has the same support, that is, $W\subset X$ and $\supp(R) = \supp(R')$.
+
+\medskip
+{\bf Improvement and Productive Rules:}
+Def\/{i}ne the {\em improvement}
+of
+a rule $X \arule Y$ as follows:
+\begin{align*}
+\textit{imp}(X \arule Y) = \conff (X \arule Y)
+- \max_{W \subset X} \Bigl\{\conff (W \arule Y) \Bigr\}
+\end{align*}
+
+\medskip
+A rule $R: X \arule Y$ is {\em productive} if
+its improvement is greater than zero, which implies that
+for all more general rules $R': W \arule
+Y$ we have  $\conff(R) > \conff(R')$. 
+\end{frame}
+
+
+\begin{frame}{F{i}sher Exact Test for Productive Rules}
+Let $R: X\arule Y$ be an association rule. Consider its
+generalization $R': W \arule Y$, where $W = X\setminus Z$ is the
+new antecedent formed by removing from $X$ the subset $Z \subseteq
+X$. 
+
+\medskip
+Given an input dataset $\bD$, conditional on the fact that $W$
+occurs, we can create a $2 \times 2$ contingency table between $Z$
+and the consequent $Y$
+\begin{center}
+\begin{tabular}{|c|cc||c|}
+    \hline
+    $W$ & $Y$ & $\neg Y$ & \\
+    \hline
+    $Z$ & $a$ & $b$ & $a+b$\\
+  $\neg Z$ & $c$ & $d$ & $c+d$\\
+  \hline\hline
+  & $a+c$ & $b+d$ & $n=\supp(W)$\\
+  \hline
+  \end{tabular}
+\end{center}
+where
+\begin{alignat*}{3}
+  a & = \supp(\mathit{WZY}) = \supp(\mathit{XY}) & \qquad\qquad
+  b & = \supp(\mathit{WZ}\neg Y) = \supp(X\neg Y) \\[-3pt]
+  c & = \supp(W \neg \mathit{ZY}) & \qquad\qquad
+  d & =\supp(W \neg Z \neg Y)
+\end{alignat*}
+\end{frame}
+
+
+\begin{frame}{F{i}sher Exact Test for Productive Rules}
+Given a contingency table conditional on $W$,
+we are interested in the odds ratio obtained by
+comparing the presence and absence of $Z$, that is,
+\begin{align*}
+  oddsratio & = \frac{a/(a+b)}{b/(a+b)} \Biggl/ \frac{c/(c+d)}{d/(c+d)} =
+  \frac{ad}{bc}
+\end{align*}
+
+Under the null hypothesis $H_0$ that
+$Z$ and $Y$ are independent given $W$ the odds ratio is 1. 
+If we further assume that the row and column marginals are
+f\/{i}xed, then $a$ uniquely determines the other three values $b$, $c$, and
+$d$, and the probability mass function of observing the value $a$ in the
+contingency table is given by the hypergeometric distribution.  
+
+\begin{align*}
+  P\Bigl(a \bigl|\; (a+c), (a+b), n\Bigr) &=
+  \frac{(a+b)!\;(c+d)!\;(a+c)!\;(b+d)!}{n!\;a!\;b!\;c!\;d!}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{F{i}sher Exact Test: P-value}
+
+Our aim is to contrast the null hypothesis $H_0$ that $oddsratio =
+1$ with the alternative hypothesis $H_a$ that $oddsratio > 1$.
+
+The $\pvalue$ for $a$ is given as
+\begin{align*}
+  \pvalue(a) & = \sum_{i=0}^{\min(b,c)} P(a+i \mid (a+c),(a+b),n)\\[6pt]
+  & =
+  \sum_{i=0}^{\min(b,c)}
+  \frac{(a+b)!\;(c+d)!\;(a+c)!\;(b+d)!}{n!\;(a+i)!\;(b-i)!\;(c-i)!\;(d+i)!}
+\end{align*}
+which follows from the fact that when we increase the count of $a$
+by $i$, then because the row and column marginals are f\/{i}xed, $b$
+and $c$ must decrease by $i$, and $d$ must increase by $i$, as
+shown in the table below:
+\begin{center} 
+\begin{tabular}{|c|cc||c|}
+    \hline
+    $W$ & $Y$ & $\neg Y$ & \\
+    \hline
+    $Z$ & $a+i$ & $b-i$ & $a+b$\\
+  $\neg Z$ & $c-i$ & $d+i$ & $c+d$\\
+  \hline\hline
+  & $a+c$ & $b+d$ & $n=\supp(W)$\\
+  \hline
+  \end{tabular}%}{}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Fisher Exact Test: Example}
+  \small
+  Consider the rule $R: pw_2 \arule c_2$ obtained from the discretized Iris
+  dataset. To test if it is productive, because there is only a single
+  item in the antecedent, we compare it only with the default rule
+  $\emptyset \arule c_2$. We have
+  \begin{align*}
+    a & = \supp(pw_2,c_2) = 49 &
+    b & = \supp(pw_2,\neg c_2) = 5\\
+    c & = \supp(\neg pw_2,c_2) = 1 &
+    d & = \supp(\neg pw_2, \neg c_2) = 95
+  \end{align*}
+  with the contingency table given as
+
+  \begin{center}
+{\tabcolsep12pt\renewcommand{\arraystretch}{1.1}  \begin{tabular}{|c|cc|c|}
+    \hline
+  & $c_2$ & $\neg c_2$ & \\ \hline
+  $pw_2$ & 49 & 5 & 54\\
+  $\neg pw_2$ & 1 & 95 & 96\\ \hline
+  & 50 & 100 & 150\\ \hline
+  \end{tabular}}
+\end{center}
+
+  Thus the $\pvalue$ is given as
+    $\pvalue  = \sum_{i=0}^{\min(b,c)} P(a+i \mid (a+c),(a+b),n) = 
+    1.51 \times 10^{-32}$
+
+	\medskip
+  Since the $\pvalue$ is extremely small, we can safely reject the null
+  \hbox{hypothesis} that the odds ratio is 1. Instead, there is a strong
+  relationship between $X=pw_2$ and $Y=c_2$, and we conclude
+  that $R:pw_2\arule c_2$
+  is a productive rule.
+\end{frame}
+
+
+\begin{frame}{Permutation Test for Significance: Swap Randomization}
+A {\em permutation} or {\em randomization} test determines
+the distribution of a given test statistic $\Theta$ by randomly
+modifying the observed data several times to obtain a random
+sample of datasets, which can in turn be used for signif\/{i}cance
+testing. 
+
+
+\medskip
+The {\em swap randomization} approach
+maintains as invariant the column and row margins for a given dataset,
+that is, the permuted datasets preserve the support of each item (the
+column margin) as well as the number of items in each transaction (the
+row margin).  
+
+\medskip
+Given a dataset $\bD$, we randomly create $k$
+datasets that have the same row and column margins. We then mine
+frequent patterns in $\bD$ and check whether the pattern statistics are different
+from those obtained using the randomized datasets. If the differences
+are not signif\/{i}cant, we may conclude that the patterns arise solely from
+the row and column margins, and not from any interesting properties of
+the data.
+\end{frame}
+
+
+\begin{frame}{Swap Randomization}
+Given a binary matrix $\bD \subseteq \cT \times \cI$, the swap randomization method exchanges two
+nonzero cells of the matrix via a {\em swap} that leaves the row and
+column margins unchanged.
+
+\medskip
+Consider any two transactions $t_a, t_b
+\in \cT$ and any two items $i_a, i_b \in \cI$ such that
+$(t_a,i_a), (t_b,i_b) \in \bD$ and $(t_a,i_b), (t_b, i_a) \not\in \bD$,
+which corresponds to the
+$2 \times 2$ submatrix in $\bD$, given as
+$$\bD(t_a,i_a; t_b,i_b)=
+\matr{1&0\\ 0&1}$$
+
+\medskip
+After a swap operation we obtain the new
+  submatrix
+$$\bD(t_a,i_b; t_b,i_a)= \matr{0&1\\ 1&0}$$
+where we exchange the elements in $\bD$ so that $(t_a, i_b), (t_b,
+i_a) \in \bD$, and $(t_a, i_a), (t_b, i_b) \not\in \bD$. We denote
+this operation as $Swap(t_a,i_a; t_b, i_b)$. 
+\end{frame}
+
+
+\newcommand{\algswap}{\textsc{SwapRandomization}}
+\begin{frame}[fragile]{Algorithm \algswap}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\algswap ($t$, $\bD \subseteq \cT \times \cI$)}
+\Algorithm{}
+\While{$t > 0$}{
+  Select pairs $(t_a,i_a), (t_b,i_b) \in \bD$ randomly\;
+  \If{$(t_a,i_b) \not\in \bD$ and $(t_b,i_a)\not\in \bD$}{
+    $\bD \gets \bD \;\setminus\; \bigl\{ (t_a,i_a), (t_b,i_b)\bigr\}
+        \;\cup\; \bigl\{ (t_a,i_b), (t_b,i_a) \bigr\}$\;
+  }
+  $t = t-1$\;
+}
+\Return{$\bD$}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}[fragile]{Swap Randomization Example}
+\setcounter{subfigure}{0}
+\begin{table}[H]
+\scalebox{0.8}{
+{\hspace*{-8pt}\begin{tabular}{c}
+  \centerline{
+{
+\label{tab:fpm:fpmeval:simplemargins}
+\centering
+\begin{tabular}{|c||c|c|c|c|c||r|}
+\hline
+\multirow{2}{*}{Tid} & \multicolumn{5}{c||}{Items} &
+\multirow{2}{*}{Sum}\\ \cline{2-6}
+& $A$ & $B$ & $C$ & $D$ & $E$ & \\\hline\hline
+1 & 1&1&0&1&1& 4 \\ \hline
+2 & 0&1&1&0&1& 3\\ \hline
+3 & 1&1&0&1&1& 4\\ \hline
+4 & 1&1&1&0&1& 4\\ \hline
+5 & 1&1&1&1&1& 5\\ \hline
+6 & 0&1&1&1&0 & 3\\ \hline \hline
+Sum&4&6&4&4&5& \\ \hline
+\multicolumn{7}{c}{\fontsize{8}{8}\selectfont(a) Input binary data $\bD$}\\
+\end{tabular}
+}}\\[-6pt]\\
+\vspace{0.1in}
+\centerline{
+{
+\label{tab:fpm:fpmeval:swapsimple}
+\centering
+\begin{tabular}{|c||c|c|c|c|c||c|}
+\hline
+\multirow{2}{*}{Tid} & \multicolumn{5}{c||}{Items} &
+\multirow{2}{*}{Sum}\\ \cline{2-6}
+& $A$ & $B$ & $C$ & $D$ & $E$ & \\\hline\hline
+1 & 1&1&\cellcolor{gray!50}1&\cellcolor{gray!50}0&1& 4 \\ \hline
+2 & 0&1&1&0&1& 3\\ \hline
+3 & 1&1&0&1&1& 4\\ \hline
+4 & 1&1&\cellcolor{gray!50}0&\cellcolor{gray!50}1&1& 4\\ \hline
+5 & 1&1&1&1&1& 5\\ \hline
+6 & 0&1&1&1&0 & 3\\ \hline \hline
+Sum&4&6&4&4&5& \\ \hline
+\multicolumn{7}{c}{\fontsize{8}{8}\selectfont(b) $Swap(1,D; 4,C)$}\\
+\end{tabular}
+} \hspace{0.2in}
+{
+\label{tab:fpm:fpmeval:swapsimple2}
+\centering
+\begin{tabular}{|c||c|c|c|c|c||c|}
+\hline
+\multirow{2}{*}{Tid} & \multicolumn{5}{c||}{Items} &
+\multirow{2}{*}{Sum}\\ \cline{2-6}
+& $A$ & $B$ & $C$ & $D$ & $E$ & \\ \hline\hline
+1 & 1&1& 1& 0 & 1& 4 \\ \hline
+2 & \cellcolor{gray!50}1&1&\cellcolor{gray!50}0 &0 &1& 3\\ \hline
+3 & 1&1& 0&1&1& 4\\ \hline
+4 & \cellcolor{gray!50}0 &1& \cellcolor{gray!50}1& 1&1& 4\\ \hline
+5 & 1&1&1&1&1& 5\\ \hline
+6 & 0 &1&1&1&0 & 3\\ \hline \hline
+Sum&4&6&4&4&5& \\ \hline
+\multicolumn{7}{c}{\fontsize{8}{8}\selectfont(c) $Swap(2,C; 4,A)$}\\
+\end{tabular}
+}
+}
+\end{tabular}}{}
+}
+\end{table}
+\end{frame}
+
+
+
+\readdata{\dISC}{FPM/fpmeval/figs/iris-supp-1.cdf}
+\begin{frame}[fragile]{CDF for Number of Frequent Itemsets: Iris}
+  \framesubtitle{$k=100$ swap randomization steps}
+\begin{center}
+\begin{figure}[H]
+        \psset{xAxisLabel=$\minsup$,yAxisLabel=$\hF$,
+        xAxisLabelPos={c,-0.4in}}%, yAxisLabelPos={-0.6in,c}}
+    \psgraph[tickstyle=bottom,Dy=0.25,dy=0.25,
+      Dx=10,dx=10]{->}(0,0)(70,1.25){3in}{2in}
+      \dataplot[linewidth=1.5pt]{\dISC}
+    \psset{dotsep=2pt}
+    \psline[linestyle=dotted](9,0)(9,0.517)
+    \psline[linestyle=dotted](0,0.517)(9,0.517)
+    \endpsgraph
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\readdata{\dILR}{FPM/fpmeval/figs/iris-liftrel.cdf}
+\begin{frame}[fragile]{CDF for Average Relative Lift: Iris}
+  \framesubtitle{$k=100$ swap randomization steps}
+\begin{center}
+\begin{figure}[H]
+        %\vspace{0.2in}
+\def\pshlabel#1{\small {$#1$}}
+\def\psvlabel#1{\small {$#1$}}
+\scalebox{0.8}{
+        \centering
+        \psset{xAxisLabel=Avg.\ Relative Lift,
+          yAxisLabel=$\hF$,
+          xAxisLabelPos={c,-0.4in}}%, yAxisLabelPos={-0.6in,c}}
+    \psgraph[tickstyle=bottom,Dy=0.25,
+        dy=0.25,Ox=-0.6,Dx=0.2,dx=0.2]{->}(-0.6,0)(1.2,1.25){3in}{2in}
+          \dataplot[linewidth=1.5pt]{\dILR}
+            \psset{dotsep=2pt}
+    \psline[linestyle=dotted](-0.2,0)(-0.2,0.05)
+    \psline[linestyle=dotted](-0.6,0.05)(-0.2,0.05)
+    \psline[linestyle=dashed](0.8,0)(0.8,0.56)
+    \psline[linestyle=dashed](-0.6,0.56)(0.8,0.56)
+    \endpsgraph
+	}
+        \vspace{0.35in}
+\end{figure}
+\end{center}
+
+The relative lift statistic is
+\begin{align*}
+  \mathit{rlift}(X,\bD,\bD_i) = \frac{\supp(X,\bD) - \supp(X,\bD_i)}{\supp(X,\bD)}
+  = 1 -  \frac{\supp(X,\bD_i)}{\supp(X,\bD)}
+\end{align*}
+$\bD_i$ is $i$th swap randomized dataset obtained after $k$ steps.
+\end{frame}
+
+
+\readdata{\dPMF}{FPM/fpmeval/figs/iris-11-42.pmf}
+\begin{frame}[fragile]{PMF for Relative Lift: $\{{\it sl}_1, {\it pw}_2\}$}
+  \framesubtitle{$k=100$ swap randomization steps}
+\begin{center}
+\begin{figure}[H]
+\def\pshlabel#1{\small {$#1$}}
+\def\psvlabel#1{\small {$#1$}}
+        \centering
+        \psset{xAxisLabel=Relative Lift,
+          yAxisLabel=$\hf$,
+          xAxisLabelPos={c,-0.3in}}%, yAxisLabelPos={-0.6in,c}}
+    \psgraph[tickstyle=bottom,Dy=0.04,
+        dy=0.04,Ox=-1.2,Dx=0.2,dx=0.2]{->}(-1.2,0)(0.2,0.2){3in}{2in}
+          \listplot[plotstyle=LineToXAxis,linewidth=4pt,linecolor=gray]{\dPMF}
+    \endpsgraph
+\end{figure}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}{Bootstrap Sampling for Conf\/{i}dence Interval}
+
+  We can generate $k$ bootstrap samples from $\bD$ using
+sampling {\em with replacement}.
+Given pattern $X$ or rule $R:X\arule Y$,
+we can obtain the value of the test statistic in each of the bootstrap
+samples; let $\theta_i$ denote the value in sample $\bD_i$.
+
+
+\medskip
+From these values we can generate the empirical cumulative distribution
+function for the statistic
+\begin{align*}
+  \hF(x) = \hP\lB(\Theta \le x\rB) = \frac{1}{k} \sum_{i=1}^k
+  I(\theta_i \le x)
+\end{align*}
+where $I$ is an indicator variable that takes on the value $1$ when its
+argument is true, and $0$ otherwise.
+
+\medskip
+Given a desired conf\/{i}dence level
+$\alpha$ (e.g., $\alpha=0.95$) we can compute
+the interval for
+the test statistic by discarding values from the tail ends of $\hF$ on both sides
+that encompass $(1-\alpha)/2$ of
+the probability mass.
+
+\end{frame}
+
+
+\newcommand{\algbootstrapCI}{\textsc{Bootstrap-ConfidenceInterval}}
+\begin{frame}[fragile]{Bootstrap Confidence Interval Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\algbootstrapCI ($X$, $\alpha$, $k$, $\bD$)}
+\Algorithm{}
+\For{$i \in [1, k]$}{
+  $\bD_i \assign$ sample of size $n$ with replacement from $\bD$\;
+  $\theta_i \gets $ compute test statistic for $X$ on $\bD_i$\;
+}
+$\hF(x) = P\lB(\Theta \le x\rB) = \frac{1}{k} \sum_{i=1}^k
+  I(\theta_i \le x)$\;
+  $v_{(1-\alpha)/2} = \hF^{-1}\bigl((1-\alpha)/2\bigr)$\;
+  $v_{(1+\alpha)/2} = \hF^{-1}\bigl((1+\alpha)/2\bigr)$\;
+\Return{$[v_{(1-\alpha)/2}, v_{(1+\alpha)/2}\bigr]$}
+\end{algorithm}
+\end{frame}
+
+
+\readdata{\dBSPMF}{FPM/fpmeval/figs/epmf-bootstrap.txt}
+\begin{frame}[fragile]{Empirical PMF for Relative Support: Iris}
+\begin{center}
+\def\pshlabel#1{\small {#1}}
+\def\psvlabel#1{\small {#1}}
+        \psset{xAxisLabel=$\rsupp$,
+          yAxisLabel=$\hf$,
+          xAxisLabelPos={c,-0.3in}}%
+    \psgraph[tickstyle=bottom,Dy=0.04,
+        dy=0.04,Ox=0.04,Dx=0.02,dx=0.02]{->}(0.04,0)(0.2,0.2){3in}{2in}
+          \listplot[plotstyle=LineToXAxis,linewidth=4pt,
+          linecolor=gray]{\dBSPMF}
+            \psset{dotsep=2pt}
+          \listplot[linewidth=1pt,linestyle=dotted]{\dBSPMF}
+    \endpsgraph
+\end{center}
+\end{frame}
+
+
+\readdata{\dBS}{FPM/fpmeval/figs/ecdf-bootstrap.txt}
+\def\pshlabel#1{\small {#1}}
+\def\psvlabel#1{\small {#1}}
+\begin{frame}{Empirical CDF for Relative Support:
+  Iris}
+        \centering
+        \psset{xAxisLabel=$\rsupp$,
+          yAxisLabel=$\hF$,
+          xAxisLabelPos={c,-0.4in}}%
+    \psgraph[tickstyle=bottom,Dy=0.25,
+        dy=0.25,Ox=0.04,Dx=0.02,dx=0.02]{->}(0.04,0)(0.2,1.25){3in}{2in}
+          \dataplot[linewidth=1.5pt]{\dBS}
+            \psset{dotsep=2pt}
+        \pcline[arrowscale=1.5]{->}(0.073,0.25)(0.073,0.0)
+        \uput[u](0.073,0.25){$v_{0.05}$}
+        \pcline[arrowscale=1.5]{->}(0.16,1.1)(0.16,0.0)
+        \uput[u](0.16,1.1){$v_{0.95}$}
+    \endpsgraph
+\end{frame}

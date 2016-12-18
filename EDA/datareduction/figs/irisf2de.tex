@@ -1,0 +1,8 @@
+\begin{pspicture}(0,-0.5)(7,3)
+\psaxes[axesstyle=frame,Ox=0,Dx=1,dy=100,Dy=100,labels=y,ticks=none](0,0)(7,3)
+\readpsbardata{\data}{EDA/datareduction/figs/irisf2de.csv}
+\psbarchart[labelwidth=1.5in,orientation=horizontal,chartstyle=stack]{\data}
+\rput[lb](7.75,2.25){\psframebox[fillstyle=solid,fillcolor=black,linecolor=black]{\color{white} Iris Setosa}}
+\rput[lb](7.75,1.25){\psframebox[fillstyle=solid,fillcolor=darkgray,linecolor=darkgray]{\color{white} Iris Versicolour}}
+\rput[lb](7.75,0.25){\psframebox[fillstyle=solid,fillcolor=gray,linecolor=gray]{\color{white} Iris Virginica}}
+\end{pspicture}

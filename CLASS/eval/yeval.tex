@@ -1,0 +1,2306 @@
+\lecture{eval}{eval}
+
+\date{Chapter 22: Classification Assessment}
+\newcommand{\specificity}{\textit{specif\/{i}city}}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}{Classif\/{i}cation Assessment}
+
+A classif\/{i}er is a model or
+function $M$ that predicts the class label $\hy$ for a given input
+example $\bx$:
+\begin{align*}
+  \hy = M(\bx)
+\end{align*}
+where $\bx = (x_1, x_2, \ldots, x_d)^T \in \setR^d$ is a point in
+$d$-dimensional space and $\hy \in \{c_1, c_2, \ldots, c_k\}$ is
+its predicted class.
+
+\medskip
+To build the classif\/{i}cation model $M$ we need a {\em training set} of
+points along with their known classes. 
+
+\medskip
+Once the model $M$ has been trained,
+we assess its performance over a
+separate {\em testing set} of points for which we know the
+true classes. 
+
+\medskip
+F{i}nally, the model
+can be deployed to predict the class for future points whose class we
+typically do not know.
+\end{frame}
+
+
+
+\begin{frame}{Classif\/{i}cation Performance Measures}
+
+Let $\bD$ be the testing set comprising $n$ points in a $d$
+dimensional space, let $\{c_1, c_2, \ldots, c_k\}$ denote the set
+of $k$ class labels, and let $M$ be a classif\/{i}er. For $\bx_i \in
+\bD$, let $y_i$ denote its true class, and let $\hy_i = M(\bx_i)$
+denote its predicted class.
+
+\medskip{\bf Error Rate:} 
+The error rate is the fraction
+of incorrect predictions for the classif\/{i}er over the testing set,
+def\/{i}ned as
+\begin{align*}
+  \textit{Error\ Rate} = {1 \over n} \sum_{i=1}^n I(y_i \ne \hy_i)
+\end{align*}
+where $I$ is an indicator function.
+Error rate is an estimate of the probability of misclassif\/{i}cation.
+The lower the error rate the better the classif\/{i}er.
+
+\medskip{\bf Accuracy:} 
+The accuracy of a classif\/{i}er is
+the fraction of correct predictions over the testing set:
+\begin{align*}
+  \textit{Accuracy} ={1\over n} \sum_{i=1}^n I(y_i = \hy_i)  = 1 - \textit{Error\ Rate}
+\end{align*}
+Accuracy gives an estimate of the probability of a correct
+prediction; thus, the higher the accuracy, the better the
+classif\/{i}er.
+\end{frame}
+
+
+
+\readdata{\dataI}{CLASS/eval/figs/iris-sorted.txt}
+\readdata{\dataT}{CLASS/eval/figs/iris-3cls-te.txt}
+\begin{frame}{Iris Data: Full Bayes Classifier}
+  \framesubtitle{Training data in grey. Testing data in black.}
+  Three Classes: {\tt Iris-setosa} ($c_1$; circles), {\tt
+  Iris-versicolor} ($c_2$;  squares) and {\tt Iris-virginica} ($c_3$;
+  triangles)\\
+
+  \begin{columns}
+	\column{0.7\textwidth}
+\begin{figure}[!b]
+\scalebox{0.7}{
+\centering
+\psset{dotscale=1.5,fillcolor=lightgray,
+      arrowscale=2,PointName=none}
+\psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+\psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+%original dataset
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+      nStart=1,nEnd=50,plotNo=1,plotNoMax=2]{\dataI}
+\listplot[plotstyle=dots,dotstyle=Bsquare,showpoints=true,
+          nStart=51,nEnd=100,plotNo=1,plotNoMax=2]{\dataI}
+          %\psset{dotscale=1}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=101,nEnd=150,plotNo=1,plotNoMax=2]{\dataI}
+%testing dataset
+ \psset{fillcolor=black}
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+      nStart=1,nEnd=10]{\dataT}
+\listplot[plotstyle=dots,dotstyle=Bsquare,showpoints=true,
+          nStart=11,nEnd=20]{\dataT}
+          %\psset{dotscale=1}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=21]{\dataT}
+\psset{dotscale=2.5,fillcolor=white}
+\psdot[dotstyle=Bo](5.0,3.43)
+\psdot[dotstyle=Bsquare](5.9,2.75)
+\psdot[dotstyle=Btriangle](6.66,3.0)
+\begin{psclip}{%
+\psline[](4,2)(4,4.5)(8.5,4.5)(8.5,2)(4,2)}
+\psplotImp[algebraic](4,2)(8.5,4.5){%
+  18.29*(x-5.0)^2-2*12.54*(x-5.0)*(y-3.43)+15.87*(y-3.43)^2 -1}
+\psplotImp[algebraic](4,0)(8.5,10.5){%
+  5.26*(x-5.9)^2-2*3.58*(x-5.9)*(y-2.75)+11.88*(y-2.75)^2 -1}
+\psplotImp[algebraic](4,0)(8.5,10.5){%
+  3.05*(x-6.66)^2-2*2.53*(x-6.66)*(y-3.0)+13.1*(y-3.0)^2 -1}
+  \psset{linecolor=lightgray}
+\psplotImp[algebraic](4,2)(8.5,4.5){%
+  18.29*(x-5.0)^2-2*12.54*(x-5.0)*(y-3.43)+15.87*(y-3.43)^2 -4}
+\psplotImp[algebraic](4,0)(8.5,10.5){%
+  5.26*(x-5.9)^2-2*3.58*(x-5.9)*(y-2.75)+11.88*(y-2.75)^2 -4}
+\psplotImp[algebraic](4,0)(8.5,10.5){%
+  3.05*(x-6.66)^2-2*2.53*(x-6.66)*(y-3.0)+13.1*(y-3.0)^2 -4}
+\end{psclip}
+\endpsgraph
+}
+\end{figure}
+\column{0.3\textwidth}
+  Mean (in white) and density contours (1 and 2 standard deviations)
+  shown for each class.\\
+
+  The classif\/{i}er
+  misclassif\/{i}es 8 out of the 30 test cases. Thus, we have
+  \begin{align*}
+    \textit{Error\ Rate} &= {8/30} = 0.27\\
+    \textit{Accuracy}  & ={22/30} = 0.73
+  \end{align*}
+\end{columns}
+\end{frame}
+
+
+
+
+\begin{frame}{Contingency Table--based Measures}
+
+Let $\cD = \{\bD_1, \bD_2, \ldots, \bD_k\}$ denote a partitioning of the
+testing points based on their true class labels, where $\bD_{j} =
+\{\bx_i  \in \bD \;| y_i = c_{j}\}$.  Let $n_i = |\bD_i|$ denote the
+size of true class $c_i$.
+
+\medskip Let $\cR = \{\bR_1, \bR_2, \ldots, \bR_k\}$ denote a
+partitioning of the testing points based on the predicted labels, that
+is, $\bR_{j} = \{\bx_i \in \bD \;| \hy_i = c_{j}\}$.  Let $m_{j} =
+|\bR_{j}|$ denote the size of the predicted class $c_{j}$.
+
+\medskip
+$\cR$ and $\cD$ induce a $k \times k$ contingency table $\bN$,
+also called a {\em confusion matrix},
+\index{classification!confusion matrix} \index{confusion matrix}
+def\/{i}ned as follows:
+\begin{align*}
+  \bN(i,j) = n_{ij}  = \lB| \bR_i \cap \bD_{j} \rB| =
+\Bigl| \bigl\{ \bx_a \in \bD \;| \hy_a = c_i \text{ and } y_a = c_{j}
+  \bigr\} \Bigr|
+\end{align*}
+where $1\le i, j \le k$.
+The count $n_{ij}$ denotes the number of points with
+predicted class $c_i$ whose true label is $c_{j}$. Thus,
+$n_{ii}$ (for $1 \le i \le k$) denotes the number of cases where the
+classif\/{i}er agrees on the true label $c_i$. The remaining counts
+$n_{ij}$, with $i \ne j$, are cases where the classif\/{i}er and true
+labels disagree.
+\end{frame}
+
+
+
+\begin{frame}{Accuracy/Precision and Coverage/Recall}
+The class-specif\/{i}c {\em accuracy} or {\em precision} of the
+classif\/{i}er $M$ for class $c_i$ is given as the fraction of correct
+predictions over all points predicted to be in class $c_i$
+\begin{align*}
+  \textit{acc}_i = \textit{prec}_i = \frac{n_{ii}}{m_{i}}
+\end{align*}
+where $m_i$ is the number of examples predicted as $c_i$ by classif\/{i}er $M$.
+The higher the accuracy on class $c_i$ the better the classif\/{i}er.
+
+\medskip
+The overall precision or accuracy of the classif\/{i}er is the
+weighted average of class-specif\/{i}c accuracies:
+\begin{align*}
+  \textit{Accuracy} = \textit{Precision} = \sum_{i=1}^k \lB(\frac{m_i}{n}\rB) \textit{acc}_i =
+  \frac{1}{n} \sum_{i=1}^k n_{ii}
+\end{align*}
+
+\medskip
+The
+class-specif\/{i}c {\em coverage} or {\em recall}  of $M$ for class
+$c_i$ is the fraction of correct predictions over all points in
+class $c_i$:
+\begin{align*}
+  \textit{coverage}_i = \textit{recall}_i = \frac{n_{ii}}{n_{i}}
+ \end{align*}
+The higher the coverage the better the classif\/{i}er.
+\end{frame}
+
+
+\begin{frame}{F-measure} 
+The {\em class-specif\/{i}c
+F-measure} tries to balance the precision and recall values, by
+computing their harmonic mean for class $c_i$:
+\begin{align*}
+  F_i = \frac{2}{\frac{1}{\textit{prec}_i} + \frac{1}{\textit{recall}_i}} =
+  \frac{2 \cdot \textit{prec}_i \cdot \textit{recall}_i}{\textit{prec}_i + \textit{recall}_i} =
+  \frac{2 \; n_{ii}}{n_{i} + m_{i}}
+\end{align*}
+The higher the $F_i$ value the better the classif\/{i}er.
+
+\medskip
+The overall {\em F-measure} for the classif\/{i}er $M$ is the mean of
+the class-specif\/{i}c values:
+\begin{align*}
+  F = \frac{1}{k} \sum_{i=1}^r F_i
+  %\label{eq:clust:eval:F}
+\end{align*}
+For a perfect classif\/{i}er, the maximum value of the F-measure is 1.
+\end{frame}
+
+
+
+\begin{frame}{Contingency Table for Iris: Full Bayes Classifier}
+%{\tabcolsep6pt
+\renewcommand{\arraystretch}{1.1}
+\begin{center}
+\begin{footnotesize}
+\begin{tabular}{|l||c|c|c||l|}
+    \hline
+    & \multicolumn{3}{c||}{True} & \\
+    \hline
+     Predicted & Iris-setosa ($c_1$) & Iris-versicolor ($c_2$)&
+     Iris-virginica($c_3$) & \\
+    \hline\hline
+  Iris-setosa ($c_1$)&       10 & 0 & 0 & $m_1=10$\\
+  Iris-versicolor ($c_2$)&   0  & 7 & 5 & $m_2 = 12$\\
+  Iris-virginica  ($c_3$)&   0  & 3 & 5 & $m_3 = 8$\\
+  \hline
+  & $n_1 = 10$ & $n_2 = 10$ & $n_3 = 10$ & $n=30$\\
+  \hline
+  \end{tabular}%}{}
+\end{footnotesize}
+\end{center}
+\small
+The class-specif\/{i}c
+  precison and recall values are:
+  \begin{align*}
+    \textit{prec}_1 &= {n_{11} \over m_1}  = {10/10} = 1.0 &
+    \textit{recall}_1 &= {n_{11} \over n_1}  = {10/10} = 1.0\\[4.5pt]
+    \textit{prec}_2 &= {n_{22} \over m_2}  = {7/12} = 0.583 & 
+    \textit{recall}_2 &= {n_{22} \over n_2}  = {7/10} = 0.7\\[4.5pt]
+    \textit{prec}_3 &= {n_{33} \over m_3}  = {5/8} = 0.625 &
+    \textit{recall}_3 &= {n_{33} \over n_3}  = {5/10} = 0.5
+  \end{align*}
+  The overall accuracy and F-measure is
+  \begin{align*}
+    \textit{Accuracy} & = {(n_{11} + n_{22} + n_{33}) \over n} = {(10+7+5) \over
+    30} = {22/30} = 0.733\\
+    F & = {1\over 3}(1.0 + 0.636 + 0.556)  = {2.192 \over 3} = 0.731
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Binary Classif\/{i}cation: Positive and Negative Class}
+When there are only $k=2$
+classes, we call class $c_1$ the positive class and $c_2$ the
+negative class. The entries of the resulting $2 \times 2$
+confusion matrix are
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+& \multicolumn{2}{c|}{\textbf{True Class}} \\ \hline
+\textbf{Predicted Class} & Positive ($c_1$) & Negative ($c_2$) \\ \hline
+Positive ($c_1$)         & True Positive ({\it TP})   &  False Positive ({\it FP})  \\ \hline
+Negative ($c_2$)        &  False Negative ({\it FN})  & True Negative ({\it TN})   \\ \hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Binary Classif\/{i}cation: Positive and Negative Class}
+
+\begin{itemize}
+  \item \textit{True Positives (TP):}
+    The number of points that
+    the classif\/{i}er correctly predicts as positive:
+  \begin{align*}
+    \mathit{TP} = n_{11} = \bigl|\{\bx_i \;| \hy_i = y_i = c_1\}\bigr|
+  \end{align*}
+
+\item \textit{False Positives (FP):}
+The number of points the classif\/{i}er
+  predicts to be positive, which in fact belong to the negative
+  class:
+  \begin{align*}
+    \mathit{FP} = n_{12} = \bigl|\{\bx_i\;| \hy_i = c_1 \text{ and } y_i = c_2
+    \}\bigr|
+  \end{align*}
+
+  \item \textit{False Negatives (FN):}
+The number of points the classif\/{i}er
+    predicts to be in the negative class, which in fact belong to the
+    positive class:
+  \begin{align*}
+    \mathit{FN} = n_{21} = \bigl|\{\bx_i\;| \hy_i = c_2 \text{ and } y_i = c_1
+    \}\bigr|
+  \end{align*}
+
+     \item \textit{True Negatives (TN):}
+The number of points that
+     the classif\/{i}er correctly predicts as negative:
+  \begin{align*}
+    \mathit{TN} = n_{22} = \bigl|\{\bx_i \;| \hy_i = y_i = c_2\}\bigr|
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Binary Classif\/{i}cation: Assessment Measures}
+
+{\bf Error Rate:} 
+The error rate for the
+binary classif\/{i}cation case is given as the fraction of mistakes
+(or false predictions):
+\begin{align*}
+\textit{Error\ Rate} = \frac{\mathit{FP}+\mathit{FN}}{n}
+\end{align*}
+
+\medskip{\bf Accuracy:} 
+The accuracy is the fraction
+of correct predictions:
+\begin{align*}
+\textit{Accuracy} = \frac{\mathit{TP}+\mathit{TN}}{n}
+\end{align*}
+
+\subsubsection{Class-specif\/{i}c Precision}
+The precision for the positive
+and negative class is given as
+\begin{align*}
+  \textit{prec}_P &= \frac{\mathit{TP}}{\mathit{TP}+\mathit{FP}} = \frac{\mathit{TP}}{m_1}\\
+  \textit{prec}_N & = \frac{\mathit{TN}}{\mathit{TN}+\mathit{FN}} = \frac{\mathit{TN}}{m_2}
+\end{align*}
+where $m_i = \card{\bR_i}$ is the number of points predicted by $M$ as
+having class $c_i$.
+\end{frame}
+
+\begin{frame}{Binary Classif\/{i}cation: Assessment Measures}
+
+{\bf Sensitivity or True Positive Rate:}
+The fraction of correct predictions with respect
+to all points in the positive class, i.e., the
+recall for the positive class
+\begin{align*}
+  \mathit{TPR} = \textit{recall}_P = \frac{\mathit{TP}}{\mathit{TP}+\mathit{FN}} = \frac{\mathit{TP}}{n_1}
+\end{align*}
+where $n_1$ is the size of the positive class.
+
+\medskip{\bf Specif\/{i}city or True Negative Rate:}
+The recall for the negative class:
+\begin{align*}
+  \mathit{TNR} = \specificity = \textit{recall}_N = \frac{\mathit{TN}}{\mathit{FP}+\mathit{TN}} = \frac{\mathit{TN}}{n_2}
+\end{align*}
+where $n_2$ is the size of the negative class.
+
+\medskip{\bf False Negative Rate:} Def\/{i}ned as
+\begin{align*}
+  \mathit{FNR} = \frac{\mathit{FN}}{\mathit{TP}+\mathit{FN}} = \frac{\mathit{FN}}{n_1}  = 1 - \textit{sensitivity}
+\end{align*}
+
+\medskip{\bf False Positive Rate:} Def\/{i}ned as
+\begin{align*}
+  \mathit{FPR} = \frac{\mathit{FP}}{\mathit{FP}+\mathit{TN}} = \frac{\mathit{FP}}{n_2}= 1 - \specificity
+\end{align*}
+\end{frame}
+
+
+
+
+\readdata{\dataPC}{CLASS/eval/figs/iris-PC.txt}
+\readdata{\dataPCte}{CLASS/eval/figs/iris-PC-te.txt}
+\begin{frame}{Iris Principal Components Data: Naive Bayes Classifier}
+  \framesubtitle{{\tt Iris-versicolor} (class $c_1$; in circles) and
+  other two Irises (class $c_2$; in triangles). Training data in grey
+  and testing data in black. Class means in white and density contours.}
+\begin{figure}[!t]
+%    \vspace{0.2in}
+  \scalebox{0.7}{
+    \centering
+    \psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+    \psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dx=1,Dy=0.5]{->}(-4.0,-1.5)(4.0,
+1.5){4in}{3in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+            nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+            nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+    \psset{fillcolor=black}
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+            nEnd=10,plotNo=1,plotNoMax=2]{\dataPCte}
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+            nStart=11,plotNo=1,plotNoMax=2]{\dataPCte}
+    \psset{dotscale=2.5,fillcolor=white}
+    \psdot[dotstyle=Bo](-0.64,-0.20)
+    \psdot[dotstyle=Btriangle](0.27,0.14)
+%randomseed = 4100000
+%        V1         V2
+%-0.6405687 -0.2035819
+%       V1        V2
+%0.2695923 0.1402959
+%          [,1]      [,2]
+%[1,] 0.2881451 0.0000000
+%[2,] 0.0000000 0.1802742
+%       [,1]      [,2]
+%[1,] 6.1402 0.0000000
+%[2,] 0.0000 0.2058456
+%[1] "inverses"
+%         [,1]     [,2]
+%[1,] 3.470474 0.000000
+%[2,] 0.000000 5.547105
+%          [,1]    [,2]
+%[1,] 0.1628611 0.00000
+%[2,] 0.0000000 4.85801
+        \begin{psclip}{%
+          \psline[](-4,-1.5)(-4,1.5)(4,1.5)(4,-1.5)(-4,-1.5)}
+                \psplotImp[linewidth=1pt,algebraic](-4,-2)(4,3.5){%
+                3.47*(x+0.64)^2+5.55*(y+0.20)^2 -1}
+                \psplotImp[linewidth=1pt,algebraic,linecolor=lightgray](-4,-2)(4,3.5){%
+                3.47*(x+0.64)^2+5.55*(y+0.20)^2 -4}
+                \psplotImp[linewidth=1pt,algebraic](-4,-2)(4,3.5){%
+                0.16*(x-0.27)^2+4.86*(y-0.14)^2 -1}
+                \psplotImp[linewidth=1pt,algebraic,linecolor=lightgray](-4,-2)(4,3.5){%
+                0.16*(x-0.27)^2+4.86*(y-0.14)^2 -4}
+        \end{psclip}
+    \endpsgraph
+}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Iris Principal Components Data: Assessment Measures}
+\renewcommand{\arraystretch}{1.1}
+\begin{center}
+\begin{tabular}{|l||c|c||l|}
+    \hline
+    & \multicolumn{2}{c||}{True} & \\
+    \hline
+     Predicted & Positive ($c_1$) & Negative ($c_2$) & \\
+    \hline\hline
+  Positive ($c_1$)&   $\mathit{TP}=7$  & $\mathit{FP}=7$ & $m_1 = 14$\\
+  Negative  ($c_2$)&   $\mathit{FN}=3$ & $\mathit{TN}=13$ & $m_2 = 16$\\
+  \hline
+  & $n_1 = 10$ & $n_2 = 20$ & $n=30$\\
+  \hline
+  \end{tabular}%}{}
+\end{center}
+\small
+The
+  naive Bayes classif\/{i}er misclassif\/{i}ed 10 out of the 30 test instances,
+  resulting in an error rate and accuracy of
+  \begin{align*}
+    \textit{Error\ Rate} &= {10/30} = 0.33 & 
+    \textit{Accuracy} & = {20/30} = 0.67
+  \end{align*}
+  
+  Other performance measures:
+  \begin{align*}
+    \textit{prec}_P & = {\mathit{TP} \over \mathit{TP}+\mathit{FP}} = {7
+	\over 14} = 0.5 & 
+    \textit{prec}_N & = {\mathit{TN} \over \mathit{TN}+\mathit{FN}} = {13 \over 16} = 0.8125\\
+    \textit{sensitivity}
+    & = {\mathit{TP} \over \mathit{TP}+\mathit{FN}} = {7 \over 10} = 0.7 &
+    \specificity
+    & = {\mathit{TN} \over \mathit{TN}+\mathit{FP}} = {13 \over 20} = 0.65\\
+    \mathit{FNR} & = 1 - \textit{sensitivity} = 0.3 & 
+    \mathit{FPR} & = 1 - \specificity = 0.35
+  \end{align*}
+
+\end{frame}
+
+
+
+
+\begin{frame}{ROC Analysis}
+
+Receiver
+Operating Characteristic (ROC) analysis is a popular strategy for
+assessing the performance of classif\/{i}ers when there are two
+classes. 
+
+\medskip
+ROC analysis requires that a classif\/{i}er output a score
+value for the positive class for each point in the testing set.
+These scores can then be used to order points in decreasing order.
+
+\medskip
+Typically, a binary classif\/{i}er
+chooses some positive score threshold $\rho$, and
+classif\/{i}es all points with score above $\rho$ as positive,
+with the remaining points classif\/{i}ed as negative.
+
+\medskip
+ROC analysis plots the
+performance of the classif\/{i}er over all possible values of the threshold
+parameter $\rho$. 
+
+
+\medskip
+In particular, for each value of $\rho$, it
+plots the false positive rate (1-specif\/{i}city) on the $x$-axis
+versus the true positive
+rate (sensitivity) on the $y$-axis.
+The resulting plot is called the {\em ROC curve} or {\em ROC plot} for
+the classif\/{i}er.
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]{ROC Analysis}
+Let $S(\bx_i)$ denote the real-valued score for the positive class
+output by a classif\/{i}er $M$ for the point $\bx_i$. Let the maximum
+and minimum score thresholds observed on testing dataset $\bD$ be
+as follows:
+\begin{align*}
+\rho^{\min} & = \min_i \{ S(\bx_i) \} &
+\rho^{\max} & = \max_i \{ S(\bx_i) \}
+\end{align*}
+
+
+Initially, we classify all points as negative. Both {\it TP} and {\it FP} are
+thus initially zero, as given in the confusion matrix:
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+    & \multicolumn{2}{c|}{True}\\
+  \hline
+  Predicted & Pos & Neg\\
+  \hline
+  Pos& 0 & 0\\
+  Neg& {\it FN} & {\it TN}\\
+  \hline
+  \end{tabular}
+\end{center}
+This results in {\it TPR} and {\it FPR}
+rates of zero, which correspond to the point $(0,0)$ at the lower
+left corner in the ROC plot. 
+\end{frame}
+
+\begin{frame}[fragile]{ROC Analysis}
+Next, for each distinct value of
+$\rho$ in the range $[\rho^{\min}, \rho^{\max}]$, we tabulate the
+set of positive points:
+\begin{align*}
+  \bR_1(\rho) = \{\bx_i \in \bD : S(\bx_i) > \rho \}
+\end{align*}
+and we compute the corresponding true and false positive rates, to
+obtain a new point in the ROC plot. 
+
+F{i}nally, in the last step, we
+classify all points as positive. Both $\mathit{FN}$ and $\mathit{TN}$
+are thus zero, as per the confusion matrix
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+    & \multicolumn{2}{c|}{True}\\
+  \hline
+  Predicted& Pos & Neg\\
+  \hline
+  Pos& {\it TP} & {\it FP}\\
+  Neg& 0 & 0\\
+  \hline
+  \end{tabular}
+\end{center}
+resulting in
+$\mathit{TPR}$ and $\mathit{FPR}$ values of 1. This results in the point $(1,1)$ at
+the top right-hand corner in the ROC plot. 
+\end{frame}
+
+
+
+\begin{frame}[fragile]{ROC Analysis}
+An ideal classif\/{i}er
+corresponds to the top left point $(0,1)$, which corresponds to
+the case $\mathit{FPR}=0$ and $\mathit{TPR}=1$, that is, the classif\/{i}er has no false
+positives, and identif\/{i}es all true positives (as a consequence, it
+also correctly predicts all the points in the negative class).
+This case is shown in the confusion matrix:
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+    & \multicolumn{2}{c|}{True}\\
+    \hline
+  Predicted & Pos & Neg\\
+  \hline
+  Pos& {\it TP} & 0\\
+  Neg& 0 & {\it TN}\\
+  \hline
+  \end{tabular}
+\end{center}
+
+A classif\/{i}er with a curve closer to the
+ideal case, that is, closer to the upper left corner, is a better
+classif\/{i}er.
+
+
+\medskip{\bf Area Under ROC Curve:}
+The area under the ROC curve,
+abbreviated AUC, can be used as a measure of classif\/{i}er
+performance. 
+The AUC value is
+essentially the probability that the classif\/{i}er will rank a random
+positive test case higher than a random negative test instance.
+\end{frame}
+
+
+
+\begin{frame}[fragile]{ROC: Different Cases for $2 \times 2$ Confusion
+  Matrix}
+%  \processtable{Different cases for $2 \times 2$ confusion matrix
+%  \label{tab:class:eval:CMcases}}
+
+\begin{footnotesize}
+{\begin{tabular}{c}
+  %\subfloat[Initial: All Negative]
+{
+  \label{tab:class:eval:CMcases:neg}
+  \tabcolsep4pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|c|c|}
+  \hline
+    & \multicolumn{2}{c|}{True}\\
+  \hline
+  Predicted & Pos & Neg\\
+  \hline
+  Pos& 0 & 0\\
+  Neg& {\it FN} & {\it TN}\\
+  \hline
+\multicolumn{3}{c}{\fontsize{8}{8}\selectfont(a) Initial: all negative}\\
+  \end{tabular}
+  }
+  \hspace{0.15in}
+%  \subfloat[Final: All Positive]
+{
+  \label{tab:class:eval:CMcases:pos}
+  \tabcolsep4pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|c|c|}
+  \hline
+    & \multicolumn{2}{c|}{True}\\
+  \hline
+  Predicted& Pos & Neg\\
+  \hline
+  Pos& {\it TP} & {\it FP}\\
+  Neg& 0 & 0\\
+  \hline
+\multicolumn{3}{c}{\fontsize{8}{8}\selectfont(b) F{i}nal: all positive}\\
+  \end{tabular}}
+  \hspace{0.15in}
+%  \subfloat[Ideal Classifier]
+{
+  \label{tab:class:eval:CMcases:ideal}
+  \tabcolsep4pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|c|c|}
+  \hline
+    & \multicolumn{2}{c|}{True}\\
+    \hline
+  Predicted & Pos & Neg\\
+  \hline
+  Pos& {\it TP} & 0\\
+  Neg& 0 & {\it TN}\\
+  \hline
+\multicolumn{3}{c}{\fontsize{8}{8}\selectfont(c) Ideal classif\/{i}er}\\
+  \end{tabular}
+  }
+\end{tabular}}%{}
+\end{footnotesize}
+\end{frame}
+
+
+\begin{frame}{Random Classif\/{i}er} 
+A random
+classif\/{i}er corresponds to a diagonal line in the ROC plot. 
+
+
+\medskip
+Consider a classif\/{i}er that randomly guesses the class of a
+point as positive half the time, and negative the other half.  We
+then expect that half of the true positives and true negatives
+will be identif\/{i}ed correctly, resulting in the point $(\mathit{TPR}, \mathit{FPR}) =
+(0.5, 0.5)$ for the ROC plot. 
+
+\medskip
+In
+general, any f\/{i}xed probability of prediction, say $r$, for the
+positive class, yields the point $(r,r)$ in ROC space.  
+
+\medskip
+The
+diagonal line thus represents the performance of a random
+classif\/{i}er, over all possible positive class prediction thresholds
+$r$.  
+\end{frame}
+
+
+
+
+\begin{frame}{ROC/AUC Algorithm}
+The ROC/AUC takes as
+input the testing set $\bD$, and the classif\/{i}er $M$. 
+
+\medskip
+The f\/{i}rst
+step is to predict the score $S(\bx_i)$ for the positive class
+($c_1$) for each test point $\bx_i \in \bD$. Next, we sort the
+$(S(\bx_i), y_i)$ pairs, that is, the score and the true class
+pairs, in decreasing order of the scores
+
+\medskip
+Initially, we set the
+positive score threshold $\rho = \infty$.  We then
+examine each pair $(S(\bx_i),
+y_i)$ in sorted order, and for each distinct value of the score,
+we set $\rho = S(\bx_i)$ and plot the point
+$$(\mathit{FPR}, \mathit{TPR}) = \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB)$$%\pagebreak
+
+\medskip
+As each test point is
+examined, the true and false positive values are adjusted based on
+the true class $y_i$ for the test point $\bx_i$. If $y_1 = c_1$,
+we increment the true positives, otherwise, we increment the false
+positives
+
+\end{frame}
+
+
+
+\begin{frame}{ROC/AUC Algorithm}
+The AUC value is computed as each new point is added to the ROC plot.
+The algorithm maintains the previous values of the false and true
+positives, $\mathit{FP}_{prev}$ and $\mathit{TP}_{prev}$, for the
+previous score threshold $\rho$. 
+
+\medskip
+Given the current $\mathit{FP}$ and $\mathit{TP}$
+values, we compute the area under the curve def\/{i}ned by the four
+points
+\begin{align*}
+(x_1, y_1) & = \lB(\frac{\mathit{FP}_{prev}}{n_2}, \frac{\mathit{TP}_{prev}}{n_1}\rB) &
+(x_2, y_2) & = \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB)\\
+(x_1,0) & = \lB(\frac{\mathit{FP}_{prev}}{n_2}, 0\rB) &
+(x_2, 0) &= \lB(\frac{\mathit{FP}}{n_2}, 0\rB)
+\end{align*}
+These four points def\/{i}ne a trapezoid, whenever $x_2 > x_1$ and $y_2 >
+y_1$, otherwise, they def\/{i}ne a rectangle (which may be degenerate, with
+zero area).
+
+\medskip
+The area
+under the trapezoid is given as $b\cdot h$, where
+$b=|x_2-x_1|$ is the length of the base of the trapezoid and $h =
+\frac{1}{2}(y_2+y_1)$ is the average height of the trapezoid.
+\end{frame}
+
+
+\newcommand{\algroccurve}{\textsc{ROC-Curve}}
+\newcommand{\algtraparea}{\textsc{Trapezoid-Area}}
+\begin{frame}[fragile]{Algorithm \algroccurve}
+\begin{footnotesize}
+\begin{algorithm}[H]
+%\begin{tightalgo}[!t]{\textwidth-18pt}
+  \SetKwInOut{Algorithm}{\algroccurve ($\bD$, $M$)}
+\Algorithm{}
+$n_1 \gets \bigl|\{\bx_i \in \bD \;| y_i = c_1\}\bigr|$
+\tcp{size of positive class}
+$n_2 \gets \bigl|\{\bx_i \in \bD\;| y_i = c_2\}\bigr|$
+\tcp{size of negative class}
+\tcp{classify, score, and sort all test points}
+$L \gets \text{sort the set } \{(S(\bx_i), y_i)\!: \bx_i \in \bD\} \text{ by
+decreasing scores}$\nllabel{alg:class:eval:roc:sortscores}
+$\mathit{FP} \gets \mathit{TP} \gets 0$ \;
+$\mathit{FP}_{prev} \gets \mathit{TP}_{prev} \gets 0$
+\nllabel{alg:class:eval:roc:previnit}\;
+$AUC \gets 0$\;
+$\rho \gets \infty$ \nllabel{alg:class:eval:roc:thetamax}\;
+\ForEach{$(S(\bx_i), y_i) \in L$ \nllabel{alg:class:eval:roc:for}} {
+  \If {$\rho > S(\bx_i)$}{
+  plot point $\lB(\frac{\mathit{FP}}{n_2},\frac{\mathit{TP}}{n_1}\rB)$
+  \nllabel{alg:class:eval:roc:plot}\;
+  $AUC \gets AUC + \textsc{Trapezoid-Area}\lB(
+  \lB(\frac{\mathit{FP}_{prev}}{n_2},
+  \frac{\mathit{TP}_{prev}}{n_1}\rB), \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB)
+  \rB)$
+  \nllabel{alg:class:eval:roc:area}\;
+    $\rho \assign S(\bx_i)$ \;
+    $\mathit{FP}_{prev} \gets \mathit{FP}$\;
+    $\mathit{TP}_{prev} \gets \mathit{TP}$\;
+  }
+  \lIf {$y_i = c_1$}{
+  $\mathit{TP} \gets \mathit{TP}+1$ \nllabel{alg:class:eval:roc:tp}
+  }
+  \lElse{
+  $\mathit{FP} \gets \mathit{FP}+1$ \nllabel{alg:class:eval:roc:fp}
+  }
+}
+plot point $\lB(\frac{\mathit{FP}}{n_2},\frac{\mathit{TP}}{n_1}\rB)$
+\nllabel{alg:class:eval:roc:plotfinal}\;
+$AUC \gets AUC + \textsc{Trapezoid-Area}
+\lB( \lB(\frac{\mathit{FP}_{prev}}{n_2},
+  \frac{\mathit{TP}_{prev}}{n_1}\rB), \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB)
+  \rB)$
+  \nllabel{alg:class:eval:roc:areafinal}\;
+\end{algorithm}
+\end{footnotesize}
+\end{frame}
+
+
+\begin{frame}{Algorithm  \algtraparea}
+\begin{small}
+\begin{algorithm}[H]
+%\BlankLine
+\SetKwInOut{AlgorithmTA}{\algtraparea ($(x_1, y_1), (x_2, y_2)$)}
+\AlgorithmTA{}
+$b \gets |x_2 - x_1|$ \tcp{base of trapezoid}
+$h \gets \frac{1}{2}(y_2 + y_1)$ \tcp{average height of trapezoid}
+\Return{$(b\cdot h)$}
+\end{algorithm}
+\end{small}
+\end{frame}
+
+
+
+
+\begin{frame}{Iris PC Data: ROC Analysis}
+We use the naive Bayes
+  classif\/{i}er to compute the probability that each
+  test point belongs to the positive class ($c_1$; {\tt
+  iris-versicolor}). 
+  
+  \medskip
+  The score of the classif\/{i}er for test point $\bx_i$
+  is therefore $S(\bx_i) = P(c_1 | \bx_i)$.
+  The sorted scores (in decreasing order)
+  along with the true
+  class labels are as follows:
+
+  \begin{center}
+  \footnotesize
+\begin{tabular}{c}
+    \tabcolsep6pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|cccccccccc|}
+    \hline
+$S(\bx_i)$ & 0.93 & 0.82 & 0.80 & 0.77 & 0.74 & 0.71 & 0.69 & 0.67 & 0.66 & 0.61\\
+$y_i$ & $c_2$    &$c_1$    &  $c_2$   & $c_1$   & $c_1$   &$c_1$    &
+$c_2$   &
+$c_1$   & $c_2$    & $c_2$\\
+\hline
+\multicolumn{11}{c}{~}\\
+\hline
+$S(\bx_i)$ & 0.59 &
+0.55 &
+0.55 &
+0.53 &
+0.47 &
+0.30 &
+0.26 &
+0.11 &
+0.04 &
+2.97e-03\\
+$y_i$ & $c_2$ & $c_2$& $c_1$& $c_1$& $c_1$& $c_1$& $c_1$&  $c_2$&
+$c_2$&  $c_2$\\
+\hline
+\multicolumn{11}{c}{~}\\
+\end{tabular}\\
+\tabcolsep6pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|ccccc|}
+\hline
+$S(\bx_i)$& 1.28e-03 &
+2.55e-07 &
+6.99e-08 &
+3.11e-08 &
+3.109e-08\\
+$y_i$ & $c_2$ & $c_2$ & $c_2$ & $c_2$ & $c_2$\\
+\hline
+\multicolumn{6}{c}{~}\\
+\hline
+$S(\bx_i)$& 1.53e-08 &
+9.76e-09 &
+2.08e-09 &
+1.95e-09 &
+7.83e-10 \\
+$y_i$ & $c_2$ & $c_2$ & $c_2$ & $c_2$ & $c_2$\\
+\hline
+  \end{tabular}\\
+\end{tabular}%}{}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}{ROC Plot for Iris PC Data}
+AUC for naive Bayes is 0.775, whereas the AUC for the random classifier
+(ROC plot in grey) is 0.5.\\
+\begin{figure}[!t]\vspace*{-0.4pc}
+\centering
+\scalebox{0.8}{
+\begin{pspicture}(-2,-1)(2,7.5)
+\psset{xAxisLabel=False Positive Rate,yAxisLabel=True Positive Rate,%
+      xAxisLabelPos={c,-0.125},yAxisLabelPos={-0.15,c}}
+  \begin{psgraph}[Dx=0.1,Dy=0.1,axesstyle=frame]{->}(0,0)(1.0,1.0){3.5in}{3in}
+\psline[linecolor=lightgray,linewidth=2pt](0,0)(1,1)
+\listplot[linewidth=2pt,showpoints=true]{%
+0 0
+0.05 0
+0.05 0.1
+0.1 0.1
+0.1 0.2
+0.1 0.3
+0.1 0.4
+0.15 0.4
+0.15 0.5
+0.2 0.5
+0.25 0.5
+0.3 0.5
+0.35 0.5
+0.35 0.6
+0.35 0.7
+0.35 0.8
+0.35 0.9
+0.35 1
+0.4 1
+0.45 1
+0.5 1
+0.55 1
+0.6 1
+0.65 1
+0.7 1
+0.75 1
+0.8 1
+0.85 1
+0.9 1
+0.95 1
+1 1
+}
+\end{psgraph}
+\end{pspicture}}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{ROC Plot and AUC: Trapezoid Region}
+\begin{figure}[!t]\vspace*{-15pt}
+\centering
+\begin{pspicture}(-2,-1)(2,5.5)
+  \psset{xAxisLabel=False Positive Rate,yAxisLabel=True Positive Rate,%
+      xAxisLabelPos={c,-0.2},yAxisLabelPos={-0.25,c}}
+  \begin{psgraph}[Dx=0.2,Dy=0.2,axesstyle=frame]{->}%
+      (0,0)(1.0,1.0){2in}{2in}
+\pspolygon[fillstyle=solid,fillcolor=lightgray]%
+(0,0)(0,0.333)(0.5,1)(1,1)(1,0)
+  \listplot[linewidth=2pt,showpoints=true]{%
+  0 0
+  0.0 0.333
+  0.5 1
+  1 1
+  }
+  \psline[linestyle=dashed](0.5,0)(0.5,1)
+  \uput[u](0.25,0.2){$0.333$}
+  \uput[u](0.75,0.2){$0.5$}
+\end{psgraph}
+\end{pspicture}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Classif\/{i}er Evaluation}
+
+  Consider a 
+classif\/{i}er $M$, and some performance measure $\theta$. 
+Typically,
+the input dataset $\bD$ is randomly split into a disjoint training
+set and testing set. The training set is used to learn the model
+$M$, and the testing set is used to evaluate the measure $\theta$.
+
+
+\medskip
+How conf\/{i}dent can we be about the classif\/{i}cation
+performance? The results may be due to an artifact of the random
+split. 
+
+\medskip
+Also $\bD$ is
+itself a $d$-dimensional multivariate random sample drawn from the
+true (unknown) joint probability density function $f(\bx)$ that
+represents the population of interest.  Ideally, we would like to
+know the expected value $E[\theta]$ of the performance measure
+over all possible testing sets drawn from $f$. However, because
+$f$ is unknown, we have to estimate $E[\theta]$ from $\bD$.
+
+\medskip
+Cross-validation and resampling are two common approaches
+to compute the expected value and variance of a given performance
+measure.
+\end{frame}
+
+
+
+\begin{frame}{$K$-fold Cross-Validation}
+Cross-validation divides the dataset $\bD$
+into $K$ equal-sized parts, called {\em folds}, namely $\bD_1$, $\bD_2$,
+$\ldots$, $\bD_K$.
+
+\medskip
+Each fold $\bD_i$ is, in turn, treated as the testing set, with
+the remaining folds comprising the training set
+$\bD\setminus\bD_i = \bigcup_{j \ne i} \bD_{j}$.
+
+\medskip
+After training the model $M_i$ on $\bD\setminus\bD_i$, we assess its performance
+on the testing set $\bD_i$ to obtain the $i$-th estimate $\theta_i$.
+
+\medskip
+The expected value of the performance measure can then be estimated as
+\begin{align*}
+  \hmu_\theta = E[\theta] = {1\over K} \sum_{i=1}^K \theta_i
+\end{align*}
+and its variance as
+\begin{align*}
+  \hsigma^2_\theta  = {1\over K} \sum_{i=1}^K (\theta_i - \hmu_\theta)^2
+\end{align*}
+
+\medskip
+Usually $K$ is chosen to be 5 or 10. The special case, when $K=n$, is
+called {\em leave-one-out}
+cross-validation.
+\end{frame}
+
+
+\newcommand{\algcrossvalidation}{\textsc{Cross-Validation}}
+\begin{frame}[fragile]{$K$-fold Cross-Validation Algorithm}
+\begin{algorithm}[H]
+%\begin{tightalgo}[!t]{\textwidth-18pt}
+\SetKwInOut{Algorithm}{\algcrossvalidation ($K$, $\bD$)}
+\Algorithm{}
+$\bD \gets $ randomly shuffle $\bD$\;
+$\{\bD_1, \bD_2, \ldots, \bD_K\} \gets$ partition $\bD$ in $K$ equal parts\;
+\ForEach{$i \in [1, K]$}{
+  $M_i \assign $ train classif\/{i}er on $\bD\setminus\bD_i$\;
+  $\theta_i \gets $ assess $M_i$ on $\bD_i$\;
+}
+$\hmu_\theta = {1\over K} \sum_{i=1}^K \theta_i$\;
+$\hsigma^2_\theta  = {1\over K} \sum_{i=1}^K (\theta_i - \hmu_\theta)^2$\;
+\Return{$\hmu_\theta, \hsigma^2_\theta$}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{Bootstrap Resampling}
+
+The bootstrap method draws $K$ random samples
+of size $n$ {\em with replacement} from $\bD$.Each sample $\bD_i$
+is thus the same size as $\bD$, and has several repeated points.
+
+\medskip
+The probability that a particular point $\bx_{j}$ is
+not selected even after $n$ tries is given as
+\begin{align*}
+  P(\bx_{j} \not\in \bD_i) = q^n  = \lB( 1- {1\over n}\rB)^n \approx
+  e^{-1} = 0.368
+\end{align*}
+which implies 
+that each bootstrap sample contains approximately $63.2\%$ of the
+points from $\bD$.
+
+\medskip
+The bootstrap samples can be used to evaluate the classif\/{i}er by
+training it on each of samples $\bD_i$ and then using the full
+input dataset $\bD$ as the testing set.
+
+\medskip
+However, the estimated mean and variance of $\theta$ will be
+somewhat optimistic owing to the fairly large overlap between the
+training and testing datasets (63.2\%). 
+\end{frame}
+
+
+
+
+\newcommand{\algbootstrap}{\textsc{Bootstrap-Resampling}}
+\begin{frame}{Bootstrap Resampling Algorithm}
+%\begin{tightalgo}[!t]{\textwidth-18pt}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\algbootstrap ($K$, $\bD$)}
+\Algorithm{}
+\For{$i \in [1, K]$}{
+  $\bD_i \assign$ sample of size $n$ with replacement from $\bD$\;
+  $M_i \assign $ train classif\/{i}er on $\bD_i$\;
+  $\theta_i \gets $ assess $M_i$ on $\bD$\;
+}
+$\hmu_\theta = {1\over K} \sum_{i=1}^K \theta_i$\;
+$\hsigma^2_\theta  = {1\over K} \sum_{i=1}^K (\theta_i - \hmu_\theta)^2$\;
+\Return{$\hmu_\theta, \hsigma^2_\theta$}
+\end{algorithm}
+\end{frame}
+
+
+
+\def\pshlabel#1{\scriptsize {#1}}
+\def\psvlabel#1{\scriptsize {#1}}
+\begin{frame}{Iris 2D Data: Bootstrap Resampling using Error Rate}
+We apply bootstrap sampling to estimate the error rate
+ for the full Bayes classif\/{i}er, using $K=50$ samples. The sampling
+  distribution of error rates is:
+  \begin{center}
+\begin{figure}%[!b]
+  \scalebox{0.8}{
+\centerline{
+  \psset{xAxisLabel=Error Rate,yAxisLabel=Frequency,%
+  xAxisLabelPos={c,-1.5},yAxisLabelPos={-0.01,c}}
+  \begin{psgraph}[Dx=0.01,Ox=0.17,showorigin=false]{->}(0.17,0)(0.28,9){3.5in}{2in}
+    \listplot[plotstyle=bar,barwidth=0.2cm,
+    fillcolor=lightgray,fillstyle=solid]{%
+0.18 4 %
+0.1866667 6 %
+0.1933333 4 %
+0.2 3 %
+0.2066667 7 %
+0.2133333 3 %
+0.22 8 %
+0.2266667 5 %
+0.2333333 2 %
+0.24 3 %
+0.2466667 2 %
+0.2533333 2 %
+0.2666667 1}
+  \end{psgraph}
+  }}
+\end{figure}
+\end{center}
+\centerline{~}
+\bigskip
+The expected value and
+  variance of the error rate are
+  \begin{align*}
+  \hmu_\theta &= 0.213 &
+  \hsigma^2_\theta & = 4.815 \times 10^{-4}
+  \end{align*}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Conf\/{i}dence Intervals}
+We would like to derive conf\/{i}dence bounds on how
+much the estimated mean and variance may deviate from the true value.
+
+\medskip
+To answer this question we make use of the
+central limit theorem, which states that the sum of a large number of
+independent and identically distributed (IID) random variables has
+approximately a normal distribution, regardless of the distribution of
+the individual random variables. 
+
+\medskip
+Let $\theta_1, \theta_2, \ldots,
+\theta_K$ be a sequence of IID random variables,
+representing, for example, the error rate or some other performance
+measure over the $K$-folds in cross-validation or $K$ bootstrap samples.
+
+\medskip
+Assume that each $\theta_i$ has a f\/{i}nite mean
+$E[\theta_i] = \mu$ and f\/{i}nite variance $var(\theta_i) = \sigma^2$.
+
+\medskip
+Let $\hmu$ denote the sample mean:
+\begin{align*}
+  \hmu = {1\over K} (\theta_1 + \theta_2 + \cdots + \theta_K)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Conf\/{i}dence Intervals}
+By linearity of expectation, we have
+\begin{align*}
+  E[\hmu] = E\lB[{1\over K} (\theta_1 + \theta_2 + \cdots + \theta_K)\rB] =
+  {1\over K} \sum_{i=1}^K E[\theta_i] = {1\over K} \lB(K\mu\rB) = \mu
+\end{align*}
+The
+variance of $\hmu$ is given as
+\begin{align*}
+  var(\hmu) = var\lB({1\over K} (\theta_1 + \theta_2 + \cdots +
+  \theta_K)\rB)
+  = {1 \over K^2} \sum_{i=1}^K var(\theta_i) =
+  {1 \over K^2} \lB(K\sigma^2\rB)
+  ={\sigma^2 \over K}
+\end{align*}
+Thus, the standard deviation of $\hmu$ is given as
+\begin{align*}
+  std(\hmu)  = \sqrt{var(\hmu)} = {\sigma \over \sqrt{K}}
+\end{align*}
+
+\medskip
+We are interested in the distribution of the $z$-score of $\hmu$,
+which is itself a random variable
+\begin{align*}
+  Z_K = {\hmu - E[\hmu] \over std(\hmu)} = {\hmu - \mu \over
+  \frac{\sigma}{\sqrt{K}}} = \sqrt{K} \lB({\hmu - \mu \over \sigma}\rB)
+  %\label{eq:class:eval:ZK}
+\end{align*}
+$Z_K$ specif\/{i}es the deviation of the estimated mean from the true
+mean in terms of its standard deviation. 
+\end{frame}
+
+
+\begin{frame}{Conf\/{i}dence Intervals}
+The central limit theorem
+states that as the sample size increases, the
+random variable $Z_K$ {\em converges in distribution}
+to the standard normal
+distribution (which has mean 0 and variance 1). That is,
+as $K \to \infty$,  for any $x \in \setR$, we have
+\begin{align*}
+\lim_{K\to\infty} P(Z_K \le x) = \Phi(x)
+\end{align*}
+where $\Phi(x)$ is the cumulative distribution function for the
+standard normal density function $f(x| 0,1)$. 
+
+\medskip
+Let $z_{\alpha/2}$
+denote the $z$-score value that encompasses $\alpha/2$ of the
+probability mass for a standard normal distribution, that is,
+\begin{align*}
+  P(0 \le Z_K \le z_{\alpha/2}) = \Phi(z_{\alpha/2}) - \Phi(0) =
+  \alpha/2
+\end{align*}
+then, because the normal distribution is symmetric about the mean,
+we have
+\begin{align*}
+  \lim_{K\to\infty} P(-z_{\alpha/2} \le Z_K \le z_{\alpha/2}) =
+  2 \cdot P(0 \le Z_K \le z_{\alpha/2}) = \alpha
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Conf\/{i}dence Intervals}
+Note that
+\begin{align*}
+  -z_{\alpha/2} \le Z_K \le z_{\alpha/2} 
+  \text{ implies that }
+  \lB(\hmu - z_{\alpha/2}{\sigma \over \sqrt{K}}\rB) \le \mu
+  \le \lB(\hmu+z_{\alpha/2}{\sigma \over \sqrt{K}}\rB)
+\end{align*}
+
+\medskip
+We obtain bounds on the value of the true mean $\mu$ in terms of the
+estimated value $\hmu$:
+\begin{align*}
+  \lim_{K\to\infty} P\lB(\hmu - z_{\alpha/2}{\sigma \over \sqrt{K}} \le \mu \le
+  \hmu + z_{\alpha/2}{\sigma \over \sqrt{K}} \rB) = \alpha
+\end{align*}
+
+\medskip
+Thus, for any given {\em level of conf\/{i}dence} $\alpha$, we can compute
+the probability that the true mean $\mu$ lies in the $\alpha\%$
+conf\/{i}dence interval $\lB(\hmu - z_{\alpha/2}{\sigma \over
+\sqrt{K}}, \hmu + z_{\alpha/2}{\sigma \over \sqrt{K}}\rB)$. 
+
+\end{frame}
+
+
+
+\begin{frame}{Confidence Intervals: Unknown Variance}
+In general we do not know the 
+  true variance
+$\sigma^2$. However, we can replace $\sigma^2$ by
+the sample variance
+\begin{align*}
+  \hsigma^2 = {1 \over K} \sum_{i=1}^K (\theta_i - \hmu)^2
+\end{align*}
+because $\hsigma^2$ is a {\em consistent} estimator for
+$\sigma^2$, that is, as $K\to\infty$, $\hsigma^2$ converges with
+probability 1, also called {\em converges almost surely}, to
+$\sigma^2$. 
+
+\medskip
+The central limit theorem then states that the random
+variable $Z_K^*$ def\/{i}ned below converges in distribution to the
+standard normal distribution:
+\begin{align*}
+  Z_K^* = \sqrt{K} \lB({\hmu - \mu \over \hsigma}\rB)
+\end{align*}
+and thus, we have
+\begin{align*}
+  \lim_{K\to\infty} P\lB(\hmu - z_{\alpha/2}{\hsigma \over \sqrt{K}} \le \mu \le
+  \hmu + z_{\alpha/2}{\hsigma \over \sqrt{K}} \rB) = \alpha
+\end{align*}
+
+\medskip
+The interval
+$\lB(\hmu - z_{\alpha/2}{\hsigma \over \sqrt{K}},\;
+  \hmu + z_{\alpha/2}{\hsigma \over \sqrt{K}} \rB)$ is the $\alpha\%$
+  conf\/{i}dence interval for~$\mu$.
+\end{frame}
+
+
+
+%\begin{example}
+%Consider Example~\ref{ex:class:eval:cv}, where we applied 5-fold
+%cross-validation ($K=5$) to assess the error rate of the full
+%Bayes classif\/{i}er. The estimated expected value and variance for
+%the error rate were as follows:
+%\begin{align*}
+%  \hmu_\theta &= 0.233 & \hsigma^2_\theta & = 0.00833 &
+%  \hsigma_\theta & =
+%  \sqrt{0.00833} = 0.0913
+%\end{align*}
+%Let $\alpha = 0.95$ be the conf\/{i}dence value. It is known that the
+%standard normal distribution has 95\% of the probability density within
+%$z_{\alpha/2}=1.96$ standard deviations from the mean.
+%Thus, in the limit of large sample size, we have
+%\begin{align*}
+%  P\Biggl( \mu \in \lB(\hmu_\theta - z_{\alpha/2}{\hsigma_\theta \over
+%  \sqrt{K}}, \hmu_\theta +
+%  z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}}\rB) \Biggr) = 0.95
+%\end{align*}
+%Because $z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {1.96
+%\times 0.0913 \over \sqrt{5}} = 0.08$, we have
+%\begin{align*}
+%  P\Bigl( \mu \in (0.233 - 0.08, 0.233 + 0.08) \Bigr) =
+%  P\Bigl( \mu \in (0.153, 0.313) \Bigr) = 0.95
+%\end{align*}
+%Put differently, with 95\% conf\/{i}dence, the true expected error rate lies
+%in the interval $(0.153,0.313)$.
+%
+%If we want greater conf\/{i}dence, for example, for $\alpha=0.99$,
+%then the corresponding $z$-score value is $z_{\alpha/2} = 2.58$,
+%and thus $z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {2.58
+%\times 0.0913 \over \sqrt{5}} = 0.105$. The $99\%$ conf\/{i}dence
+%interval for $\mu$ is therefore wider $(0.128,0.338)$.
+%
+%Nevertheless, $K=5$ is not a large sample size, and thus
+%the above conf\/{i}dence intervals are not that reliable.
+%\label{ex:class:eval:conflarge}
+%\end{example}
+%
+
+
+\begin{frame}{Confidence Intervals: Small Sample Size}
+The conf\/{i}dence interval
+applies only when the sample
+size $K\to \infty$. However, in practice for $K$-fold cross-validation
+or bootstrap resampling $K$ is small.
+
+\medskip
+In the small sample case, instead of the
+normal density to derive the conf\/{i}dence interval, we use the
+Student's $t$
+distribution. 
+
+
+\medskip
+In particular, we choose the value
+$t_{\alpha/2,K-1}$ such that the cumulative $t$ distribution
+function with $K-1$ degrees of freedom encompasses $\alpha/2$ of
+the probability mass, that is,
+\begin{align*}
+  P(0 \le Z_K^* \le t_{\alpha/2,K-1}) = T_{K-1}(t_{\alpha/2}) - T_{K-1}(0) =
+  \alpha/2
+\end{align*}
+where $T_{K-1}$ is the cumulative distribution function for the
+Student's $t$ distribution with $K-1$ degrees of freedom. 
+
+\medskip
+The $\alpha\%$ conf\/{i}dence interval for the true mean $\mu$ is thus
+$$\lB(\hmu - t_{\alpha/2,K-1}{\hsigma \over \sqrt{K}} \le \mu \le
+ \hmu + t_{\alpha/2,K-1}{\hsigma \over \sqrt{K}} \rB)$$
+Note the dependence of the interval on both $\alpha$ and the sample size
+$K$.
+\end{frame}
+
+
+
+\begin{frame}{Student's ${\it t}$ Distribution: ${\it K}$ Degrees of Freedom}
+\begin{figure}[!t]
+  \centerline{
+\begin{pspicture}(-6,-0.5)(6,5.5)
+\psset{linewidth=1pt,plotpoints=100}
+\psset{xAxisLabel=$x$,yAxisLabel=$y$}
+\pslegend[rt]{%
+\psline[linewidth=2pt](0,0)(0.5,0)\hspace{0.2in}  & $f(x|0,1)$\\
+\psline[linestyle=dashed](0,0)(0.5,0)\hspace{0.2in} & $t(10)$\\
+\psline[linestyle=dotted](0,0)(0.5,0)\hspace{0.2in} & $t(4)$\\
+\psline[](0,0)(0.5,0)\hspace{0.2in} & $t(1)$%
+}
+\begin{psgraph}[Dy=0.1]{->}(0,0)(-5.5,0)(5.5,0.5){4.5in}{2in}
+%\psaxes[Dy=0.1]{->}(0,0)(-5.5,0)(5.5,0.5)
+\psGauss[mue=0,sigma=1,linewidth=2pt]{-4.5}{4.5}
+\psTDist[nue=1]{-4.5}{4.5}
+\psTDist[nue=4,linestyle=dotted]{-4.5}{4.5}
+\psTDist[nue=10,linestyle=dashed]{-4.5}{4.5}
+\end{psgraph}
+\end{pspicture}
+}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Iris 2D Data: Confidence Intervals}
+We apply 5-fold
+cross-validation ($K=5$) to assess the error rate of the full
+Bayes classif\/{i}er on the Iris 2D data. 
+The estimated expected value and variance for
+the error rate are as follows:
+\begin{align*}
+  \hmu_\theta &= 0.233 & \hsigma^2_\theta & = 0.00833 &
+  \hsigma_\theta & =
+  \sqrt{0.00833} = 0.0913
+\end{align*}
+Let $\alpha = 0.95$ be the conf\/{i}dence value. 
+It is known that the
+standard normal distribution has 95\% of the probability density within
+$z_{\alpha/2}=1.96$ standard deviations from the mean.
+Thus, we have $z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {1.96
+\times 0.0913 \over \sqrt{5}} = 0.08$, and the confidence interval is
+\begin{align*}
+  P\Bigl( \mu \in (0.233 - 0.08, 0.233 + 0.08) \Bigr) =
+  P\Bigl( \mu \in (0.153, 0.313) \Bigr) = 0.95
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Iris 2D Data: Small Sample Confidence Intervals}
+Due to the small sample
+size ($K=5$), we can get a better conf\/{i}dence interval by using the $t$
+distribution. For $K-1=4$ degrees of freedom, for $\alpha=0.95$, we get
+$t_{\alpha/2,K-1} = 2.776$.
+Thus,
+$$t_{\alpha/2,K-1}{\hsigma_\theta \over \sqrt{K}} = 2.776 \times {0.0913
+\over \sqrt{5}}  = 0.113$$
+The 95\% conf\/{i}dence interval is therefore $$(0.233-0.113,0.233+0.113) =
+(0.12, 0.346)$$
+which is much wider than the overly optimistic
+conf\/{i}dence interval $(0.153,0.313)$
+obtained for the large sample case.
+\end{frame}
+
+
+
+\begin{frame}{Comparing Classif\/{i}ers: Paired $t$-Test}
+How can we test for a signif\/{i}cant
+difference in the classif\/{i}cation performance of two alternative
+classif\/{i}ers, $M^A$ and $M^B$ on a given dataset $\bD$.
+
+\medskip
+We can apply $K$-fold
+cross-validation (or bootstrap resampling) and tabulate their
+performance over each of the $K$ folds, with identical folds for
+both classif\/{i}ers. 
+That is, we perform a {\em paired test}, with
+both classif\/{i}ers trained and tested on the same data. 
+
+\medskip
+Let
+$\theta_1^A, \theta_2^A, \ldots, \theta_K^A$ and $\theta_1^B,
+\theta_2^B, \ldots, \theta_K^B$ denote the performance values for
+$M_A$ and $M_B$, respectively. To determine if the two classif\/{i}ers
+have different or similar performance, def\/{i}ne the random variable $\delta_i$ as the difference in their performance on the $i$th
+dataset:
+\begin{align*}
+  \delta_i = \theta_i^A - \theta_i^B
+\end{align*}
+
+\medskip
+The expected difference and the
+variance estimates are given as:
+\begin{align*}
+  \hmu_{\delta} &= {1\over K} \sum_{i=1}^K \delta_i &
+  \hsigma^2_{\delta} &= {1\over K} \sum_{i=1}^K (\delta_i -
+  \hmu_{\delta})^2
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Comparing Classif\/{i}ers: Paired $t$-Test}
+\small
+  
+The null hypothesis $H_0$ is that the
+performance of $M^A$ and $M^B$ is the same.
+The alternative hypothesis $H_a$ is that they are
+not the same, that is:
+\begin{align*}
+  H_0\!: & \quad \mu_\delta = 0 & H_a\!: & \quad\mu_\delta \ne 0
+\end{align*}
+
+\medskip
+Def\/{i}ne the $z$-score random variable for the estimated
+expected difference as
+\begin{align*}
+  Z^*_\delta = \sqrt{K} \lB( {\hmu_\delta  - \mu_\delta \over \hsigma_\delta} \rB)
+\end{align*}
+$Z^*_\delta$ follows a $t$
+distribution with $K-1$ degrees of freedom. However, under the
+null hypothesis we have $\mu_\delta = 0$, and thus
+\begin{align*}
+  Z^*_\delta = {\sqrt{K} \hmu_\delta \over \hsigma_\delta} \sim t_{K-1}
+\end{align*}
+i.e., $Z^*_\delta$
+follows the $t$ distribution with $K-1$ degrees of freedom.
+
+\medskip
+Given a desired conf\/{i}dence level $\alpha$, we conclude that
+\begin{align*}
+  P\lB(-t_{\alpha/2,K-1} \le Z^*_\delta \le t_{\alpha/2,K-1}\rB) =
+  \alpha
+\end{align*}
+Put another way, if $Z^*_\delta \not\in \lB(-t_{\alpha/2,K-1},
+t_{\alpha/2,K-1} \rB)$, then we may reject the null hypothesis
+with $\alpha\%$ conf\/{i}dence. 
+\end{frame}
+
+
+
+\newcommand{\algpairedTtest}{\textsc{Paired $t$-Test}}
+\begin{frame}[fragile]{Paired ${\it t}$-Test via Cross-Validation}
+%\begin{tightalgo}[!t]{\textwidth-18pt}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\algpairedTtest ($\alpha$, $K$, $\bD$)}
+\Algorithm{}
+$\bD \gets $ randomly shuffle $\bD$\;
+$\{\bD_1, \bD_2, \ldots, \bD_K\} \gets$ partition $\bD$ in $K$ equal parts\;
+\ForEach{$i \in [1, K]$}{
+  $M^A_i, M^B_i \assign $ train the two different classif\/{i}ers on $\bD \setminus \bD_i$\;
+  $\theta^A_i, \theta^B_i \gets $ assess $M^A_i$ and $M^B_i$ on
+  $\bD_i$\;
+  $\delta_i = \theta^A_i - \theta^B_i$\;
+}
+$\hmu_\delta = {1\over K} \sum_{i=1}^K \delta_i$\;
+$\hsigma^2_\delta  = {1\over K} \sum_{i=1}^K (\delta_i - \hmu_\delta)^2$\;
+$Z^*_\delta = {\sqrt{K} \hmu_\delta \over \hsigma_\delta}$\;
+\eIf{$Z^*_\delta \in \lB(-t_{\alpha/2,K-1},t_{\alpha/2,K-1} \rB)$}{
+  Accept $H_0$; both classif\/{i}ers have similar performance\;
+}{
+  Reject $H_0$; classif\/{i}ers have signif\/{i}cantly different performance\;
+} 
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{Bias-Variance Decomposition}
+In many applications there may be costs associated with
+making wrong predictions. A {\em loss function}
+specif\/{i}es the cost or
+penalty of predicting the class to be $\hy=M(\bx)$,
+when the true class is $y$.
+
+\medskip
+A commonly used loss function for classif\/{i}cation is the {\em zero-one
+loss}, def\/{i}ned~as
+\begin{align*}
+  L(y, M(\bx)) = I(M(\bx) \ne y) =
+  \begin{cases}
+    0 & \text{if } M(\bx)=y\\
+  1 & \text{if } M(\bx) \ne y
+ \end{cases}
+\end{align*}
+Thus, zero-one loss assigns a cost of zero if the prediction is correct, and one otherwise.
+
+\medskip
+Another commonly used loss function is the {\em squared loss},
+def\/{i}ned
+as
+\begin{align*}
+  L(y, M(\bx)) = \lB( y - M(\bx) \rB)^2
+\end{align*}
+where we assume that the classes are discrete valued, and not
+categorical.
+\end{frame}
+
+
+
+\begin{frame}{Expected Loss}
+An ideal or optimal
+classif\/{i}er is the one that minimizes the loss function. Because
+the true class is not known for a test case $\bx$, the goal of
+learning a classif\/{i}cation model can be cast as minimizing the
+expected loss:
+\begin{align*}
+  E_y\bigl[L(y, M(\bx)) \;| \bx\bigr] =
+  \sum_{y} L(y, M(\bx)) \cdot P(y|\bx)
+\end{align*}
+where $P(y|\bx)$ is the conditional probability of class $y$ given
+test point $\bx$, and $E_y$ denotes
+that the expectation is taken over the different
+class values $y$.
+
+\medskip
+Minimizing the expected zero--one loss corresponds to minimizing
+the error rate.
+Let $M(\bx) =
+c_i$, then we have
+\begin{align*}
+  E_y\bigl[L(y, M(\bx)) \;| \bx\bigr] &
+  = \sum_{y} I(y \ne c_i) \cdot P(y|\bx)
+   = \sum_{y \ne c_i} P(y|\bx)
+   = 1 - P(c_i | \bx)
+\end{align*}
+Thus, to minimize the expected loss we should choose $c_i$ as the
+class that maximizes the posterior probability, that is, $c_i =
+\mathop{\arg\max}_{y} P(y|\bx)$. By def\/{i}nition
+the error rate is simply an
+estimate of the expected zero--one loss; this choice thus
+minimizes the error rate.
+\end{frame}
+
+
+\begin{frame}{Bias and Variance}
+  \small
+The expected loss for the squared loss function offers important
+insight into the classif\/{i}cation problem because it can be
+decomposed into bias and variance terms. 
+
+\medskip
+Intuitively, the {\em
+bias} of a classif\/{i}er refers to the
+systematic deviation of its predicted decision boundary from the
+true decision boundary, whereas the {\em variance}
+ of a classif\/{i}er refers to the
+deviation among the learned decision boundaries over different
+training sets. 
+
+\medskip
+Because
+ $M$ depends on the training set, given a test point $\bx$,
+ we denote its predicted value as
+ $M(\bx, \bD)$. Consider the expected square loss:
+\begin{align*}
+E_y\Bigl[ L\bigl(y,M(\bx, \bD)\bigr) \;\bigl| \bx, \bD \Bigr] 
+  & = E_y\Bigl[ \bigl(y - M(\bx, \bD)\bigr)^2 \bigl| \bx,
+  \bD\Bigr]\\ 
+  & =  \underbrace{E_y\Bigl[ \bigl(y - E_y[y|\bx]\bigr)^2 \;
+      \bigl| \bx, \bD\Bigr]}_{var(y|\bx)} +
+    \underbrace{\Bigl(M(\bx, \bD) -
+    E_y[y|\bx]\Bigr)^2}_{\textit{squared-error}}
+\end{align*}
+The f\/{i}rst term is simply the variance of $y$ given $\bx$.
+The second term
+ is the squared error between the
+predicted value $M(\bx, \bD)$ and the expected value $E_y[y|\bx]$.
+\end{frame}
+
+\begin{frame}{Bias and Variance}
+  \small
+The squared error depends on the training set. We can eliminate
+this dependence by averaging over all possible training tests of
+size $n$. The average or expected squared error for a given test
+point $\bx$ over all training sets is then given as
+\begin{align*}
+ E_{\bD}\Bigl[\bigl(M(\bx, \bD) - E_y[y|\bx]\bigr)^2\Big]
+&  =  \underbrace{E_{\bD}\Bigl[ \bigl(M(\bx,\bD) -
+    E_{\bD}[M(\bx,\bD)]\bigr)^2\Bigr]}_{\rm variance} +
+    \underbrace{\Bigl(E_{\bD}[M(\bx, \bD)] - E_y[y|\bx]\Bigr)^2}_{\rm bias}
+\end{align*}
+
+The
+expected squared loss over all test points $\bx$ and over all
+training sets $\bD$ of size $n$ yields the following decomposition:
+\begin{align*}
+E_{\bx,\bD,y}\Bigl[ \bigl(y - M(\bx, \bD)\bigr)^2\Bigr]
+  & = \underbrace{E_{\bx,y}\Bigl[\bigl(y - E_y[y|\bx]\bigr)^2 \Bigr]}_{\rm noise} +
+\underbrace{E_{\bx,\bD}\Bigl[ \bigl(M(\bx, \bD) -
+E_{\bD}[M(\bx, \bD)]\bigr)^2\Bigr]}_{{\it average\ variance}}\\
+    &\qquad \quad \qquad \qquad +
+    \underbrace{E_\bx\Bigl[\bigl(E_{\bD}[M(\bx, \bD)] -
+    E_y[y|\bx]\bigr)^2\Bigr]}_{{\it average\ bias}}
+\end{align*}
+
+The expected square loss over all test points and training
+sets can be decomposed into three terms: noise, average bias, and
+average variance. 
+\end{frame}
+
+\begin{frame}{Bias and Variance}
+\small
+
+The noise term is the average variance
+$var(y|\bx)$ over all test points $\bx$. It contributes a f\/{i}xed
+cost to the loss independent of the model, and can thus be ignored
+when comparing different classif\/{i}ers. 
+
+\medskip
+The classif\/{i}er specif\/{i}c loss
+can then be attributed to the variance and bias terms. 
+Bias indicates whether the model $M$ is correct or incorrect. 
+
+\medskip
+If the decision boundary is
+nonlinear, and we use a linear classif\/{i}er, then it is likely to
+have high bias. A nonlinear (or a
+more complex) classif\/{i}er is more likely to capture the correct
+decision boundary, and is thus likely to have a low bias.
+
+\medskip
+The complex
+classif\/{i}er is not necessarily better, since we also have to consider
+the variance term, which measures the inconsistency of the
+classif\/{i}er decisions. A complex classif\/{i}er induces a more complex
+decision boundary and thus may be prone to {\em overf\/{i}tting},
+and thus may be
+susceptible to small changes in training set, which may result in
+high variance.
+
+\medskip
+In general, the expected loss can be attributed to high bias or
+high variance, with typically a trade-off between the two.
+\end{frame}
+
+
+
+\readdata{\dataPC}{CLASS/eval/figs/iris-PC.txt}
+\readdata{\dataC}{CLASS/eval/figs/BV-C.dat}
+\begin{frame}[fragile]{Bias-variance Decomposition: SVM Quadratic Kernels}
+  \small
+  Iris PC Data: 
+{\tt Iris-versicolor} (class $c_1$; in circles) and
+  other two Irises (class $c_2$; in triangles). $K=10$ Bootstrap
+  samples, trained via SVMs, varying the regularization constant 
+  $C$ from $10^{-2}$ to $10^2$. A small value of $C$ emphasizes the
+  margin, whereas a large value of $C$ tries to minimize the slack terms.
+  The decision boundaries over the 10 samples were as follows:\\
+  \normalsize
+\begin{figure}[!t]\vspace*{4pt}
+  \vspace{0.1in}
+  \captionsetup[subfloat]{captionskip=0.3in}
+       \def\pshlabel#1{ {\footnotesize $#1$}}
+        \def\psvlabel#1{ {\footnotesize $#1$}}
+  \centerline{
+  \subfloat[$C=0.01$]{
+  \label{fig:class:eval:BVsvmC01}
+    \scalebox{0.7}{
+    \centering
+    \psset{dotscale=1.5,fillcolor=lightgray,
+            arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+  \psgraph[tickstyle=bottom,Ox=-4,Oy=-3,Dx=1,Dy=1]{->}(-4.0,-3)(4.0,
+3){2.5in}{2in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\begin{psclip}{%
+      \psline[](-4,-3)(-4,3)(4,3)(4,-3)(-4,-3)}
+%C=0.01
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.50*x^2+-0.12*x*y+-0.02*y^2+1.34}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.49*x^2+-0.05*x*y+0.01*y^2+1.21}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.47*x^2+-0.12*x*y+0.02*y^2+1.08}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.51*x^2+-0.19*x*y+0.01*y^2+1.07}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.44*x^2+-0.16*x*y+-0.02*y^2+1.17}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.45*x^2+-0.19*x*y+-0.04*y^2+1.08}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.45*x^2+-0.21*x*y+-0.02*y^2+1.25}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.46*x^2+-0.10*x*y+0.01*y^2+1.28}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.41*x^2+-0.14*x*y+-0.01*y^2+1.20}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){0.45*x^2+0.10*x*y+0.01*y^2+-1.06}
+\end{psclip}
+    \endpsgraph
+    }}
+    \hspace{0.4in}
+  \subfloat[$C=1$]{
+  \label{fig:class:eval:BVsvmC1}
+  \scalebox{0.7}{
+    \centering
+    \psset{dotscale=1.5,fillcolor=lightgray,
+            arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+  \psgraph[tickstyle=bottom,Ox=-4,Oy=-3,Dx=1,Dy=1]{->}(-4.0,-3)(4.0,
+3){2.5in}{2in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\begin{psclip}{%
+      \psline[](-4,-3)(-4,3)(4,3)(4,-3)(-4,-3)}
+%C=1
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.24*x^2+-0.93*x*y+-0.82*y^2+2.67}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.58*x^2+-0.35*x*y+-0.35*y^2+3.02}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.52*x^2+-1.51*x*y+0.32*y^2+2.60}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.22*x^2+-1.54*x*y+-1.15*y^2+2.31}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.23*x^2+-1.80*x*y+-1.30*y^2+2.76}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.44*x^2+-1.64*x*y+-1.32*y^2+2.70}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.35*x^2+-1.92*x*y+-0.69*y^2+2.40}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.31*x^2+-1.64*x*y+-0.01*y^2+2.57}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.05*x^2+-0.73*x*y+-0.84*y^2+2.22}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){1.45*x^2+1.48*x*y+0.38*y^2+-2.67}
+\end{psclip}
+    \endpsgraph
+    }}
+    }
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Bias-variance Decomposition: SVM Quadratic Kernels}
+\begin{figure}[!t]\vspace*{4pt}
+%MJZ -- see the BV-C.txt for the output
+  \vspace{0.1in}
+  \captionsetup[subfloat]{captionskip=0.3in}
+       \def\pshlabel#1{ {\footnotesize $#1$}}
+        \def\psvlabel#1{ {\footnotesize $#1$}}
+  \centerline{
+  \subfloat[$C=100$]{
+  \label{fig:class:eval:BVsvmC100}
+    \scalebox{0.7}{
+    \centering
+    \psset{dotscale=1.5,fillcolor=lightgray,
+            arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+  \psgraph[tickstyle=bottom,Ox=-4,Oy=-3,Dx=1,Dy=1]{->}(-4.0,-3)(4.0,
+3){2.5in}{2in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\begin{psclip}{%
+      \psline[](-4,-3)(-4,3)(4,3)(4,-3)(-4,-3)}
+%C = 100
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.71*x^2+-1.16*x*y+-2.56*y^2+4.10}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-5.09*x^2+1.08*x*y+-4.34*y^2+9.38}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-2.42*x^2+-2.58*x*y+2.43*y^2+3.55}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-4.38*x^2+-6.34*x*y+-1.60*y^2+8.00}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.74*x^2+-2.93*x*y+-1.08*y^2+3.56}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.69*x^2+-1.82*x*y+-1.44*y^2+3.09}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.54*x^2+-2.27*x*y+-1.06*y^2+2.91}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-2.26*x^2+-2.96*x*y+1.86*y^2+4.60}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.71*x^2+-1.36*x*y+-2.53*y^2+4.25}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){2.13*x^2+1.98*x*y+1.87*y^2+-3.97}
+\end{psclip}
+    \endpsgraph
+    }}
+    \hspace{0.4in}
+  \subfloat[Bias-Variance]{
+  \label{fig:class:eval:BVsvmQ}
+  \def\pshlabel#1{ {\footnotesize {$#1$}}}
+  \def\psvlabel#1{ {\footnotesize {$#1$}}}
+  \scalebox{0.7}{
+    \centering
+\psset{dotscale=1.25,fillcolor=lightgray}
+\psset{xAxisLabel=$C$,yAxisLabel=$~$,
+    xAxisLabelPos={c,-0.075}}
+\pslegend[rt]{%
+\rule[1ex]{2em}{1pt}%
+\psdot[dotstyle=Bsquare,dotscale=1.5](-0.2,0.01) & loss\\
+\rule[1ex]{2em}{1pt}%
+\psdot[dotstyle=Btriangle,dotscale=1.5](-0.2,0.01) & bias\\
+\rule[1ex]{2em}{1pt}%
+\psdot[dotstyle=Bo,dotscale=1.5](-0.2,0.01) & variance}
+\pstScalePoints(1,1){log}{}
+\begin{psgraph}[Dy=0.1,Ox=-2,xlogBase=10]{->}(-2,0)(2.5,0.41){2.5in}{2in}
+  \psset{dotscale=1.5}
+\listplot[showpoints=true, dotstyle=Bo,plotNoMax=11,
+plotNo=6]{\dataC}
+\listplot[showpoints=true, dotstyle=Btriangle,plotNoMax=11,plotNo=7]{\dataC}
+\listplot[showpoints=true, dotstyle=Bsquare,plotNoMax=11,plotNo=10]{\dataC}
+\end{psgraph}
+    }}
+    }
+\end{figure}
+
+\small
+Variance of the SVM model increases as we increase $C$, as seen
+from the varying decision boundaries. The figure on the right plots
+average variance and average bias for different values of $C$, as well
+as the expected loss. The bias-variance tradeoff is clearly visible,
+since as the bias reduces, the variance increases.  The lowest expected
+loss is obtained when $C=1$.
+\end{frame}
+
+
+
+\begin{frame}{Ensemble Classif\/{i}ers}
+A classif\/{i}er is called {\em unstable} if small perturbations in the
+training set result in large changes in the prediction or decision
+boundary. 
+
+\medskip
+High variance classif\/{i}ers are inherently unstable, since they
+tend to overf\/{i}t the data.
+On the other hand, high bias methods typically underf\/{i}t the data, and usually have
+low variance.
+
+\medskip
+In either case, the aim of learning is to reduce classif\/{i}cation
+error by reducing the variance or bias, ideally both.
+
+\medskip
+Ensemble methods create a {\em combined classif\/{i}er} using the
+output of multiple {\em base classif\/{i}ers}, which are
+trained on different data subsets. Depending on how the training
+sets are selected, and on the stability of the base classif\/{i}ers,
+ensemble classif\/{i}ers can help reduce the variance and the bias, leading
+to a better overall performance.
+\end{frame}
+
+
+
+\begin{frame}{Bagging}
+
+{\em Bagging} stands for {\em Bootstrap Aggregation}. It is an
+ensemble classif\/{i}cation method that employs multiple bootstrap samples
+(with replacement) from the input training data $\bD$ to create
+slightly different training sets $\bD_i$, $i=1,2,\ldots,K$.
+Different base classif\/{i}ers $M_i$ are
+learned, with $M_i$ trained on $\bD_i$.
+
+\medskip Given any test point $\bx$, it is f\/{i}rst classif\/{i}ed
+using each of the $K$ base classif\/{i}ers, $M_i$. Let the number of
+classif\/{i}ers that predict the class of $\bx$ as $c_{j}$ be given as
+\begin{align*}
+v_{j}(\bx) =
+\Bigl|\bigl\{M_i(\bx) = c_{j} \;\bigl| i = 1,\ldots,K\bigr\} \Bigr|
+\end{align*}
+
+
+The combined classif\/{i}er, denoted $\bM^K$, predicts the class of a
+test point $\bx$ by {\em majority voting} among the $k$ classes:
+\begin{align*}
+  \bM^K(\bx) = \mathop{\arg\max}_{c_{j}} \Bigl\{ v_{j}(\bx) \;\bigl| j=1,\ldots,k \Bigr\}
+\end{align*}
+
+Bagging can help reduce the variance, especially if the base
+classif\/{i}ers are unstable, due to the averaging effect of majority
+voting. It does not, in general, have much effect on the bias.
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Bagging: Combined SVM Classif\/{i}ers}
+\setcounter{subfigure}{0}
+\small
+SVM classif\/{i}ers are trained on $K=10$ bootstrap samples using $C=1$.
+The combined (average) classif\/{i}er is shown in bold.\\
+
+\normalsize
+\begin{figure}[!t]
+%MJZ -- see the BV-C.txt for the output
+  \vspace{0.1in}
+  \captionsetup[subfloat]{captionskip=0.25in}
+       \def\pshlabel#1{ {\footnotesize $#1$}}
+        \def\psvlabel#1{ {\footnotesize $#1$}}
+  \centerline{
+  \subfloat[$K=10$]{
+  \label{fig:class:eval:BagSvmC1}
+  \scalebox{0.8}{
+    \centering
+    \psset{dotscale=1.5,fillcolor=lightgray,
+            arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+  \psgraph[tickstyle=bottom,Ox=-4,Oy=-3,Dx=1,Dy=1]{->}(-4.0,-3)(4.0,
+3){2.5in}{2in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\begin{psclip}{%
+      \psline[](-4,-3)(-4,3)(4,3)(4,-3)(-4,-3)}
+%C=1
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.24*x^2+-0.93*x*y+-0.82*y^2+2.67}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.58*x^2+-0.35*x*y+-0.35*y^2+3.02}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.52*x^2+-1.51*x*y+0.32*y^2+2.60}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.22*x^2+-1.54*x*y+-1.15*y^2+2.31}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.23*x^2+-1.80*x*y+-1.30*y^2+2.76}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.44*x^2+-1.64*x*y+-1.32*y^2+2.70}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.35*x^2+-1.92*x*y+-0.69*y^2+2.40}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.31*x^2+-1.64*x*y+-0.01*y^2+2.57}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.05*x^2+-0.73*x*y+-0.84*y^2+2.22}
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){1.45*x^2+1.48*x*y+0.38*y^2+-2.67}
+\psplotImp[algebraic, linewidth=3pt](-4.1,-3.1)(4.1,3.1){-1.05*x^2+-1.06*x*y+-0.58*y^2+2.06}
+\end{psclip}
+    \endpsgraph
+    }}
+    \hspace{0.4in}
+  \subfloat[Effect of $K$]{
+  \label{fig:class:eval:BagSvmK}
+    \scalebox{0.8}{%
+    \psset{dotscale=1.5,fillcolor=lightgray,
+            arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+  \psgraph[tickstyle=bottom,Ox=-4,Oy=-3,Dx=1,Dy=1]{->}(-4.0,-3)(4.0,
+3){2.5in}{2in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\begin{psclip}{%
+      \psline[](-4,-3)(-4,3)(4,3)(4,-3)(-4,-3)}
+\psplotImp[algebraic,linecolor=gray,linewidth=2pt](-4.1,-3.1)(4.1,3.1){-1.45*x^2+-0.93*x*y+-0.29*y^2+2.77} %K=3
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.36*x^2+-1.23*x*y+-0.66*y^2+2.67} %K=5
+\psplotImp[algebraic,linewidth=2pt](-4.1,-3.1)(4.1,3.1){-1.36*x^2+-1.42*x*y+-0.66*y^2+2.63} %K=8
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-1.05*x^2+-1.06*x*y+-0.58*y^2+2.06} %K=10
+\psplotImp[algebraic](-4.1,-3.1)(4.1,3.1){-0.79*x^2+-0.81*x*y+-0.38*y^2+1.55} %K=15
+\end{psclip}
+    \endpsgraph
+    }
+  }
+}
+\end{figure}
+
+\small
+The worst training
+  performance is obtained for $K=3$ (in thick gray) and the best for
+  $K=8$ (in thick black).
+\end{frame}
+
+
+
+
+\begin{frame}{Boosting}
+
+  In {\em Boosting} the main idea is to carefully
+select the samples to {\em boost} the performance on hard to classify
+instances. 
+
+\medskip
+Starting from an initial training sample $\bD_1$,
+we train the base
+classif\/{i}er $M_1$, and obtain its training error rate. 
+
+\medskip
+To construct the
+next sample $\bD_2$, we
+select the misclassif\/{i}ed instances with higher probability, and after
+training $M_2$, we obtain its training error rate. 
+
+\medskip
+To construct
+$\bD_3$, those instances that are hard to classify by $M_1$ or $M_2$,
+have a higher probability of being selected.
+This process is repeated
+for $K$ iterations. 
+
+\medskip
+F{i}nally, the combined classif\/{i}er
+is obtained via weighted voting over the output of the $K$ base
+classif\/{i}ers $M_1, M_2, \ldots, M_K$.
+\end{frame}
+
+
+\begin{frame}{Boosting}
+
+  Boosting is most benef\/{i}cial when the base classif\/{i}ers are {\em
+weak}, that is, have an error rate that is slightly less than that
+for a random classif\/{i}er. 
+
+\medskip
+The idea is that whereas $M_1$ may not be
+particularly good on all test instances, by design $M_2$ may help
+classify some cases where $M_1$ fails, and $M_3$ may help classify
+instances where
+ $M_1$ and $M_2$ fail, and so on. Thus,
+boosting has more of a bias reducing effect. 
+
+\medskip
+Each of the weak learners
+is likely to have high bias (it is only slightly better than random
+guessing), but the f\/{i}nal combined classif\/{i}er can have much lower bias,
+since different weak learners learn to classify instances in
+different regions of the input space.
+\end{frame}
+
+
+
+\begin{frame}{Adaptive Boosting: AdaBoost}
+
+The boosting process is repeated $K$ times.
+Let $t$ denote the iteration and let $\alpha_t$ denote the weight
+for the $t$th classif\/{i}er $M_t$. 
+
+\medskip
+Let $w^t_i$ denote the weight for
+$\bx_i$, with $\bw^t = (w^t_1, w^t_2, \ldots, w^t_n)^T$ being the
+weight vector over all the points for the $t$th iteration. 
+
+\medskip
+$\bw$ is a probability vector, whose elements sum to one.
+Initially all points have equal weights, that is,
+\begin{align*}
+  \bw^0 = \lB(\frac{1}{n}, \frac{1}{n}, \ldots, \frac{1}{n}\rB)^T =
+  \frac{1}{n}\bone
+\end{align*}
+
+
+\medskip
+During iteration $t$, the
+training sample $\bD_{t}$ is obtained via weighted resampling
+using the distribution $\bw^{t-1}$, that is, we draw a sample of
+size $n$ with replacement, such that the $i$th point is chosen
+according to its probability $w^{t-1}_i$. 
+
+\medskip
+Using $\bD_t$ we train the
+classif\/{i}er $M_{t}$, and compute its weighted error
+rate $\epsilon_{t}$ on the entire input dataset $\bD$:
+\begin{align*}
+  \epsilon_t = \sum_{i=1}^n w^{t-1}_i \cdot I\bigl(M_t(\bx_i) \ne y_i\bigr)
+\end{align*}
+
+\end{frame}
+
+
+
+\begin{frame}{Adaptive Boosting: AdaBoost}
+
+The weight for the $t$th classif\/{i}er is then set as
+\begin{align*}
+  \alpha_{t} =  \ln\lB( \frac{1-\epsilon_{t}}{\epsilon_{t}}\rB)
+\end{align*}
+The weight for each point $\bx_i \in \bD$ is updated as
+\begin{align*}
+  w^{t}_i = w^{t-1}_i \cdot \exp \Bigl\{ \alpha_{t} \cdot
+  I\bigl(M_t(\bx_i) \ne y_i\bigr) \Bigr\}
+\end{align*}
+
+\medskip
+If the predicted class matches the true class, that is, if
+$M_{t}(\bx_i) = y_i$, then  the
+weight for point $\bx_i$ remains unchanged. 
+
+\medskip
+If
+the point is misclassif\/{i}ed, that is, $M_t(\bx_i) \ne y_i$, then \begin{align*}
+  w^{t}_i = w^{t-1}_i \cdot \exp \bigl\{ \alpha_{t} \bigr\}  =
+  w^{t-1}_i \exp \Biggl\{
+    \ln \lB( \frac{1-\epsilon_{t}}{\epsilon_{t}}\rB)
+  \Biggr\}
+  = w^{t-1}_i \lB({1 \over \epsilon_{t}} -1\rB)
+\end{align*}
+Thus, if the error rate $\epsilon_{t}$ is small,
+then there is a greater weight increment for $\bx_i$. 
+The
+intuition is that a point that is misclassif\/{i}ed by a good
+classif\/{i}er (with a low error rate) should be more likely to be
+selected for the next training dataset. 
+\end{frame}
+
+
+
+\begin{frame}{Adaptive Boosting: AdaBoost}
+For boosting
+we require that a base classif\/{i}er has an error
+rate at least slightly better than random guessing, that is,
+$\epsilon_{t} < 0.5$.  
+If the error rate $\epsilon_t \ge 0.5$,
+then the boosting method discards the classif\/{i}er, and tries 
+another data sample.
+
+\medskip
+{\bf Combined Classifier:}
+Given the set of boosted classif\/{i}ers, $M_1, M_2, \ldots, M_K$,
+along with their weights $\alpha_1, \alpha_2, \ldots, \alpha_K$,
+the class for a test case $\bx$ is
+obtained via weighted majority voting.
+
+\medskip
+Let $v_{j}(\bx)$ denote the
+weighted vote for class $c_{j}$ over the $K$ classif\/{i}ers, given as
+\begin{align*}
+  v_{j}(\bx) = \sum_{t=1}^K \alpha_t \cdot I\bigl(M_t(\bx)= c_{j}\bigr)
+\end{align*}
+Because $I(M_t(\bx) = c_{j})$ is $1$ only when $M_t(\bx) = c_{j}$, the
+variable $v_{j}(\bx)$ simply obtains the tally for class $c_{j}$ among
+the $K$ base classif\/{i}ers, taking into account the classif\/{i}er
+weights. The combined classif\/{i}er, denoted $\bM^K$, then predicts
+the class for $\bx$ as follows:
+\begin{align*}
+  \bM^K(\bx) = \mathop{\arg\max}_{c_{j}} \Bigl\{ v_{j}(\bx) \;\bigl| j=1,..,k \Bigr\}
+\end{align*}
+\end{frame}
+
+
+
+
+\newcommand{\algAdaBoost}{\textsc{AdaBoost}}
+\begin{frame}[fragile]{AdaBoost Algorithm}
+%\begin{tightalgo}[!t]{\textwidth-18pt}
+\begin{small}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\algAdaBoost ($K$, $\bD$)}
+\SetKw{KwBreak}{break}
+\Algorithm{}
+$\bw^0 \gets  \lB(\frac{1}{n}\rB)\cdot \bone \in \setR^n$\;
+$t \gets 1$\;
+\While{$t\le K$}{
+\lnl{alg:class:eval:adaBoost:resample}
+$\bD_t \assign$ weighted resampling with replacement from $\bD$ using $\bw^{t-1}$\;
+  $M_t \assign $ train classif\/{i}er on $\bD_t$\;
+  $\epsilon_t \gets \sum_{i=1}^n w^{t-1}_i \cdot I\bigl(M_t(\bx_i) \ne
+  y_i\bigr)$
+  \tcp{weighted error rate on $\bD$}
+  \lIf{$\epsilon_t = 0$}{\KwBreak}
+  \ElseIf{$\epsilon_t < 0.5$}{
+  $\alpha_{t} =  \ln\lB( \frac{1-\epsilon_{t}}{\epsilon_{t}}\rB)$
+  \tcp{classif\/{i}er weight}
+  \ForEach{$i \in [1,n]$ }{\tcp{update point weights}
+      $w^{t}_i =
+        \begin{cases}
+          w_i^{t-1} & \text{if } M_t(\bx_i) = y_i\\
+          w^{t-1}_i \lB(\frac{1 - \epsilon_{t}}{\epsilon_t}\rB) &
+          \text{if }  M_t(\bx_i) \ne y_i
+        \end{cases}$\;
+    }
+    \lnl{alg:class:eval:adaBoost:normalize}
+    $\bw^t = \frac{\bw^t}{\bone^T\bw^t}$\tcp{normalize weights}
+    $t \gets t+1$\;
+  }
+}
+\Return{$\{M_1, M_2, \ldots, M_K\}$}
+\end{algorithm}
+\end{small}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]{Boosting SVMs: Linear Kernel ($C=1$)}
+\setcounter{subfigure}{0}
+
+\begin{figure}[!b]%\vspace*{14pt}
+  \captionsetup[subfloat]{captionskip=0.25in}
+  \def\pshlabel#1{ {\footnotesize {$#1$}}}
+  \def\psvlabel#1{ {\footnotesize {$#1$}}}
+  \centerline{
+  \subfloat[$K=4$ Iterations]{
+  \label{fig:class:eval:BoostSvm}
+  \scalebox{0.75}{%
+    \psset{dotscale=1.5,fillcolor=lightgray,
+            arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+  \psgraph[tickstyle=bottom,Ox=-4,Oy=-2,Dx=1,Dy=1]{->}(-4.0,-2)(4.0,
+2){2.5in}{2in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\begin{psclip}{%
+      \psline[](-4,-2)(-4,2)(4,2)(4,-2)(-4,-2)}
+      %\psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
+      %-0.00*x-0.00*y-1.00}
+      \psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
+      0.18*x+2.01*y+0.18}
+      \psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
+      0.51*x+0.43*y+-0.48}
+      \psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
+      1.03*x+0.89*y+1.60}
+      %\psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
+      %-0.51*x+0.04*y+0.31}
+      %the above line is the same as the one below
+      \psline[](0.451,-2)(0.765,2)
+    \end{psclip}
+    \uput[r](4,-0.45){$h_1$}
+    \uput[u](-0.75,2){$h_2$}
+    \uput[u](-3.3,2){$h_3$}
+    \uput[u](0.765,2){$h_4$}
+    \endpsgraph
+    }}
+    \hspace{0.55in}
+    \subfloat[Effect of $K$: Avg.\ error; 5-fold CV]{
+\label{fig:class:eval:Boost5CV}
+    \scalebox{0.75}{%
+\readdata{\dataBoost}{CLASS/eval/figs/boosting_results_K.txt}
+\psset{dotscale=1.5,fillcolor=lightgray}
+\psset{xAxisLabel=$K$,yAxisLabel=}
+\pslegend[rt]{\rule[1ex]{2em}{1.5pt}%
+\psdot[dotstyle=Btriangle,dotscale=1.5](-10,0.0125) & Testing Error\\
+\rule[1ex]{2em}{1.5pt}%
+\psdot[dotstyle=Bo,dotscale=1.5](-10,0.0125) & Training Error}
+\begin{psgraph}[Dy=0.05,Dx=50]{->}(0,0)(250,0.4){2.5in}{2in}
+%\pstScalePoints(1,1){}{log 0.001 add }
+\listplot[showpoints=true, dotstyle=Bo,plotNoMax=3,
+plotNo=1,nEnd=27,nStep=1]{\dataBoost}
+\listplot[showpoints=true,
+dotstyle=Btriangle,plotNoMax=3,plotNo=2,nEnd=27,nStep=1]{\dataBoost}
+\end{psgraph}
+    }
+    }
+    }
+\end{figure}
+
+\small
+Iris PC Data: Hyperplane learnt in $t$th iteration is $h_t$. 
+We can observe that the first three hyperplanes $h_1$, $h_2$ and $h_3$
+already capture the essential features of
+  the nonlinear decision
+  boundary.
+  Further reduction in the training error is obtained by increasing the
+  number of boosting steps $K$.
+\end{frame}

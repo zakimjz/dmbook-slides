@@ -1,0 +1,70 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="Geoff Webb">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<title>Identifier-item file</title>
+</head>
+
+<body>
+
+<h1><font color="#000080">Identifier-item file</font></h1>
+
+<p><b>See also</b>: <a href="MOCLDataTypes.html">transaction data and attribute-value data</a>,
+<a href="MOCLItemListFile.html">item list file</a>, <a href="MOnames_file.html">names file</a>,
+<a href="MOdata_file.html">data file</a>. </p>
+
+<p>An identifier-item file is a text file that lists transactions to be analyzed in
+identifier-item format.&nbsp; Each transaction has a unique identifier.&nbsp; Each line
+associates a transaction identifier with an item in that transaction. </p>
+
+<p>Each line must contain at least two columns, one for the identifier and one for the
+item. </p>
+
+<p>The following commands are specific to identifier-item files: </p>
+
+<table border="1" cellPadding="7" cellSpacing="1">
+  <tr>
+    <td vAlign="top">identifier-column=[no]</td>
+    <td vAlign="top">Specifies the column that contains the identifier.</td>
+  </tr>
+  <tr>
+    <td vAlign="top">item-column=[no]</td>
+    <td vAlign="top">Specifies the column&nbsp;that contains the item.</td>
+  </tr>
+  <tr>
+    <td vAlign="top">ordered</td>
+    <td vAlign="top">Specifies that the identifier-item file is ordered by identifier.&nbsp;
+    Specifying this option can greatly reduce data import time.</td>
+  </tr>
+</table>
+
+<p>For example, the following shows the content of an identifier-item file, called
+example.idi, containing two columns delimited by colons, the first column containing
+transaction data, the second the item and the third the identifier. 
+
+<blockquote>
+  <tt>001, apples</tt> <br>
+  <tt>001, oranges</tt> <br>
+  <tt>001, bananas</tt> <br>
+  <tt>002, apples</tt> <br>
+  <tt>002, carrots</tt> <br>
+  <tt>002, lettuce</tt> <br>
+  <tt>002, tomatoes</tt>
+</blockquote>
+
+<p>Transaction 001 contains apples, oranges and bananas.&nbsp; Transaction 002 contains
+apples, carrots, lettuce and tomatoes.&nbsp; The file is ordered because all data for a
+transaction appears on consecutive lines of the file.</p>
+
+<p>This data could be processed with the following comand.</p>
+
+<p><font face="Courier New">mocl id-item-file=example.idi id-col=3 item-col=2 delim=:
+ordered</font></p>
+
+<p>&nbsp; <br>
+<b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></p>
+</body>
+</html>

@@ -1,0 +1,1596 @@
+\lecture{sequences}{sequences}
+
+\date{Chapter 10: Sequence Mining}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\newcommand{\alggsp}{\textsc{GSP}\xspace}
+\newcommand{\algspade}{\textsc{Spade}\xspace}
+\newcommand{\algSeqcomputesupport}{\textsc{ComputeSupport}\xspace}
+\newcommand{\algSeqextprefix}{\textsc{ExtendPrefixTree}\xspace}
+\newcommand{\algprefixspan}{\textsc{PrefixSpan}\xspace}
+\newcommand{\algUkkonenSimple}{\textsc{NaiveUkkonen}\xspace}
+\newcommand{\algUkkonen}{\textsc{Ukkonen}\xspace}
+
+
+\begin{frame}{Sequence Mining: Terminology}
+Let $\Sigma$ be the {\em alphabet}, a set of symbols.
+A {\em sequence} or a {\em string} is def\/{i}ned
+as an ordered list of symbols, and is written as $\bs =  s_{1}s_{2}
+\dots s_{k}$, where $s_i \in \Sigma$ is a symbol at position $i$, also
+denoted as $\bs[i]$. 
+$|\bs| = k$ denotes the {\em length} of the
+sequence.  
+
+\medskip
+The notation $\bs[i:j] = s_is_{i+1}\cdots
+s_{j-1}s_{j}$ denotes the {\em substring} or sequence of consecutive
+symbols in positions $i$ through $j$, where $j > i$.  
+
+\medskip
+Def\/{i}ne the {\em
+pref\/{i}x} of a sequence $\bs$ as any substring of the form
+$\bs[1:i]=s_1s_2\ldots s_i$, with $0 \le i \le n$.
+
+
+\medskip
+Def\/{i}ne the {\em suff\/{i}x}
+of $\bs$ as any substring of the form $\bs[i:n] = s_is_{i+1}\ldots
+s_{n}$, with $1 \le i \le n+1$. 
+
+\medskip
+$\bs[1:0]$ is the empty
+pref\/{i}x, and $\bs[n+1:n]$ is the empty suff\/{i}x. Let $\Sigma^\star$ be the set of all possible sequences
+that can be constructed using the symbols in $\Sigma$, including the
+empty sequence $\emptyset$ (which has length zero).
+
+\end{frame}
+
+
+
+\begin{frame}{Sequence Mining: Terminology}
+
+  Let $\bs = s_1s_2 \ldots s_{n}$ and $\br = r_1r_2 \ldots r_{m}$ be two
+sequences over $\Sigma$.  We say that $\br$ is a {\em subsequence} of
+$\bs$ denoted $\br \subseteq \bs$, if there exists a one-to-one mapping
+$\phi: [1,m] \to [1,n]$, such that $\br[i] = \bs[\phi(i)]$ and for any
+two positions $i,j$ in $\br$, $i < j \implies \phi(i) < \phi(j)$. In
+If $\br \subseteq \bs$, we also say that $\bs$ {\em contains} $\br$.
+
+\medskip
+The sequence $\br$ is called a {\em consecutive subsequence} or
+substring of $\bs$ provided $r_1r_2\ldots r_{m} = s_{j}s_{j+1}\ldots
+s_{j+m-1}$, i.e., $\br[1:m] =\bs[j:j+m-1]$, with $1\le j \le n-m+1$.
+
+\begin{block}
+
+Let $\Sigma = \{A,C,G,T\}$, and let $\bs = \mathit{ACTGAACG}$.  
+
+Then
+$\br_1=\mathit{CGAAG}$ is a subsequence of $\bs$, and $\br_2=\mathit{CTGA}$ is a substring
+of $\bs$.  The sequence $\br_3=\mathit{ACT}$ is a pref\/{i}x of $\bs$, and so is
+$\br_4=\mathit{ACTGA}$, whereas $\br_5=\mathit{GAACG}$ is one of the suff\/{i}xes of $\bs$.
+\end{block}%\pagebreak
+\end{frame}
+%
+
+\begin{frame}{Frequent Sequences}
+Given a database $\bD = \{\bs_1,\bs_2, \ldots, \bs_N\}$ of $N$
+sequences, and given some sequence $\br$, the {\em support} of $\br$ in
+the database $\bD$ is def\/{i}ned as the total number of sequences in $\bD$
+that contain $\br$
+\begin{align*}
+  \supp(\br) = \bcard{\Big}{\bigl\{\bs_i \in \bD | \br \subseteq
+  \bs_i\bigr\}}
+\end{align*}
+
+\medskip
+The {\em relative support} of $\br$ is the fraction of sequences that
+contain $\br$
+\begin{align*}
+  \rsupp(\br) = \supp(\br)/N
+\end{align*}
+
+\medskip
+Given a user-specif\/{i}ed $\minsup$ threshold, we say that a sequence $\br$
+is {\em frequent} in database $\bD$ if $\supp(\br) \ge \minsup$.  A
+frequent sequence is {\em maximal} if it is not a subsequence of any
+other frequent sequence, and a frequent sequence is {\em closed} if it
+is not a subsequence of any other frequent sequence with the same
+support.
+
+\end{frame}
+
+
+\begin{frame}{Mining Frequent Sequences}
+
+  For sequence mining the order of the symbols matters, and thus we have
+to consider all possible {\em permutations} of the symbols as the
+possible frequent candidates. Contrast this with itemset mining, where
+we had only to consider {\em combinations} of the items.  
+
+The sequence
+search space can be organized in a pref\/{i}x search tree.  The root of the
+tree, at level 0, contains the empty sequence, with each symbol $x \in
+\Sigma$ as one of its children. As such, a node labeled with the
+sequence $\bs=s_1s_2\ldots s_k$ at level $k$ has children of the form
+$\bs' = s_1s_2\ldots s_ks_{k+1}$ at level $k+1$. In other words, $\bs$
+is a pref\/{i}x of each child $\bs'$, which is also called an {\em
+extension} of $\bs$.
+
+\end{frame}
+
+
+\begin{frame}{Example Sequence Database}
+\begin{center}
+\begin{tabular}[h]{|l|l|}
+    \hline
+    Id & Sequence\\ \hline
+    \hline
+    $\bs_1$ & $\mathit{CAGAAGT}$\\
+    \hline
+    $\bs_2$ & $\mathit{TGACAG}$\\
+    \hline
+    $\bs_3$ & $\mathit{GAAGT}$\\
+    \hline
+  \end{tabular}
+\end{center}
+
+\begin{block}
+  
+Using $\minsup=3$, the set of frequent subsequences is given as:
+\begin{align*}
+  \Fk{1} & = A(3), G(3), T(3)\\
+  \Fk{2} & = AA(3), AG(3), GA(3), GG(3)\\
+  \Fk{3} & = AAG(3), GAA(3), GAG(3)\\
+  \Fk{4} & = GAAG(3)
+\end{align*}
+
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Level-wise Sequence Mining: GSP Algorithm}
+\small
+  The GSP algorithm searches the sequence pref\/{i}x tree using a
+  level-wise or breadth-f\/{i}rst search.  Given the set of frequent
+  sequences at level $k$, we generate all possible sequence extensions
+  or {\em candidates} at level $k+1$.  We next compute the support of
+  each candidate and prune those that are not frequent. The search stops
+  when no more frequent extensions are possible.
+
+\medskip
+  The pref\/{i}x search tree at level $k$ is
+denoted $\Ck{k}$. Initially $\Ck{1}$ comprises all the symbols in
+$\Sigma$. Given the current set of candidate $k$-sequences $\Ck{k}$, the
+method f\/{i}rst computes their support.
+
+\medskip
+For each database sequence $\bs_i
+\in \bD$, we check whether a  candidate sequence $\br \in \Ck{k}$
+is a subsequence of $\bs_i$. If so, we increment the support of $\br$.
+Once the frequent sequences at level $k$ have been found, we generate
+the candidates for level $k+1$.
+
+\medskip
+For the extension, each leaf $\br_a$ is extended with the last symbol of
+any other leaf $\br_b$ that shares the same pref\/{i}x (i.e., has the same
+parent), to obtain the new candidate $(k+1)$-sequence
+$\br_{ab} = \br_a + \br_b[k]$.
+If the new candidate $\br_{ab}$ contains any infrequent $k$-sequence, we
+prune it.
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm \alggsp}
+\begin{algorithm}[H]
+\SetKwInput{AlgorithmA}{\alggsp ($\bD$, $\Sigma$, $\minsup$)}
+\AlgorithmA{}
+$\cF \assign \emptyset$\;
+$\Ck{1} \assign \{\emptyset\}$ \tcp{Initial prefix tree with single
+symbols}
+\lForEach{$s \in \Sigma$}{
+Add $s$ as child of $\emptyset$ in $\Ck{1}$ with $sup(s) \assign 0$
+}
+$k \assign 1$ \tcp{$k$ denotes the level}
+\While{$\Ck{k} \not= \emptyset$}{
+  \algSeqcomputesupport ($\Ck{k}, \bD$) \nllabel{alg:fpm:seq:gsp:csup}\;
+  \ForEach{ leaf $\bs \in \Ck{k}$}{
+    \lIf{$\supp(\br) \ge \minsup$}{
+      $\cF \assign \cF \cup \bigl\{(\br, \supp(\br))\bigr\}$
+    }
+    \lElse{
+    remove $\bs$ from $\Ck{k}$
+    }
+  }
+ $\Ck{k+1} \assign$ \algSeqextprefix ($\Ck{k}$)
+ \nllabel{alg:fpm:seq:gsp:ext}\;
+  $k \assign k+1$\;
+}
+\Return{$\Fk{k}$}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm \algSeqcomputesupport}
+\begin{algorithm}[H]
+\SetKwInput{AlgorithmB}{\algSeqcomputesupport ($\Ck{k}, \bD$)}
+\AlgorithmB{}
+\ForEach{$\bs_i \in \bD$}{
+\ForEach{$\br \in \Ck{k}$}{
+    \lIf{$\br \subseteq \bs_i$}{
+      $\supp(\br) \assign \supp(\br)+1$
+    }
+  }
+}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\SetKwInput{AlgorithmC}{\algSeqextprefix ($\Ck{k}$)}
+\AlgorithmC{}
+\ForEach{$ \text{leaf } \br_a \in \Ck{k}$}{
+\ForEach{$\text{leaf } \br_b \in
+\textsc{Children}(\textsc{Parent}(\br_a))$}{
+$\br_{ab} \assign \br_a + \br_b[k]$ \tcp{ extend $\br_a$ with last item of
+$\br_b$} \nllabel{alg:fpm:seq:gsp:cand}
+    \tcp{prune if there are any infrequent subsequences}
+    \If{$\br_c \in \Ck{k}, \textbf{ for all }
+    \br_c \subset \br_{ab}, \text{ such that }
+    \card{\br_c} = \card{\br_{ab}}-1$}{
+     Add $\br_{ab}$ as child of $\br_a$ with
+     $sup(\br_{ab}) \assign 0$}
+   }
+   \If{no extensions from $\br_a$}{remove $\br_a$,
+   and all ancestors of $\br_a$ with no extensions, from $\Ck{k}$}
+}
+\Return $\Ck{k}$\;
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{Sequence Search Space}
+  \framesubtitle{shaded ovals are infrequent sequences}
+\begin{center}
+  \psset{unit=0.75in}
+  \centerline{
+  \scalebox{0.5}{%
+  \psset{treesep=0.05in,levelsep=*1in,treefit=tight}
+  \pstree[]{\Toval{$\emptyset(3)$}}{
+    %
+    \pstree[]{\Toval{$A$(3)}}{
+      \pstree[]{\Toval{$AA$(3)}}{
+        \Toval[fillcolor=lightgray,fillstyle=solid]{$AAA(1)$}
+        \pstree[]{\Toval{$AAG(3)$}}{
+          \Toval[fillcolor=lightgray,fillstyle=solid]{$AAGG$}
+        }
+      }
+      \pstree[]{\Toval{$AG$(3)}}{
+        \Toval[fillcolor=lightgray,fillstyle=solid]{$AGA(1)$}
+        \Toval[fillcolor=lightgray,fillstyle=solid]{$AGG(1)$}
+      }
+      \Toval[fillcolor=lightgray,fillstyle=solid]{$AT(2)$}
+    }
+    %
+    \tspace{1.5in}
+    \Toval[fillcolor=lightgray,fillstyle=solid]{$C(2)$}
+    %
+    \pstree[]{\Toval{$G$(3)}}{
+      \pstree[]{\Toval{$GA$(3)}}{
+        \pstree[]{\Toval{$GAA$(3)}}{
+          \Toval[fillcolor=lightgray,fillstyle=solid]{$GAAA$}
+          \Toval{$GAAG(3)$}
+        }
+        \pstree[]{\Toval{$GAG$(3)}}{
+          \Toval[fillcolor=lightgray,fillstyle=solid]{$GAGA$}
+          \Toval[fillcolor=lightgray,fillstyle=solid]{$GAGG$}
+        }
+      }
+      \pstree[]{\Toval{$GG$(3)}}{
+        \Toval[fillcolor=lightgray,fillstyle=solid]{$GGA(0)$}
+        \Toval[fillcolor=lightgray,fillstyle=solid]{$GGG(0)$}
+      }
+      \Toval[fillcolor=lightgray,fillstyle=solid]{$GT(2)$}
+    }
+    %
+    \pstree[]{\Toval{$T$(3)}}{
+      \Toval[fillcolor=lightgray,fillstyle=solid]{$TA(1)$}
+      \Toval[fillcolor=lightgray,fillstyle=solid]{$TG(1)$}
+      \Toval[fillcolor=lightgray,fillstyle=solid]{$TT(0)$}
+    }
+  }
+  }}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}{Vertical Sequence Mining: Spade}
+The Spade algorithm uses a vertical database representation for sequence
+mining. For each symbol $s \in \Sigma$, we keep a
+set of tuples of the form $\tup{i, pos(s)}$, where
+$pos(s)$ is the set of positions in the database sequence
+$\bs_i \in \bD$ where symbol $s$
+appears. 
+
+\medskip
+Let $\cL(s)$ denote the set of such sequence-position tuples
+for symbol $s$,
+which we refer to as the {\em poslist}.
+The set of poslists for each symbol $s \in \Sigma$ thus constitutes a
+vertical representation of the input database.
+
+\medskip
+Let $\cL(s)$ denote the set of such sequence-position tuples
+Given $k$-sequence
+$\br$, its poslist $\cL(\br)$
+maintains the list of positions for the occurrences
+of the last symbol $\br[k]$ in each database sequence $\bs_i$, provided
+$\br \subseteq \bs_i$. The support of sequence $\br$ is simply the
+number of distinct sequences in which $\br$ occurs, that is,
+$\supp(\br) =
+\card{\cL(\br)}$.
+
+\end{frame}
+
+\begin{frame}{Spade Algorithm}
+Support computation in Spade is done via {\em sequential join}
+operations.  
+
+\medskip
+Given the poslists for any two
+$k$-sequences $\br_a$ and $\br_b$ that share the same $(k-1)$ length
+pref\/{i}x, a sequential join on the poslists is used to
+compute the support for the new $(k+1)$ length candidate sequence
+$\br_{ab} = \br_a + \br_b[k]$.  
+
+\medskip 
+Given a tuple $\ltup{\big}{i,pos\bigl(\br_b[k]\bigr)} \in
+\cL(\br_b)$, we f\/{i}rst check if there exists a tuple
+$\ltup{\big}{i,pos\bigl(\br_a[k]\bigr)} \in \cL(\br_a)$, that is, both
+sequences must occur in the same database sequence $\bs_i$. 
+
+\smallskip
+Next, for
+each position $p \in pos\bigl(\br_b[k]\bigr)$, we check whether there
+exists a position $q \in pos\bigl(\br_a[k]\bigr)$ such that $q < p$. If
+yes, this means that the symbol $\br_b[k]$ occurs after the last
+position of $\br_a$ and thus we retain $p$ as a valid occurrence of
+$\br_{ab}$. The poslist $\cL(\br_{ab})$ comprises all such valid
+occurrences.  
+
+\medskip
+We keep track of positions only for the last
+symbol in the candidate sequence since we extend sequences
+from a common pref\/{i}x, and so there is no need to keep track of all the
+occurrences of the symbols in the pref\/{i}x.  
+
+\medskip
+We denote the sequential
+join as $\cL(\br_{ab}) = \cL(\br_a) \cap \cL(\br_b)$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Spade Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmT}{\algspade ($P$, $\minsup$, $\cF$, $k$)}
+\tcp{Initial Call: $\cF \assign \emptyset$, $k \assign 0$,
+$P \assign \bigl\{\tup{s,\cL(s)} \mid
+  s \in \Sigma, \supp(s) \ge \minsup\bigr\}$}
+\AlgorithmT{}
+\ForEach{$\br_a \in P$}{
+    $\cF \assign \cF \cup \bigl\{(\br_{a}, \supp(\br_{a}))\bigr\}$\;
+    $P_a \assign \emptyset$\;
+    \ForEach{$\br_b \in P$}{
+      $\br_{ab} = \br_a + \br_b[k]$\;
+      $\cL(\br_{ab}) = \cL(\br_a) \cap \cL(\br_b)$\;
+      \If{$\supp(\br_{ab}) \geq \minsup$}{
+          $P_a \assign P_a \cup \bigl\{ \tup{\br_{ab}, \cL(\br_{ab})} \bigr\}$\;
+        }
+    }
+    \lIf{$P_a \ne \emptyset$}{
+      \algspade($\bP$, $\minsup$, $\cF$, $k+1$)
+    }
+}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{Sequence Mining via Spade}
+  \large
+  \centering
+ \def\nA{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$A$}\\
+        \hline
+        1 & 2,4,5\\
+        2 & 3,5\\
+        3 & 2,3\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nC{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$C$}\\
+        \hline
+        1 & 1\\
+        2 & 4\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nG{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$G$}\\
+        \hline
+        1 & 3,6\\
+        2 & 2,6\\
+        3 & 1,4\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nT{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$T$}\\
+        \hline
+        1 & 7\\
+        2 & 1\\
+        3 & 5\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nAA{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{AA}$}\\
+        \hline
+        1 & 4,5\\
+        2 & 5\\
+        3 & 3\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nAG{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{AG}$}\\
+        \hline
+        1 & 3,6\\
+        2 & 6\\
+        3 & 4\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nAT{\TR*[fillcolor=lightgray,fillstyle=solid]{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{AT}$}\\
+        \hline
+        1 & 7\\
+        3 & 5\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nGA{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{GA}$}\\
+        \hline
+        1 & 4,5\\
+        2 & 3,5\\
+        3 & 2,3\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nGG{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{GG}$}\\
+        \hline
+        1 & 6\\
+        2 & 6\\
+        3 & 4\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nGT{\TR*[fillcolor=lightgray,fillstyle=solid]{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{GT}$}\\
+        \hline
+        1 & 7\\
+        3 & 5\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nTA{\TR*[fillcolor=lightgray,fillstyle=solid]{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{TA}$}\\
+        \hline
+        2 & 3,5\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nTG{\TR*[fillcolor=lightgray,fillstyle=solid]{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{TG}$}\\
+        \hline
+        2 & 2,6\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nAAA{\TR*[fillcolor=lightgray,fillstyle=solid]{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{AAA}$}\\
+        \hline
+        1 & 5\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nAAG{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{AAG}$}\\
+        \hline
+        1 & 6\\
+        2 & 6\\
+        3 & 4\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nAGA{\TR*[fillcolor=lightgray,fillstyle=solid]{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{AGA}$}\\
+        \hline
+        1 & 5\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nAGG{\TR*[fillcolor=lightgray,fillstyle=solid]{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{AGG}$}\\
+        \hline
+        1 & 6\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nGAA{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{GAA}$}\\
+        \hline
+        1 & 5\\
+        2 & 5\\
+        3 & 3\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nGAG{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{GAG}$}\\
+        \hline
+        1 & 6\\
+        2 & 6\\
+        3 & 4\\
+        \hline
+    \end{tabular}}
+  }
+ \def\nGAAG{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{$\mathit{GAAG}$}\\
+        \hline
+        1 & 6\\
+        2 & 6\\
+        3 & 4\\
+        \hline
+    \end{tabular}}
+  }
+  \centerline{
+  \scalebox{0.5}{%
+  \psset{unit=0.75in}
+  \psmatrix[colsep=0.5,rowsep=1]
+  &&&[name=empty]$\emptyset$\psspan{2}\\\empty
+  &&[name=A]\nA & [name=C]\nC & [name=G]\nG & [name=T]\nT\\\empty
+  [name=AA]\nAA & [name=AG]\nAG &
+  [name=AT]\nAT  &  [name=GA]\nGA
+  & [name=GG]\nGG & [name=GT]\nGT& [name=TA]\nTA  &
+  [name=TG]\nTG\\\empty
+   [name=AAA]\nAAA & [name=AAG]\nAAG & [name=AGA]\nAGA
+   & [name=AGG]\nAGG & [name=GAA]\nGAA & [name=GAG]\nGAG \\\empty
+   &&&&[name=GAAG]\nGAAG
+  \endpsmatrix
+  \ncline{empty}{A}
+  \ncline{empty}{C}
+  \ncline{empty}{G}
+  \ncline{empty}{T}
+  \ncline{A}{AA}
+  \ncline{A}{AG}
+  \ncline{A}{AT}
+  \ncline{G}{GA}
+  \ncline{G}{GG}
+  \ncline{G}{GT}
+  \ncline{T}{TA}
+  \ncline{T}{TG}
+  \ncline{AA}{AAA}
+  \ncline{AA}{AAG}
+  \ncline{AG}{AGA}
+  \ncline{AG}{AGG}
+  \ncline{GA}{GAA}
+  \ncline{GA}{GAG}
+  \ncline{GAA}{GAAG}
+  }}
+\end{frame}
+
+
+\begin{frame}{Projection-Based Sequence Mining: Pref\/{i}xSpan}
+Let $\bD$ denote a database, and let $s \in \Sigma$ be any
+symbol. The {\em projected database} with respect to $s$, denoted
+$\bD_s$, is obtained by f\/{i}nding the
+f\/{i}rst occurrence of $s$ in $\bs_i$, say at position $p$. Next,
+we retain in $\bD_s$ only the suff\/{i}x of $\bs_i$
+starting at position $p+1$.  Further, any infrequent
+symbols are removed from the suff\/{i}x.
+This is done for each sequence
+$\bs_i \in \bD$.
+
+\medskip
+Pref\/{i}xSpan computes the support for only the
+individual symbols in the projected database $\bD_s$; it then
+performs recursive projections on the
+frequent symbols in a depth-f\/{i}rst manner. 
+
+\medskip
+Given a frequent subsequence $\br$, let $\bD_\br$ be the projected
+dataset for $\br$. Initially $\br$ is empty and $\bD_\br$ is the entire
+input dataset $\bD$.
+Given a database of (projected) sequences $\bD_\br$,
+Pref\/{i}xSpan f\/{i}rst f\/{i}nds all the frequent symbols in the projected
+dataset. For each such symbol $s$, we extend $\br$ by appending $s$
+to obtain the new frequent subsequence $\br_s$. Next, we create the
+projected dataset $\bD_s$ by projecting $\bD_\br$ on
+symbol $s$. A recursive call to Pref\/{i}xSpan is
+then made with $\br_s$ and $\bD_s$.
+\end{frame}
+
+
+\begin{frame}[fragile]{PrefixSpan Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmS}{\algprefixspan ($\bD_\br$, $\br$, $\minsup$,
+$\cF$)}
+\tcp{Initial Call: $\bD_\br \assign \bD$,
+$\br \assign \emptyset$, $\cF \assign \emptyset$}
+\AlgorithmS{}
+\ForEach{$s \in \Sigma$ such that $\supp(s, \bD_\br) \ge \minsup$}{
+  $\br_s = \br + s$ \tcp{ extend $\br$ by symbol $s$}
+  $\cF \assign \cF \cup \bigl\{ (\br_s, \supp(s, \bD_\br))\bigr\}$\;
+  $\bD_s \assign \emptyset$ \tcp{ create projected data for symbol $s$}
+  \ForEach{$\bs_i \in \bD_\br$}{
+    $\bs'_i \assign $ projection of $\bs_i$ w.r.t symbol $s$\;
+    Remove any infrequent symbols from $\bs'_i$\;
+    Add $\bs'_i$ to $\bD_s$ if $\bs'_i \ne \emptyset$
+  }
+  \lIf{$\bD_s \ne \emptyset$}{
+    \algprefixspan($\bD_s$, $\br_s$, $\minsup$, $\cF$)
+  }
+}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{Projection-based Sequence Mining: PrefixSpan}
+\centering
+\scalebox{0.5}{%
+\psset{levelsep=1.5in}
+\pstree[]{%
+  \TR{%
+    \psframebox{
+      \begin{tabular}{ll}
+          \multicolumn{2}{c}{$\bD_{\emptyset}$}\\
+        \hline
+        $\bs_1$ & $\mathit{CAGAAGT}$\\
+        $\bs_2$ & $\mathit{TGACAG}$\\
+        $\bs_3$ & $\mathit{GAAGT}$\\
+        \hline\hline
+        \multicolumn{2}{c}{$A(3)$, \st{$C(2)$}, $G(3)$, $T(3)$}
+      \end{tabular}}}%
+}{%
+  \pstree[]{%
+    \TR{%
+      \psframebox{
+        \begin{tabular}{ll}
+          \multicolumn{2}{c}{$\bD_A$}\\
+          \hline
+          $\bs_1$ & $\mathit{GAAGT}$\\
+          $\bs_2$ & $\mathit{AG}$\\
+          $\bs_3$ & $\mathit{AGT}$\\
+          \hline\hline
+          \multicolumn{2}{c}{$A(3)$, $G(3)$, \st{$T(2)$}}
+        \end{tabular}}}%
+  }{%
+    \pstree[]{%
+      \TR{%
+        \psframebox{
+          \begin{tabular}{ll}
+            \multicolumn{2}{c}{$\bD_{\mathit{AA}}$}\\
+            \hline
+            $\bs_1$ & $\mathit{AG}$\\
+            $\bs_2$ & $G$\\
+            $\bs_3$ & $G$\\
+            \hline\hline
+            \multicolumn{2}{c}{\st{$A(1)$}, $G(3)$}
+          \end{tabular}}}%
+    }{%
+      \TR{%
+        \psframebox{
+        \begin{tabular}{c}
+          $\bD_{\mathit{AAG}}$\\
+          \hline
+          $\emptyset$
+        \end{tabular}}}%
+    }%
+    \TR{%
+      \psframebox{
+        \begin{tabular}{ll}
+          \multicolumn{2}{c}{$\bD_{\mathit{AG}}$}\\
+          \hline
+          $\bs_1$ & $\mathit{AAG}$\\
+          \hline\hline
+          \multicolumn{2}{c}{\st{$A(1)$}, \st{$G(1)$}}
+        \end{tabular}}}%
+  }%
+  \pstree[]{%
+    \TR{%
+      \psframebox{
+        \begin{tabular}{ll}
+          \multicolumn{2}{c}{$\bD_{G}$}\\
+          \hline
+          $\bs_1$ & $\mathit{AAGT}$\\
+          $\bs_2$ & $\mathit{AAG}$\\
+          $\bs_3$ & $\mathit{AAGT}$\\
+          \hline\hline
+          \multicolumn{2}{c}{$A(3)$, $G(3)$, \st{$T(2)$}}
+        \end{tabular}}}%
+  }{%
+    \pstree[]{%
+      \TR{%
+        \psframebox{
+          \begin{tabular}{ll}
+            \multicolumn{2}{c}{$\bD_{\mathit{GA}}$}\\
+            \hline
+            $\bs_1$ & $\mathit{AG}$\\
+            $\bs_2$ & $\mathit{AG}$\\
+            $\bs_3$ & $\mathit{AG}$\\
+            \hline\hline
+            \multicolumn{2}{c}{$A(3)$, $G(3)$}
+          \end{tabular}}}%
+    }{%
+      \pstree[thislevelsep=1in]{%
+        \TR{%
+          \psframebox{
+            \begin{tabular}{ll}
+              \multicolumn{2}{c}{$\bD_{\mathit{GAA}}$}\\
+              \hline
+              $\bs_1$ & $G$\\
+              $\bs_2$ & $G$\\
+              $\bs_3$ & $G$\\
+              \hline\hline
+              \multicolumn{2}{c}{$G(3)$}
+            \end{tabular}}}%
+      }{%
+        \TR{%
+          \psframebox{
+            \begin{tabular}{c}
+            $\bD_{\mathit{GAAG}}$\\
+            \hline
+            $\emptyset$
+          \end{tabular}}}%
+      }%
+
+      \TR{%
+        \psframebox{
+          \begin{tabular}{c}
+            $\bD_{\mathit{GAG}}$\\
+            \hline
+            $\emptyset$
+          \end{tabular}}}%
+    }%
+    \TR{%
+      \psframebox{
+        \begin{tabular}{c}
+          $\bD_{\mathit{GG}}$\\
+          \hline
+          $\emptyset$
+        \end{tabular}}}%
+  }%
+  \TR{%
+    \psframebox{
+      \begin{tabular}{ll}
+        \multicolumn{2}{c}{$\bD_{T}$}\\
+        \hline
+        $\bs_2$ & $\mathit{GAAG}$\\
+        \hline\hline
+        \multicolumn{2}{c}{\st{$A(1)$}, \st{$G(1)$}}
+      \end{tabular}}}%
+} }
+\end{frame}
+
+
+\begin{frame}{Substring Mining via Suff\/{i}x Trees}
+
+  Let $\bs$ be a sequence having length $n$, then
+there are at most $O(n^2)$ possible distinct
+substrings contained in $\bs$. This is a much smaller search space compared to subsequences, and
+consequently we can design more eff\/{i}cient algorithms for solving
+the frequent substring mining task. 
+
+\bigskip
+Naively, we can mine all the
+frequent substrings in worst case $O(Nn^2)$ time for a dataset
+$\bD=\{\bs_1, \bs_2, \ldots, \bs_N\}$ with $N$ sequences.
+
+\bigskip
+We will show that all sequences can be mined in $O(Nn)$ time via Suffix
+Trees.
+\end{frame}
+
+
+
+\begin{frame}{Suff\/{i}x Tree}
+Given a sequence $\bs$, we append a terminal character 
+$\$ \not\in \Sigma$ so that
+$\bs = s_{1}s_{2} \dots s_{n}s_{n+1}$, where $s_{n+1}=\$$, and
+the $j$th suff\/{i}x of $\bs$ is given as
+$\bs[j:n+1] = s_{j}s_{j+1} \dots s_{n+1}$.
+
+\medskip
+The {\em suff\/{i}x tree} of the sequences in the database $\bD$,
+denoted $\cT$,
+ stores all the
+suff\/{i}xes for each $\bs_i \in \bD$ in a tree structure, where suff\/{i}xes
+that share a common pref\/{i}x lie on the same path from the root of the
+tree.
+
+\medskip
+The substring obtained by
+concatenating all the symbols from the root node to a node $v$ is
+called the {\em node label} of $v$, and is denoted as $L(v)$.
+The substring
+that appears on an edge $(v_a,v_b)$ is called an {\em edge label},
+and is denoted as $L(v_a,v_b)$.
+
+\medskip
+A suff\/{i}x
+tree has two kinds of nodes: internal and leaf nodes.  An internal
+node in the suff\/{i}x tree (except for the root) has at least two children,
+where each edge label to a child begins with a different symbol.  Because
+the terminal character is unique, there are as many leaves in the
+suff\/{i}x tree as there are unique suff\/{i}xes over all the sequences.
+Each leaf node corresponds to a suff\/{i}x shared by one or
+more sequences in $\bD$.
+\end{frame}
+
+
+\begin{frame}[fragile]{Suffix Tree Construction for $\bs=CAGAAGT\$$}
+  \framesubtitle{Insert each suffix $j$ per step}
+\begin{figure}
+  \scriptsize
+  \def\Tb#1{\Tr{\psframebox{#1}}}
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.15,levelsep=*1,radius=0.05}
+  \centerline{
+  \scalebox{0.9}{%
+    \subfloat[$j=1$]{ \label{fig:fpm:seq:nst1a}
+      \fbox{
+        \pstree[]{\TC*}{%
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+        }
+      }
+    }
+    \subfloat[$j=2$]{      \label{fig:fpm:seq:nst1b}
+      \fbox{
+        \pstree[]{\TC*}{%
+          \Tb{(1,2)}\ncput*{$AGAAGT\$$}
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+        }
+      }
+    }
+    \subfloat[$j=3$]{ \label{fig:fpm:seq:nst1c}
+      \fbox{
+        \pstree[]{\TC*}{%
+          \Tb{(1,2)}\ncput*{$AGAAGT\$$}
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+          \Tb{(1,3)}\ncput*{$GAAGT\$$}
+        }
+      }
+    }
+    \subfloat[$j=4$]{ \label{fig:fpm:seq:nst1d}
+      \fbox{
+        \pstree[]{\TC*}{%
+          \pstree[]{\TC*\ncput*{$A$}}{%
+            \Tb{(1,4)}\ncput*{$AGT\$$}
+            \Tb{(1,2)}\ncput*{$GAAGT\$$}
+          }
+          \tspace{0.2}
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+          \Tb{(1,3)}\ncput*{$GAAGT\$$}
+        }
+      }
+    }
+    }}%centerline
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Suffix Tree Construction  for $\bs=CAGAAGT\$$}
+  \framesubtitle{Insert each suffix $j$ per step}
+\begin{figure}
+  \scriptsize
+  \def\Tb#1{\Tr{\psframebox{#1}}}
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.15,levelsep=*1,radius=0.05}
+  \centerline{
+  \scalebox{0.7}{%
+    \subfloat[$j=5$]{ \label{fig:fpm:seq:nst1e}
+      \fbox{
+        \pstree[]{\TC*}{%
+          \pstree[]{\TC*\ncput*{$A$}}{%
+            \Tb{(1,4)}\ncput*{$AGT\$$}
+            \pstree[]{\TC*\ncput*{$G$}}{%
+              \Tb{(1,2)}\ncput*{$AAGT\$$}
+              \Tb{(1,5)}\ncput*{$T\$$}
+            }
+          }
+          \tspace{0.2}
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+          \Tb{(1,3)}\ncput*{$GAAGT\$$}
+        }
+      }
+    }
+    \subfloat[$j=6$]{ \label{fig:fpm:seq:nst1f}
+      \fbox{
+        \pstree[]{\TC*}{%
+          \pstree[]{\TC*\ncput*{$A$}}{%
+            \Tb{(1,4)}\ncput*{$AGT\$$}
+            \pstree[]{\TC*\ncput*{$G$}}{%
+              \Tb{(1,2)}\ncput*{$AAGT\$$}
+              \Tb{(1,5)}\ncput*{$T$}
+            }
+          }
+          \tspace{0.2}
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+          \pstree[]{\TC*\ncput*{$G$}}{%
+            \Tb{(1,3)}\ncput*{$AAGT\$$}
+            \Tb{(1,6)}\ncput*{$T\$$}
+          }
+        }
+      }
+    }
+    \subfloat[$j=7$]{  \label{fig:fpm:seq:nst1g}
+      \fbox{
+        \pstree[]{\TC*}{%
+          \pstree[]{\TC*\ncput*{$A$}}{%
+            \Tb{(1,4)}\ncput*{$AGT\$$}
+            \pstree[]{\TC*\ncput*{$G$}}{
+              \Tb{(1,2)}\ncput*{$AAGT\$$}
+              \Tb{(1,5)}\ncput*{$T\$$}
+            }
+          }
+          \tspace{0.2}
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+          \pstree[]{\TC*\ncput*{$G$}}{%
+            \Tb{(1,3)}\ncput*{$AAGT\$$}
+            \Tb{(1,6)}\ncput*{$T\$$}
+          }
+          \Tb{(1,7)}\ncput*{$T\$$}
+        }
+      }
+    }
+    }}%centerline
+\end{figure}
+\end{frame}
+
+
+\newcommand\TB[2]{\Tr{\psframebox{%
+      \begin{tabular}{c}
+        #1\\#2
+      \end{tabular}}}}
+ \def\Tb#1{\Tr{\psframebox{#1}}}
+\begin{frame}{Suffix Tree for Entire Database}
+\framesubtitle{$\bD = \{\bs_1=\mathit{CAGAAGT}, 
+    \bs_2 = \mathit{TGACAG},
+	\bs_3=\mathit{GAAGT} \}$}
+  \scriptsize
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.2,radius=0.05,levelsep=*0.75}
+  \centerline{
+  \scalebox{0.9}{%
+      \pstree[]{\Tcircle{3}}{%
+        \pstree[]{\Tcircle{3}\ncput*{$A$}}{%
+          \TB{(1,4)}{(3,2)}\ncput*{$AGT\$$}
+          \Tb{(2,3)}\ncput*[]{$CAG\$$}
+          \pstree[]{\Tcircle{3}\ncput*{$G$}}{
+            \Tb{(1,2)}\ncput*{$AAGT\$$}
+            \TB{(1,5)}{(3,3)}\ncput*{$T\$$}
+            \Tb{(2,5)}\ncput*{$\$$}
+          }
+        }
+        \pstree[]{\Tcircle{2}\ncput*{$CAG$}}{%
+          \Tb{(1,1)}\ncput*{$AAGT\$$}
+          \Tb{(2,4)}\ncput*{$\$$}
+        }
+        \pstree[]{\Tcircle{3}\ncput*{$G$}}{%
+          \pstree[]{\Tcircle{3}\ncput*{$A$}}{
+            \TB{(1,3)}{(3,1)}\ncput*{$AGT\$$}
+            \Tb{(2,2)}\ncput*{$CAG\$$}
+          }
+          \TB{(1,6)}{(3,4)}\ncput*{$T\$$}
+          \Tb{(2,6)}\ncput*{$\$$}
+        }
+        \pstree[]{\Tcircle{3}\ncput*{$T$}}{
+          \Tb{(2,1)}\ncput*{$GACAG\$$}
+          \TB{(1,7)}{(3,5)}\ncput*{$\$$}
+        }
+      }
+    }}%centerline
+\end{frame}
+
+
+\begin{frame}{Frequent Substrings}
+Once the suff\/{i}x tree is built, we can compute all the frequent
+substrings by checking how many different sequences appear in a leaf
+node or under an internal node.
+
+\medskip
+The node labels for the nodes with support at least $\minsup$ yield the
+set of frequent substrings; all the pref\/{i}xes of such node labels are
+also frequent.
+
+
+\medskip
+The suff\/{i}x tree can also support ad hoc queries for
+f\/{i}nding all the occurrences in the database for any query substring
+$\bq$.
+For each symbol in $\bq$, we follow the path from the root until all
+symbols in $\bq$ have been seen, or until there is a mismatch at any
+position. If $\bq$ is found, then the set of leaves under that path is the
+list of occurrences of the query $\bq$. On the other hand, if there is
+mismatch that means the
+query does not occur in the database.
+
+\medskip
+Because we have to match each
+character in $\bq$, we immediately get $O(|\bq|)$
+as the time bound (assuming
+that $\card{\Sigma}$ is a constant), which is
+{\em independent} of the size of the database. Listing all
+the matches takes additional time, for a total time complexity of
+$O(|\bq|+k)$, if there are $k$ matches.
+
+
+\end{frame}
+
+
+\begin{frame}{Ukkonen's Linear Time Suffix Tree Algorithm}
+
+{\bf Achieving Linear Space:}
+If an algorithm stores all the
+symbols on each edge label, then the space complexity is $O(n^2)$, and
+we cannot achieve
+linear time construction either.
+
+\bigskip
+The trick is to not explicitly store
+all the edge labels, but rather to use an {\em edge-compression}
+technique, where we store only the starting and ending positions of
+the edge label in the input string $\bs$. That is, if an edge label
+is given as $\bs[i:j]$, then we represent is as the
+interval $[i,j]$.
+\end{frame}
+
+  \def\Tb#1{\Tr{\psframebox{#1}}}
+  \renewcommand\TB[2]{\Tr{\psframebox{%
+        \begin{tabular}{c}
+          #1\\#2
+        \end{tabular}}}}
+\begin{frame}[fragile]{Suffix Tree using Edge-compression:
+  $\bs=CAGAAGT\$$}
+\setcounter{subfigure}{0}
+  \begin{figure}
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.2,radius=0.05,levelsep=*1.0,treefit=loose}
+    \subfloat[Full Tree]{
+	  \scalebox{0.4}{
+      \fbox{
+        \pstree[]{\TC*}{%
+          \pstree[]{\TC*\ncput*{$A$}}{%
+            \Tb{(1,4)}\ncput*{$AGT\$$}
+            \pstree[]{\TC*\ncput*{$G$}}{
+              \Tb{(1,2)}\ncput*{$AAGT\$$}
+              \Tb{(1,5)}\ncput*{$T\$$}
+            }
+          }
+          \tspace{0.2}
+          \Tb{(1,1)}\ncput*{$CAGAAGT\$$}
+          \pstree[]{\TC*\ncput*{$G$}}{%
+            \Tb{(1,3)}\ncput*{$AAGT\$$}
+            \Tb{(1,6)}\ncput*{$T\$$}
+          }
+          \Tb{(1,7)}\ncput*{$T\$$}
+        }
+      }
+	  }}
+	\subfloat[Compressed Tree]{
+     \scalebox{0.7}{
+	 \fbox{
+      \pstree[]{\TC*~[tnpos=l]{$v_1$}}{%
+        \pstree[]{\TC*~[tnpos=l]{$v_2$}\ncput*{$[2,2]$}}{%
+          \Tb{(1,4)}\ncput*{$[5,8]$}
+          \pstree[]{\TC*~[tnpos=l]{$v_3$}\ncput*{$[3,3]$}}{
+            \Tb{(1,2)}\ncput*{$[4,8]$}
+            \Tb{(1,5)}\ncput*{$[7,8]$}
+          }
+        }
+        \Tb{(1,1)}\ncput*{$[1,8]$}
+        \pstree[]{\TC*~[tnpos=l]{$v_4$}\ncput*{$[3,3]$}}{%
+          \Tb{(1,3)}\ncput*{$[4,8]$}
+          \Tb{(1,6)}\ncput*{$[7,8]$}
+        }
+        \Tb{(1,7)}\ncput*{$[7,8]$}
+		}}
+	  }}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Ukkonen Algorithm: Achieving Linear Time}
+Ukkonen's method is an {\em online} algorithm, that is,
+given a string $\bs = s_1s_2\ldots s_{n}\$$ it constructs the full
+suff\/{i}x tree in phases. 
+
+\medskip
+Phase $i$ builds the tree up to the $i$-th symbol
+in $\bs$.
+Let $\cT_{i}$ denote the
+suff\/{i}x tree up to the $i$th pref\/{i}x $\bs[1:i]$, with $1 \le i \le
+n$. Ukkonen's algorithm constructs $\cT_i$ from
+$\cT_{i-1}$, by making sure
+that all suff\/{i}xes including the {\em current} character $s_{i}$ are in
+the new intermediate tree $\cT_{i}$. 
+
+\medskip
+In other words, in the $i$th
+phase, it inserts all the suff\/{i}xes $\bs[j:i]$ from $j=1$ to
+$j=i$ into the tree $\cT_{i}$. Each such insertion is called the $j$th
+{\em extension} of the $i$th {\em phase}.
+
+\medskip
+Once we process the terminal
+character at position $n+1$ we obtain the f\/{i}nal suff\/{i}x tree $\cT$
+for $\bs$.
+
+
+\medskip
+However, this naive Ukkonen method has cubic time complexity
+because to obtain $\cT_i$ from $\cT_{i-1}$ takes $O(i^2)$ time,
+with the last phase requiring $O(n^2)$ time. With
+$n$ phases, the total time is $O(n^3)$.
+We will show that this time can be reduced to $O(n)$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm \algUkkonenSimple}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmU}{\algUkkonenSimple ($\bs$)} \AlgorithmU{}
+$n \gets \card{\bs}$\; $\bs[n+1] \gets \$$ \tcp{ append terminal
+character}
+$\cT \assign \emptyset$ \tcp{ add empty string as
+root}
+\ForEach(\tcp*[h]{phase $i$ - construct
+$\cT_i$}){$i=1,\ldots,n+1$}{
+  \ForEach(\tcp*[h]{extension $j$ for phase $i$}){$j=1,\ldots,i$}{
+    \tcp{Insert $\bs[j:i]$ into the suff\/{i}x tree}
+    F{i}nd end of the path with label $\bs[j:i-1]$ in $\cT$\;
+    Insert $s_i$ at end of path;
+  }
+}
+\Return{$\cT$}\;
+\end{algorithm}
+\end{frame}
+
+\begin{frame}{Ukkonen's Linear Time Algorithm: Implicit Suffixes}
+This optimization states that, in phase
+$i$, if the $j$th extension $\bs[j:i]$ is found in the tree, then any
+subsequent extensions will also be found, and consequently there is
+no need to process further extensions in phase $i$.
+
+\bigskip
+Thus, the suff\/{i}x tree $\cT_i$ at the end of phase $i$ has
+{\em implicit suff\/{i}xes} corresponding to extensions
+$j+1$ through $i$.
+
+\bigskip
+It is important to note that all suff\/{i}xes will
+become explicit the f\/{i}rst
+time we encounter a new substring that does not already exist in the
+tree. This will surely happen in phase $n+1$ when
+we process the terminal character
+$\$$, as it cannot occur anywhere else in
+$\bs$ (after all, $\$ \not\in \Sigma$).
+\end{frame}
+
+
+
+
+\begin{frame}{Ukkonen's Algorithm: Implicit Extensions}
+Let the current phase be $i$, and let $l \le i-1$ be
+the last explicit suff\/{i}x in the previous tree $\cT_{i-1}$.
+
+\bigskip
+All explicit suff\/{i}xes in $\cT_{i-1}$ have
+edge labels of the form $[x,i-1]$ leading to the corresponding
+leaf nodes, where the starting position
+$x$ is node specif\/{i}c, but the ending position
+must be $i-1$ because $s_{i-1}$ was added to the end of these
+paths in phase $i-1$. 
+
+\bigskip
+In the current phase $i$, we would have to
+extend these paths by adding $s_i$ at the end.
+However, instead of explicitly incrementing all the
+ending positions, we can replace the ending position by a pointer $e$ which
+keeps track of the current phase being
+processed. 
+
+\bigskip
+If we replace $[x,i-1]$ with $[x,e]$, then
+in phase $i$, if we
+set $e=i$, then immediately all the $l$ existing suff\/{i}xes get
+{\em implicitly} extended to $[x,i]$. Thus, in one operation of
+incrementing $e$ we have, in effect, taken care of
+extensions $1$ through $l$ for phase $i$.
+\end{frame}
+
+
+\begin{frame}[fragile]{Implicit Extensions: $\bs=CAGAAGT\$$, 
+  Phase ${\it i}=7$}
+\setcounter{subfigure}{0}
+\begin{figure}
+  \def\Tb#1{\Tr{\psframebox{#1}}}
+  \def\TSb#1{\TCircle[radius=0.2,doubleline=true]{#1}}
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.5,levelsep=*1.5,%
+    tnpos=a,radius=0.075}
+    \centerline{
+    \scalebox{0.8}{
+    \subfloat[$\cT_6$]{ \label{fig:fpm:seq:impexts1}
+    \scalebox{0.8}{%
+        \pstree[thislevelsep=2]{\TC*[name=r]}{%
+          \pstree[]{\TC*[name=A]\ncput*{$[2,2]=A$}}{%
+              \TSb{(1,4)}\ncput*{$[5,e]=AG$}
+              \Tb{(1,2)}\ncput*{$[3,e]=GAAG$}
+          }
+          \tspace{0.4}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGAAG$}
+          \Tb{(1,3)}\ncput*{$[3,e]=GAAG$}
+      }
+      }}
+    \hspace{0.25in}
+    \subfloat[$\cT_7$, extensions $j=1,\ldots,4$]{ \label{fig:fpm:seq:impexts2}
+    \scalebox{0.8}{%
+        \pstree[thislevelsep=2]{\TC*[name=r]}{%
+          \pstree[]{\TC*[name=A]\ncput*{$[2,2]=A$}}{%
+            \TSb{(1,4)}\ncput*{$[5,e]=AGT$}
+            \Tb{(1,2)}\ncput*{$[3,e]=GAAGT$}
+          }
+          \tspace{0.6}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGAAGT$}
+          \Tb{(1,3)}\ncput*{$[3,e]=GAAGT$}
+        }
+      }
+      }}
+      }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Ukkonen's Algorithm: Skip/count Trick}
+For the $j$th extension of phase $i$,
+we have to search for the substring $\bs[j:i-1]$
+so that we can add
+$s_i$ at the end. 
+
+\medskip
+Note that
+this string must exist in $\cT_{i-1}$ because we have already processed
+symbol $s_{i-1}$ in the previous phase.
+  Thus, instead of searching for each
+  character in $\bs[j:i-1]$ starting from the root, we f\/{i}rst
+  {\em count} the number of symbols on
+  the edge beginning with character
+  $s_{j}$; let this length be $m$. If
+  $m$ is longer than the length of the substring (i.e., if $m > i-j$), then
+  the substring must end on this edge, so we simply jump to position
+  $i-j$ and insert $s_i$.
+
+  \medskip
+  On the other hand, if $m \le i-j$, then we can
+  {\em skip} directly to the child node,
+  say $v_c$, and
+  search for the remaining string $\bs[j+m:i-1]$ from
+  $v_c$ using the same skip/count technique.
+
+  \medskip
+  With this
+  optimization, the cost of an extension becomes proportional
+  to the number of nodes on the path, as opposed to the number of
+  characters in $\bs[j:i-1]$.
+\end{frame}
+  
+  
+
+\begin{frame}{Ukkonen's Algorithm: Suffix Links}
+We can avoid searching for the substring $\bs[j:i-1]$ 
+from the root via the use of {\em suff\/{i}x links}.
+
+\medskip
+For each internal node $v_a$ we maintain a link to the
+internal node $v_b$, where $L(v_b)$ is the immediate suff\/{i}x of $L(v_a)$.
+
+\medskip
+In extension $j-1$, let $v_p$ denote the internal node under which we
+f\/{i}nd $\bs[j-1:i]$, and let $m$ be the length of the node label of $v_p$.
+To insert the $j$th extension $\bs[j:i]$,
+we follow the suff\/{i}x link from $v_p$ to another node, say $v_s$, and
+search for the
+remaining substring $\bs[j+m-1:i-1]$ from $v_s$.
+
+\medskip
+The use of suff\/{i}x links allows us to jump internally within the tree for
+different extensions, as opposed to searching from the root each time.
+\end{frame}
+
+\begin{frame}[fragile]{Linear Time Ukkonen Algorithm}
+\begin{algorithm}[H]
+\SetKw{Break}{break} 
+\SetKwInOut{AlgorithmU}{\algUkkonen ($\bs$)}
+\AlgorithmU{} 
+$n \gets \card{\bs}$ \; 
+$\bs[n+1] \gets \$$ \tcp{ append terminal character} 
+$\cT \assign \emptyset$ \tcp{ add empty string as root} 
+$l \assign 0$ \tcp{ last explicit suff\/{i}x}
+\ForEach(\tcp*[h]{phase $i$ - construct $\cT_i$}){$i=1,\ldots,n+1$}{ 
+$e \assign i$ \tcp{ implicit extensions} \nllabel{alg:fpm:seq:UkkonenImpExt}
+  \ForEach(\tcp*[h]{extension $j$ for phase $i$}){$j=l+1,\ldots,i$}{
+    \tcp{Insert $\bs[j:i]$ into the suff\/{i}x tree}
+    F{i}nd end of $\bs[j:i-1]$ in $\cT$ via skip/count
+    and suff\/{i}x links \nllabel{alg:fpm:seq:UkkonenSkip}\;
+    \eIf(\tcp*[h]{implicit suff\/{i}xes}){$s_i \in \cT$}{
+      \Break \nllabel{alg:fpm:seq:UkkonenImpSuff}\;
+      }{
+      Insert $s_i$ at end of path\;
+      Set last explicit suff\/{i}x $l$ if needed\;
+    }
+  }
+}
+\Return{$\cT$}\;
+\end{algorithm}
+\end{frame}
+  
+
+\def\Tb#1{\Tr{\psframebox{#1}}}
+  \def\TSb#1{\Tr{\pscirclebox[doubleline=true]{#1}}}
+\begin{frame}[fragile]{Ukkonen's Suffix Tree Construction:
+  $\bs=CAGAAGT\$$}
+\setcounter{subfigure}{0}
+\begin{figure}
+  %\small
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.2,levelsep=*1.25,tnpos=a,radius=0.05}
+  \centerline{
+    \subfloat[$\cT_1$]{ \label{fig:fpm:seq:ukka}
+  \scalebox{0.6}{%
+      \fbox{
+        \pstree[]{\TC*~{{\pscirclebox{$C$}$AGAAGT\$$}, $e=1$}}{%
+          \TSb{(1,1)}\ncput*{$[1,e]=C$}
+        }
+      }
+      }}
+    \subfloat[$\cT_2$]{ \label{fig:fpm:seq:ukkb}
+  \scalebox{0.6}{%
+      \fbox{
+        \pstree[]{\TC*~{{$C$\pscirclebox{$A$}$GAAGT\$$}, $e=2$}}{%
+          \TSb{(1,2)}\ncput*{$[2,e]=A$}
+          \Tb{(1,1)}\ncput*{$[1,e]=CA$}
+        }
+      }
+      }}
+    \subfloat[$\cT_3$]{ \label{fig:fpm:seq:ukkc}
+  \scalebox{0.6}{%
+      \fbox{
+        \pstree[]{\TC*~{{$CA$\pscirclebox{$G$}$AAGT\$$}, $e=3$}}{%
+          \Tb{(1,2)}\ncput*{$[2,e]=AG$}
+          \tspace{0.3}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAG$}
+          \TSb{(1,3)}\ncput*{$[3,e]=G$}
+        }
+      }
+      }}
+    \subfloat[$\cT_4$]{ \label{fig:fpm:seq:ukkd}
+  \scalebox{0.6}{%
+      \fbox{
+        \pstree[]{\TC*~{{$CAG$\pscirclebox{$A$}$AGT\$$}, $e=4$}}{%
+          \Tb{(1,2)}\ncput*{$[2,e]=AGA$}
+          \tspace{0.3}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGA$}
+          \tspace{0.3}
+          \TSb{(1,3)}\ncput*{$[3,e]=GA$}
+        }
+      }
+    }
+    }
+  }%centerline
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Ukkonen's Suffix Tree Construction:
+  $\bs=CAGAAGT\$$}
+\begin{figure}
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.2,levelsep=*1.25,tnpos=a,radius=0.05}
+  \centerline{
+    \subfloat[$\cT_5$]{ \label{fig:fpm:seq:ukke}
+  \scalebox{0.5}{%
+      \fbox{
+        \pstree[thislevelsep=*1.45]{\TC*[name=r]~{{$CAGA$\pscirclebox{$A$}$GT\$$},
+        $e=5$}}{%
+          \pstree[]{\TC*[name=A]\ncput*{$[2,2]=A$}}{%
+              \TSb{(1,4)}\ncput*{$[5,e]=A$}
+              \Tb{(1,2)}\ncput*{$[3,e]=GAA$}
+          }
+          \tspace{0.3}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGAA$}
+          \tspace{0.2}
+          \Tb{(1,3)}\ncput*{$[3,e]=GAA$}
+        }
+        \ncarc[arcangle=50,linestyle=dashed,arrows=->,arrowscale=2]{A}{r}
+      }
+      }}
+    \subfloat[$\cT_6$]{ \label{fig:fpm:seq:ukkf}
+  \scalebox{0.5}{%
+      \fbox{
+        \pstree[thislevelsep=*1.45]{\TC*[name=r]~{{$CAGAA$\pscirclebox{$G$}$T\$$},
+        $e=6$}}{%
+          \pstree[]{\TC*[name=A]\ncput*{$[2,2]=A$}}{%
+              \TSb{(1,4)}\ncput*{$[5,e]=AG$}
+              \Tb{(1,2)}\ncput*{$[3,e]=GAAG$}
+          }
+          \tspace{0.4}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGAAG$}
+          \tspace{0.3}
+          \Tb{(1,3)}\ncput*{$[3,e]=GAAG$}
+        }
+        \ncarc[arcangle=50,linestyle=dashed,arrows=->,arrowscale=2]{A}{r}
+      }
+      }}
+    \subfloat[$\cT_7$]{  \label{fig:fpm:seq:ukkg}
+  \scalebox{0.5}{%
+      \fbox{
+        \pstree[thislevelsep=*1.45]{\TC*[name=r]~{{$CAGAAG$\pscirclebox{$T$}$\$$},
+        $e=7$}}{%
+          \pstree[]{\TC*[name=A]\ncput*{$[2,2]=A$}}{%
+            \Tb{(1,4)}\ncput*{$[5,e]=AGT$}
+            \pstree[]{\TC*[name=AG]\ncput*{$[3,3]=G$}}{%
+              \Tb{(1,2)}\ncput*{$[4,e]=AAGT$}
+              \Tb{(1,5)}\ncput*{$[7,e]=T$}
+            }
+          }
+          \tspace{0.5}
+          \Tb{(1,1)}\ncput*[]{$[1,e]=CAGAAGT$}
+          \tspace{0.8}
+          \pstree[]{\TC*[name=G]\ncput*{$[3,3]=G$}}{%
+            \Tb{(1,3)}\ncput*{$[4,e]=AAGT$}
+            \Tb{(1,6)}\ncput*{$[7,e]=T$}
+          }
+          \tspace{0.3}
+          \TSb{(1,7)}\ncput*{$[7,e]=T$}
+        }
+        \ncarc[arcangle=50,linestyle=dashed,arrows=->,arrowscale=2]{A}{r}
+        \ncline[linestyle=dashed,arrows=->,arrowscale=2]{AG}{G}
+        \ncarc[arcangle=20,linestyle=dashed,arrows=->,arrowscale=2]{G}{r}
+      }
+    }
+    }
+  }%centerline
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{Extensions in Phase $i=7$}
+\setcounter{subfigure}{0}
+\begin{figure}
+\centerline{
+  \def\Tb#1{\Tr{\psframebox{#1}}}
+  \def\TSb#1{\TCircle[radius=0.2,doubleline=true]{#1}}
+  \psset{unit=1in}
+  \psset{tpos=0.5,nrot=:U,treesep=0.15,levelsep=*1.5,tnpos=a,radius=0.075}
+    \subfloat[]{\label{fig:fpm:seq:exts1}
+    \scalebox{0.41}{%
+      \psframebox[framesep=10pt]{
+        \pstree[thislevelsep=*2]{\TC*[name=r]~{Extensions 1--4}}{%
+          \pstree[]{\TC*[name=A]~[tnpos=l]{$v_A$}\ncput*{$[2,2]=A$}}{%
+            \TSb{(1,4)}\ncput*{$[5,e]=AGT$}
+          \tspace{0.4}
+            \Tb{(1,2)}\ncput*{$[3,e]=GAAGT$}
+          }
+          \tspace{0.4}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGAAGT$}
+          \tspace{0.3}
+          \Tb{(1,3)}\ncput*{$[3,e]=GAAGT$}
+        }
+        \ncarc[arcangle=30,linestyle=dashed,arrows=->,arrowscale=2]{A}{r}
+      }
+      }}
+    \subfloat[]{\label{fig:fpm:seq:exts2}
+    \scalebox{0.41}{%
+      \psframebox[framesep=10pt]{
+        \pstree[thislevelsep=*2]{\TC*[name=r]~{{Extension 5: $AGT$}}}{%
+          \pstree[]{\TC*[name=A]~[tnpos=l]{$v_A$}\ncput*{$[2,2]=A$}}{%
+            \Tb{(1,4)}\ncput*{$[5,e]=AGT$}
+            \pstree[]{\TC*[name=AG]~[tnpos=l]{$v_{AG}$}\ncput*{$[3,3]=G$}}{%
+              \Tb{(1,2)}\ncput*{$[4,e]=AAGT$}
+          \tspace{0.4}
+              \TSb{(1,5)}\ncput*{$[7,e]=T$}
+            }
+          }
+          \tspace{0.4}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGAAGT$}
+          \tspace{0.3}
+          \Tb{(1,3)}\ncput*{$[3,e]=GAAGT$}
+        }
+        \ncarc[arcangle=30,linestyle=dashed,arrows=->,arrowscale=2]{A}{r}
+      }
+      }}
+    \subfloat[]{\label{fig:fpm:seq:exts3}
+    \scalebox{0.41}{%
+      \psframebox[framesep=10pt]{
+        \pstree[thislevelsep=*2]{\TC*[name=r]~{{Extension 6: $GT$}}}{%
+          \pstree[]{\TC*[name=A]~[tnpos=l]{$v_A$}\ncput*{$[2,2]=A$}}{%
+            \Tb{(1,4)}\ncput*{$[5,e]=AGT$}
+            \pstree[]{\TC*[name=AG]~[tnpos=l]{$v_{AG}$}\ncput*{$[3,3]=G$}}{%
+              \Tb{(1,2)}\ncput*{$[4,e]=AAGT$}
+          \tspace{0.4}
+              \Tb{(1,5)}\ncput*{$[7,e]=T$}
+            }
+          }
+          \tspace{0.3}
+          \Tb{(1,1)}\ncput*{$[1,e]=CAGAAGT$}
+          \tspace{0.3}
+          \pstree[]{\TC*[name=G]~[tnpos=l]{$v_{G}$}\ncput*{$[3,3]=G$}}{%
+            \Tb{(1,3)}\ncput*{$[4,e]=AAGT$}
+          \tspace{0.3}
+            \TSb{(1,6)}\ncput*{$[7,e]=T$}
+          }
+        }
+        \ncarc[arcangle=30,linestyle=dashed,arrows=->,arrowscale=2]{A}{r}
+        \ncline[linestyle=dashed,arrows=->,arrowscale=2]{AG}{G}
+      }
+    }}
+   }
+\end{figure}
+\end{frame}

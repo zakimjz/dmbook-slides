@@ -1,0 +1,811 @@
+\lecture{highdim}{highdim}
+
+\date{Chapter 6: High-dimensional Data}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{High-dimensional Space}
+\small
+
+Let $\bD$ be a $n\times d$ data matrix. 
+In data mining typically the data is very high dimensional.
+Understanding the nature of high-dimensional space, or
+{\em hyperspace}, is very important, especially because it
+does not behave like the more familiar geometry in two or three
+dimensions.
+
+
+\medskip{\bf Hyper-rectangle:}
+ The data space is a 
+$d$-dimensional
+{\em hyper-rectangle}
+\index{hyper-rectangle}
+\begin{align*}
+    R_d & = \prod_{j=1}^{d} \Bigl[\min(X_{j}), \max(X_{j})\Bigr]
+\end{align*}
+where $\min(X_j)$ and $max(X_j)$ specify the range of $X_j$.
+
+\medskip{\bf Hypercube:}
+Assume the data is centered, and let $m$ 
+denote the maximum attribute value
+\begin{align*}
+    m = \max_{j=1}^d \max_{i=1}^n \Bigl\{ \abs{x_{ij}} \Bigr\}
+\end{align*}
+
+The data hyperspace can be represented as a {\em hypercube}, centered
+at $\bzero$, with all sides of length $l=2m$, given as
+\begin{align*}
+    H_d(l) = \Bigl\{\bx = (x_1, x_2, \ldots, x_d)^T \; \big|
+    \; \forall i,\;
+	x_i \in [-l/2, l/2] \Bigr\}
+\end{align*}
+The {\em unit hypercube} has all sides
+of length $l=1$, and is denoted as $H_d(1)$.
+\end{frame}
+
+
+\begin{frame}{Hypersphere}
+Assume that the data has been centered, so that
+$\bmu = \bzero$.
+Let $r$ denote the largest magnitude among all points:
+\begin{align*}
+    r = \max_i \Bigl\{ \norm{\bx_i} \Bigr\}
+\end{align*}
+
+The data hyperspace can be represented as a
+$d$-dimensional {\em hyperball}
+centered at $\bzero$ with radius $r$, def\/{i}ned as
+\begin{align*}
+  B_d(r) & = \bigl\{ \bx\; |\;\; \norm{\bx} \le r\bigr\}\\
+  \text{or } B_d(r) & = \lB\{
+    \bx = (x_1, x_2, \ldots, x_d) \; \big| \;
+    \sum_{j=1}^{d} x_{j}^2 \le r^2
+    \rB\}
+\end{align*}
+
+The surface of the hyperball is called a {\em hypersphere},
+and it consists of all the points exactly at distance $r$ from
+the center of the hyperball
+\begin{align*}
+  S_d(r) & = \bigl\{ \bx\; |\;\; \norm{\bx} = r\bigr\}\\
+  \text{or } S_d(r) & = \lB\{\bx = (x_1, x_2, \ldots, x_d)
+  \; \big| \;
+  \sum_{j=1}^{d} (x_{j})^2 = r^2\rB\}
+\end{align*}
+\end{frame}
+
+
+
+\readdata{\dataSLW}{EDA/highdim/figs/iris-slw-c.dat}
+\begin{frame}{Iris Data Hyperspace: Hypercube and Hypersphere}
+  \framesubtitle{$\textit{l}=4.12$ and $\textit{r}=2.19$}
+\centering
+\scalebox{0.8}{
+\psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2}
+\psset{xAxisLabel=$X_1$: sepal length,yAxisLabel= $X_2$: sepal width,
+        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.5in,c}}
+\psgraph[tickstyle=bottom,axesstyle=frame,Ox=-2,Oy=-2]%
+    (-2.06,-2.06)(2.06,2.06){3in}{3in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataSLW}
+\psdot[dotstyle=*,dotscale=2](0,0)
+\pscircle[linestyle=dashed]{2.188}
+\pnode(0,0){O}
+\pnode(2.06,0.75){A}
+\ncline[arrowscale=2]{->}{O}{A}
+\naput[nrot=:U]{$r$}
+%\psline[](0,0)(2.06,0.75)
+\endpsgraph
+}
+\end{frame}
+
+
+\begin{frame}{High-dimensional Volumes}
+%
+
+
+{\bf Hypercube:}
+The volume of a hypercube with edge length $l$ is given as
+\begin{align*}
+\vol(H_d(l)) = l^d
+\end{align*}
+%
+
+\medskip
+{\bf Hypersphere}%h3
+The volume of a hyperball and its corresponding hypersphere
+is identical
+The volume of a hypersphere is given as
+\begin{align*}
+  \text{In 1 dimension: } & \vol(S_1(r)) = 2r \\
+  \text{In 2 dimensions: } & \vol(S_2(r)) = \pi r^2 \\
+  \text{In 3 dimensions: } & \vol(S_3(r)) = \frac{4}{3}\pi r^3 \\
+\text{In $d$-dimensions: } & \vol(S_d(r))=K_d r^d =
+\lB(\frac{\pi^{\frac{d}{2}}}{\Gamma\lB(\frac{d}{2}+1\rB)}\rB) r^d
+\end{align*}
+where
+\begin{align*}
+\Gamma\lB(\frac{d}{2}+1\rB) =
+\begin{cases}
+  {\lB(\frac{d}{2}\rB)}! & \text{if $d$ is even}\\
+  \sqrt{\pi}\lB(\frac{d!!}{2^{(d+1)/2}}\rB) & \text{if $d$ is odd}
+\end{cases}
+\end{align*}
+\end{frame}
+
+
+\readdata{\dataSV}{EDA/highdim/figs/spherevol.dat}
+\begin{frame}{Volume of Unit Hypersphere}
+  \small
+With increasing dimensionality the hypersphere volume 
+f\/{i}rst increases up to a point, and then
+starts to decrease, and ultimately vanishes. In particular, for the
+unit hypersphere with $r=1$,
+\begin{align*}
+\lim_{d\to\infty} \vol(S_d(1)) =
+\lim_{d\to\infty}\frac{\pi^{\frac{d}{2}}}{\Gamma(\frac{d}{2}+1)} \to 0
+\end{align*}
+    
+\normalsize
+\centerline{
+\scalebox{0.6}{
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$d$,yAxisLabel= $\vol(S_d(1))$,
+        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.4in,c}}
+    \psgraph[tickstyle=bottom,Dx=5,Dy=1,subticks=2]{->}(0,0)(55,6){4in}{2.5in}%
+    \dataplot[showpoints=true]{\dataSV}
+\endpsgraph
+}}
+\end{frame}
+
+
+\begin{frame}{Hypersphere Inscribed within Hypercube}
+
+Consider the space
+enclosed within the largest hypersphere that can be accommodated within
+a hypercube (which represents the dataspace).  
+
+\medskip
+The ratio of the volume of the hypersphere of radius $r$ to the
+hypercube with side length $l=2r$ is given as
+\begin{align*}
+  \text{In 2 dimensions: } &
+  \frac{\vol(S_2(r))}{\vol(H_2(2r))} = \frac{\pi r^2}{4 r^2} = \frac{\pi}{4} = 78.5\%\\
+  \text{In 3 dimensions: } &
+\frac{\vol(S_3(r))}{\vol(H_3(2r))} = 
+\frac{\frac{4}{3} \pi r^3}{8 r^3} = \frac{\pi}{6} = 52.4\%\\
+\text{In $d$ dimensions: } &
+\lim_{d \to \infty} \frac{\vol(S_d(r))}{\vol(H_d(2r))} = \lim_{d \to \infty}
+\frac{\pi^{d/2}}{2^d \Gamma(\frac{d}{2}+1)} \to 0
+\end{align*}
+
+As the dimensionality increases, most of the volume of
+the hypercube is in the ``corners,'' whereas the center is essentially
+empty. 
+\end{frame}
+
+
+\begin{frame}{Hypersphere Inscribed inside a Hypercube}
+\centerline{
+%%\captionsetup[subfloat]{captionskip=5pt}
+%\subfloat[]{\label{fig:eda:hd:inscribed2d}
+\scalebox{0.8}{
+\psset{unit=0.75in}
+\pspicture(-1.5,-1.55)(1.5,1.5)
+\psaxes[labels=none,tickstyle=bottom,axesstyle=frame](-1,-1)(1,1)
+\pscircle[linecolor=darkgray](0,0){1}
+\uput[d](-1,-1){$-r$}
+\uput[d](0,-1){0}
+\uput[d](1,-1){$r$}
+\endpspicture
+}
+\hspace{0.25in}
+%\subfloat[]{\label{fig:eda:hd:inscribed3d}
+\scalebox{0.8}{
+\psset{viewpoint=30 30 45 rtp2xyz,Decran=60,lightsrc=viewpoint}
+\begin{pspicture}(-3,-3.25)(3,3.25)
+\psSolid[object=sphere, hollow, linecolor=darkgray,
+    opacity=0.75,r=1,incolor=white, %fillcolor=gray!25,
+    ngrid=18 18]%
+\psSolid[object=parallelepiped,a=2,b=2,c=2,action=draw](0,0,0)
+\multido{\ix=-1+1}{3}{%
+    \psPoint(\ix\space,1,-1){X1}
+    \psPoint(\ix\space,1.05,-1){X2}
+    \psline(X1)(X2)}
+%\uput[dr](X1){\ix}
+\multido{\iy=-1+1}{3}{%
+    \psPoint(1,\iy\space,-1){Y1}
+    \psPoint(1.05,\iy\space,-1){Y2}
+    \psline(Y1)(Y2)}
+%\uput[dl](Y1){\iy}
+\psPoint(1,-1,-1){Y1}
+\uput[dl](Y1){$-r$}
+\psPoint(1,0,-1){Y1}
+\uput[dl](Y1){0}
+\psPoint(1,1,-1){Y1}
+\uput[dl](Y1){$r$}
+\multido{\iz=-1+1}{3}{%
+    \psPoint(1,-1,\iz\space){Z1}
+    \psPoint(1,-1.05,\iz\space){Z2}
+    \psline(Z1)(Z2)}
+%\uput[l](Z1){\iz}
+\end{pspicture}
+}
+}
+\end{frame}
+
+
+
+\begin{frame}{Conceptual View of High-dimensional Space}
+  \framesubtitle{Two, three, four, and higher dimensions}
+
+  All the volume of the hyperspace is in the corners, with the center
+  being essentially empty.
+
+  \bigskip
+  \centerline{High-dimensional space looks like a rolled-up porcupine!}
+  
+
+    \centerline{
+	\begin{tabular}{cccc}
+    \scalebox{0.5}{
+    \begin{pspicture}(-2.5,-2.5)(2.5,2.5)
+    \input{EDA/highdim/porcupine2}
+    \end{pspicture}
+    } &
+    \scalebox{0.5}{
+    \begin{pspicture}(-2.5,-2.5)(2.5,2.5)
+    \input{EDA/highdim/porcupine3}
+    \end{pspicture}
+    } &
+    \scalebox{0.5}{
+    \begin{pspicture}(-2.5,-2.5)(2.5,2.5)
+    \input{EDA/highdim/porcupine4}
+    \end{pspicture}
+    } &
+    \scalebox{0.5}{
+    \begin{pspicture}(-2.5,-2.5)(2.5,2.5)
+    \input{EDA/highdim/porcupine6}
+    \end{pspicture}
+    }\\
+	(a) 2D &
+	(b) 3D &
+	(c) 4D &
+	(d) $d$D
+	\end{tabular}
+    }
+\end{frame}
+
+
+\begin{frame}{Volume of a Thin Shell}
+
+  \begin{columns}
+	\column{0.5\textwidth}
+The volume of a thin hypershell of width
+$\epsilon$ is given as
+\begin{align*}
+  \vol(S_d(r,\epsilon)) & = \vol(S_d(r)) - \vol(S_d(r - \epsilon))\\
+  & = K_d r^d - K_d (r -\epsilon)^d.
+\end{align*}
+
+The ratio of volume of the thin shell to the
+volume of the outer sphere:
+\begin{align*}
+\frac{\vol(S_d(r,\epsilon))}{\vol(S_d(r))} =
+\frac{K_d r^d - K_d (r-\epsilon)^d}{K_d r^d} =
+1 - \lB(1-\frac{\epsilon}{r}\rB)^d
+\end{align*}
+
+As $d$ increases, we have
+\begin{align*}
+\lim_{d\to \infty} \frac{\vol(S_d(r,\epsilon))}{\vol(S_d(r))} =
+\lim_{d\to \infty} 1 - \lB(1-\frac{\epsilon}{r}\rB)^d \to 1
+\end{align*}
+
+
+	\column{0.45\textwidth}
+	\normalsize
+\centerline{
+\scalebox{0.7}{
+\psset{unit=0.75in}
+\pspicture(-1.5,-1.5)(1.75,1.75)
+\pscircle[fillstyle=solid,fillcolor=lightgray](0,0){1.5}
+\pscircle[fillstyle=solid,fillcolor=white](0,0){1.25}
+\pnode(0,0){O}
+\pnode(1.5,0){A}
+\pnode(0.884,-0.884){B}
+\pnode(1.06,-1.06){C}
+\ncline[arrowscale=2]{->}{O}{A}
+\naput[nrot=:U]{$r$}
+\ncline[arrowscale=2]{->}{O}{B}
+\nbput[nrot=:U]{$r-\epsilon$}
+\ncline[]{-}{B}{C}
+\nbput[nrot=:U]{$\epsilon$}
+\endpspicture
+}}
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}{Diagonals in Hyperspace}
+
+Consider a $d$-dimensional hypercube, with origin
+${\bm 0}_d = (0_1,0_2,\ldots,0_d)$, and bounded in each dimension in
+the range $[-1,1]$. Each \hbox{``corner''} of the hyperspace is a
+$d$-dimensional vector of the form $(\pm 1_1, \pm 1_2, \ldots, \pm 1_d)^T$.
+
+\smallskip
+Let $\be_i = (0_1, \ldots, 1_i, \ldots, 0_d)^T$ denote the
+$d$-dimensional canonical unit vector in dimension $i$,
+and let $\bone$ denote the $d$-dimensional diagonal vector
+$(1_1,1_2,\ldots,1_d)^T$.
+
+
+\medskip
+Consider the angle $\theta_d$ between the diagonal vector
+$\bone$ and the f\/{i}rst axis $\be_1$, in $d$ dimensions:
+\begin{align*}
+  \cos\theta_d = \frac{\be_1^T \bone}{\|\be_1\| \; \| \bone\|} =
+  \frac{\be_1^T \bone}{\sqrt{\be_1^T\be_1} \sqrt{\bone^T\bone}} =
+  \frac{1}{\sqrt{1}\sqrt{d}}  = \frac{1}{\sqrt{d}}
+\end{align*}
+
+\medskip
+As $d$ increases, we have
+\begin{align*}
+& \lim_{d\to \infty} \cos \theta_d =
+\lim_{d\to\infty} \frac{1}{\sqrt{d}} \to 0\\
+\shortintertext{which implies that}
+& \lim_{d\to\infty} \theta_d \to \frac{\pi}{2} = 90^\circ
+\end{align*}
+\end{frame}
+
+
+%\begin{figure}[b!]
+\def\pshlabel#1{\scriptsize {$#1$}}
+\def\psvlabel#1{\scriptsize {$#1$}}
+\begin{frame}{Angle between Diagonal Vector $\bone$ and $\be_1$}
+\centerline{
+\begin{tabular}{cc}
+%\subfloat[]{
+\scalebox{0.8}{
+\psset{unit=0.75in,arrowscale=1.5}
+\pspicture(-1.5,-1.75)(1.5,1.5)
+\psaxes[tickstyle=bottom,axesstyle=frame,Ox=-1,Oy=-1](-1,-1)(1,1)
+\psline[](-1,0)(1,0)
+\psline[](0,-1)(0,1)
+\psline[linestyle=dotted](-1,-1)(1,1)
+\psline[linestyle=dotted](-1,1)(1,-1)
+\psline[linewidth=2pt]{->}(1,0)
+\psline[linewidth=2pt]{->}(1,1)
+\uput[ur](1,1){$\bone$}
+\uput[r](1,0){$\be_1$}
+%\uput[d](-1,-1){-1}
+%\uput[d](0,-1){0}
+%\uput[d](1,-1){1}
+%\uput[l](-1,-1){-1}
+%\uput[l](-1,0){0}
+%\uput[l](-1,1){1}
+\pstGeonode[PointSymbol=none,PointName=none](0,0){O}(1,0){B}(1,1){C}
+\pstMarkAngle[MarkAngleRadius=0.25,LabelSep=0.4]{B}{O}{C}{$\theta$}
+\endpspicture
+} &
+\scalebox{0.7}{
+\definecolor{mygray}{gray}{0.95}
+\psset{viewpoint=30 -35 20 rtp2xyz,Decran=60,
+    lightsrc=viewpoint, opacity=0.8}
+\begin{pspicture}(-3,-3.25)(3,3.25)
+\psSolid[object=plan, definition=equation, action=draw*,
+    fillcolor=mygray,incolor=mygray,
+    args={[0 0 1 0]}, base=-1 1 -1 1]
+\psSolid[object=parallelepiped,a=2,b=2,c=2,action=draw](0,0,0)
+\multido{\ix=-1+1}{3}{%
+    \psPoint(\ix\space,-1,-1){X1}
+    \psPoint(\ix\space,-1.05,-1){X2}
+    \psline(X1)(X2)\uput[dl](X1){\scriptsize $\ix$}}
+\multido{\iy=-1+1}{3}{%
+    \psPoint(1,\iy\space,-1){Y1}
+    \psPoint(1.05,\iy\space,-1){Y2}
+    \psline(Y1)(Y2)\uput[dr](Y1){\scriptsize $\iy$}}
+\multido{\iz=-1+1}{3}{%
+    \psPoint(-1,-1,\iz\space){Z1}
+    \psPoint(-1,-1.05,\iz\space){Z2}
+    \psline(Z1)(Z2)\uput[l](Z1){\scriptsize $\iz$}}
+\psSolid[object=line,args=-1 0 0 1 0 0]
+\psSolid[object=line,args=0 -1 0 0 1 0]
+\psSolid[object=line,args=0 0 -1 0 0 1]
+\psset{linestyle=dotted}
+\psSolid[object=line,args=-1 -1 -1 1 1 1]
+\psSolid[object=line,args=1 -1 -1 -1 1 1]
+\psSolid[object=line,args=-1 1 -1 1 -1 1]
+\psSolid[object=line,args=-1 -1 1 1 1 -1]
+\psset{linestyle=solid,arrowscale=1.5}
+\psSolid[object=vecteur, args=1 0 0, linewidth=1pt]
+\psSolid[object=vecteur, args=1 1 1, linewidth=1pt]
+\psPoint(0,0,0){O}
+\psPoint(1,0,0){A}
+\psPoint(1,1,1){C}
+\psline[linewidth=2pt]{->}(O)(A)
+\psline[linewidth=2pt]{->}(O)(C)
+\uput[ur](C){$\bone$}
+\uput[dr](A){$\be_1$}
+\pstMarkAngle[MarkAngleRadius=0.6,LabelSep=0.75]{A}{O}{C}{$\theta$}
+\end{pspicture}
+}\\
+(a) In 2D & (b) In 3D
+\end{tabular}
+}%}
+
+\medskip
+\small
+In high dimensions all of the diagonal vectors are
+perpendicular (or orthogonal) to all the coordinates axes!
+Each of the $2^{d-1}$ new axes connecting pairs of 
+$2^d$ corners are essentially orthogonal to all of
+the $d$ principal coordinate axes! Thus, in effect, high-dimensional
+space has an exponential number of orthogonal ``axes.''
+
+\end{frame}
+
+
+
+\begin{frame}{Density of the Multivariate Normal}
+
+  \small
+
+Consider the standard multivariate normal distribution
+with $\bmu = \bzero$, and $\cov = \bI$ 
+\begin{align*}
+f(\bx) = \frac{1}{(\sqrt{2\pi})^d}\exp\lB\{-\frac{\bx^T
+\bx}{2}\rB\}
+\end{align*}
+
+\medskip
+The peak of the density is at the mean. 
+Consider the set of points $\bx$ with density at least
+$\alpha$ fraction of the density at the mean
+\begin{align*}
+\frac{f(\bx)}{f(\bzero)} & \ge \alpha\nonumber\\
+\exp\lB\{-\frac{\bx^T\bx}{2}\rB\}  & \ge \alpha\nonumber\\
+ \bx^T\bx  & \le -2 \ln (\alpha)\nonumber\\
+  \sum_{i=1}^d (x_i)^2 & \le -2 \ln (\alpha)
+\end{align*}
+
+\medskip
+The sum of squared IID random variables follows a chi-squared
+distribution $\chi^2_d$. Thus,
+\begin{align*}
+P\lB(\frac{f(\bx)}{f(\bzero)} \geq \alpha\rB) 
+=  F_{\chi^2_d}(-2\ln(\alpha))
+\end{align*}
+where $F_{\chi^2_q}$ is the CDF.
+
+\medskip
+As dimensionality increases, this probability
+decreases sharply, and eventually tends to zero, that is,
+\begin{equation*}
+\lim_{d\to\infty}  P\lB( \bx^T\bx \le -2\ln(\alpha) \rB) \to 0
+\end{equation*}
+Thus, in higher dimensions the probability density around the
+mean decreases very rapidly as one moves away from the mean. In
+essence the entire probability mass migrates to the tail regions.
+\end{frame}
+
+
+
+\def\pshlabel#1{\scriptsize {$#1$}}
+\def\psvlabel#1{\scriptsize {$#1$}}
+\begin{frame}{Density Contour for $\alpha$ Fraction of the Density at
+  the Mean: One Dimension}
+
+  Let $\alpha=0.5$, then $-2\ln(0.5)=1.386$ and 
+  $F_{\chi^2_1}(1.386) = 0.76$. Thus, 24\% of the density is in the
+  tail regions.
+
+  \bigskip
+\centerline{
+%\captionsetup[subfloat]{captionskip=10pt}
+%\subfloat[]{
+\psset{yunit=3in,xunit=0.3in}
+\begin{pspicture}(-4,-0.05)(4,0.5)%
+\psaxes[Dy=0.1,arrowscale=1.5]{->}(0,0)(-4.5,0)(4.5,0.5)
+\psGauss[sigma=1]{-4.5}{4.5}%
+\psline[linewidth=2pt](-1.177,0.2)(1.177,0.2)
+\psset{dotscale=0.75,dotstyle=B|}
+\psline[linewidth=2pt,showpoints=true](-1.177,0)(1.177,0)
+\uput[ur](1.177,0.2){$\alpha=0.5$}
+\end{pspicture}
+}%}
+
+\end{frame}
+
+
+
+\begin{frame}{Density Contour for $\alpha$ Fraction of the Density at
+  the Mean: Two Dimensions}
+
+    Let $\alpha=0.5$, then $-2\ln(0.5)=1.386$ and 
+  $F_{\chi^2_2}(1.386) = 0.50$. Thus, 50\% of the density is in the
+  tail regions.
+
+\bigskip
+\centerline{
+%\subfloat[]{
+\scalebox{0.7}{
+\psset{unit=0.25in}
+\psset{viewpoint=30 20 30 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,opacity=0.9,incolor=white}
+\begin{pspicture}(-7,-6)(7,7.5)
+%peak at 0 is 1/2pi = 0.159, taking 0.159*20/2 = 1.59 offset
+\psSurface[ngrid=0.25 0.25, linewidth=0.1pt,
+linecolor=lightgray,
+intersectionplan ={[0 0 1 -1.59]},
+intersectionlinewidth =2,
+intersectioncolor=(Black),
+intersectiontype=0,
+transform={1 1 20 scaleOpoint3d},algebraic](-4,-4)(4,4){%
+  (1/(2*pi))*e^(-1*((x^2)+(y^2))/2)}
+%\psSolid[object=cylindrecreux,h=0.025,r=1.18,mode=4](0,0,0)
+\axesIIID[axisnames={X_1,X_2,f(\bx)}](-4.1,-4.1,0)(5,5,4)
+\multido{\ix=-4+1}{9}{%
+                \psPoint(\ix\space,4,0){X1}
+                \psPoint(\ix\space,4.2,0){X2}
+                \psline(X1)(X2)\uput[dr](X1){$\ix$}}
+\multido{\iy=-4+1}{9}{%
+                \psPoint(4,\iy\space,0){Y1}
+                \psPoint(4.2,\iy\space,0){Y2}
+                \psline(Y1)(Y2)\uput[dl](Y1){$\iy$}}
+\multido{\nz=0+1,\nl=0+0.05}{4}{%
+        \psPoint(0,0,\nz\space){Z1}
+        \psPoint(0,-0.2,\nz\space){Z2}
+        \psline(Z1)(Z2)\uput[l](Z1){\nl}}
+\psdot[dotsize=0.3](0,0,0)
+\psPoint(0,1.177,1.61){A}
+\uput[r](A){$\alpha=0.5$}
+\psset{solidmemory}
+\psSolid[object=plan, action=none, definition=equation,
+args={[0 0 1 0]}, name=monplan]
+\psset{plan=monplan}
+\psProjection[object=cercle,linewidth=2pt,args=0 0 1.1774]
+\composeSolid
+\end{pspicture}
+}}%}
+
+\end{frame}
+
+
+\def\pshlabel#1{\scriptsize {$#1$}}
+\def\psvlabel#1{\scriptsize {$#1$}}
+\begin{frame}{Chi-Squared Distribution: $P(f(\bx)/f(\bzero) \ge \alpha)$}
+
+  This probability decreases
+rapidly with dimensionality. For 2D, it is $0.5$. For 3D it is $0.29$,
+ie., $71\%$ of the density is in the tails.
+By $d=10$, it
+decreases to $0.075\%$, that is, 99.925\% of the points lie in
+the extreme or tail regions.
+
+
+\psset{plotpoints=200,tickstyle=bottom}
+\psset{xAxisLabel=$x$,yAxisLabel=$f(x)$}
+  \bigskip
+  \centerline{~}
+\centerline{
+\scalebox{0.9}{
+\hspace{0.5in}
+%\subfloat[$d=2$]{
+\begin{pspicture}(0,-0.5)(1,5)
+\begin{psgraph}[Dx=5,Dy=0.1]{->}(0,0)(16,0.55){2in}{2in}
+\pscustom[fillstyle=solid,fillcolor=lightgray]{%
+    \psChiIIDist[nue=2]{0.001}{1.39}%
+    \psline[](1.39,0)(0.01,0)}
+\psChiIIDist[nue=2,linewidth=1.5pt]{0.001}{14}
+\uput[0](1,0.45){\scriptsize $F=0.5$}
+\end{psgraph}
+\end{pspicture}
+%}
+%%\hspace{-0.25in}
+%\subfloat[$d=3$]{
+\begin{pspicture}(0,-0.5)(1,5)
+\begin{psgraph}[Dx=5,Dy=0.05]{->}(0,0)(20,0.3){2in}{2in}
+\pscustom[fillstyle=solid,fillcolor=lightgray]{%
+    \psChiIIDist[nue=3]{0.0001}{1.39}%
+    \psline[](1.39,0)(0.01,0)}
+\psChiIIDist[nue=3,linewidth=1.5pt]{0.0001}{16}
+\uput[0](1,0.27){\scriptsize $F=0.29$}
+\end{psgraph}
+\end{pspicture}
+}}
+\end{frame}
+
+
+\begin{frame}{Hypersphere Volume: Polar Coordinates in 2D}
+
+  \begin{columns}
+	\column{0.5\textwidth}
+\centerline{
+\psset{unit=0.75in}
+\pspicture(-3,0)(3,3)
+\psset{xAxisLabel=$X_1$,yAxisLabel= $X_2$}
+\psgraph[labels=none,tickstyle=bottom,arrows=->]%
+    (0,0)(-1.25,-1.25)(1.25,1.25){2in}{!}
+\pscircle[](0,0){1}
+\pstGeonode[PointSymbol=none,PointName=none](0,0){O}(1,0){B}(0.707,0.707){C}
+\psdot[dotscale=2,dotstyle=Bo,fillcolor=lightgray](C)
+\pstMarkAngle[MarkAngleRadius=0.25,LabelSep=0.4,
+    arrows=->]{B}{O}{C}{$\theta_1$}
+\ncline[arrowscale=2,linewidth=2pt]{->}{O}{C}
+\naput[nrot=:U]{$r$}
+\uput[45](C){$(x_1,x_2)$}
+\psline[linestyle=dashed](0.707,0)(C)
+\psline[linestyle=dashed](0,0.707)(C)
+\endpsgraph
+\endpspicture
+}
+
+\column{0.5\textwidth}
+\small
+The point $\bx=(x_1, x_2)$ in polar coordinates
+\vspace*{-0.3cm}
+\begin{align*}
+    x_1 & = r \cos\theta_1 = r c_1\\[0.1cm]
+    x_2 & = r \sin\theta_1 = r s_1
+\end{align*}
+\vspace*{-0.3cm}
+where $r = \norm{\bx}$, and
+$\cos\theta_1 = c_1$ and
+$\sin\theta_1= s_1$.
+
+The {\em Jacobian matrix} for this transformation is given as
+\begin{align*}
+    J(\theta_1) =
+    \matr{
+    \frac{\partial x_1}{\partial r} &
+    \frac{\partial x_1}{\partial \theta_1}\\[1ex]
+    \frac{\partial x_2}{\partial r} &
+    \frac{\partial x_2}{\partial \theta_1}\\
+    } =
+    \matr{
+    c_1 & -r s_1\\
+    s_1 & r c_1\\
+    }
+\end{align*}
+
+Hypersphere volume is obtained by
+integration over $r$ and $\theta_1$ 
+(with $r > 0$, and $0 \le \theta_1 \le
+2\pi$):
+\begin{align*}
+    \vol(S_2(r)) & = \int_r \int_{\theta_1}
+    \Bigl|\det(J(\theta_1))\Bigr| \; dr \;
+    d{\theta_1}\nonumber\\
+    & = \int_0^r \int_0^{2\pi} r \; dr \; d{\theta_1} =
+    \int_0^r r \; dr \int_0^{2\pi}  d{\theta_1}\nonumber\\
+    & = \lB.\frac{r^2}{2}\rB|_0^r
+    \cdot \Bigl.\theta_1\Bigr|_0^{2\pi} = \pi r^2
+\end{align*}
+
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Hypersphere Volume: Polar Coordinates in 3D}
+
+  \begin{columns}
+
+	\column{0.5\textwidth}
+\centerline{
+\scalebox{0.7}{
+\definecolor{mygray}{gray}{0.95}
+\psset{unit=0.5in,arrowscale=1.5}
+\psset{viewpoint=30 -15 30 rtp2xyz,Decran=80,lightsrc=viewpoint}
+\begin{pspicture}(-3,-3)(3,3.5)
+%\psSolid[object=plan, definition=equation, action=draw*,
+    %opacity=0.4, fillcolor=lightgray,incolor=lightgray,
+    %args={[0 0 1 0]}, base=-1 1 -1 1]
+\psSolid[object=sphere,hollow,linecolor=lightgray,
+    opacity=0.75,r=1,incolor=white, %fillcolor=gray!25,
+    ngrid=20 20]%
+\axesIIID[axisnames={X_1,X_2,X_3}](-1,-1,-1)(1.75,1.25,1.25)
+\psPoint[](0,0,0){O}
+\psPoint[](0.5,0.5,0.707){A}
+\psPoint[](0.15,0.15,0.4){F}
+\psdot[dotscale=2,fillcolor=lightgray,dotstyle=Bo](A)
+\uput[45](A){$(x_1,x_2,x_3)$}
+\uput[0](F){$r$}
+\psPoint[](0.5,0.5,0){B}
+\psPoint[](1,0,0){C}
+\psPoint[](0.5,0,0){D}
+\psPoint[](0,0.5,0){E}
+\psline[linewidth=3pt]{->}(O)(A)
+\psline[linewidth=2pt,linestyle=dotted,dotsep=1pt]{->}(O)(B)
+\psline[linestyle=dashed](B)(A)
+\psline[linestyle=dashed](D)(B)
+\psline[linestyle=dashed](E)(B)
+\pstMarkAngle[MarkAngleRadius=0.7,LabelSep=0.9,
+    arrows=->]{B}{O}{A}{$\btheta_1$}
+\pstMarkAngle[MarkAngleRadius=0.5,LabelSep=0.7,
+    arrows=->]{C}{O}{B}{$\btheta_2$}
+\end{pspicture}
+}}
+
+\column{0.5\textwidth}
+\small
+$\bx=(x_1, x_2, x_2)$ in polar coordinates
+\begin{align*}
+    x_1 & = r \cos\theta_1 \cos\theta_2 = r c_1 c_2\\
+    x_2 & = r \cos\theta_1 \sin\theta_2 = r c_1 s_2\\
+    x_3 & = r \sin\theta_1 = r s_1
+\end{align*}
+
+The Jacobian matrix is given as
+\begin{align*}
+    J(\theta_1,\theta_2) =
+    \matr{
+    c_1 c_2 & -r s_1 c_2 & -r c_1 s_2\\
+    c_1 s_2  & -r s_1 s_2 & r c_1 c_2\\
+    s_1 & r c_1 & 0
+    }
+\end{align*}
+
+The volume of the hypersphere for $d=3$ is obtained via a triple
+integral with $r > 0$, $-\pi/2 \le \theta_1 \le \pi/2$,
+and $0 \le \theta_2 \le 2\pi$
+\begin{align*}
+    \vol(S_3(r)) & = \int_r \int_{\theta_1} \int_{\theta_2}
+    \Bigl|\det(J(\theta_1,\theta_2))\Bigr| \; dr \;
+    d{\theta_1} \; d{\theta_2}\nonumber\\
+    &= {4 \over 3} \pi r^3
+\end{align*}
+
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Hypersphere Volume in $d$ Dimensions}
+  \small
+
+The determinant of the 
+$d$-dimensional Jacobian matrix is
+\begin{align*}
+    \det(J(\theta_1,\theta_2,\dots,\theta_{d-1})) =
+    (-1)^d r^{d-1} c_1^{d-2} c_2^{d-3} \dots c_{d-2}
+\end{align*}
+
+\medskip
+The volume of the hypersphere is given by the $d$-dimensional
+integral with
+$r > 0$, $-\pi/2 \le \theta_i \le \pi/2$ for all $i=1,
+\dots, d-2$, and $0 \le \theta_{d-1} \le 2\pi$:
+\begin{align*}
+    \vol(S_d(r)) & =
+    \int_r \int_{\theta_1} \int_{\theta_2} \dots
+    \int_{\theta_{d-1}}
+    \Bigl|\det(J(\theta_1,\theta_2,\dots,\theta_{d-1}))\Bigr| \; dr \;
+    d{\theta_1} \; d{\theta_2} \dots d{\theta_{d-1}}\nonumber\\
+    & = \int_0^r r^{d-1} dr
+    \int_{-\pi/2}^{\pi/2} c_1^{d-2} d\theta_1 \;
+    \dots
+    \int_{-\pi/2}^{\pi/2} c_{d-2} d\theta_{d-2}
+    \int_0^{2\pi} d\theta_{d-1}\\
+	& = 
+     {r^d \over d}
+    \frac{\Gamma\lB(\frac{d-1}{2}\rB)\Gamma\lB({1\over 2}\rB)}
+           {\Gamma\lB(\frac{d}{2}\rB)}
+    \frac{\Gamma\lB(\frac{d-2}{2}\rB)\Gamma\lB({1\over 2}\rB)}
+           {\Gamma\lB(\frac{d-1}{2}\rB)}
+    \dots
+    \frac{\Gamma\lB(1\rB)\Gamma\lB({1\over 2}\rB)}
+           {\Gamma\lB(\frac{3}{2}\rB)}
+    2\pi\nonumber\\
+    & = \frac{\pi \Gamma\lB({\frac{1}{2}}\rB)^{d/2-1} r^d}
+        {\frac{d}{2}\Gamma\lB(\frac{d}{2}\rB)}\nonumber\\
+        & = \lB(\frac{\pi^{d/2}}{\Gamma\lB(\frac{d}{2}+1\rB)}
+        \rB) r^d
+\end{align*}
+\end{frame}

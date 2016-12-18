@@ -1,0 +1,977 @@
+\lecture{density}{density}
+
+\date{Chapter 15: Density-based Clustering}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\readdata{\dataT}{CLUST/density/figs/t7-4k.txt}
+\begin{frame}{Density-based Clustering}
+Density-based methods 
+are able to mine nonconvex clusters, where distance-based methods may
+have difficulty.
+\begin{figure}
+\begin{center}
+\scalebox{0.65}{
+\psset{unit=1in}
+\psset{fillcolor=lightgray}
+\psset{xAxisLabel=$X_1$, yAxisLabel=$X_2$}
+  \hspace*{-60pt}
+  \pspicture[](-2,-0.5)(2,3.5)
+ \psgraph[Ox=0,Oy=20,Dx=100,Dy=75]{->}(0,20)(700,475){4in}{3in}
+      \listplot[plotstyle=dots,dotstyle=Bo,
+           plotNo=1,plotNoMax=2]{\dataT}
+  \endpsgraph
+  \endpspicture
+  }
+\end{center}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{The DBSCAN Approach: Neighborhood and Core Points}
+Def\/{i}ne a ball of radius $\epsilon$ around a point
+$\bx \in \setR^d$, called the $\epsilon$-{\em neighborhood} of $\bx$, as
+follows:
+\begin{align*}
+  N_{\epsilon}(\bx) = B_d(\bx,\epsilon) = \{\by \mid
+  \;\dist(\bx,\by) \leq \epsilon\}
+\end{align*}
+Here $\dist(\bx, \by)$ represents the distance between points
+$\bx$ and $\by$.
+which is usually assumed to be the Euclidean
+
+\medskip
+We say that $\bx$ is a {\em core
+point} if there are at least $\minpts$ points in its
+$\epsilon$-neighborhood, i.e., if 
+$|N_{\epsilon}(\bx)| \geq
+\minpts$.
+
+\medskip
+A {\em border point}
+does not meet the $\minpts$ threshold, i.e.,
+$|N_{\epsilon}(\bx)| < \minpts$, but it belongs to the $\epsilon$-neighborhood of some core point $\bz$, that is, $\bx \in N_\epsilon(\bz)$.
+
+\medskip
+If a point is neither a core nor a border point, then it
+is called a {\em noise point} or an outlier.
+\end{frame}
+
+
+\begin{frame}{The DBSCAN Approach: Reachability and Density-based
+  Cluster}
+
+  A point $\bx$ is {\em directly density reachable}
+from another point $\by$ if $\bx \in N_{\epsilon}(\by)$ and
+$\by$ is a core point. 
+
+\medskip
+A point $\bx$ is {\em density
+    reachable} from $\by$ if there exists a chain of points,
+$\bx_0, \bx_1, \ldots, \bx_l$, such that
+$\bx = \bx_0$ and $\by = \bx_l$, and
+$\bx_i$ is
+directly density reachable from $\bx_{i-1}$ for all $i=1,\ldots,l$.
+In other words,
+there is set of core points leading from $\by$ to $\bx$.
+
+\medskip
+Two points $\bx$ and $\by$ are
+{\em density connected}
+if there exists a core point $\bz$,
+such that both $\bx$ and $\by$ are density reachable from $\bz$.
+
+\medskip
+A {\em density-based cluster} is def\/{i}ned as a maximal set of
+density connected points.
+\end{frame}
+
+
+\begin{frame}[fragile]{Core, Border and Noise Points}
+\begin{figure}[!ht]%fig15.2
+  \centerline{
+    \subfloat[Neighborhood of a Point]{
+    \psset{unit=0.3in, dotscale=2}
+    \psset{fillcolor=lightgray}
+    \pspicture[](0,0)(4,4)
+    \pscircle[linewidth=1pt](2,2){2}
+    \pnode(2,2){x}
+    \pnode(4,2){r}
+    \ncline[linewidth=1pt,arrowscale=1.5]{->}{x}{r}
+    \nbput{$\epsilon$}
+    \psdots[dotstyle=Bo](2,2)(1,2.5)(2.25,3)(1,1)(3,2.5)(3,0.5)
+    \uput[-90](2,2){$\bx$}
+    \endpspicture
+  }
+  \hspace{1in}
+  \subfloat[Core, Border, and Noise Points]{
+    \psset{unit=0.3in, dotscale=2}
+    \psset{fillcolor=lightgray}
+    \pspicture[](0,-1.5)(6.5,4)
+    \pscircle[linewidth=1pt](2,2){2}
+    \pscircle[linewidth=1pt,linestyle=dashed](3,0.5){2}
+    \pscircle[linewidth=1pt,linestyle=dotted](5,1){2}
+    \psdots[dotstyle=Bo](2,2)(3,0.5)(5,1)(1,2.5)(2.25,3)(1,1)(3,2.5)
+    \uput[-90](2,2){$\bx$}
+    \uput[45](3,0.5){$\by$}
+    \uput[45](5,1){$\bz$}
+    \endpspicture
+    }}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{DBSCAN Density-based Clustering Algorithm}
+
+DBSCAN computes the
+$\epsilon$-neighborhood $N_\epsilon(\bx_i)$ for each point $\bx_i$ in
+the dataset $\bD$, and checks if it is a core point.
+It also sets the cluster id $id(\bx_i)=\emptyset$ for all points,
+indicating that they are not assigned to any cluster.  
+
+\medskip
+Starting
+from each unassigned core point, the method recursively f\/{i}nds all its
+density connected points, which are assigned to the same cluster.
+
+\medskip
+Some border point may be
+reachable from core points in more than one cluster; they may either be
+arbitrarily assigned to one of the clusters or to all of them (if
+overlapping clusters are allowed).  
+
+\medskip
+Those points that do not belong to
+any cluster are treated as outliers or noise.
+
+\medskip
+Each DBSCAN cluster is a maximal connected component over the core point
+graph.
+
+\medskip
+DBSCAN is sensitive to the choice of
+$\epsilon$, in particular if clusters have different densities.
+The
+overall complexity of DBSCAN is $O(n^2)$.
+\end{frame}
+
+
+\newcommand{\dbscan}{\textsc{dbscan}\xspace}
+\newcommand{\getcluster}{\textsc{DensityConnected}\xspace}
+\begin{frame}[fragile]{DBSCAN Algorithm}
+  \scalebox{0.8}{
+\begin{algorithm}[H]
+  \SetKwInput{Algorithm}{\dbscan ($\bD$, $\epsilon$, $\minpts$)}
+  \Algorithm{}
+  $\mathit{Core} \assign \emptyset$\;
+  \ForEach(\tcp*[h]{F{i}nd the core points}){$\bx_i \in \bD$ \nllabel{alg:clust:den:dbscan:coresA}}{
+      Compute $N_\epsilon(\bx_i)$\;
+      $\mathit{id}(\bx_i) \assign \emptyset$ \tcp{cluster id for $\bx_i$}
+      \lIf{$N_\epsilon(\bx_i) \ge \minpts$}{
+        $\mathit{Core} \assign \mathit{Core} \cup \{ \bx_i \}$
+        \nllabel{alg:clust:den:dbscan:coresB}
+      }
+  }
+  $k \assign 0$ \tcp{cluster id}
+  \ForEach{$\bx_i \in \mathit{Core}$, \textit{such that} $\mathit{id}(\bx_i) = \emptyset$}{
+    $k \assign k + 1$\;
+    $\mathit{id}(\bx_i) \assign k$ \tcp{assign $\bx_i$ to cluster id $k$}
+    \getcluster($\bx_i, k$)\nllabel{alg:clust:den:dbscan:getcluster}\;
+  }
+  $\cC \assign \{ C_i \}_{i=1}^k$, where $C_i \assign
+  \{\bx \in \bD\mid \; id(\bx)=i \}$\;
+  $\mathit{Noise} \assign \{ \bx \in \bD\mid\; \mathit{id}(\bx) = \emptyset\}$\;
+  $\mathit{Border} \assign \bD \setminus \{\mathit{Core} \cup \mathit{Noise}\}$\;
+  \Return $\cC, \mathit{Core}, \mathit{Border}, \mathit{Noise}$\;
+  \BlankLine
+  \BlankLine
+ 
+  \SetKwInput{AlgorithmB}{\getcluster ($\bx$, $k$)}
+  \AlgorithmB{}
+  \ForEach{$\by \in N_\epsilon(\bx)$}{
+    $\mathit{id}(\by) \assign k$ \tcp{assign $\by$ to cluster id $k$}
+    \lIf{$\by \in Core$}{
+      \getcluster($\by, k$)
+    }
+  }
+\end{algorithm}
+}
+\end{frame}
+
+
+
+\readdata{\dataTC}{CLUST/density/figs/t7-4k.cluster.e15-m10.txt}
+\begin{frame}{Density-based Clusters}
+  \framesubtitle{$\epsilon = 15$ and $\minpts = 10$}
+\begin{figure}
+\scalebox{0.77}{
+\psset{unit=1in}
+\psset{fillcolor=lightgray}
+\psset{xAxisLabel=$X_1$, yAxisLabel=$X_2$}
+\psset{plotstyle=dots,dotscale=1}
+\centerline{
+\pspicture[](-3,-0.1)(3,3)
+    \psgraph[Ox=0,Oy=20,Dx=100,Dy=75]{->}(0,20)(700,475){4in}{3in}
+%C0
+    \psset{dotstyle=Bsquare,fillcolor=white}
+    \listplot[nStart=1,nEnd=233]{\dataTC}
+    \listplot[nStart=234,nEnd=253]{\dataTC}
+%C1
+    \psset{dotstyle=Bo,fillcolor=lightgray}
+    \listplot[nStart=254,nEnd=1273]{\dataTC}
+    \listplot[nStart=1274,nEnd=1371]{\dataTC}
+%C2
+    \psset{dotstyle=Btriangle,fillcolor=lightgray}
+    \listplot[nStart=1372,nEnd=2201]{\dataTC}
+    \listplot[nStart=2202,nEnd=2266]{\dataTC}
+%C3
+    \psset{dotstyle=Bsquare,fillcolor=black}
+    \listplot[nStart=2267,nEnd=2489]{\dataTC}
+    \listplot[nStart=2490,nEnd=2508]{\dataTC}
+%C4
+    \psset{dotstyle=Btriangle,fillcolor=white}
+    \listplot[nStart=2509,nEnd=2636]{\dataTC}
+    \listplot[nStart=2637,nEnd=2652]{\dataTC}
+%C5
+    \psset{dotstyle=Btriangle,fillcolor=black}
+    \listplot[nStart=2653,nEnd=2777]{\dataTC}
+    \listplot[nStart=2778,nEnd=2791]{\dataTC}
+%C6
+    \psset{dotstyle=Bsquare,fillcolor=lightgray}
+    \listplot[nStart=2792,nEnd=3167]{\dataTC}
+    \listplot[nStart=3168,nEnd=3202]{\dataTC}
+%C7
+    \psset{dotstyle=Bo,fillcolor=black}
+    \listplot[nStart=3203,nEnd=3309]{\dataTC}
+    \listplot[nStart=3310,nEnd=3322]{\dataTC}
+%C8
+    \psset{dotstyle=Bo,fillcolor=white}
+    \listplot[nStart=3323,nEnd=3706]{\dataTC}
+    \listplot[nStart=3707,nEnd=3743]{\dataTC}
+%noise
+    \psset{dotstyle=+, dotscale=0.75}
+    \listplot[nStart=3744]{\dataTC}
+%
+    \endpsgraph
+    \endpspicture
+    }}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{DBSCAN Clustering: Iris Dataset}
+\setcounter{subfigure}{0}
+\begin{figure}
+\psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+\psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+\centerline{
+\captionsetup[subfloat]{captionskip=15pt}
+\subfloat[$\epsilon = 0.2$, $\minpts = 5$]{
+\label{fig:clust:den:iris:dbscanA}
+\readdata{\dataICa}{CLUST/density/figs/iris.cluster.e0.2-m5.txt}
+\scalebox{0.6}{%
+\psgraph[tickstyle=bottom,Ox=4,Oy=2,Dx=1,Dy=0.5]{->}(4,2)(7.5,4.5){3in}{2.5in}%
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,nEnd=44]{\dataICa}
+\listplot[plotstyle=dots,dotstyle=Bo,fillcolor=white,
+  showpoints=true, nStart=45, nEnd=48]{\dataICa}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+        nStart=49,nEnd=73]{\dataICa}
+\listplot[plotstyle=dots,dotstyle=Btriangle,fillcolor=white,
+  showpoints=true,nStart=74, nEnd=79]{\dataICa}
+\listplot[plotstyle=dots,dotstyle=Bsquare,
+      showpoints=true, nStart=80,nEnd=99]{\dataICa}
+\listplot[plotstyle=dots,dotstyle=Bsquare,
+  showpoints=true, nStart=100,nEnd=103]{\dataICa}
+\listplot[plotstyle=dots,dotstyle=+,dotscale=1, showpoints=true,
+        nStart=104]{\dataICa}
+\endpsgraph
+}}
+\hspace{0.5in}
+\subfloat[$\epsilon = 0.36$, $\minpts = 3$]{
+\label{fig:clust:den:iris:dbscanB}
+\readdata{\dataICb}{CLUST/density/figs/iris.cluster.e0.36-m3.txt}
+\scalebox{0.6}{
+\psgraph[tickstyle=bottom,Ox=4,Oy=2,Dx=1,Dy=0.5]{->}(4,2)(7.5,4.5){3in}{2.5in}%
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,nEnd=94]{\dataICb}
+\listplot[plotstyle=dots,dotstyle=Bo,fillcolor=white,
+  showpoints=true, nStart=95, nEnd=97]{\dataICb}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+        nStart=98,nEnd=144]{\dataICb}
+\listplot[plotstyle=dots,dotstyle=Btriangle,fillcolor=white,
+  showpoints=true,nStart=145, nEnd=146]{\dataICb}
+\listplot[plotstyle=dots,dotstyle=+,dotscale=1, showpoints=true,
+        nStart=147]{\dataICb}
+\endpsgraph
+}}}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Kernel Density Estimation}
+
+There is a close connection between density-based clustering and density
+estimation. The
+goal of density estimation is to determine the unknown probability
+density \hbox{function} by f\/{i}nding the dense regions of points, which can in
+turn be used for clustering. 
+
+\medskip
+Kernel density estimation is a
+nonparametric technique that does not assume any f\/{i}xed probability
+model of the clusters. Instead, it tries to
+directly infer the underlying probability density at each point in the
+dataset.
+\end{frame}
+
+
+
+\begin{frame}{Univariate Density Estimation}
+Assume that $X$ is a continuous random variable, and let $x_1, x_2,
+\ldots, x_n$ be a random sample.
+We directly estimate the cumulative distribution function
+from the data by counting how many points are less than or equal
+to $x$:
+\begin{align*}
+  \hF(x)= {1\over n}  \sum_{i=1}^n I(x_i \leq x)
+\end{align*}
+where $I$ is an indicator function.
+
+\medskip
+We 
+estimate the density function by taking the derivative of $\hF(x)$
+\begin{align*}
+  \hf(x) & =
+  \frac{\hF\lB(x+\frac{h}{2}\rB)-\hF\lB(x-\frac{h}{2}\rB)}{h}
+  = {{k/n} \over h} = {k \over nh}
+\end{align*}
+where $k$
+is the number of points
+that lie in the window of width $h$ centered at $x$.
+The density estimate is the ratio of the
+fraction of the points in the window ($k/n$) to the volume of the window
+($h$). 
+\end{frame}
+
+
+\begin{frame}subsubsection{Kernel Estimator}
+Kernel density estimation relies on a {\em kernel
+function} $K$
+that is non-negative, symmetric, and integrates to $1$,
+that is, $K(x) \ge 0$, $K(-x) = K(x)$
+for all values $x$, and
+${\int K(x) dx = 1}$.
+
+\medskip
+{\bf Discrete Kernel}
+Define the {\bf discrete kernel} function $K$, that
+computes the number of points
+in a window of width $h$
+\begin{align*}
+  K(z) = \begin{cases}
+    1 & \mbox{If $|z| \leq \frac{1}{2}$}\\
+    0 & \mbox{Otherwise}\\
+  \end{cases}
+\end{align*}
+
+The density estimate $\hf(x)$ can
+be rewritten in terms
+of the kernel function as follows:
+\begin{align*}
+    \hf(x) =  \frac{1}{nh}\,\sum_{i=1}^n\,
+    K \left(\frac{x-x_i}{h}\right)
+    %\label{eq:clust:den:denestK}
+\end{align*}
+\end{frame}
+
+
+
+\readdata{\dataSL}{CLUST/density/figs/iris-sl.dat}
+%\begin{figure}[!t]%fig15.5
+%\vspace*{-12pt}
+\readdata{\dataha}{CLUST/density/figs/iris1d-h0.25.dat}
+\readdata{\datahb}{CLUST/density/figs/iris1d-h0.50.dat}
+\readdata{\datahc}{CLUST/density/figs/iris1d-h1.00.dat}
+\readdata{\datahd}{CLUST/density/figs/iris1d-h2.00.dat}
+\begin{frame}[fragile]{Kernel Density Estimation: Discrete Kernel (Iris
+  1D)}
+\setcounter{subfigure}{0}
+\begin{figure}
+\vspace*{-0.7cm}
+\psset{unit=0.6in}
+\psset{arrowscale=2, dotscale=1.5}
+\centerline{
+\subfloat[$h=0.25$]{
+\label{fig:clust:den:kde1dD:a}
+\scalebox{0.60}{
+\pstScalePoints(1,3){}{}
+\begin{pspicture}(3,-0.5)(9,3.5)
+\psaxes[Ox=4,Dy=0.33,dy=1]{->}(4,0)(8.5,2.5)[$x$,0][$f(x)$,90]
+\listplot[plotstyle=dots,dotstyle=Bo,
+        fillcolor=lightgray, showpoints = true]{\dataSL}
+\listplot[linewidth=1.5pt]{\dataha}
+\end{pspicture}
+}}
+\hspace{-0.2in}
+\subfloat[$h=0.5$]{
+\label{fig:clust:den:kde1dD:b}
+\scalebox{0.60}{
+\pstScalePoints(1,4.3){}{}
+\begin{pspicture}(3,-0.5)(9,3.5)
+\psaxes[Ox=4,Dy=0.22,dy=1]{->}(4,0)(8.5,2.5)[$x$,0][$f(x)$,90]
+\listplot[plotstyle=dots,dotstyle=Bo,
+        fillcolor=lightgray, showpoints = true]{\dataSL}
+\listplot[linewidth=1.5pt]{\datahb}
+\end{pspicture}
+}}
+}
+\vspace*{-0.7cm}
+\centerline{
+\subfloat[$h=1.0$]{
+\label{fig:clust:den:kde1dD:c}
+\scalebox{0.60}{
+\pstScalePoints(1,4.7){}{}
+\begin{pspicture}(3,-0.5)(9,3.5)
+\psaxes[Ox=4,Dy=0.21,dy=1]{->}(4,0)(8.5,2.5)[$x$,0][$f(x)$,90]
+\listplot[plotstyle=dots,dotstyle=Bo,
+        fillcolor=lightgray, showpoints = true]{\dataSL}
+\listplot[linewidth=1.5pt]{\datahc}
+\end{pspicture}
+}}
+\hspace{-0.2in}
+\subfloat[$h=2.0$]{
+\label{fig:clust:den:kde1dD:d}
+\scalebox{0.60}{
+\pstScalePoints(1,5.2){}{}
+\begin{pspicture}(3,-0.5)(9,3.5)
+\psaxes[Ox=4,Dy=0.2,dy=1]{->}(4,0)(8.5,2.5)[$x$,0][$f(x)$,90]
+\listplot[plotstyle=dots,dotstyle=Bo,
+        fillcolor=lightgray, showpoints = true]{\dataSL}
+\listplot[linewidth=1.5pt]{\datahd}
+\end{pspicture}
+}}
+}
+%}
+\end{figure}
+The discrete
+  kernel yields a non-smooth (or jagged) density function.
+
+\end{frame}
+
+
+\begin{frame}{kernel Density Estimation: Gaussian Kernel}
+The width $h$ is a parameter that
+denotes the spread or smoothness of the density estimate.
+The discrete kernel function has
+an abrupt influence. 
+
+\medskip
+Def\/{i}ne a more smooth
+transition of influence via a Gaussian kernel:
+\begin{align*}
+  K\left(z\right) =
+  \frac{1}{\sqrt{2\pi}}\,\exp\lB\{-\frac{z^2}{2}\rB\}
+\end{align*}
+Thus, we have
+\begin{align*}
+  K\left(\frac{x-x_i}{h}\right) =
+  \frac{1}{\sqrt{2\pi}}\,\exp\lB\{-\frac{(x-x_i)^2}{2h^2}\rB\}
+\end{align*}
+Here $x$, which is at the center of the window, plays the role of
+the mean, and $h$ acts as the standard deviation.
+\end{frame}
+
+
+\begin{frame}[fragile]{Kernel Density Estimation: Gaussian Kernel (Iris
+  1D)}
+\setcounter{subfigure}{0}
+\vspace*{-0.7cm}
+\begin{figure}[!t]%fig15.6
+\psset{unit=0.6in}
+\psset{arrowscale=2, dotscale=1.5}
+\centerline{
+\subfloat[$h=0.1$]{
+\scalebox{0.60}{
+\def\DyStep{0.27}
+\def\myh{0.1}
+\def\scaleF{3.7}
+\input{CLUST/density/density-plot-1d-Gaussian}
+}}
+\hspace{-0.3in}
+\subfloat[$h=0.15$]{
+\scalebox{0.60}{
+\def\DyStep{0.23}
+\def\myh{0.15}
+\def\scaleF{4.3}
+\input{CLUST/density/density-plot-1d-Gaussian}
+}}
+}
+\vspace*{-0.7cm}
+\centerline{
+\subfloat[$h=0.25$]{
+\scalebox{0.60}{
+\def\DyStep{0.2}
+\def\myh{0.25}
+\def\scaleF{5}
+\input{CLUST/density/density-plot-1d-Gaussian}
+}}
+\hspace{-0.3in}
+\subfloat[$h=0.5$]{
+\scalebox{0.60}{
+\def\DyStep{0.19}
+\def\myh{0.5}
+\def\scaleF{5}
+\input{CLUST/density/density-plot-1d-Gaussian}
+}}
+}
+\end{figure}
+\small
+  When $h$ is small
+the density function has many
+  local maxima. A large $h$ results in a unimodal distribution.
+
+\end{frame}
+
+
+\begin{frame}{Multivariate Density Estimation}
+To estimate the probability density at a $d$-dimensional point $\bx =
+(x_{1}, x_{2},\ldots, x_{d})^T$, we def\/{i}ne the $d$-dimensional ``window'' as a
+hypercube in $d$ dimensions, that is, a \hbox{hypercube}
+centered at $\bx$ with edge length $h$.
+The volume of such a $d$-dimensional hypercube is given as
+\begin{align*}
+  \vol(H_d(h)) = h^d
+\end{align*}
+
+\medskip
+The density is estimated as the fraction of the point weight
+lying within the
+$d$-dimensional window centered at $\bx$, divided by the volume of the
+hypercube:
+\begin{align*}
+  \hf(\bx) = \frac{1}{n h^d} \sum_{i=1}^n
+  K\left(\frac{\bx-\bx_i}{h}\right)
+\end{align*}
+where the multivariate kernel function $K$ satisf\/{i}es the condition
+$\int K(\bz) d\bz = 1$.
+\end{frame}
+
+
+\begin{frame}{Multivariate Density Estimation: Discrete and Gaussian
+  Kernel}
+
+{\bf Discrete Kernel:}
+For any $d$-dimensional vector $\bz = (z_1,z_2, \ldots, z_d)^T$,
+the discrete kernel function in $d$-dimensions is given as
+\begin{align*}
+  K(\bz) = \begin{cases}
+    1 & \mbox{If $|z_{j}| \leq \frac{1}{2}$, for all dimensions
+    $j=1, \ldots, d$}\\
+    0 & \mbox{Otherwise}
+  \end{cases}
+\end{align*}
+
+\medskip
+{\bf Gaussian Kernel:}
+The $d$-dimensional Gaussian kernel is
+given as
+\begin{align*}
+  K\left(\bz\right) =
+  \frac{1}{(2\pi)^{d/2}}\,\exp\lB\{-\frac{\bz^T\bz}{2}\rB\}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[fragile]{Density Estimation: Iris 2D Data (Gaussian
+  Kernel)}
+\setcounter{subfigure}{0}
+\begin{figure}
+\psset{unit=0.5in}
+\psset{viewpoint=30 -120 30 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,opacity=0.3,incolor=white}
+\psset{dotstyle=Bo,fillcolor=gray}
+\psset{dotsize=0.15}
+\centerline{
+\subfloat[$h=0.1$]{
+\label{fig:clust:den:kde2dGa}
+\ifdraft{
+\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-a}
+}{
+    \def\scaleF{4}
+    \def\myh{0.1}
+    \scalebox{0.4}{%
+    \input{CLUST/density/density-plot-2d}
+    }
+    }}
+\vspace{0.1in}
+\subfloat[$h=0.2$]{
+\label{fig:clust:den:kde2dGb}
+\ifdraft{
+\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-b}
+}{
+    \def\scaleF{5}
+    \def\myh{0.2}
+    \scalebox{0.4}{%
+    \input{CLUST/density/density-plot-2d}
+    }
+    }}
+    }
+\centerline{
+\subfloat[$h=0.35$]{
+\label{fig:clust:den:kde2dGc}
+\ifdraft{
+\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-c}
+}{
+    \def\scaleF{6.5}
+    \def\myh{0.35}
+    \scalebox{0.4}{%
+    \input{CLUST/density/density-plot-2d}
+    }
+    }}
+    \vspace{0.1in}
+\subfloat[$h=0.6$]{
+\label{fig:clust:den:kde2dGd}
+\ifdraft{
+\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-d}
+}{
+    \def\scaleF{7.5}
+    \def\myh{0.6}
+    \scalebox{0.4}{%
+    \input{CLUST/density/density-plot-2d}
+    }
+    }}
+    }
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Density Estimation: Density-based Dataset}
+  \framesubtitle{Gaussian kernel, $h=20$}
+\begin{figure}
+%%  \label{fig:clust:den:kdeShape}
+%%\end{figure}
+%\begin{figure}[t!]%fig15.8
+%  \centering
+%  \ifdraft{%
+    \includegraphics[scale=0.6]{CLUST/density/figs/draftfigs/kdeShape.eps}
+%  }{
+%%\comment{%
+%\psset{unit=0.5in}
+%\psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
+%\psset{lightsrc=viewpoint}
+%\defFunction[algebraic]{myfunc}(u,v){u}{v}{((v^2)-(u^2))/4}
+%\begin{pspicture}(-1,-0.5)(7,6)
+%%\psSolid[object=surfaceparametree, action=writeobj,
+%%  file=CLUST/density/figs/mysurf,
+%%  ngrid=1.0 1.0,incolor=white, fillcolor=lightgray,
+%%  linewidth=0.5\pslinewidth,function=myfunc,base=0.0 7.0 0.0 5.0]
+%\psPoint(0,0,0){O2}
+%\psPoint(7.75,0,0){X2}
+%\psPoint(0,5.5,0){Y2}
+%\psline[arrows=->,arrowscale=2](O2)(X2)
+%\psline[arrows=->,arrowscale=2](O2)(Y2)
+%\uput[r](X2){$X_1$}
+%\uput[u](Y2){$X_2$}
+%%\psset{dotstyle=Bo,fillcolor=gray,linecolor=lightgray}
+%%\psset{dotsize=0.05}
+%%\input{CLUST/density/figs/t7-4k-pspoints3.0}
+%%\psset{fillcolor=white,linecolor=black}
+%\psset{incolor=white, opacity=0.2}
+%\psSolid[object=objfile, file=CLUST/density/figs/t7-4k-h20surf,
+%  transform={1 1 1.75 scaleOpoint3d}, RotY=-4,
+%  linewidth=0.01pt,base=0 7.0 0 5.0]
+%\multido{\ix=0+1}{8}{%
+%    %\pstdivide{200pt}{100pt}\myx
+%    \pstmymultiply{\ix}{100}\myx
+%        \psPoint(\ix\space,-0.2,0){X1}
+%        \psPoint(\ix\space,0.0,0){X2}
+%        \psline(X1)(X2)
+%    \uput[d](X1){\scriptsize \myx}}
+%\multido{\iy=0+1}{6}{%
+%    \pstmymultiply{\iy}{100}\myy
+%        \psPoint(-0.2,\iy\space,0){Y1}
+%        \psPoint(0,\iy\space,0){Y2}
+%        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
+%\end{pspicture}
+%}
+\end{figure}
+\end{frame}
+
+
+
+
+\begin{frame}{Nearest Neighbor Density Estimation}
+
+  In kernel density estimation we implicitly f\/{i}xed the
+volume by f\/{i}xing the width $h$, and we used the
+kernel function to f\/{i}nd out the number or weight of points that lie
+inside the f\/{i}xed volume region. 
+
+\medskip
+An alternative approach to density
+estimation is to f\/{i}x $k$, the number of points required to estimate the
+density, and allow the volume of the enclosing region to vary to
+accommodate those $k$ points. This
+approach is called the $k$ nearest neighbors (KNN) approach to density
+estimation. 
+
+\medskip
+Given $k$, the number of neighbors, we estimate the
+density at $\bx$ as follows:
+\begin{align*}
+  \hf(\bx) = \frac{k}{n \vol(S_d(h_\bx))}
+\end{align*}
+where $h_\bx$ is the distance from $\bx$ to its $k$th nearest
+neighbor, and
+$\vol(S_d(h_\bx))$ is the volume of the
+$d$-dimensional hypersphere $S_d(h_\bx)$ centered at $\bx$,
+with radius $h_\bx$.
+\end{frame}
+
+
+
+\begin{frame}{DENCLUE Density-based Clustering: Attractor and Gradient}
+A point $\bx^*$ is called a {\em density attractor} if it is a
+local maxima of the probability density function $f$.  
+
+\medskip
+The density gradient at a point $\bx$ is the multivariate
+derivative of the probability density estimate
+\begin{align*}
+    \grad \hf(\bx) = {\partial \over \partial \bx} \hf(\bx) =
+     {1 \over n h^d}
+     \sum_{i=1}^n {\partial \over \partial \bx}
+     K\lB(\frac{\bx-\bx_i}{h}\rB)
+\end{align*}
+
+\medskip
+For the Gaussian kernel the gradient at a point $\bx$ is given as
+ \begin{align*}
+     \grad \hf(\bx)  = {1 \over n h^{d+2}} \sum_{i=1}^n
+        K\left(\frac{\bx-\bx_i}{h}\right)\cdot (\bx_i - \bx)
+\end{align*}
+This equation can be thought of as having two parts for each point: a
+vector $(\bx_i-\bx)$ and a scalar {\em influence} value
+$K(\frac{\bx-\bx_i}{h})$.
+\end{frame}
+
+
+
+\begin{frame}{The Gradient Vector}
+\begin{figure}
+%\begin{figure}[!ht]%fig15.9
+  \centerline{
+    \psset{yunit=0.5in,xunit=0.5in,arrows=->, arrowscale=2}
+    \pspicture[](0,0)(6,4)
+    \psaxes{->}(0,0)(0,0)(6,4)
+    \qdisk(1,1){3pt}
+    \qdisk(5,1){3pt}
+    \qdisk(3,3){3pt}
+    \qdisk(1,3){3pt}
+    \uput[dl](1,1){$\bx$}
+    \uput[r](5,1){$\bx_1$}
+    \uput[ur](3,3){$\bx_2$}
+    \uput[u](1,3){$\bx_3$}
+    \psline[](1,1)(5,1)
+    \psline[](1,1)(1,3)
+    \psline[](1,1)(3,3)
+    \psline[linecolor=gray,linewidth=2pt](1,1)(1.5,1)
+    \psline[linecolor=gray,linewidth=2pt](1,1)(2,2)
+    \psline[linecolor=gray,linewidth=2pt](1,1)(1,2.75)
+    \psline[linewidth=2pt](1,1)(2,2.75)
+    \uput[u](2,2.75){$\grad \hf(\bx)$}
+    \endpspicture
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{DENCLUE: Density Attractor}
+We say that $\bx^*$ is a {\em density attractor} for $\bx$, or
+alternatively that $\bx$ is {\em density attracted} to
+$\bx^*$, if a hill climbing process started at $\bx$
+converges to $\bx^*$.
+
+\medskip
+That is, there exists a sequence of points
+$\bx=\bx_0 \rightarrow \bx_1 \rightarrow \ldots \rightarrow
+\bx_m$,
+starting from $\bx$ and ending at $\bx_m$,
+such that $\|\bx_m - \bx^*\| \leq \epsilon$,
+that is, $\bx_m$ converges to the attractor $\bx^*$.
+
+\medskip
+Setting the gradient to the zero vector leads to the following {\em
+mean-shift} update rule:
+\begin{align*}
+  \bx_{t+1} & = \frac{\sum_{i=1}^n
+        K\left(\frac{\bx_t-\bx_i}{h}\right) \bx_i}
+        {\sum_{i=1}^n K\left(\frac{\bx_t-\bx_i}{h}\right)}
+\end{align*}
+where $t$ denotes the current iteration and $\bx_{t+1}$ is the updated value for the current vector $\bx_t$.  
+\end{frame}
+
+
+\begin{frame}{DENCLUE: Density-based Cluster}
+A cluster $C \subseteq \bD$, is called a {\em center-def\/{i}ned
+cluster} if all the points $\bx \in C$ are
+density attracted to a unique density attractor $\bx^*$, such that
+$\hf(\bx^*) \geq \xi$, where $\xi$ is a user-def\/{i}ned minimum
+density threshold.  
+
+\medskip
+An arbitrary-shaped cluster $C \subseteq \bD$ is called a {\em
+density-based cluster} if there exists a set of density attractors
+$\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
+\begin{enumerate}
+\item Each point $\bx \in C$ is attracted to some attractor $\bx_i^*$.
+\item Each density attractor has density above $\xi$.
+\item Any two density attractors $\bx_i^*$ and  $\bx_{j}^*$ are {\em
+  density reachable}, that is, there exists a path from
+  $\bx_i^*$ to $\bx_{j}^*$, such that for all points $\by$ on the path,
+  $\hf(\by) \geq \xi$.
+\end{enumerate}
+\end{frame}
+
+
+
+\newcommand{\denclue}{\textsc{denclue}\xspace}
+\newcommand{\gradientascent}{\textsc{F{i}ndAttractor}\xspace}
+\begin{frame}[fragile]{The DENCLUE Algorithm}
+\begin{algorithm}[H]
+  \SetKwInput{Algorithm}{\denclue ($\bD, h, \xi, \epsilon$)}
+  \Algorithm{}
+  $\cA \assign \emptyset$\;
+  \ForEach(\tcp*[h]{f\/{i}nd density attractors}){$\bx \in \bD$}{
+    \lnl{alg:clust:den:denclue:fa}
+    $\bx^* \assign \text{\gradientascent}(\bx, \bD, h,\epsilon)$\;
+    \If{$\hf(\bx^*) \ge \xi$}{
+    \lnl{alg:clust:den:denclue:A}
+      $\cA \assign \cA \cup \{\bx^*\}$\;
+      \lnl{alg:clust:den:denclue:R}
+      $R(\bx^*) \assign R(\bx^*) \cup \{\bx\}$\;
+    }
+  }
+  \lnl{alg:clust:den:denclue:cC}
+  $\cC \assign \{\text {maximal } C\subseteq \cA \mid\; \forall \bx_i^*, \bx_{j}^* \in C,
+    \bx_i^* \text{ and } \bx_{j}^* \text { are density
+    reachable}\}$\;
+  \ForEach(\tcp*[h]{density-based clusters}){$C \in \cC$}{
+    \lForEach{$\bx^* \in C$}{$C \assign C \cup R(\bx^*)$}
+  }
+  \Return{$\cC$}
+\end{algorithm}
+\end{frame}
+
+\begin{frame}[fragile]{The DENCLUE Algorithm: Find Attractor}
+\begin{algorithm}[H]
+ \SetKwInput{AlgorithmGA}{\gradientascent ($\bx, \bD, h, \epsilon$)}
+  \AlgorithmGA{}
+  \lnl{alg:clust:den:denclue:FAs}$t \assign 0$\;
+  $\bx_t \assign \bx$\;
+  \Repeat{$\norm{\bx_t - \bx_{t-1}} \le \epsilon$}{%
+    \lnl{alg:clust:den:denclue:DU}
+    $\bx_{t+1} \assign \frac{\sum_{i=1}^n
+      K\lB({\bx_t - \bx_i \over h}\rB) \cdot \bx_t}
+      {\sum_{i=1}^n K\lB({\bx_t - \bx_i \over h}\rB)}$\;
+      $t \assign t+1$\;
+  }
+  \lnl{alg:clust:den:denclue:FAe}\Return{$\bx_t$}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{DENCLUE: Iris 2D Data}
+\begin{figure}
+\centering
+%\ifdraft{%
+\includegraphics[scale=0.6]{CLUST/density/figs/draftfigs/irisSlice.eps}
+%}{
+%%\comment{%
+%\psset{viewpoint=40 -120 40 rtp2xyz,Decran=50}
+%\psset{lightsrc=viewpoint}
+%\psset{incolor=white}
+%\psset{opacity=0.2}
+%\psset{fillcolor=white}
+%\begin{pspicture}(-1,1)(7,7)
+%\psSolid[object=objfile, file=CLUST/density/figs/iris-h0.2surf,
+%  linewidth=0.01pt,base=3.5 8.5 1.0 5.0]
+%\psset{opacity=0.5}
+%\psSolid[object=objfile, file=CLUST/density/figs/iris-h0.2xi0.8surf,
+%  linewidth=0.01pt,base=3.5 8.5 1.0 5.0]
+%\psPoint(3.5,1.0,0){O2}
+%\psPoint(8.5,1,0){X2}
+%\psPoint(3.5,5.0,0){Y2}
+%\psPoint(3.5,1.0,1.5){Z2}
+%\psPoint(3.5,1.0,0.8){xi}
+%\psline[arrows=->,arrowscale=1.5](O2)(X2)
+%\psline[arrows=->,arrowscale=1.5](O2)(Y2)
+%\psline[arrows=->,arrowscale=1.5](O2)(Z2)
+%\uput[r](X2){$X_1$}
+%\uput[ul](Y2){$X_2$}
+%\uput[u](Z2){$f(\bx)$}
+%%\uput[r](xi){$\xi=0.08$}
+%\multido{\nx=3.5+1.0}{5}{%
+%        \psPoint(\nx\space,0.8,0){X1}
+%        \psPoint(\nx\space,1.0,0){X2}
+%        \psline(X1)(X2)
+%    \uput[d](X1){\scriptsize \nx}}
+%\multido{\ny=1+1}{4}{%
+%        \psPoint(3.3,\ny\space,0){Y1}
+%        \psPoint(3.5,\ny\space,0){Y2}
+%        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \ny}}
+%\end{pspicture}
+%}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{DENCLUE: Density-based Dataset}
+\begin{figure}
+%%\begin{figure}[t!]%fig15.11
+%%  \centering
+%%  \ifdraft{
+  \includegraphics[scale=0.6]{CLUST/density/figs/draftfigs/denclueNCclusters.eps}
+%%  }{
+%%%\comment{%
+%\psset{unit=0.5in}
+%\psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
+%\psset{lightsrc=viewpoint}
+%\psset{incolor=white}
+%\psset{opacity=0.15}
+%\begin{pspicture}(-1,-0.5)(7,6)
+%\psset{fillcolor=white}
+%\psSolid[object=objfile, file=CLUST/density/figs/t7-4k-h10-xi1.9surf,
+%  transform={1 1 1.75 scaleOpoint3d},
+%  linewidth=0.01pt,base=0 7.0 0 5.0]
+%\psPoint(0,0,0){O2}
+%\psPoint(7.5,0,0){X2}
+%\psPoint(0,5.5,0){Y2}
+%\psline[arrows=->,arrowscale=2](O2)(X2)
+%\psline[arrows=->,arrowscale=2](O2)(Y2)
+%\uput[r](X2){$X_1$}
+%\uput[u](Y2){$X_2$}
+%\psset{dotstyle=Bo,fillcolor=gray,linecolor=lightgray}
+%\psset{dotsize=0.05}
+%\input{CLUST/density/figs/t7-4k-pspoints3.0}
+%\psset{fillcolor=white,linecolor=black}
+%\multido{\ix=0+1}{8}{%
+%    \pstmymultiply{\ix}{100}\myx
+%        \psPoint(\ix\space,-0.2,0){X1}
+%        \psPoint(\ix\space,0.0,0){X2}
+%        \psline(X1)(X2)
+%    \uput[d](X1){\scriptsize \myx}}
+%\multido{\iy=0+1}{6}{%
+%    \pstmymultiply{\iy}{100}\myy
+%        \psPoint(-0.2,\iy\space,0){Y1}
+%        \psPoint(0,\iy\space,0){Y2}
+%        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
+%\end{pspicture}
+\end{figure}
+\end{frame}

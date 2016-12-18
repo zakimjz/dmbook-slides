@@ -1,0 +1,67 @@
+graph G{
+      ranksep = "1.5";
+      node [fontsize=24];
+        node [
+                fontname = "Arial"
+                label = "\N"
+                color = "black"
+        ]
+        edge [
+                color = "black"
+        ]
+	{node [label="{}"] empty;}      
+	
+        {node [label="A(3)"] A;}
+	{node [label="C(2)", style=filled, fillcolor=lightgray] C;}
+	{node [label="G(3)"] G;}
+	{node [label="T(3)"] T;}
+        {node [label="AA(3)"] AA;}
+	{node [label="AG(3)"] AG;}
+	{node [label="AT(2)", style=filled, fillcolor=lightgray] AT;}
+	{node [label="GA(3)"] GA;}
+	{node [label="GG(3)"] GG;}
+	{node [label="GT(2)", style=filled, fillcolor=lightgray] GT;}
+	{node [label="TA(1)", style=filled, fillcolor=lightgray] TA;}
+	{node [label="TG(1)", style=filled, fillcolor=lightgray] TG;}
+        {node [label="TT(0)", style=filled, fillcolor=lightgray] TT;}
+        {node [label="AAA(1)", style=filled, fillcolor=lightgray] AAA;}
+	{node [label="AAG(3)"] AAG;}
+	{node [label="AGA(1)", style=filled, fillcolor=lightgray] AGA;}
+	{node [label="AGG(1)", style=filled, fillcolor=lightgray] AGG;}
+	{node [label="GAA(3)"] GAA;}
+	{node [label="GAG(3)"] GAG;}
+	{node [label="GGA(0)", style=filled, fillcolor=lightgray] GGA;}
+        {node [label="GGG(0)", style=filled, fillcolor=lightgray] GGG;}
+        {node [label="AAGG", shape=plaintext, style=filled, fillcolor=gray] AAGG;}
+	{node [label=" GAAA", shape=plaintext, style=filled, fillcolor=gray] GAAA;}
+	{node [label="GAAG(3)"] GAAG;}
+	{node [label="GAGA", shape=plaintext, style=filled, fillcolor=gray] GAGA;}
+	{node [label="GAGG", shape=plaintext, style=filled, fillcolor=gray] GAGG;}
+
+	empty--A;
+	empty--C;
+	empty--G;
+	empty--T;
+	A -- AA;
+	A -- AG;
+	A -- AT;
+	G -- GA;
+	G -- GG;
+	G -- GT;
+	T -- TA;
+	T -- TG;
+	T -- TT;
+	AA -- AAA;
+	AA -- AAG;
+	AG -- AGA;
+	AG -- AGG;
+	GA -- GAA;
+	GA -- GAG;
+	GG -- GGA;
+	GG -- GGG;
+	AAG -- AAGG;
+	GAA -- GAAA;
+	GAA -- GAAG;
+	GAG -- GAGA;
+	GAG -- GAGG;
+}

@@ -1,0 +1,23 @@
+% d=2 r=0.707107 R=1.000000
+\psset{unit=1in,dotsep=0.5mm,PointName=none,PointSymbol=none}
+\pstGeonode(0,0){O}
+\pstGeonode(0,0.707){A}
+\pstCircleOA[fillstyle=solid,fillcolor=lightgray]{O}{A}
+\pstGeonode(1.000,0.000){R0}
+\pstGeonode(0.000,1.000){R1}
+\pstGeonode(-1.000,0.000){R2}
+\pstGeonode(-0.000,-1.000){R3}
+\pstLineAB[linestyle=dotted]{R0}{R2}
+\pstLineAB[linestyle=dotted]{R1}{R3}
+\pstGeonode(0.500,0.500){r0}
+\pstGeonode(-0.500,0.500){r1}
+\pstGeonode(-0.500,-0.500){r2}
+\pstGeonode(0.500,-0.500){r3}
+\pstLineAB{r0}{R0}
+\pstLineAB{r0}{R1}
+\pstLineAB{r1}{R1}
+\pstLineAB{r1}{R2}
+\pstLineAB{r2}{R2}
+\pstLineAB{r2}{R3}
+\pstLineAB{r3}{R3}
+\pstLineAB{r3}{R0}

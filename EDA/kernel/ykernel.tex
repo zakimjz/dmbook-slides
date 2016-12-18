@@ -1,0 +1,755 @@
+\lecture{kernel}{kernel}
+
+\date{Chapter 5: Kernel Methods}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Input and Feature Space}
+
+For mining and analysis, it is important to f\/{i}nd a suitable data
+representation.  
+For example, for complex
+data such as text, sequences, images, and so on, we must typically extract
+or construct a set of attributes or features, so that we can represent
+the data instances as multivariate vectors.  
+
+\medskip
+Given a data
+instance $\bx$ (e.g., a sequence), we need to f\/{i}nd a mapping $\phi$, so
+that $\phi(\bx)$ is the vector representation of $\bx$.  
+
+\medskip
+Even when 
+the input data is a numeric data matrix
+a nonlinear mapping $\phi$ may be used to 
+discover nonlinear relationships.
+
+\medskip
+The term {\em input space} refers to the data space for the input data
+$\bx$ and {\em feature space} refers to the space of mapped vectors $\phi(\bx)$.
+\end{frame}
+
+
+
+\begin{frame}{Sequence-based Features}
+
+  Consider a dataset of DNA sequences over the alphabet $\Sigma =
+\{A,C,G,T\}$. 
+
+\medskip
+One simple feature space is to represent each sequence in
+terms of the probability distribution over symbols in $\Sigma$. That is,
+given a sequence $\bx$ with length $|\bx| = m$, the mapping into feature
+space is given as
+$$\phi(\bx) = \{P(A), P(C), P(G), P(T) \}$$
+where
+$P(s) = \tfrac{n_s}{m}$
+is the probability of observing symbol $s\in\Sigma$,
+and $n_s$ is the number of
+times $s$ appears in sequence $\bx$. 
+
+\medskip
+For example, if $\bx = \hbox{\it ACAGCAGTA}$, with $m=|\bx|=9$, since $A$ occurs four
+times, $C$ and $G$ occur twice, and $T$ occurs once, we have
+$$\phi(\bx)
+= (4/9, 2/9, 2/9, 1/9)= (0.44,0.22,0.22,0.11)$$
+
+\medskip
+We can compute larger feature spaces by considering, for example, the
+probability distribution over all substrings or words of size up to $k$
+over the alphabet $\Sigma$.
+
+\end{frame}
+
+
+\begin{frame}{Nonlinear Features}
+%As an example of a nonlinear mapping 
+Consider the mapping $\phi$ that
+takes as input a vector $\bx=(x_1,x_2)^T \in \setR^2$ and maps it to a
+``quadratic''  feature space via the nonlinear mapping
+\begin{align*}
+  \phi(\bx) = (x_1^2, x_2^2, \sqrt{2} x_1x_2)^T \in \setR^3
+\end{align*}
+
+\medskip
+For example, the point $\bx = (5.9,3)^T$ is mapped to the vector
+\begin{align*}
+  \phi(\bx) = (5.9^2, 3^2, \sqrt{2}\cdot5.9\cdot3)^T = (34.81,9,25.03)^T
+\end{align*}
+
+\medskip
+We can then apply well-known
+linear analysis methods in the feature space. 
+\end{frame}
+
+
+\begin{frame}{Kernel Method}
+
+  \small
+Let $\cI$ denote the input space, which can
+comprise any arbitrary set of objects, and let $\bD = \{\bx_i\}_{i=1}^n
+\subset \cI$ be a dataset comprising $n$ objects in the input space.
+Let $\phi\!: \cI \to \cF$ be a mapping from the
+input space $\cI$ to the feature space $\cF$. 
+
+\medskip
+Kernel methods avoid explicitly transforming each point $\bx$ in the
+input space into the mapped point $\phi(\bx)$ in the feature space.
+Instead, the input objects are represented via their
+pairwise similarity values comprising 
+the $n \times n$ {\em kernel matrix}, def\/{i}ned as
+\begin{align*}
+  \bK = \matr{
+      K(\bx_1,\bx_1) & K(\bx_1,\bx_2) & \cdots & K(\bx_1,\bx_n)\\
+      K(\bx_2,\bx_1) & K(\bx_2,\bx_2) & \cdots & K(\bx_2,\bx_n)\\
+      \vdots & \vdots & \ddots & \vdots\\
+      K(\bx_n,\bx_1) & K(\bx_n,\bx_2) & \cdots & K(\bx_n,\bx_n)\\
+    }
+\end{align*}
+
+\medskip
+$K\!: \cI \times \cI \to \setR$
+is a {\em kernel function} on any two points in input space, which 
+should satisfy the
+condition
+\begin{align*}
+K(\bx_i, \bx_{j})  = \phi(\bx_i)^T \phi(\bx_{j})
+\end{align*}
+
+\medskip
+Intuitively, we need to
+be able to compute the value of the dot product using the
+original input representation $\bx$, without having recourse to the
+mapping $\phi(\bx)$.  
+\end{frame}
+
+
+\begin{frame}{Linear Kernel}
+
+  Let $\phi(\bx) \to \bx$ be the {\em identity kernel}. 
+  This leads to the {\em linear kernel},
+  which
+  is simply the dot product between two input vectors:
+  \begin{align*}
+    \phi(\bx)^T\phi(\by) = \bx^T\by = K(\bx, \by)
+  \end{align*}
+
+  For example, if 
+    $\bx_1  = \matr{5.9 & 3}^T$ and 
+    $\bx_2  = \matr{6.9 & 3.1}^T$, then we have
+  \begin{align*}
+    K(\bx_1, \bx_2) = \bx_1^T\bx_2=
+    5.9 \times 6.9 + 3 \times 3.1 = 40.71 + 9.3 =
+    50.01
+  \end{align*}
+
+  \centerline{
+  \hspace{0.2in}
+\scalebox{0.9}{
+  \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+  \psset{xAxisLabel=$X_1$,yAxisLabel= $X_2$}
+  \centering
+  \pspicture[](-2,-0.75)(2,3)
+  \psgraph[Dx=0.5,Dy=0.5,Ox=4.5,Oy=2]{->}(4.5,2.0)(7.0,3.5){1.5in}{1in}%
+\psdot[](5.9, 3)
+\uput[u](5.9,3){$\bx_1$}
+\psdot[](6.9, 3.1)
+\uput[u](6.9,3.1){$\bx_2$}
+\psdot[](6.6, 2.9)
+\uput[u](6.6,2.9){$\bx_3$}
+\psdot[](4.6, 3.2)
+\uput[ur](4.6,3.2){$\bx_4$}
+\psdot[](6, 2.2)
+\uput[u](6,2.2){$\bx_5$}
+\endpsgraph
+\endpspicture
+}
+\hspace{-0.3in}
+\pspicture[](0,-1.75)(2,1)
+\begin{small}
+\begin{tabular}{c|ccccc}
+$\bK$& $\bx_1$ & $\bx_2$ & $\bx_3$ & $\bx_4$ & $\bx_5$\\
+\hline
+$\bx_1$ &43.81 &50.01 &47.64 &36.74 &42.00\\
+$\bx_2$ &50.01 &57.22 &54.53 &41.66 &48.22\\
+$\bx_3$ &47.64 &54.53 &51.97 &39.64 &45.98\\
+$\bx_4$ &36.74 &41.66 &39.64 &31.40 &34.64\\
+$\bx_5$ &42.00 &48.22 &45.98 &34.64 &40.84\\
+\end{tabular}
+\end{small}
+\endpspicture
+}
+\end{frame}
+
+
+\begin{frame}{Kernel Trick}
+
+  \smallskip
+  Many data mining methods can be {\em kernelized}
+that is, instead of mapping the input points into feature space, the data
+can be represented via the $n \times n$ kernel matrix $\bK$, and all
+relevant analysis can be performed over $\bK$. 
+
+\medskip
+This is done via the
+{\em kernel trick}, that is, show that the analysis task
+requires only dot products $\phi(\bx_i)^T \phi(\bx_{j})$ in feature space,
+which can be replaced by the corresponding kernel $K(\bx_i, \bx_{j}) =
+\phi(\bx_i)^T \phi(\bx_{j})$ that can be computed eff\/{i}ciently in input
+space.  
+
+\medskip
+Once the kernel matrix has been computed, we no longer even need
+the input points $\bx_i$, as all operations involving only dot products
+in the feature space can be performed over the $n \times n$ kernel
+matrix $\bK$. 
+
+\end{frame}
+
+
+\begin{frame}{Kernel Matrix}
+A function $K$ is called a {\bf positive semidef\/{i}nite kernel} if and
+only if it is symmetric: $$K(\bx_i, \bx_{j}) = K(\bx_{j}, \bx_i)$$ and the
+corresponding kernel matrix $\bK$ for any subset $\bD \subset \cI$ is
+positive semidef\/{i}nite, that is,
+\begin{align*}
+    & \ba^T \bK \ba \ge 0, \text{ for all vectors } \ba \in
+    \setR^n\nonumber\\
+    \shortintertext{which implies that}
+     & \dsum_{i=1}^n \dsum_{j=1}^n a_i a_{j} K(\bx_i, \bx_{j}) \ge
+    0, \text{ for all } a_i \in \setR, i \in [1,n]
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Dot Products and Positive Semi-definite Kernels}
+\small
+
+  \begin{block}{Positive Semidef\/{i}nite Kernel}
+If $K(\bx_i, \bx_{j})$ represents the dot
+product $\phi(\bx_i)^T\phi(\bx_{j})$ in some feature space, then $K$ is a
+positive semidef\/{i}nite kernel. 
+\end{block}
+
+\bigskip
+F{i}rst, $K$ is symmetric since the dot product is
+symmetric, which also implies that $\bK$ is symmetric.
+
+\bigskip
+Second, $\bK$ is positive semidef\/{i}nite because
+\begin{align*}
+  \ba^T \bK \ba & = \sum_{i=1}^n \sum_{j=1}^n a_i a_{j} K(\bx_i, \bx_{j})\\[-2pt]
+  & =  \sum_{i=1}^n \sum_{j=1}^n a_i a_{j} \phi(\bx_i)^T \phi(\bx_{j})\\[-2pt]
+& = \lB(\sum_{i=1}^n a_i \phi(\bx_i)\rB)^T
+    \lB(\sum_{j=1}^n a_{j}\phi(\bx_{j})\rB)\\[-2pt]
+& = \norm{\sum_{i=1}^n a_i \phi(\bx_i)}^2 \ge 0
+\end{align*}
+Thus, $K$ is a positive semidef\/{i}nite kernel.
+\end{frame}
+
+
+
+\begin{frame}{Empirical Kernel Map}
+We now show that if we are given a positive semidef\/{i}nite kernel
+$K\!: \cI \times \cI \to \setR$, then it corresponds to a dot product in
+some feature space $\cF$.
+
+\bigskip
+Def\/{i}ne the
+map $\phi$ as follows:
+\begin{align*}
+  \phi(\bx) =
+  \Big((K(\bx_1, \bx), K(\bx_2, \bx), \ldots,  K(\bx_n, \bx)
+  \Big)^T \in \setR^n
+\end{align*}
+
+The {\em empirical kernel map} is
+def\/{i}ned as
+\begin{align*}
+  \phi(\bx) = \bK^{-1/2} \cdot  \Big((K(\bx_1, \bx), K(\bx_2, \bx), \ldots,  K(\bx_n, \bx) \Big)^T \in \setR^n
+\end{align*}
+so that the dot product yields
+\begin{align*}
+  \phi(\bx_i)^T\phi(\bx_{j}) & =
+  \Bigl(\bK^{-1/2} \; \bK_i\Bigr)^T
+  \Bigl(\bK^{-1/2} \; \bK_{j}\Bigr) \\
+  & = \bK_i^T\; \bigl( \bK^{-1/2}\bK^{-1/2} \bigr) \; \bK_{j}\\
+  & = \bK_i^T\; \bK^{-1}\; \bK_{j}
+\end{align*}
+where $\bK_i$ is the $i$th column of $\bK$.
+Over all pairs of mapped points, we have
+\begin{align*}
+  \lB\{ \bK_i^T \bK^{-1}\; \bK_{j}\; \rB\}_{i,j=1}^n = \bK\; \bK^{-1}\; \bK = \bK
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Data-specif\/{i}c Mercer Kernel Map}
+\small
+The Mercer kernel map also corresponds to a dot product in feature
+space.
+
+\medskip
+Since $\bK$ is a symmetric
+positive semidef\/{i}nite matrix, it has real and 
+non-negative eigenvalues.
+It can be decomposed as follows:
+\begin{align*}
+  \bK = \bU \bLambda \bU^T
+\end{align*}
+where $\bU$ is the orthonormal matrix of eigenvectors
+$\bu_i = (u_{i1}, u_{i2}, \ldots, u_{in})^T \in \setR^n$ (for~$i=1,\ldots,n$), and $\bLambda$ is
+the diagonal matrix of eigenvalues, with both arranged in non-increasing
+order of the eigenvalues
+$\lambda_1 \ge \lambda_2 \ge \ldots \ge \lambda_n \ge 0$:
+
+The Mercer map $\phi$ is given as
+\begin{align*}
+  \phi(\bx_i) = \sqrt{\bLambda} \bU_i
+\end{align*}
+where $\bU_i$ is the $i$th row of $\bU$.
+
+The kernel value is simply the dot product between
+scaled rows of $\bU$:
+\begin{align*}
+   \phi(\bx_i)^T\phi(\bx_{j}) = \lB(\sqrt{\bLambda} \bU_i\rB)^T
+   \lB(\sqrt{\bLambda} \bU_{j}\rB) = \bU_i^T \bLambda \bU_{j}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Polynomial Kernel}
+  \small
+Polynomial kernels are of two types: homogeneous or
+inhomogeneous.
+
+
+\medskip
+Let $\bx, \by \in \setR^d$.
+The (inhomogeneous) {\em polynomial
+kernel} is def\/{i}ned as
+  \begin{align*}
+    K_q(\bx, \by)= \phi(\bx)^T \phi(\by) =
+    (c+\bx^{T}\by)^q
+  \end{align*}
+  where $q$ is the degree of the polynomial, and $c \ge 0$ is some
+  constant. When $c=0$ we obtain the homogeneous kernel,
+  comprising only degree $q$ terms. When
+  $c>0$, the feature space is spanned
+  by all products of at most $q$ attributes.
+  
+  This can be seen
+  from the binomial expansion
+  \begin{align*}
+      K_q(\bx, \by) = (c+\bx^T\by)^q
+      = \sum_{k=1}^q {q \choose k} c^{q-k} \lB( \bx^T\by \rB)^k
+  \end{align*}
+
+\medskip
+The most typical cases are the {\em linear} (with $q=1$) and
+  {\em quadratic} (with $q=2$) kernels, given as
+  \begin{align*}
+      K_1(\bx, \by) &= c+ \bx^T\by\\
+     K_2(\bx, \by) &= (c+ \bx^T\by)^2
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Gaussian Kernel}
+The Gaussian kernel, also called the Gaussian radial basis
+function (RBF) kernel,
+is def\/{i}ned as
+  \begin{align*}
+      K(\bx, \by) =
+    \exp\lB\{-\frac{\norm{\bx-\by}^2}{2\sigma^2} \rB\}
+  \end{align*}
+where $\sigma > 0$ is the spread parameter that plays the same
+role as the standard deviation in a normal density function.
+
+\medskip
+Note that $K(\bx,\bx)=1$, and further that the kernel
+value is inversely related to the distance between the two
+points $\bx$ and $\by$.
+
+\medskip
+A feature space for the Gaussian
+kernel has inf\/{i}nite dimensionality. 
+\end{frame}
+
+
+\begin{frame}{Basic Kernel Operations in Feature Space}
+
+  Basic data analysis tasks that can be
+  performed solely via kernels, without instantiating $\phi(\bx)$.
+
+\medskip
+{\bf Norm of a Point:} We can compute the
+norm of a point $\phi(\bx)$ in feature space as follows:
+\begin{align*}
+  \norm{\phi(\bx)}^2 = \phi(\bx)^T\phi(\bx) = K(\bx, \bx)
+\end{align*}
+which implies that $\norm{\phi(\bx)} = \sqrt{K(\bx, \bx)}$.
+
+\medskip
+{\bf Distance between Points:}
+The distance between $\phi(\bx_i)$ and
+$\phi(\bx_{j})$ is
+\begin{align*}
+  \norm{\phi(\bx_i) -\phi(\bx_{j})}^2 & = \norm{\phi(\bx_i)}^2 +
+  \norm{\phi(\bx_{j})}^2 - 2
+  \phi(\bx_i)^T\phi(\bx_{j})\\
+    & = K(\bx_i,\bx_i) + K (\bx_{j}, \bx_{j}) - 2 K(\bx_i,\bx_{j})
+\end{align*}
+which implies that
+\begin{align*}
+  \norm{\phi(\bx_i) -\phi(\bx_{j})} =
+  \sqrt{K(\bx_i,\bx_i) + K (\bx_{j}, \bx_{j}) - 2 K(\bx_i,\bx_{j})}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Basic Kernel Operations in Feature Space}
+
+  {\bf Kernel Value as Similarity:} We can rearrange the terms in
+  $$\norm{\phi(\bx_i) -\phi(\bx_{j})}^2 
+  = K(\bx_i,\bx_i) + K (\bx_{j}, \bx_{j}) - 2
+  K(\bx_i,\bx_{j})$$
+  to obtain
+\begin{align*}
+{1 \over 2} \lB(\|\phi(\bx_i)\|^2 + \|\phi(\bx_{j})\|^2 - \|
+    \phi(\bx_i)-\phi(\bx_{j}) \|^2\rB) =
+K(\bx_i,\bx_{j}) = \phi(\bx_i)^T\phi(\bx_{j})
+\end{align*}
+\smallskip
+The more the distance $\|\phi(\bx_i)-\phi(\bx_{j})\|$
+between the two points in
+feature space, the less the kernel
+value, that is, the less the similarity.
+
+\medskip
+{\bf Mean in Feature Space:} 
+The mean of the points in
+feature space is given as $\bmu_\phi = 1/n \sum_{i=1}^n \phi(\bx_i)$.
+Thus, we cannot compute it explicitly. However, the 
+the squared norm of the mean is:
+\begin{align}
+    \|\bmu_\phi\|^2 & = \bmu_\phi^T\bmu_\phi = 
+    {1\over n^2} \sum_{i=1}^n \sum_{j=1}^n K(\bx_i, \bx_{j})
+\end{align}
+The squared norm of the mean in
+feature space is simply the average of the values in the kernel
+matrix $\bK$.
+\end{frame}
+
+
+\begin{frame}{Basic Kernel Operations in Feature Space}
+\small
+
+{\bf Total Variance in Feature Space:}
+The total variance in feature space is
+obtained by taking the average squared
+deviation of points from the mean in feature space:
+\begin{align*}
+        \sigma_\phi^2 & = {1 \over n} \sum_{i=1}^n \|\phi(\bx_i)
+        - \bmu_\phi \|^2 = 
+ {1 \over n} \sum_{i=1}^n K(\bx_i, \bx_i) - {1\over n^2}
+ \sum_{i=1}^n \sum_{j=1}^n K(\bx_i, \bx_{j})
+\end{align*}
+
+\medskip
+{\bf Centering in Feature Space}
+We can center each point in feature space by subtracting the mean
+from it, as follows:
+\begin{align*}
+  \hat{\phi}(\bx_i) = \phi(\bx_i) - \bmu_\phi
+\end{align*}
+The kernel between centered points is given as
+\begin{align*}
+  \hat{\kern-3pt K}(\bx_i,\bx_{j}) & = \hat{\phi}(\bx_i)^T\hat{\phi}(\bx_{j})\\
+  & = K(\bx_i,\bx_{j}) - {1 \over n} \dsum_{k=1}^n K(\bx_i,\bx_k)  -
+  {1 \over n} \dsum_{k=1}^n K(\bx_{j},\bx_k) + {1 \over n^2}
+  \dsum_{a=1}^n \dsum_{b=1}^n K(\bx_a,\bx_b)
+\end{align*}
+
+More compactly, we have:
+\begin{align*}
+    \hat{\bK} &= 
+    \lB(\bI - {1\over n}\bone_{n\times n}\rB) \bK
+    \lB(\bI - {1\over n}\bone_{n\times n}\rB)
+\end{align*}
+where $\bone_{n\times n}$ is the  $n \times n$ matrix of ones.
+\end{frame}
+
+
+\begin{frame}{Basic Kernel Operations in Feature Space}
+
+{\bf Normalizing in Feature Space:}
+The dot product between normalized points in feature space 
+corresponds to the cosine of the angle between them
+\begin{align*}
+  \phi_n(\bx_i)^T\phi_n(\bx_{j}) =
+  {\phi(\bx_i)^T\phi(\bx_{j}) \over \norm{\vphantom{\norm{\phi(\bx_{j})}}\phi(\bx_i)}
+  \cdot \norm{\phi(\bx_{j})}} = \cos \theta
+\end{align*}
+
+\medskip
+If the mapped points are both centered and normalized,
+then a dot product corresponds to the correlation
+between the two points in feature space.
+
+\medskip
+The normalized kernel matrix, $\bK_n$,
+can be computed using only the kernel function $K$, as
+\begin{align*}
+  \bK_n(\bx_i, \bx_{j}) = {\phi(\bx_i)^T\phi(\bx_{j}) \over \norm{\vphantom{\norm{\phi(\bx_{j})}}\phi(\bx_i)}
+  \cdot \norm{\phi(\bx_{j})}} =
+  {K(\bx_i, \bx_{j}) \over \sqrt{K(\bx_i,\bx_i) \cdot K(\bx_{j},\bx_{j})}}
+\end{align*}
+$\bK_n$ has all diagonal elements as 1.
+\end{frame}
+
+
+\begin{frame}{Spectrum Kernel for Strings}
+
+\small
+Given alphabet $\Sigma$,  the $l$-spectrum feature map is
+the mapping $\phi\!: \Sigma^* \to \setR^{|\Sigma|^l}$ from the set of
+substrings over $\Sigma$ to the $|\Sigma|^l$-dimensional space
+representing the number of occurrences of all possible
+substrings of length $l$, def\/{i}ned as
+\begin{align*}
+  \phi(\bx) = \Bigl( \cdots, \#(\alpha), \cdots \Bigr)^T_{\alpha \in \Sigma^l}
+\end{align*}
+where $\#(\alpha)$ is the number of occurrences of the $l$-length string
+$\alpha$ in $\bx$.
+
+\medskip
+The (full) spectrum map 
+considers all lengths from $l=0$ to $l=\infty$, leading to an 
+inf\/{i}nite
+dimensional feature map $\phi: \Sigma^* \to \setR^\infty$:
+\begin{align*}
+  \phi(\bx) = \Bigl( \cdots,
+  \#(\alpha), \cdots \Bigr)^T_{\alpha \in \Sigma^*}
+\end{align*}
+where $\#(\alpha)$ is the number of occurrences of the string
+$\alpha$ in $\bx$.
+
+\medskip
+The ($l$-)spectrum kernel between two strings $\bx_i, \bx_{j}$
+is simply the dot product between their ($l$-)spectrum maps:
+\begin{align*}
+  K(\bx_i, \bx_{j}) = \phi(\bx_i)^T\phi(\bx_{j})
+\end{align*}
+
+\medskip
+The (full) spectrum kernel can be computed
+eff\/{i}ciently via suff\/{i}x trees 
+in $O(n + m)$ time for two strings of length $n$ and $m$.
+\end{frame}
+
+
+\begin{frame}{Diffusion Kernels on Graph Nodes}
+Let $\bS$ be some symmetric similarity matrix between nodes of a graph
+$G=(V,E)$.  For instance, $\bS$
+can be the (weighted) adjacency matrix $\bA$ or
+the Laplacian matrix $\bL = \bA - \bDelta$ (or its negation),
+where $\bDelta$ is the degree matrix for
+an undirected graph $G$, def\/{i}ned as $\bDelta(i,i) = d_i$ and
+$\bDelta(i,j) = 0$ for all $i\ne j$, and $d_i$ is the degree of node~$i$.
+
+
+\medskip
+{\bf Power Kernels:}
+Summing up the
+product of the base similarities over all $l$-length paths between two
+nodes, we obtain the $l$-length similarity matrix $\bS^{(l)}$,
+which is simply the $l$th power of $\bS$, that is,
+\begin{align*}
+  \bS^{(l)} = \bS^l
+\end{align*}
+
+\medskip
+Even path lengths lead to positive semidef\/{i}nite kernels, but odd path
+lengths are not guaranteed to do so, unless the base matrix $\bS$ is
+itself a positive semidef\/{i}nite matrix.
+
+\medskip
+Power kernel $\bK$ can be obtained via the eigen-decomposition of $\bS^l$:
+\begin{align*}
+  \bK = \bS^l = \bigl(\bU \bLambda \bU^T\bigr)^l
+  = \bU \bigl(\bLambda^l\bigr) \bU^T
+\end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Exponential Diffusion Kernel}
+\small
+
+The exponential diffusion kernel 
+we can obtain a new kernel between nodes of a graph by 
+paths of all possible lengths, but damps the contribution of longer
+paths
+\begin{align*}
+  \bK & = \sum_{l=0}^\infty {1 \over l!} \beta^l \bS^l\\
+  & = \bI + \beta \bS + {1 \over 2!} \beta^2 \bS^2 + {1 \over 3!}
+  \beta^3 \bS^3 + \cdots\\
+  & = \exp\bigl\{ \beta \bS \bigr\}
+\end{align*}
+where $\beta$ is a damping factor, and $\exp\{\beta\bS\}$ is the
+matrix exponential. The series on the right hand side above converges
+for all $\beta \ge 0$.
+
+%
+\medskip
+Substituting $\bS \,{=}\, \bU \bLambda \bU^T$ the kernel can be computed
+as
+\begin{align*}
+  \bK
+  & = \bI + \beta \bS + {1 \over 2!} \beta^2 \bS^2 + \cdots\\
+  & = \bU
+  \matr{
+  \exp\{\beta\lambda_1\} & 0 & \cdots & 0\\
+  0 & \exp\{\beta\lambda_2\} & \cdots & 0\\
+  \vdots & \vdots & \ddots & 0\\
+  0 & 0 & \cdots & \exp\{\beta\lambda_n\}
+  } \bU^T
+\end{align*}
+where $\lambda_i$ is an eigenvalue of $\bS$.
+\end{frame}
+
+
+
+\begin{frame}{Von Neumann Diffusion Kernel}
+
+The {\em von Neumann diffusion kernel} is def\/{i}ned as
+\begin{align*}
+  \bK = \sum_{l=0}^\infty \beta^l \bS^l
+\end{align*}
+where $\beta \ge 0$.
+Expanding and rearranging the terms, we obtain 
+\begin{align*}
+   \bK &= (\bI - \beta \bS)^{-1}
+\end{align*}
+
+\medskip
+The kernel is guaranteed to be
+positive semidef\/{i}nite if
+$\abs{\beta} < 1/\rho(\bS)$, where $\rho(\bS) = \max_i
+\{\abs{\lambda_i}\}$ is called the {\em spectral radius} of $\bS$,
+def\/{i}ned as the largest eigenvalue of $\bS$ in
+absolute value.
+\end{frame}
+
+
+\begin{frame}{Graph Diffusion Kernel: Example}
+\centerline{
+  \psset{unit=1in}
+  \psset{treesep=0.75,levelsep=1,treemode=R}
+  \centering
+    \pstree[]{\Tcircle[name=u1]{$v_1$}}{
+      \pstree[]{\Tcircle[name=u4]{$v_4$}}{
+        \Tcircle[name=u5]{$v_5$}
+      }
+      \pstree[]{\def\psedge{\ncline[]}
+        \Tcircle[name=u3]{$v_3$}}{
+        \Tcircle[name=u2]{$v_2$}
+      }
+    }
+    \ncline[]{u5}{u2}
+    \ncline[]{u4}{u3}
+    }
+
+  Adjacency and degree matrices are given as
+  \begin{align*}
+    \bA & = \matr{
+    0 & 0 & 1 & 1 & 0\\
+    0 & 0 & 1 & 0 & 1\\
+    1 & 1 & 0 & 1 & 0\\
+    1 & 0 & 1 & 0 & 1\\
+    0 & 1 & 0 & 1 & 0
+    } &
+    \bDelta = \matr{
+    2 & 0 & 0 & 0 & 0\\
+    0 & 2 & 0 & 0 & 0\\
+    0 & 0 & 3 & 0 & 0\\
+    0 & 0 & 0 & 3 & 0\\
+    0 & 0 & 0 & 0 & 2
+    }
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Graph Diffusion Kernel: Example}
+
+  Let the base similarity matrix $\bS$ be the 
+	negated Laplacian matrix
+  \begin{align*}
+    \bS = -\bL = \bA - \bD = \amatr{r}{
+    -2 & 0 & 1 & 1 & 0\\
+    0 & -2 & 1 & 0 & 1\\
+    1 & 1 & -3 & 1 & 0\\
+    1 & 0 & 1 & -3 & 1\\
+    0 & 1 & 0 & 1 & -2
+    }
+  \end{align*}
+  The eigenvalues of $\bS$ are as
+  follows:
+  \begin{align*}
+    \lambda_1 & = 0 & \lambda_2 & = -1.38 & \lambda_3 & = -2.38 &
+    \lambda_4 & = -3.62 & \lambda_5 & = -4.62
+  \end{align*}
+  and the eigenvectors of $\bS$ are
+  \begin{align*}
+ \bU = \amatr{r}{
+ \bu_1 & \bu_2 & \bu_3 & \bu_4 & \bu_5\\
+ \hline
+0.45& -0.63&    0.00&   0.63&   0.00\\
+0.45&  0.51&   -0.60&   0.20&  -0.37\\
+0.45& -0.20&   -0.37&  -0.51&   0.60\\
+0.45& -0.20&    0.37&  -0.51&  -0.60\\
+0.45&  0.51&    0.60&   0.20&   0.37\\
+}
+  \end{align*}
+\end{frame} 
+ 
+
+\begin{frame}{Graph Diffusion Kernel: Example}
+
+  Assuming $\beta = 0.2$, the exponential diffusion kernel
+  matrix is given as
+  \begin{align*}
+    \bK = \exp\bigl\{ 0.2 \bS \bigr\} & =
+  \bU \matr{
+  \exp\{0.2\lambda_1\} & 0 & \cdots & 0\\
+  0 & \exp\{0.2\lambda_2\} & \cdots & 0\\
+  \vdots & \vdots & \ddots & 0\\
+  0 & 0 & \cdots & \exp\{0.2\lambda_n\}
+  } \bU^T\\
+  & =
+    \matr{
+0.70& 0.01& 0.14& 0.14& 0.01\\
+0.01& 0.70& 0.13& 0.03& 0.14\\
+0.14& 0.13& 0.59& 0.13& 0.03\\
+0.14& 0.03& 0.13& 0.59& 0.13\\
+0.01& 0.14& 0.03& 0.13& 0.70\\
+    }
+  \end{align*}
+
+Assuming $\beta = 0.2$, the von Neumann kernel is given as
+  \begin{align*}
+    \bK = \bU(\bI - 0.2\bLambda)^{-1} \bU^T =
+    \matr{
+0.75& 0.02& 0.11& 0.11& 0.02\\
+0.02& 0.74& 0.10& 0.03& 0.11\\
+0.11& 0.10& 0.66& 0.10& 0.03\\
+0.11& 0.03& 0.10& 0.66& 0.10\\
+0.02& 0.11& 0.03& 0.10& 0.74\\
+}
+  \end{align*}
+\end{frame}
+

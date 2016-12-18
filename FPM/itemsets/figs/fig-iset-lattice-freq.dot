@@ -1,0 +1,145 @@
+graph "Itemset Lattice" {
+      rankdir=TB;
+      ranksep = "1.25";
+      /*nodesep = "0.5";*/
+        node [
+                fontname = "Arial"
+                label = "\N"
+                color = "black"
+        ]
+        edge [
+                color = "black"
+        ]
+
+	{node [label="{}"] empty;}
+	{node [label="A(4)"] A;}
+	{node [label="B(6)"] B;}
+	{node [label="C(4)"] C;}
+	{node [label="D(4)"] D;}
+	{node [label="E(5)"] E;}
+	{node [label="AB(4)"] AB;}
+	{node [label="AC(2)", style=filled, fillcolor=lightgray] AC;}
+	{node [label="AD(3)"] AD;}
+	{node [label="AE(4)"] AE;}
+	{node [label="BC(4)"] BC;}
+	{node [label="BD(4)"] BD;}
+	{node [label="BE(5)"] BE;}
+	{node [label="CD(2)", style=filled, fillcolor = "lightgray"] CD;}
+	{node [label="CE(3)"] CE;}
+	{node [label="DE(3)"] DE;}
+	{node [label="ABD(3)"] ABD;}
+	{node [label="ABE(4)"] ABE;}
+	{node [label="ADE(3)"] ADE;}
+	{node [label="BCE(3)"] BCE;}
+	{node [label="BDE(3)"] BDE;}
+	{node [label="ABDE(3)"] ABDE;}
+
+	{rank = same; A; B; C; D; E;  }
+	{rank = same; AB; AC; AD; AE; BC; BD; BE; CD; CE; DE; } 
+	{rank = same; ABC; ABD; ABE; ACD; ACE; ADE; BCD; BCE; BDE;
+	CDE; }
+	{rank = same; ABCD; ABCE; ABDE; ACDE; BCDE;}
+
+	{edge [style=invis] 
+	A -- B -- C -- D -- E;
+	AB -- AC -- AD -- AE -- BC -- BD -- BE -- CD -- CE -- DE;
+	ABC -- ABD -- ABE -- ACD -- ACE--ADE--BCD--BCE--BDE--CDE;
+	ABCD -- ABCE -- ABDE -- ACDE -- BCDE;
+
+	A -- CD; A -- DE; 
+	B -- AD; B -- DE;
+	C -- AD; C -- BD; 
+	D -- AB; 
+	E -- AB; 
+	DE -- BCE;
+	BD -- ADE;
+	BC -- ACD;
+	ABC -- BCDE; 
+	ABD -- BCDE;
+	ACD -- ABCE;
+	BCE -- ABCD; 
+	BDE -- ABCD;
+	CDE -- ABCD; 
+	} 
+
+	empty -- A;
+	empty -- B;
+	empty -- C;
+	empty -- D;
+	empty -- E;
+	A -- AB;
+	A -- AC;
+	A -- AD;
+	A -- AE;
+	B -- AB [style=invis];
+	B -- BC;
+	B -- BD;
+	B -- BE;
+	C -- AC [style=invis];
+	C -- BC [style=invis];
+	C -- CD;
+	C -- CE;
+	D -- AD [style=invis];
+	D -- BD [style=invis];
+	D -- CD [style=invis];
+	D -- DE;
+	E -- AE [style=invis];
+	E -- BE [style=invis];
+	E -- CE [style=invis];
+	E -- DE [style=invis];	
+	AB -- ABC [style=dashed]; 
+	AB -- ABD;
+	AB -- ABE;
+	AC -- ABC [style=invis];
+	AC -- ACD  [style=dashed];
+	AC -- ACE [style=dashed];
+	AD -- ABD [style=invis];
+	AD -- ACD [style=invis];
+	AD -- ADE;
+	AE -- ABE [style=invis];
+	AE -- ACE [style=invis];
+	AE -- ADE [style=invis];
+	BC -- ABC [style=invis];
+	BC -- BCD [style=dashed];
+	BC -- BCE;
+	BD -- ABD [style=invis];
+	BD -- BCD [style=invis];
+	BD -- BDE;
+	BE -- ABE [style=invis];
+	BE -- BCE [style=invis];
+	BE -- BDE [style=invis];
+	CD -- ACD [style=invis];
+	CD -- BCD [style=invis];
+	CD -- CDE [style=dashed];
+	CE -- ACE [style=invis];
+	CE -- BCE [style=invis];
+	CE -- CDE [style=invis];
+	DE -- ADE [style=invis];
+	DE -- BDE [style=invis];
+	DE -- CDE [style=invis];	
+	ABC -- ABCD [style=dashed];
+	ABC -- ABCE [style=dashed];
+	ABD -- ABCD [style=invis];
+	ABD -- ABDE;
+	ABE -- ABCE [style=invis];
+	ABE -- ABDE [style=invis];
+	ACD -- ABCD [style=invis];
+	ACD -- ACDE [style=dashed];
+	ACE -- ABCE [style=invis];
+	ACE -- ACDE [style=invis];
+	ADE -- ABDE [style=invis];
+	ADE -- ACDE [style=invis];
+	BCD -- ABCD [style=invis];	
+	BCD -- BCDE [style=dashed];
+	BCE -- ABCE [style=invis];
+	BCE -- BCDE [style=invis];
+	BDE -- ABDE [style=invis];
+	BDE -- BCDE [style=invis];
+	CDE -- ACDE [style=invis];
+	CDE -- BCDE [style=invis];
+	ABCD -- ABCDE [style=dashed];
+	ABCE -- ABCDE [style=invis];
+	ABDE -- ABCDE [style=invis];
+	ACDE -- ABCDE [style=invis];
+	BCDE -- ABCDE [style=invis];
+}

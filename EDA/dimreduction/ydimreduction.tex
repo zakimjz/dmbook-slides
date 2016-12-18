@@ -1,0 +1,1254 @@
+\lecture{dimreduction}{dimreduction}
+
+\date{Chapter 7: Dimensionality Reduction}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Dimensionality Reduction}
+  The goal of dimensionality reduction is to find a lower dimensional
+  representation of the data matrix $\bD$ to avoid the curse
+  of dimensionality.
+
+\medskip
+Given $n \times d$ data matrix, 
+each
+point $\bx_i =
+(x_{i1}, x_{i2}, \ldots, x_{id})^T$ is a vector in the
+ambient
+$d$-dimensional vector space spanned by the $d$ standard basis
+vectors $\be_1, \be_2, \ldots, \be_d$.
+
+\medskip
+Given any other set of $d$
+orthonormal vectors $\bu_1, \bu_2, \ldots, \bu_d$
+we can
+re-express each point $\bx$ as
+\begin{align*}
+    \bx = a_1 \bu_1 + a_2 \bu_2 + \cdots + a_d \bu_d
+\end{align*}
+where $\ba = (a_1, a_2, \ldots, a_d)^T$ represents the
+coordinates of $\bx$ in the new basis. 
+More compactly:
+\begin{align*}
+    \bx = \bU \ba
+\end{align*}
+where $\bU$ is the $d \times d$ orthogonal matrix, 
+whose $i$th column comprises the $i$th basis vector $\bu_i$.
+Thus $\bU^{-1} = \bU^T$, and we have
+\begin{align*}
+    \ba &= \bU^T \bx
+\end{align*}
+\end{frame}
+%
+
+
+\begin{frame}{Optimal Basis: Projection in Lower Dimensional Space}
+
+There are potentially inf\/{i}nite choices for the
+ orthonormal
+basis vectors. Our goal is to choose an 
+{\em optimal} basis that preserves essential information about $\bD$.
+
+\medskip
+We are interested in f\/{i}nding the
+optimal $r$-dimensional representation
+of $\bD$, with $r \ll d$.
+Projection of $\bx$ onto the f\/{i}rst $r$
+basis vectors is given as
+\begin{align*}
+    \bx' & = a_1 \bu_1 + a_2 \bu_2 + \cdots + a_r \bu_r =
+    \sum_{i=1}^r a_i \bu_i
+	= \bU_r \ba_r
+\end{align*}
+where $\bU_r$ and $\ba_r$ comprises the $r$ basis vectors and
+coordinates, respv. 
+Also, restricting $\ba = \bU^T \bx$ to $r$ terms, we have
+\begin{align*}	
+\ba_r & = \bU_r^T \bx
+\end{align*}
+
+
+\medskip
+The $r$-dimensional projection of $\bx$ is thus given as:
+\begin{align*}
+    \bx' = \bU_r\bU_r^T \bx = \bP_r \bx
+\end{align*}
+where $\bP_r = \bU_r \bU_r^T = \sum_{i=1}^r \bu_i \bu_i^T$ is the {\em
+orthogonal projection
+matrix} for the subspace spanned by the f\/{i}rst $r$ basis vectors.
+
+\end{frame}
+
+
+\begin{frame}{Optimal Basis: Error Vector}
+
+Given the projected vector $\bx' = \bP_r \bx$, the corresponding
+{\em error vector}, is the projection onto the remaining $d-r$ basis
+vectors
+\begin{align*}
+    \bepsilon = \sum_{i=r+1}^d a_i \bu_i = \bx - \bx'
+\end{align*}
+The error vector $\bepsilon$ is orthogonal to $\bx'$.
+
+
+\medskip
+The goal of dimensionality reduction is to
+seek an $r$-dimensional basis that gives the best
+possible approximation $\bx_i'$
+over all the points $\bx_i \in \bD$.
+Alternatively, we seek to minimize the error $\bepsilon_i =
+\bx_i - \bx_i'$ over all the points.
+\end{frame}
+
+
+
+\readdata{\dataSLWPL}{EDA/dimreduction/figs/iris-slwpl-c.dat}
+
+\begin{frame}{Iris Data: Optimal One-dimensional Basis}
+
+  \begin{center}
+  \begin{tabular}{ccc}
+\psset{unit=0.5in}
+\psset{arrowscale=2}
+\psset{Alpha=60,Beta=-30}
+%\psset{Alpha=-190,Beta=-45}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+%\subfloat[Original Basis]{
+%\label{fig:eda:dimr:3dirisOrig}
+\scalebox{0.55}{
+\begin{pspicture}(-2,-4.5)(2,4.5)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=2pt,linecolor=black]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataSLWPL}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+\end{pspicture}
+}%}
+&
+\hspace{1in}
+&
+\psset{unit=0.5in}
+\psset{arrowscale=2}
+%\psset{Alpha=-190,Beta=-45}
+\psset{Alpha=60,Beta=-30}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+\scalebox{0.55}{%
+\begin{pspicture}(-2,-4.5)(2,4.5)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=1pt, linecolor=black]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\input{EDA/dimreduction/figs/iris-1dmap.tex}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataSLWPL}
+\pstThreeDLine[linewidth=2pt,arrows=->](1.43,-0.32,3.36)(-1.43,0.32,-3.36)
+\pstThreeDPut(-1.6,0.35,-3.7){$\bu_1$}
+%\psset{dotstyle=Bo,dotscale=1.75,fillcolor=white}
+%\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisOneD}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+\end{pspicture}
+}\\
+Iris Data: 3D & & Optimal 1D Basis\\
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+
+\readdata{\dataIrisDL}{EDA/dimreduction/figs/iris-2dL.dat}
+\readdata{\dataIrisDR}{EDA/dimreduction/figs/iris-2dR.dat}
+\begin{frame}{Iris Data: Optimal 2D Basis}
+\psset{unit=0.5in}
+\psset{arrowscale=2}
+\psset{Alpha=60,Beta=-30}
+  \begin{center}
+  \begin{tabular}{ccc}
+%\psset{Alpha=-190,Beta=-45}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+%\subfloat[Original Basis]{
+%\label{fig:eda:dimr:3dirisOrig}
+\scalebox{0.6}{
+\begin{pspicture}(-2,-4.5)(2,4.5)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=2pt,linecolor=black]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataSLWPL}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+\end{pspicture}
+}%}
+&
+\hspace{1in}
+&
+\psset{unit=0.5in}
+\psset{arrowscale=2,dotscale=1.75}
+\psset{Alpha=60,Beta=-30}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+%\subfloat[Optimal basis]{
+%\label{fig:eda:dimr:2dirisA}
+\scalebox{0.55}{%
+\begin{pspicture}(-2,-4.5)(2,4.5)
+%\pstThreeDSquare[fillstyle=solid, fillcolor=lightgray]
+\pstThreeDSquare[fillstyle=vlines,
+    hatchcolor=lightgray, hatchwidth=0.1\pslinewidth,
+    hatchsep=3\pslinewidth]
+(3.99,2.64,2.56)(-2.86,0.64,-6.72)(-5.12,-5.92, 1.6)
+\psset{dotstyle=Bo,fillcolor=gray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisDR}
+%\pstThreeDSquare[
+%fillstyle=solid, fillcolor=lightgray]
+%(2.71,1.16,2.96)(-2.86,0.64,-6.72)(-2.56,-2.96, 0.8)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=1pt,linecolor=black,arrowscale=2]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\input{EDA/dimreduction/figs/iris-2dmap.tex}
+\pstThreeDLine[linewidth=2pt,arrows=->](1.43,-0.32,3.36)(-1.43,0.32,-3.36)
+\pstThreeDLine[linewidth=2pt,arrows=->](2.56,2.96,-0.8)(-2.56,-2.96,0.8)
+\pstThreeDPut(-1.6,0.35,-3.7){$\bu_1$}
+\pstThreeDPut(-2.88,-3.33,0.9){$\bu_2$}
+\psset{dotstyle=Bo,fillcolor=white}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisDL}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+%\pstThreeDBox[](-3.5,-2.5,-3)(5,0,0)(0,4,0)(0,0,7.5)
+\end{pspicture}
+}\\
+Iris Data (3D) & & Optimal 2D Basis\\
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Principal Component Analysis}
+
+Principal Component Analysis (PCA) is a technique that
+seeks a $r$-dimensional basis that best captures the
+variance in the data.
+
+\medskip
+The direction with the largest projected variance is called
+the f\/{i}rst principal component.
+
+\medskip
+The orthogonal direction that captures
+the second largest projected variance is called the second principal component,
+and so on. 
+
+\medskip
+The direction that maximizes the
+variance is also the one that minimizes the mean squared
+error.
+\end{frame}
+
+
+
+
+
+\begin{frame}{Principal Component: Direction of Most Variance}
+We seek to find the unit vector $\bu$ that maximizes the projected
+variance of the points. Let $\bD$ be centered, and let $\cov$ be its
+covariance matrix.
+
+\medskip
+The projection of $\bx_i$ on $\bu$ is given as
+\begin{align*}
+  \bx_i' =
+  \lB(\frac{\bu^T \bx_i}{\bu^T\bu}\rB) \bu = (\bu^T \bx_i) \bu =
+  a_i \bu
+\end{align*}
+
+\medskip
+Across all the points, the 
+projected variance along $\bu$ is
+\begin{align*}
+  \sigma^2_\bu  
+  = \frac{1}{n}\sum_{i=1}^n (a_i-\mu_\bu)^2 
+  = \frac{1}{n} \sum_{i=1}^n \bu^T \lB(\bx_{i}\bx_i^T\rB) \bu
+   =  \bu^T \lB(\frac{1}{n}\sum_{i=1}^n \bx_i\bx_i^T\rB) \bu
+  =  \bu^T \cov \bu
+\end{align*}
+
+
+\medskip
+We have to find the
+optimal basis vector $\bu$ that maximizes the projected variance 
+$\sigma^2_\bu = \bu^T \cov \bu$, subject to the 
+constraint that $\bu^T\bu=1$. The maximization objective is given as
+\begin{align*}
+  \max_\bu J(\bu) = 
+  \bu^T \cov \bu - \alpha (\bu^T\bu-1)
+\end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Principal Component: Direction of Most Variance}
+
+  Given the objective $\max_\bu J(\bu) =  
+  \bu^T \cov \bu - \alpha (\bu^T\bu-1)$, we solve it by
+setting the derivative of $J(\bu)$
+with respect to $\bu$ to the zero vector, to obtain
+\begin{align*}
+  \frac{\partial}{\partial \bu} \lB(\bu^T \cov \bu - \alpha
+  (\bu^T\bu-1)\rB) & = \bzero\\
+  \text{that is, }2 \cov \bu - 2 \alpha \bu  &= \bzero
+  \text{which implies } \cov \bu  = \alpha \bu
+\end{align*}
+Thus $\alpha$ is an eigenvalue of the covariance matrix
+$\cov$, with the associated eigenvector $\bu$.
+
+\medskip
+Taking the dot product with $\bu$ on both sides, we have
+\begin{align*}
+\sigma^2_\bu  = \bu^T\cov\bu  \bu^T \alpha \bu = 
+\alpha \bu^T\bu =  \alpha
+\end{align*}
+
+\medskip
+To maximize the projected variance $\sigma_\bu^2$,
+we thus choose the largest eigenvalue $\lambda_1$ of $\cov$, and
+the dominant eigenvector $\bu_1$ specif\/{i}es the
+direction of most variance, also called the
+{\em f\/{i}rst principal
+component}.
+\end{frame}
+
+
+\begin{frame}{Iris Data: First Principal Component}
+  \centerline{
+\psset{unit=0.5in}
+\psset{arrowscale=2}
+%\psset{Alpha=-190,Beta=-45}
+\psset{Alpha=60,Beta=-30}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+\scalebox{0.65}{%
+\begin{pspicture}(-2,-4.5)(2,4.5)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=1pt, linecolor=black]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\input{EDA/dimreduction/figs/iris-1dmap.tex}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataSLWPL}
+\pstThreeDLine[linewidth=2pt,arrows=->](1.43,-0.32,3.36)(-1.43,0.32,-3.36)
+\pstThreeDPut(-1.6,0.35,-3.7){$\bu_1$}
+%\psset{dotstyle=Bo,dotscale=1.75,fillcolor=white}
+%\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisOneD}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+\end{pspicture}
+}}
+\end{frame}
+
+
+
+\begin{frame}{Minimum Squared Error Approach}
+The direction that
+maximizes the projected variance is also the
+one that minimizes the average squared error.
+
+
+\medskip
+The mean squared error ({\it MSE}) optimization condition is 
+\begin{align*}
+    MSE(\bu) & =  {1 \over n} \sum_{i=1}^n \norm{\bepsilon_i}^2
+     =  {1 \over n} \sum_{i=1}^n \| \bx_i - \bx'_i \|^2 
+	 =\sum_{i=1}^n \frac{\| \bx_i\|^2}{n}-\bu^T \cov \bu
+\end{align*}
+Since the first term is fixed for a dataset $\bD$, we see that the
+direction $\bu_1$ that maximizes the
+variance is also the one that minimizes the MSE.
+
+\medskip
+Further, we have
+\begin{align*}
+    \sum_{i=1}^n \frac{\| \bx_i\|^2}{n}-\bu^T \cov \bu = var(\bD) = 
+	tr(\cov) = \sum_{i=1}^d \sigma_i^2
+\end{align*}
+
+\medskip
+Thus, for the direction $\bu_1$ that minimizes MSE, we have
+\begin{align*}
+    MSE(\bu_1) = var(\bD) - \bu_1^T\cov \bu_1 = var(\bD) - \lambda_1 
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Best 2-dimensional Approximation}
+
+The best 2D subspace that captures the most variance in $\bD$ comprises
+the eigenvectors $\bu_1$ and $\bu_2$ corresponding to the largest and
+second largest eigenvalues $\lambda_1$ and $\lambda_2$, respv.
+
+\medskip
+Let $\bU_2 = \matr{\bu_1 & \bu_2}$ 
+be the matrix whose columns correspond to the two principal components.
+Given the point $\bx_i \in \bD$ its projected coordinates are computed as follows:
+\begin{align*}
+    \ba_i = \bU_2^T \bx_i
+\end{align*}
+Let $\bA$ denote the projected 2D dataset.
+The total projected variance for $\bA$ is given as
+\begin{align*}
+    var(\bA)  = \bu_1^T\cov\bu_1  + \bu_2^T\cov \bu_2 =
+	\bu_1^T\lambda_1\bu_1 + \bu_2^T\lambda_2\bu_2 =
+    \lambda_1 + \lambda_2
+\end{align*}
+
+The first two principal components also
+minimize the mean square error objective, since
+\begin{align*}
+    MSE & =  {1 \over n} \sum_{i=1}^n
+    \norm{\bx_i-\bx_i'}^2
+	= var(\bD) - {1\over n} \sum_{i=1}^n \lB(\bx_i^T \bP_2 \bx_i\rB)
+	= var(\bD) - var(\bA)
+\end{align*}
+\end{frame}
+
+
+\readdata{\dataIrisDLno}{EDA/dimreduction/figs/iris-2dLnonopt.dat}
+\readdata{\dataIrisDRno}{EDA/dimreduction/figs/iris-2dRnonopt.dat}
+\begin{frame}{Optimal and Non-optimal 2D Approximations}
+
+The optimal subspace
+    maximizes the variance, and minimizes the squared error,
+    whereas the nonoptimal subspace captures less variance, and
+     has a high mean squared error value, as seen from the 
+	 lengths of the error vectors (line  segments).
+
+\psset{unit=0.5in}
+\psset{arrowscale=2,dotscale=1.75}
+\psset{Alpha=60,Beta=-30}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+\centerline{
+%\subfloat[Optimal basis]{
+%\label{fig:eda:dimr:2dirisA}
+\scalebox{0.55}{%
+\begin{pspicture}(-2,-4.5)(2,4.5)
+%\pstThreeDSquare[fillstyle=solid, fillcolor=lightgray]
+\pstThreeDSquare[fillstyle=vlines,
+    hatchcolor=lightgray, hatchwidth=0.1\pslinewidth,
+    hatchsep=3\pslinewidth]
+(3.99,2.64,2.56)(-2.86,0.64,-6.72)(-5.12,-5.92, 1.6)
+\psset{dotstyle=Bo,fillcolor=gray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisDR}
+%\pstThreeDSquare[
+%fillstyle=solid, fillcolor=lightgray]
+%(2.71,1.16,2.96)(-2.86,0.64,-6.72)(-2.56,-2.96, 0.8)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=1pt,linecolor=black,arrowscale=2]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\input{EDA/dimreduction/figs/iris-2dmap.tex}
+\pstThreeDLine[linewidth=2pt,arrows=->](1.43,-0.32,3.36)(-1.43,0.32,-3.36)
+\pstThreeDLine[linewidth=2pt,arrows=->](2.56,2.96,-0.8)(-2.56,-2.96,0.8)
+\pstThreeDPut(-1.6,0.35,-3.7){$\bu_1$}
+\pstThreeDPut(-2.88,-3.33,0.9){$\bu_2$}
+\psset{dotstyle=Bo,fillcolor=white}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisDL}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+%\pstThreeDBox[](-3.5,-2.5,-3)(5,0,0)(0,4,0)(0,0,7.5)
+\end{pspicture}
+}%}
+\hspace{1in}
+%\subfloat[Nonoptimal basis]{
+%\label{fig:eda:dimr:2dirisB}
+\scalebox{0.55}{%
+\begin{pspicture}(-2,-4.5)(2,4.5)
+\input{EDA/dimreduction/figs/iris-2dmapnonopt.tex}
+\psset{dotstyle=Bo,fillcolor=gray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisDLno}
+%\pstThreeDSquare[fillstyle=solid, fillcolor=lightgray]
+\pstThreeDSquare[fillstyle=vlines,
+hatchcolor=lightgray,hatchwidth=0.1\pslinewidth,hatchsep=3\pslinewidth]
+(3.55,1.97,-1.325)(-5.12,-5.92,1.6)(-1.98,1.98,1.05)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=1pt,linecolor=black,arrowscale=2]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\pstThreeDLine[linewidth=2pt,arrows=->](2.56,2.96,-0.8)(-2.56,-2.96,0.8)
+\pstThreeDLine[linewidth=2pt,arrows=->](0.99,-0.99,-0.525)(-0.99,0.99,0.525)
+\psset{dotstyle=Bo,fillcolor=white}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataIrisDRno}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+%\pstThreeDBox[](-3.5,-2.5,-3)(5,0,0)(0,4,0)(0,0,7.5)
+\end{pspicture}
+}%}
+}
+\end{frame}
+
+
+
+\begin{frame}{Best $\textbf{\textit{r}}$-dimensional Approximation}
+  \small
+
+To f\/{i}nd the best $r$-dimensional
+approximation to $\bD$,
+we compute the eigenvalues of $\cov$.
+Because $\cov$ is positive
+  semidef\/{i}nite, its eigenvalues are non-negative
+\begin{align*}
+  \lambda_{1} \geq \lambda_{2} \geq \cdots \lambda_{r}\geq
+  \lambda_{r+1} \cdots \geq \lambda_{d} \ge 0
+\end{align*}
+We select the $r$ largest eigenvalues, and their
+corresponding eigenvectors to form the best $r$-dimensional
+approximation.
+
+\medskip
+{\bf Total Projected Variance:}
+Let $\bU_r = \matr{\bu_1 & \cdots & \bu_r }$ be the $r$-dimensional
+basis vector matrix, withe the 
+projection matrix given as
+$\bP_r = \bU_r\bU_r^T = \sum_{i=1}^r \bu_i \bu_i^T$.
+
+\medskip
+Let $\bA$ denote the dataset formed by the coordinates of the
+projected points in the \hbox{$r$-dimensional} subspace.
+The projected variance is given as
+\begin{align*}
+    var(\bA) = {1\over n} \sum_{i=1}^n \bx_i^T\bP_r\bx_i =
+    \sum_{i=1}^r \bu_i^T \cov \bu_i = \sum_{i=1}^r \lambda_i
+\end{align*}
+
+\medskip
+{\bf Mean Squared Error:}
+The mean squared error in $r$~dimensions is
+\begin{align*}
+    MSE &= {1\over n} \sum_{i=1}^n \norm{\bx_i -
+    \bx_i'}^2 = 
+    var(\bD) - \sum_{i=1}^r \lambda_i = 
+	\sum_{i=1}^d \lambda_i - \sum_{i=1}^r \lambda_i
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Choosing the Dimensionality}
+
+  One criteria for
+choosing $r$ is to compute the fraction of the total variance
+captured by the
+f\/{i}rst $r$ principal components, computed as
+\begin{align*}
+  f(r) =
+  \frac{\lambda_1+\lambda_2+\cdots+\lambda_r}
+  {\lambda_1+\lambda_2+\cdots+\lambda_d}
+  = \frac{\sum_{i=1}^r \lambda_i}{\sum_{i=1}^d \lambda_i}
+  = \frac{\sum_{i=1}^r \lambda_i}{var(\bD)}
+  \label{eq:eda:dimr:fracvar}
+\end{align*}
+
+Given a certain desired variance threshold, say $\alpha$,
+starting from
+the f\/{i}rst principal component, we keep on adding additional
+components, and stop at the smallest value $r$,
+for which $f(r) \geq \alpha$. In other words, we select the
+fewest number of dimensions such that the subspace spanned by
+those $r$ dimensions captures at least $\alpha$ fraction (say 0.9) 
+of the
+total variance.
+\end{frame}
+
+
+\begin{frame}{Principal Component Analysis: Algorithm}
+  \begin{algorithm}[H]
+\newcommand{\PCA}{\textsc{PCA}}
+\SetKwInOut{Algorithm}{\PCA\ ($\bD, \alpha$)}
+\Algorithm{}
+$\bmu = {1\over n}\sum_{i=1}^n \bx_i$ \tcp{compute mean}
+$\bZ = \bD - \bone \cdot \bmu^T$ \tcp{center the data}
+$\cov = {1\over n} \lB(\bZ^T \bZ\rB)$ \tcp{compute covariance matrix}
+$(\lambda_1, \lambda_2, \ldots, \lambda_d) =
+\text{eigenvalues}(\cov)$ \tcp{compute eigenvalues}
+$\bU = \matr{\bu_1 & \bu_2 & \cdots & \bu_d} =
+\text{eigenvectors}(\cov)$ \tcp{compute eigenvectors}
+$f(r) = \frac{\sum_{i=1}^r \lambda_i}{\sum_{i=1}^d \lambda_i},
+\;\; \text{for all } r=1, 2, \ldots, d$ \tcp{fraction of total
+variance}
+Choose smallest $r$ so that $f(r) \ge \alpha$ \tcp{choose
+dimensionality}
+$\bU_r = \matr{\bu_1 & \bu_2 & \cdots & \bu_r}$ \tcp{reduced
+basis}
+$\bA = \{\ba_i \mid \ba_i = \bU_r^T\bx_i, \text{for } i=1, \ldots,
+n\}$ \tcp{reduced dimensionality data}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{Iris Principal Components}
+Covariance matrix:
+    \begin{align*}
+        \cov = \amatr{r}{
+        0.681 &-0.039 &1.265\\
+        -0.039& 0.187 &-0.320\\
+        1.265 &-0.32 &3.092\\
+        }
+    \end{align*}
+	
+	\medskip
+    The eigenvalues and eigenvectors of $\cov$
+    \begin{alignat*}{3}
+    \lambda_1 & = 3.662 &\qquad\lambda_2 &= 0.239 &\qquad\lambda_3 &= 0.059\\
+        \bu_1 &= \amatr{r}{-0.390\\0.089\\-0.916} &\bu_2 &= \amatr{r}{-0.639\\-0.742\\0.200} &\bu_3 &= \amatr{r}{-0.663\\0.664\\0.346}
+    \end{alignat*}
+
+    The total variance is therefore $\lambda_1 + \lambda_2 +
+    \lambda_3  = 3.662  +0.239 + 0.059 = 3.96$.
+
+	The fraction of total variance for different values of $r$ is
+    given as
+    \begin{center}
+    \vspace*{12pt plus2pt minus1pt}
+    {\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c||c|c|c|}
+        \hline
+        $r$ & 1 & 2 & 3\\
+        \hline
+        $f(r)$ & 0.925 & 0.985 & 1.0\\
+        \hline
+    \end{tabular}}
+        \vspace*{12pt plus2pt minus1pt}
+    \end{center}
+	This $r=2$ PCs are need to capture $\alpha=0.95$ fraction of
+	variance.
+
+\end{frame}
+
+
+
+\begin{frame}{Iris Data: Optimal 3D PC Basis}
+\psset{unit=0.5in}
+\psset{arrowscale=2}
+\psset{Alpha=60,Beta=-30}
+  \begin{center}
+  \begin{tabular}{ccc}
+%\psset{Alpha=-190,Beta=-45}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+%\subfloat[Original Basis]{
+%\label{fig:eda:dimr:3dirisOrig}
+\scalebox{0.6}{
+\begin{pspicture}(-2,-4.5)(2,4.5)
+\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        linewidth=2pt,linecolor=black]
+\pstThreeDPut(2.3,0,0){$X_1$}
+\pstThreeDPut(0,2.5,0){$X_2$}
+\pstThreeDPut(0,0,4.3){$X_3$}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataSLWPL}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+\end{pspicture}
+}%}
+&
+\hspace{1in}
+&
+%\subfloat[Optimal Basis]{
+%\label{fig:eda:dimr:3dirisOpt}
+\scalebox{0.55}{
+\begin{pspicture}(-2,-4.5)(2,4.5)
+%\pstThreeDSquare[fillstyle=hlines, hatchangle=64,
+%hatchcolor=gray,hatchwidth=0.1pt,hatchsep=3pt]
+%(3.37,0.5,2.61)(-2.86,0.64,-6.72)(-2.56,-2.96, 0.8)
+%\pstThreeDSquare[fillstyle=hlines, hatchangle=32,
+%hatchcolor=gray,hatchwidth=0.1pt,hatchsep=3pt]
+%(3.37,0.5,2.61)(-2.86,0.64,-6.72)(-1.32,1.32,0.7)
+%\pstThreeDSquare[fillstyle=hlines, hatchangle=32,
+%hatchcolor=gray,hatchwidth=0.1pt,hatchsep=3pt]
+%(3.37,0.5,2.61)(-2.56,-2.96,0.8)(-1.32,1.32,0.7)
+%\pstThreeDCoor[xMin=-2, xMax= 2, yMin=-2,
+        %yMax=2, zMin=-3, zMax=4, Dx=0.5, Dy=0.5, Dz=1,
+        %linewidth=1pt, linecolor=gray]
+%\pstThreeDPut(2.3,0,0){$X_1$}
+%\pstThreeDPut(0,2.5,0){$X_2$}
+%\pstThreeDPut(0,0,4.3){$X_3$}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataSLWPL}
+%\pstThreeDBox[](3.37,0.5,2.61)(-2.86,0.64,-6.72)(-2.56,-2.96,0.8)(-1.32,1.32,0.7)
+\pstThreeDBox[](4.01,1.24,2.41)(-2.86,0.64,-6.72)(-3.84,-4.44,1.2)(-1.32,1.32,0.7)
+\pstThreeDLine[linewidth=2pt,arrows=->](1.43,-0.32,3.36)(-1.43,0.32,-3.36)
+%\pstThreeDLine[linewidth=2pt,arrows=->](1.28,1.48,-0.4)(-1.28,-1.48,0.4)
+\pstThreeDLine[linewidth=2pt,arrows=->](0.66,-0.66,-0.35)(-0.66,0.66,0.35)
+\pstThreeDPut(-1.6,0.35,-3.6){$\bu_1$}
+%\pstThreeDPut(-1.4,-1.63,0.44){$\bu_2$}
+\pstThreeDPut(-0.79,0.79,0.37){$\bu_3$}
+%\pstThreeDLine[linewidth=2pt,arrows=->](2.56,2.96,-0.8)(-2.56,-2.96,0.8)
+\pstThreeDLine[linewidth=2pt,arrows=->](1.92,2.22,-0.6)(-1.92,-2.22,0.6)
+\pstThreeDPut(-2.05,-2.37,0.64){$\bu_2$}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+\end{pspicture}
+}\\
+Iris Data (3D) & & Optimal 3D Basis\\
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+
+\readdata{\dataA}{EDA/dimreduction/figs/iris-2dproj-dimr.dat}
+\begin{frame}{Iris Principal Components: Projected Data (2D)}
+
+\centering
+%\vspace{0.1in}
+\scalebox{0.9}{
+\psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+\psgraph[Dx=1,Dy=0.5,Ox=-4,Oy=-1.5]{->}(-4,-1.5)(4.1,1.6){4in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataA}
+\endpsgraph
+}
+
+\end{frame}
+
+
+\begin{frame}{Geometry of PCA}
+  \small
+Geometrically, when $r=d$,
+PCA corresponds to a orthogonal change of basis, 
+so that the total variance
+is captured by the sum of the variances along each of the
+principal directions $\bu_1, \bu_2, \ldots, \bu_d$, and
+further, all covariances are zero.
+
+\smallskip
+Let $\bU$ be the $d
+\times d$ orthogonal matrix
+$\bU = \matr{\bu_1 & \bu_2 & \cdots & \bu_d}$,
+with $\bU^{-1} = \bU^T$.
+Let $\bLambda = diag(\lambda_1, \cdots, \lambda_d)$ be
+the diagonal matrix of eigenvalues.
+Each principal component $\bu_i$ corresponds
+to an eigenvector of the covariance matrix $\cov$
+\begin{align*}
+  \cov \bu_i = \lambda_i \bu_i \mbox{ for all } 1 \le i \le d
+\end{align*}
+which can be written compactly in matrix notation:
+\begin{align*}
+  \cov\bU =  \bU \bLambda \text{ which implies }
+  \cov =  \bU \bLambda \bU^T
+\end{align*}
+Thus, $\bLambda$ represents the covariance matrix in the new PC basis.
+
+
+\smallskip
+In the new PC basis, the equation
+\begin{align*}
+    \bx^T \cov^{-1} \bx = 1
+\end{align*}
+def\/{i}nes a $d$-dimensional ellipsoid (or hyper-ellipse). The
+eigenvectors $\bu_i$ of $\cov$, that is, the principal components,
+are the directions for the principal axes of the ellipsoid. The
+square roots of the eigenvalues, that is, $\sqrt{\lambda_i}$, give
+the lengths of the semi-axes.
+
+\end{frame}
+
+
+
+\readdata{\dataSLWPP}{EDA/dimreduction/figs/iris-slwpl-p.dat}
+\begin{frame}{Iris: Elliptic Contours in Standard Basis}
+\psset{unit=0.5in}
+\psset{arrowscale=2}
+\centerline{
+%\subfloat[Elliptic contours in standard basis]{
+%\label{fig:eda:dimr:3dellipsoidSB}
+\scalebox{0.6}{
+\psset{Alpha=60,Beta=-30}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$}
+\begin{pspicture}(-4,-4.5)(4,4.5)
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\dataplotThreeD[plotstyle=dots,showpoints=true]{\dataSLWPL}
+\pstThreeDBox[](4.01,1.24,2.41)(-2.86,0.64,-6.72)(-3.84,-4.44,1.2)(-1.32,1.32,0.7)
+\pstThreeDLine[linewidth=2pt,arrows=->](1.43,-0.32,3.36)(-1.43,0.32,-3.36)
+\pstThreeDLine[linewidth=2pt,arrows=->](0.66,-0.66,-0.35)(-0.66,0.66,0.35)
+\pstThreeDPut(-1.6,0.35,-3.6){$\bu_1$}
+\pstThreeDPut(-0.79,0.79,0.37){$\bu_3$}
+\pstThreeDLine[linewidth=2pt,arrows=->](1.92,2.22,-0.6)(-1.92,-2.22,0.6)
+\pstThreeDPut(-2.05,-2.37,0.64){$\bu_2$}
+\pstThreeDBox[linecolor=gray](-2,-2,-3)(4,0,0)(0,4,0)(0,0,7)
+\pstThreeDEllipse(0,0,0)(-1.43,0.32,-3.36)(-1.92,-2.22,0.6)
+\pstThreeDEllipse[linestyle=dashed](0,0,0)(-1.43,0.32,-3.36)(-0.66,0.66,0.35)
+\pstThreeDEllipse[linestyle=solid](0,0,0)(-1.92,-2.22,0.6)(-0.66,0.66,0.35)
+\end{pspicture}
+}}%}
+\end{frame}
+
+\begin{frame}[fragile]{Iris: Axis-Parallel Ellipsoid in PC Basis}
+\centerline{
+\scalebox{0.8}{
+\centering
+\psset{unit=1}
+\psset{arrowscale=2}
+\begin{pspicture}(-5,-3.3)(5,3)
+\psset{viewpoint=30 60 30 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,opacity=0.75,incolor=white}
+%\psSolid[object=sphere, hollow, r=3.66, ngrid=20 20,
+%transform={1 0.4 0.2 scaleOpoint3d}, linewidth=0.5pt]%
+%\psSolid[object=parallelepiped,a=7.29,b=2.72,c=1.27,action=draw](0,0,0)
+\psSolid[object=sphere, hollow, r=1.91, ngrid=20 20,
+transform={1 0.4 0.2 scaleOpoint3d}, linewidth=0.5pt]%
+\psSolid[object=parallelepiped,a=7.29,b=2.72,c=1.27,action=draw](0,0,0)
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\input{EDA/dimreduction/figs/iris-slwpl-p-dots.tex}
+\axesIIID[axisnames={\bu_1,\bu_2,\bu_3},linewidth=2pt](-3.65,-1.36,-0.64)(3.75,1.8,1.2)
+\end{pspicture}
+}}%}
+\end{frame}
+
+
+
+\begin{frame}{Kernel Principal Component Analysis}
+
+Principal component analysis can be extended to f\/{i}nd nonlinear
+``directions'' in the data using kernel methods.
+Kernel PCA f\/{i}nds the directions of most
+variance in the feature space instead of the input space.  
+Using the {\em kernel trick}, all PCA operations 
+can be carried out in terms
+of the kernel function in input space, without having to transform the
+data into feature space.
+
+
+\bigskip
+Let $\phi$ be a function that maps a point
+$\bx$ in input space to its image $\phi(\bx_i)$ in feature space. 
+Let the points in
+feature space be centered and let $\cov_\phi$ be the covariance matrix. 
+The first PC in feature space correspond to the dominant eigenvector
+\begin{align*}
+  \cov_\phi \bu_1 = \lambda_1 \bu_1
+\end{align*}
+  where
+\begin{align*}
+  \cov_\phi = {1\over n}\dsum_{i=1}^n \phi(\bx_i) \phi(\bx_i)^T
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Kernel Principal Component Analysis}
+It can be shown that $\bu_1 = \dsum_{i=1}^n c_{i} \phi(\bx_i)$.
+That is, the PC direction in 
+feature space is a linear combination
+of the transformed points. 
+
+\medskip
+The coefficients are captured in the weight vector
+$$\bc = \matr{c_1, c_2, \cdots, c_n}^T$$
+
+\medskip
+Substituting into the eigen-decomposition of $\cov_\phi$ and
+simplifying, we get:
+\begin{align*}
+  \bK\bc = n \lambda_1 \bc = \eta_1 \bc
+\end{align*}
+Thus,
+the weight vector $\bc$ is the eigenvector
+corresponding to the
+largest eigenvalue $\eta_1$ of the kernel matrix
+$\bK$.
+\end{frame}
+
+
+\begin{frame}{Kernel Principal Component Analysis}
+  \small
+  The weight vector $\bc$ can be used to then find $\bu_1$ via
+$\bu_1 = \dsum_{i=1}^n c_{i} \phi(\bx_i)$.
+
+\medskip
+The only constraint we impose is that $\bu_1$
+should be
+normalized to be a unit vector, which implies
+  $\norm{\bc}^2 = {1 \over \eta_1}$.
+
+
+\medskip
+We cannot compute directly the
+principal direction, but we can
+project any point $\phi(\bx)$ onto the principal
+direction $\bu_1$, as follows:
+\begin{align*}
+  \bu_1^T\phi(\bx) = \dsum_{i=1}^n c_i\phi(\bx_i)^T\phi(\bx) =
+  \dsum_{i=1}^n c_i K(\bx_i,\bx)
+\end{align*}
+which requires only kernel operations. 
+
+\medskip
+We can obtain the additional principal
+components by solving for the other eigenvalues and eigenvectors of
+$$\bK\bc_j = n \lambda_j \bc_j = \eta_j \bc_j$$
+If we sort the
+eigenvalues of $\bK$ in decreasing order
+$\eta_1 \ge \eta_2 \ge \cdots
+\ge \eta_n \ge 0$, we can obtain the $j$th principal component as
+the corresponding eigenvector $\bc_{j}$.
+The variance
+along the $j$th principal component is given as 
+$\lambda_{j} = {\eta_{j} \over n}$. 
+\end{frame}
+
+
+\begin{frame}{Kernel PCA Algorithm}
+  \begin{algorithm}[H]
+\newcommand{\KPCA}{\textsc{KernelPCA}}
+\SetKwInOut{Algorithm}{\KPCA\ ($\bD, K, \alpha$)}
+\Algorithm{}
+$\bK = \bigl\{K(\bx_i, \bx_{j}) \bigr\}_{i,j=1,\ldots,n}$ \tcp{compute $n
+\times n$ kernel
+matrix}
+$\bK  = (\bI - {1\over n}\bone_{n\times n}) \bK (\bI - {1\over
+n}\bone_{n \times n})$ \tcp{center the kernel
+matrix}
+$(\eta_1, \eta_2, \ldots, \eta_d) =
+\text{eigenvalues}(\bK)$ \tcp{compute eigenvalues}
+$\matr{\bc_1 & \bc_2 & \cdots & \bc_n} =
+\text{eigenvectors}(\bK)$ \tcp{compute eigenvectors}
+$\lambda_i = {\eta_i \over n} \text{ for all } i = 1, \ldots,
+n$ \tcp{compute variance for each component}
+$\bc_i = \sqrt{1 \over \eta_i} \cdot \bc_i \text{ for all } i =
+1, \ldots, n$ \tcp{ensure that $\bu_i^T\bu_i=1$}
+$f(r) = \frac{\sum_{i=1}^r \lambda_i}{\sum_{i=1}^d \lambda_i},
+\;\; \text{for all } r=1, 2, \ldots, d$ \tcp{fraction of total
+variance}
+Choose smallest $r$ so that $f(r) \ge \alpha$ \tcp{choose
+dimensionality}
+$\bC_r = \matr{\bc_1 & \bc_2 & \cdots & \bc_r}$ \tcp{reduced
+basis}
+$\bA = \{\ba_i \mid \ba_i = \bC_r^T\bK_i, \text{for } i=1, \ldots,
+n\}$ \tcp{reduced dimensionality data}
+\end{algorithm}
+\end{frame}
+
+
+\readdata{\dataI}{EDA/dimreduction/figs/iris-2d-nonlinear.dat}
+\begin{frame}{Nonlinear Iris Data: PCA in Input Space}
+\psset{stepFactor=0.4}
+\psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\psset{xAxisLabel=$X_1$,yAxisLabel= $X_2$}
+\psset{xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.4in,c}}
+\centerline{
+\scalebox{0.90}{\hspace{0.25in}
+\psgraph[axesstyle=frame,Dx=0.5,Dy=0.5,Ox=-0.5,Oy=-1]{->}(-0.5,-1)(1.5,1.5){2in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataI}
+\psline[linewidth=2pt]{->}(-0.316,-1)(0.474,1.5)
+\uput[r](0.4,1.55){$\bu_1$}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.25+0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.25+0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.5+0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.5+0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.75+0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.75+0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -1+0.3015*x+0.9535*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -1.25+0.3015*x+0.9535*y}
+\endpsgraph
+%}
+\hspace{0.75in}
+%\subfloat[$\lambda_2=0.087$]{
+%\label{fig:eda:dimr:2dnonlinearL2}
+\psgraph[axesstyle=frame,Dx=0.5,Dy=0.5,Ox=-0.5,Oy=-1]{->}(-0.5,-1)(1.5,1.5){2in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataI}
+\psline[linewidth=2pt]{->}(-0.5,0.158)(1.5,-0.474)
+\uput[r](1.5,-0.5){$\bu_2$}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.25-0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.25-0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.5-0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.5-0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.75-0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.75-0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        1-0.9535*x+0.3015*y}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        1.25-0.9535*x+0.3015*y}
+\endpsgraph
+}}%}
+\end{frame}
+
+
+\readdata{\dataLIN}{EDA/dimreduction/figs/iris-nonlinear-PCA.dat}
+\begin{frame}{Nonlinear Iris Data: Projection onto PCs}
+\scalebox{0.9}{
+\psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+%\psset{xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.4in,c}}
+\centerline{
+\psgraph[Dx=0.5,Dy=0.5,Ox=-0.75,Oy=-1.5]{->}(-0.75,-1.5)(1.75,0.5){3.5in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataLIN}
+\endpsgraph
+}
+}
+\end{frame}
+
+
+\def\mye{2.7183}
+\begin{frame}[fragile]{Kernel PCA: 3 PCs (Contours of Constant Projection)} 
+  \framesubtitle{Homogeneous Quadratic Kernel: $K(\bx_i, \bx_j) =
+  (\bx_i^T\bx_j)^2$}
+\centering 
+\begin{figure}[!t]
+%\vspace{0.1in} 
+\psset{stepFactor=0.4}
+\psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\psset{xAxisLabel=$X_1$,yAxisLabel= $X_2$}
+\psset{xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.4in,c}}
+\setcounter{subfigure}{0}
+\captionsetup[subfloat]{captionskip=35pt} 
+\centerline{
+\hspace{0.25in} 
+\subfloat[$\lambda_1=0.2067$]{
+\scalebox{0.6}{
+\psgraph[axesstyle=frame,Dx=0.5,Dy=0.5,Ox=-0.5,Oy=-1]{->}(-0.5,-1)(1.5,1.5){2in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataI}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.01+1.0426*x*y+0.995*x^2+0.914*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.1+1.0426*x*y+0.995*x^2+0.914*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.25+1.0426*x*y+0.995*x^2+0.914*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.5+1.0426*x*y+0.995*x^2+0.914*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -1+1.0426*x*y+0.995*x^2+0.914*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -2+1.0426*x*y+0.995*x^2+0.914*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -4+1.0426*x*y+0.995*x^2+0.914*y^2}
+\endpsgraph
+} }
+\hspace{0.25in} 
+\subfloat[$\lambda_2=0.0596$]{
+\scalebox{0.6}{
+\psgraph[axesstyle=frame,Dx=0.5,Dy=0.5,Ox=-0.5,Oy=-1]{->}(-0.5,-1)(1.5,1.5){2in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataI}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.01+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.1+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.1+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.25+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.25+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.5+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        1+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        1.5+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        2+0.9077*x*y-0.6088*x^2-1.4077*y^2}
+\endpsgraph
+}} 
+\hspace{0.25in} 
+%\vspace{0.2in} \centerline{ \hspace{0.25in}
+\subfloat[$\lambda_3=0.0184$]{
+\scalebox{0.6}{
+\psgraph[axesstyle=frame,Dx=0.5,Dy=0.5,Ox=-0.5,Oy=-1]{->}(-0.5,-1)(1.5,1.5){2in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataI}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        1-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.75-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.5-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.3-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        0.1-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.1-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.3-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -0.6-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -1-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -1.5-0.298*x*y+1.625*x^2-1.087*y^2}
+\psplotImp[algebraic](-0.5,-1)(1.5,1.5){%
+        -2-0.298*x*y+1.625*x^2-1.087*y^2}
+%%\psplotImp[linewidth=2pt, algebraic](-0.5,-1)(1.5,1.5){%
+%%0.298*\mye^(-1*x^2)+0.625*\mye^(-1*y^2)-0.5}
+\endpsgraph
+}}
+}
+\end{figure}
+\end{frame}
+
+
+\readdata{\dataKQH}{EDA/dimreduction/figs/iris-2d-kPC-quadraticH.dat}
+\begin{frame}{Kernel PCA: Projected Points onto 2 PCs}
+  \framesubtitle{Homogeneous Quadratic Kernel: $K(\bx_i, \bx_j) =
+  (\bx_i^T\bx_j)^2$}
+\hspace*{0.5in}
+\scalebox{0.9}{
+\centering
+%\vspace{0.1in}
+\psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+\psgraph[Dx=0.5,Dy=0.5,Ox=-0.5,Oy=-2]{->}(-0.5,-2)(4,0.5){4in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataKQH}
+\endpsgraph
+}
+\end{frame}
+
+
+
+
+\begin{frame}{Singular Value Decomposition}
+  \small
+
+  Principal components analysis is a special case of a more general
+matrix decomposition method called {\em Singular Value
+Decomposition (SVD)}.  
+PCA yields the following decomposition of the covariance
+matrix:
+\begin{align*}
+   \cov & = \bU \bLambda \bU^T
+\end{align*}
+where the covariance matrix has been factorized into
+the orthogonal matrix $\bU$ containing its eigenvectors, and a
+diagonal matrix $\bLambda$ containing its eigenvalues (sorted in
+decreasing order).
+
+\medskip
+SVD generalizes the above factorization for any matrix. In particular
+for an $n \times d$ data matrix $\bD$ with $n$ points and $d$ columns, SVD factorizes $\bD$ as follows:
+\begin{align*}
+  \bD &= \bL \bDelta \bR^T
+\end{align*}
+
+where $\bL$ is a orthogonal $n \times n$ matrix,
+$\bR$ is an
+orthogonal $d \times d$ matrix, and $\bDelta$ is an 
+$n \times d$ ``diagonal'' matrix, 
+defined as $\bDelta(i,i) = \delta_i$, and $0$
+otherwise.
+The columns of $\bL$ are called the {\em left singular
+  and the columns of $\bR$ (or rows of $\bR^T$) are called the
+\em right singular vectors}.
+The entries $\delta_{i}$ are called the 
+{\em singular values} of $\bD$, and they are all non-negative.
+\end{frame}
+
+\begin{frame}{Reduced SVD}
+  \small
+If the rank of $\bD$ is $r \le \min(n,d)$, then
+there are only $r$ nonzero
+singular values, ordered as follows:
+$\delta_1 \ge
+\delta_2 \ge \cdots \ge \delta_r > 0$.
+
+\medskip
+We
+discard the left and right singular vectors that correspond to zero
+singular values, to obtain the {\em reduced SVD} as
+\begin{align*}
+\bD = \bL_r \bDelta_r \bR_r^T
+\end{align*}
+where $\bL_r$ is the $n \times r$ matrix of the left
+singular vectors,
+$\bR_r$ is the $d \times r$ matrix of the right
+singular vectors, and $\bDelta_r$ is the $r \times r$ diagonal
+matrix containing the positive singular vectors.
+
+\medskip
+The reduced SVD leads directly to
+the {\em spectral decomposition} of
+$\bD$ given as
+\begin{align*}
+\bD   = & \sum_{i=1}^r \delta_i \bl_i \br^T_i
+\end{align*}
+
+The best rank $q$ approximation to the
+original data $\bD$ is the matrix
+$\bD_q = \sum_{i=1}^q \delta_i \bl_i \br^T_i$
+that
+minimizes the expression $\|\bD - \bD_q\|_F$,
+where $\|\bA\|_F = \sqrt{\sum_{i=1}^n \sum_{j=1}^d \bA(i,j)^2}$
+is called the {\em Frobenius Norm} of $\bA$.
+\end{frame}
+
+
+
+\begin{frame}{Connection Between SVD and PCA}
+  \small 
+Assume $\bD$ has been centered, and let $\bD = \bL \bDelta \bR^T$ via
+SVD. 
+Consider the {\em scatter matrix} for $\bD$, given as $\bD^T\bD$.
+We have
+\begin{align*}
+    \bD^T\bD  = \lB(\bL \bDelta \bR^T\rB)^T
+         \lB(\bL \bDelta \bR^T \rB)
+         = \bR \bDelta^T \bL^T \bL \bDelta \bR^T
+         = \bR (\bDelta^T \bDelta) \bR^T
+         = \bR \bDelta^2_d \bR^T
+\end{align*}
+where $\bDelta^2_d$ is
+the $d \times d$ diagonal matrix def\/{i}ned as
+$\bDelta^2_d(i,i) = \delta_i^2$, for
+$i=1,\ldots,d$.
+
+\medskip
+The covariance matrix of centered $\bD$ is given as
+$\cov = {1\over n} \bD^T\bD$; we get
+\begin{align*}
+    \bD^T\bD & = n \cov\nonumber\\
+        & = n \bU \bLambda \bU^T\nonumber\\
+        & = \bU (n \bLambda) \bU^T
+\end{align*}
+
+\medskip
+The right singular vectors $\bR$ are the same as
+the eigenvectors of $\cov$.
+The singular values of $\bD$ are
+related to the eigenvalues of $\cov$ as
+\begin{align*}
+n \lambda_i = \delta_i^2\nonumber
+\text{, which implies } \lambda_i = {\delta_i^2 \over n},
+\text{ for } i=1, \ldots, d
+\end{align*}
+
+\medskip
+Likewise the left
+singular vectors in $\bL$ are the eigenvectors of the matrix $n
+\times n$ matrix $\bD\bD^T$, and the corresponding eigenvalues
+are given as $\delta^2_i$.
+\end{frame}
+

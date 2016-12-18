@@ -1,0 +1,6 @@
+! Analyse tutorial.itl with default search settings.
+! Use the concise=2 output format and show RHScoverage.
+! Note, you may need to specify the full path name for tutorial.itl.
+item-list-file=tutorial.itl
+concise=2
+show-RHScoverage=yes

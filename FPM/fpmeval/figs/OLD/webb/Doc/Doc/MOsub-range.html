@@ -1,0 +1,67 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="Geoff Webb">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<title>Sub-range</title>
+</head>
+
+<body>
+
+<h1> <font color="#000080">Sub-range</font></h1>
+
+<p><strong>Magnum Opus</strong> must be instructed how to divide the values of a numeric <a
+href="MOattribute.html">attribute</a> into sub-ranges. </p>
+
+<p>Either the user can select cut-points that determine the sub-ranges, or can allow
+Magnum Opus to select them. </p>
+
+<p>If the user selects the cut-points, in the <a href="MOnames_file.html">names file</a>
+the attribute name is followed by a list of sub-range cut points. Each cut point is
+introduced by one of the relations <tt>&lt;</tt> or <tt>&lt;=</tt> which is followed by
+the value that terminates the sub-range. If the relation is <tt>&lt;</tt>, the sub-range
+includes all values less than the specified value. If the relation is <tt>&lt;=</tt>, the
+sub-range includes all values less than or equal to the specified value. </p>
+
+<p>Example: </p>
+
+<blockquote>
+  <p><tt>Spend &lt; 10 &lt;= 100</tt></p>
+</blockquote>
+
+<p>This specifies that the attribute spend has three sub-ranges: </p>
+
+<blockquote>
+  <p><tt>Spend &lt; 10</tt> </p>
+  <p><tt>10 &lt;= Spend &lt;= 100</tt> </p>
+  <p><tt>Spend &gt; 100</tt></p>
+</blockquote>
+
+<p>Note that there is always one more sub-range than the number of cut points that are
+specified. </p>
+
+<p>If <strong>Magnum Opus</strong> is to select the cut-points, in the <a
+href="MOnames_file.html">names file</a> the attribute name is followed by the keyword <tt>numeric</tt>
+and then the number of sub-ranges to be created. </p>
+
+<p>Example: </p>
+
+<blockquote>
+  <p><tt>Spend: numeric 5</tt></p>
+</blockquote>
+
+<p>For compatibility with See-5, <strong>Magnum Opus</strong> also accepts the keyword <tt>continuous</tt>
+which is treated as <tt>numeric 3</tt>. </p>
+
+<p>&nbsp;</p>
+
+<table WIDTH="100%">
+  <tr>
+    <td ALIGN="left"><b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></td>
+    <td ALIGN="right"></td>
+  </tr>
+</table>
+</body>
+</html>

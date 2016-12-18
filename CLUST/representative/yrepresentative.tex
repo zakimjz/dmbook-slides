@@ -1,0 +1,1344 @@
+\lecture{representative}{representative}
+
+\date[Chap 13: Rep-based Clustering]{Chapter 13: Representative-based Clustering}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Representative-based Clustering}
+Given a dataset with $n$ points in a $d$-dimensional space, $\bD =
+\{\bx_i \}_{i=1}^n$, and given the number of desired clusters $k$, the
+goal of representative-based clustering is to partition the dataset into
+$k$ groups or clusters, which is called a {\em clustering} and is
+denoted as $\cC = \{C_1, C_2, \ldots, C_k\}$. 
+
+\medskip
+For each cluster
+$C_i$ there exists a representative point that summarizes the cluster, a
+common choice being the mean (also called the {\em centroid})
+$\bmu_i$ of all points in
+the cluster, that is,
+\begin{align*}
+  \bmu_i = {1\over n_i} \sum_{x_{j} \in C_i} \bx_{j}
+\end{align*}
+where $n_i = \card{C_i}$ is the number of points in cluster $C_i$.
+
+\medskip
+A brute-force or exhaustive algorithm for f\/{i}nding a good clustering is simply to generate all possible partitions of $n$ points into $k$
+clusters, evaluate some optimization score for each of them,
+and retain the
+clustering that yields the best score.
+However, this is clearly infeasilbe, since there are
+$O(k^n/k!)$ clusterings of $n$ points into $k$ groups. 
+\end{frame}
+
+
+
+\begin{frame}{K-means Algorithm: Objective}
+The {\em sum of squared errors}
+scoring function is def\/{i}ned as
+\begin{align*}
+  SSE(\cC) = \sum_{i=1}^{k}\sum_{\bx_{j} \in
+  C_{i}}\norm{\bx_{j}-\bmu_i}^2
+\end{align*}
+
+\medskip
+The goal is to f\/{i}nd the clustering that minimizes
+the SSE score:
+\begin{align*}
+    \cC^* = \arg \min_{\cC} \{ SSE(\cC) \}
+\end{align*}
+
+\medskip
+K-means
+employs a greedy iterative approach to f\/{i}nd a clustering that minimizes
+the SSE objective.
+As such it can converge to a local optima
+instead of a globally optimal clustering.
+
+\end{frame}
+
+
+\begin{frame}{K-means Algorithm: Objective}
+K-means initializes the cluster means by randomly generating $k$
+points in the data space. 
+Each iteration of K-means consists of two steps: (1) cluster
+assignment, and (2) centroid update. 
+
+\medskip
+Given the $k$ cluster means,
+in the cluster assignment step, each point $\bx_{j} \in \bD$ is
+assigned to the closest mean, which induces a clustering, with
+each cluster $C_i$ comprising points that are closer to $\bmu_i$
+than any other cluster mean. That is, each point $\bx_{j}$ is
+assigned to cluster $C_{j^*}$, where
+\begin{align*}
+j^* = \arg \min_{i=1}^k \Bigl\{\norm{\bx_{j} - \bmu_i}^2\Bigr\}
+\end{align*}
+
+\medskip
+Given a set of clusters $C_i$, $i=1,\dots,k$, in the centroid
+update step, new mean values are computed for each
+cluster from the points in $C_i$.
+
+\medskip
+The cluster assignment and centroid update
+steps are
+carried out iteratively until we reach a f\/{i}xed point or local
+minima. 
+\end{frame}
+
+
+\begin{frame}[fragile]{K-Means Algorithm}
+\begin{algorithm}[H]
+%\begin{tightalgo}[!h]{\textwidth-18pt}
+\SetKwInOut{Algorithm}{\textsc{K-means} ($\bD, k, \epsilon$)}
+\Algorithm{}
+$t = 0$\;
+Randomly initialize $k$ centroids: $\bmu_1^t, \bmu_2^t, \dots,
+\bmu_k^t \in \setR^d$\;
+\Repeat{$\sum_{i=1}^k \norm{\bmu_i^{t} - \bmu_i^{t-1}}^2 \le
+\epsilon$}{
+    $t \assign t+1$\;
+    $C_{j} \gets \emptyset \text{ for all } j = 1, \cdots, k$\;
+    \tcp{Cluster Assignment Step}
+    \ForEach{$\bx_{j} \in \bD$}{
+    $j^* \assign \arg \min_{i} \Bigl\{\norm{\bx_{j} - \bmu_i^t}^2
+    \Bigr\}$  \tcp{Assign $\bx_{j}$ to closest centroid}
+        $C_{j^*} \assign C_{j^*} \cup \{ \bx_{j}\}$\;
+    }
+    \tcp{Centroid Update Step}
+    \ForEach{$i = 1$ to $k$}{
+        $\bmu_i^{t} \assign \frac{1}{|C_i|} \sum_{\bx_{j} \in C_i} \bx_{j}$\;
+    }
+}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-means in One Dimension}
+\begin{center}
+\begin{figure}
+    \psset{unit=0.2in,dotscale=2.5,arrowscale=2,fillcolor=gray}
+    \centerline{
+    \subfloat[Initial dataset]{\label{fig:clust:rep:kexa}
+    \scalebox{0.75}{%
+    \pspicture[](-1,-1)(31,3)
+    \psline(0,0)(31,0)
+    \def\tick{\psline(0,0)(0,0.5)}%
+    \multips(0,0)(1,0){32}{\tick}
+    \pnode(2,0){a}
+    \pnode(3,0){b}
+    \pnode(4,0){c}
+    \pnode(10,0){d}
+    \pnode(11,0){e}
+    \pnode(12,0){f}
+    \pnode(20,0){g}
+    \pnode(25,0){h}
+    \pnode(30,0){i}
+    \psset{dotstyle=Bo,fillcolor=white}
+    \psdot(a)\uput[-90](a){2}
+    \psdot(b)\uput[-90](b){3}
+    \psdot(c)\uput[-90](c){4}
+    \psdot(d)\uput[-90](d){10}
+    \psdot(e)\uput[-90](e){11}
+    \psdot(f)\uput[-90](f){12}
+    \psdot(g)\uput[-90](g){20}
+    \psdot(h)\uput[-90](h){25}
+    \psdot(i)\uput[-90](i){30}
+    \endpspicture
+    }}}
+    \centerline{
+    \subfloat[Iteration: $t=1$]{\label{fig:clust:rep:kex1}
+    \scalebox{0.75}{%
+    \pspicture[](-1,-1)(31,3)
+    \psline(0,0)(31,0)
+    \def\tick{\psline(0,0)(0,0.5)}%
+    \multips(0,0)(1,0){32}{\tick}
+    \pnode(2,0){a}
+    \pnode(3,0){b}
+    \pnode(4,0){c}
+    \pnode(10,0){d}
+    \pnode(11,0){e}
+    \pnode(12,0){f}
+    \pnode(20,0){g}
+    \pnode(25,0){h}
+    \pnode(30,0){i}
+    \psset{dotstyle=Bo}
+    \psline{->}(2,2)(2,0.5)
+    \uput[90](2,2){$\bmu_1=2$}
+    \psdot(a)\uput[-90](a){2}
+    \psdot(b)\uput[-90](b){3}
+    \psset{dotstyle=Btriangle}
+    \psline{->}(4,2)(4,0.5)
+    \uput[45](4,2){$\bmu_2=4$}
+    \psdot(c)\uput[-90](c){4}
+    \psdot(d)\uput[-90](d){10}
+    \psdot(e)\uput[-90](e){11}
+    \psdot(f)\uput[-90](f){12}
+    \psdot(g)\uput[-90](g){20}
+    \psdot(h)\uput[-90](h){25}
+    \psdot(i)\uput[-90](i){30}
+    \endpspicture
+    }}}
+
+    \centerline{
+    \subfloat[Iteration: $t=2$]{\label{fig:clust:rep:kex2}
+   \scalebox{0.75}{%
+     \pspicture[](-1,-1)(31,3)
+    \psline(0,0)(31,0)
+    \def\tick{\psline(0,0)(0,0.5)}%
+    \multips(0,0)(1,0){32}{\tick}
+    \pnode(2,0){a}
+    \pnode(3,0){b}
+    \pnode(4,0){c}
+    \pnode(10,0){d}
+    \pnode(11,0){e}
+    \pnode(12,0){f}
+    \pnode(20,0){g}
+    \pnode(25,0){h}
+    \pnode(30,0){i}
+    \psline{->}(2.5,2)(2.5,0.5)
+    \uput[90](2.5,2){$\bmu_1=2.5$}
+    \psset{dotstyle=Bo}
+    \psdot(a)\uput[-90](a){2}
+    \psdot(b)\uput[-90](b){3}
+    \psdot(c)\uput[-90](c){4}
+    \psline{->}(16,2)(16,0.5)
+    \uput[90](16,2){$\bmu_2=16$}
+    \psset{dotstyle=Btriangle}
+    \psdot(d)\uput[-90](d){10}
+    \psdot(e)\uput[-90](e){11}
+    \psdot(f)\uput[-90](f){12}
+    \psdot(g)\uput[-90](g){20}
+    \psdot(h)\uput[-90](h){25}
+    \psdot(i)\uput[-90](i){30}
+    \endpspicture
+    }}}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-means in One Dimension (contd.)}
+\begin{center}
+\begin{figure}
+    \psset{unit=0.2in,dotscale=2.5,arrowscale=2,fillcolor=gray}
+
+    \centerline{
+    \subfloat[Iteration: $t=3$]{
+    \scalebox{0.75}{%
+    \pspicture[](-1,-1)(31,3)
+    \psline(0,0)(31,0)
+    \def\tick{\psline(0,0)(0,0.5)}%
+    \multips(0,0)(1,0){32}{\tick}
+    \pnode(2,0){a}
+    \pnode(3,0){b}
+    \pnode(4,0){c}
+    \pnode(10,0){d}
+    \pnode(11,0){e}
+    \pnode(12,0){f}
+    \pnode(20,0){g}
+    \pnode(25,0){h}
+    \pnode(30,0){i}
+    \psline{->}(3,2)(3,0.5)
+    \uput[90](3,2){$\bmu_1=3$}
+    \psset{dotstyle=Bo}
+    \psdot(a)\uput[-90](a){2}
+    \psdot(b)\uput[-90](b){3}
+    \psdot(c)\uput[-90](c){4}
+    \psdot(d)\uput[-90](d){10}
+    \psline{->}(18,2)(18,0.5)
+    \uput[90](18,2){$\bmu_2=18$}
+    \psset{dotstyle=Btriangle}
+    \psdot(e)\uput[-90](e){11}
+    \psdot(f)\uput[-90](f){12}
+    \psdot(g)\uput[-90](g){20}
+    \psdot(h)\uput[-90](h){25}
+    \psdot(i)\uput[-90](i){30}
+    \endpspicture
+    }}}
+
+    \centerline{
+    \subfloat[Iteration: $t=4$]{
+    \scalebox{0.75}{%
+    \pspicture[](-1,-1)(31,3)
+    \psline(0,0)(31,0)
+    \def\tick{\psline(0,0)(0,0.5)}%
+    \multips(0,0)(1,0){32}{\tick}
+    \pnode(2,0){a}
+    \pnode(3,0){b}
+    \pnode(4,0){c}
+    \pnode(10,0){d}
+    \pnode(11,0){e}
+    \pnode(12,0){f}
+    \pnode(20,0){g}
+    \pnode(25,0){h}
+    \pnode(30,0){i}
+    \psline{->}(4.75,2)(4.75,0.5)
+    \uput[90](4.75,2){$\bmu_1=4.75$}
+    \psset{dotstyle=Bo}
+    \psdot(a)\uput[-90](a){2}
+    \psdot(b)\uput[-90](b){3}
+    \psdot(c)\uput[-90](c){4}
+    \psdot(d)\uput[-90](d){10}
+    \psdot(e)\uput[-90](e){11}
+    \psdot(f)\uput[-90](f){12}
+    \psline{->}(19.6,2)(19.6,0.5)
+    \uput[90](19.6,2){$\bmu_2=19.60$}
+    \psset{dotstyle=Btriangle}
+    \psdot(g)\uput[-90](g){20}
+    \psdot(h)\uput[-90](h){25}
+    \psdot(i)\uput[-90](i){30}
+    \endpspicture
+    }}}
+
+    \centerline{
+    \subfloat[Iteration: $t=5$ (converged)]{
+    \scalebox{0.75}{%
+    \pspicture[](-1,-1)(31,3)
+    \psline(0,0)(31,0)
+    \def\tick{\psline(0,0)(0,0.5)}%
+    \multips(0,0)(1,0){32}{\tick}
+    \pnode(2,0){a}
+    \pnode(3,0){b}
+    \pnode(4,0){c}
+    \pnode(10,0){d}
+    \pnode(11,0){e}
+    \pnode(12,0){f}
+    \pnode(20,0){g}
+    \pnode(25,0){h}
+    \pnode(30,0){i}
+    \psline{->}(7,2)(7,0.5)
+    \uput[90](7,2){$\bmu_1=7$}
+    \psset{dotstyle=Bo}
+    \psdot(a)\uput[-90](a){2}
+    \psdot(b)\uput[-90](b){3}
+    \psdot(c)\uput[-90](c){4}
+    \psdot(d)\uput[-90](d){10}
+    \psdot(e)\uput[-90](e){11}
+    \psdot(f)\uput[-90](f){12}
+    \psline{->}(25,2)(25,0.5)
+    \uput[90](25,2){$\bmu_2=25$}
+    \psset{dotstyle=Btriangle}
+    \psdot(g)\uput[-90](g){20}
+    \psdot(h)\uput[-90](h){25}
+    \psdot(i)\uput[-90](i){30}
+    \endpspicture
+    }}}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-means in 2D: Iris Principal Components}
+\setcounter{subfigure}{0}
+\begin{center}
+\begin{figure}
+    \centering
+    \captionsetup[subfloat]{captionskip=0.25in}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,
+    arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \centerline{
+    \subfloat[Random initialization: $t=0$]{\label{fig:clust:rep:kex2da}
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5){4in}{2in}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C1}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C2}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C3}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W1}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W2}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](-0.98,-1.24){A}
+        \pstGeonode[PointSymbol=Bsquare, dotscale=2](-2.95,1.16){B}
+        \pstGeonode[PointSymbol=Btriangle,dotscale=2](-1.69,-0.80){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        \endpsgraph
+        %\endpspicture
+    }
+    }%\hspace{0.5in}
+%    \vspace{0.2in}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-means in 2D: Iris Principal Components}
+\begin{center}
+\begin{figure}
+    \centerline{
+    \captionsetup[subfloat]{captionskip=0.25in}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,
+    arrowscale=2,PointName=none}
+    \subfloat[Iteration: $t=1$]{\label{fig:clust:rep:kex2db}
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5){4in}{2in}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C1}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C2}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C3}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W1}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W2}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](1.56,-0.08){A}
+        \pstGeonode[PointSymbol=Bsquare,dotscale=2](-2.86,0.53){B}
+        \pstGeonode[PointSymbol=Btriangle,dotscale=2](-1.50,-0.05){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    } }
+%    \vspace{0.2in}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-means in 2D: Iris Principal Components}
+\begin{center}
+\begin{figure}
+    \centerline{
+    \captionsetup[subfloat]{captionskip=0.25in}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,
+    arrowscale=2,PointName=none}
+    \subfloat[Iteration: $t=8$ (converged)]{\label{fig:clust:rep:kex2dc}
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5){4in}{2in}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W1}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/representative/iris-PC-kmeans-2d-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/iris-PC-kmeans-2d-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](2.64,0.19){A}
+        \pstGeonode[PointSymbol=Bsquare,
+        dotscale=2](-2.35,0.27){B}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-0.66,-0.33){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    }}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}{Kernel K-means}
+In K-means, the separating boundary between clusters is
+linear. Kernel K-means 
+allows one to extract nonlinear
+boundaries between clusters via the use of the kernel trick, i.e., we
+show that all operations involve only the kernel value between a pair of
+points.
+%
+
+\medskip
+Let  $\bx_i \in \bD$ be mapped
+to $\phi(\bx_i)$ in feature space.
+Let $\bK = \bigl\{K(\bx_i,
+\bx_{j})\bigr\}_{i,j=1,\dots,n}$
+denote the $n \times n$ symmetric kernel matrix,
+where $K(\bx_i,\bx_{j}) = \phi(\bx_i)^T\phi(\bx_{j})$.
+
+\medskip
+The cluster means in
+feature space are $\{\bmu^\phi_1, \ldots, \bmu^\phi_k\}$, where
+$\bmu^\phi_i = {1 \over n_i} \sum_{\bx_{j} \in C_i} \phi(\bx_{j})$.
+
+
+\medskip
+The sum of squared errors in feature space is
+\begin{align*}
+    \min_{\cC} \; SSE(\cC) =
+    \sum_{i=1}^k \sum_{\bx_{j} \in C_i}
+    \norm{\phi(\bx_{j}) -\bmu^\phi_i}^2
+     = \sum_{j=1}^n K(\bx_{j}, \bx_{j}) -
+    \sum_{i=1}^k {1\over n_i} \sum_{\bx_a \in C_i}
+      \sum_{\bx_b \in C_i} K(\bx_a, \bx_b)
+\end{align*}
+Thus, the kernel K-means SSE objective function can be expressed purely in
+terms of the kernel function.
+\end{frame}
+
+\begin{frame}{Kernel K-means: Cluster Reassignment}
+
+Consider the distance of a point $\phi(\bx_{j})$ to
+the mean $\bmu_i^\phi$ in feature space
+\begin{align*}
+    \norm{\phi(\bx_{j}) - \bmu^\phi_i}^2 & =
+        \norm{\phi(\bx_{j})}^2 - 2 \phi(\bx_{j})^T\bmu^\phi_i +
+        \norm{\bmu^\phi_i}^2\\
+     & = K(\bx_{j}, \bx_{j})
+     - \frac{2}{n_i} \sum_{\bx_a \in C_i} K(\bx_a, \bx_{j})
+     + {1\over n_i^2} \sum_{\bx_a\in C_i} \sum_{\bx_b \in C_i}
+        K(\bx_a, \bx_b)
+\end{align*}
+
+Kernel K-means assign a point to the closest cluster mean as
+follows:
+\begin{align*}
+    C^*(\bx_{j}) & = \arg \min_{i} \lB\{
+    \norm{\phi(\bx_{j}) - \bmu^\phi_i}^2  \rB\}\\
+    & = \arg \min_{i} \Biggl\{
+    {1\over n_i^2} \sum_{\bx_a\in C_i} \sum_{\bx_b \in C_i}
+        K(\bx_a, \bx_b)
+     - \frac{2}{n_i} \sum_{\bx_a \in C_i} K(\bx_a, \bx_{j})
+    \Biggr\}
+\end{align*}
+\end{frame}
+
+
+\newcommand{\KKmeans}{\textsc{Kernel-Kmeans}}
+\begin{frame}[fragile]{Kernel-Kmeans Algorithm}
+\small{
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\KKmeans ($\bK, k, \epsilon$)}
+\Algorithm{}
+$t \assign 0$\;
+$\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$ clusters}
+\Repeat{$1-\frac{1}{n}\sum_{i=1}^k \lB|C^t_i \cap C^{t-1}_i\rB| \le \epsilon$}{
+  $t \assign t+1$\;
+  \ForEach(\tcp*[h]{Squared norm of cluster means})%
+    {$C_i \in \cC^{t-1}$}{
+    \nllabel{alg:clust:rep:kkmeans:sqnorm}
+    $\text{sqnorm}_i \assign {1\over n_i^2} \sum_{\bx_a\in C_i} \sum_{\bx_b \in
+           C_i} K(\bx_a, \bx_b)$\;
+  }
+  \ForEach(\tcp*[h]{Average kernel value for $\bx_{j}$ and $C_i$})%
+  {$\bx_{j} \in \bD$}{
+  \nllabel{alg:clust:rep:kkmeans:avg}
+  \ForEach{$C_i \in \cC^{t-1}$}{
+  $\text{avg}_{ji} \assign \frac{1}{n_i} \sum_{\bx_a \in C_i} K(\bx_a,
+      \bx_{j})$\;
+    }
+  }
+  \tcp{F{i}nd closest cluster for each point}
+    \ForEach{$\bx_{j} \in \bD$}{
+        \ForEach{$C_i \in \cC^{t-1}$}{
+        $d(\bx_{j}, C_i) \assign \text{sqnorm}_i - 2\cdot \text{avg}_{ji}$\;
+        }
+        $j^* \assign \arg \min_{i} \bigl\{ d(\bx_{j},C_i) \bigr\}$\;
+        $C^{t}_{j^*} \assign C^{t}_{j^*} \cup \{\bx_{j}\}$ \tcp{Cluster
+        reassignment}
+        \nllabel{alg:clust:rep:kkmeans:cluserassignment}
+    }
+    $\cC^{t} \assign \lB\{ C^{t}_1, \dots, C^{t}_k \rB\}$\;
+}
+\end{algorithm}
+}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-Means or Kernel K-means with Linear Kernel}
+\setcounter{subfigure}{0}
+\begin{center}
+\begin{figure}
+  \captionsetup[subfloat]{captionskip=0.25in}
+    \def\pshlabel#1{ {\footnotesize #1}}
+    \def\psvlabel#1{ {\footnotesize #1}}
+    \psset{xAxisLabel=$X_1$,yAxisLabel= $X_2$}
+    \psset{xunit=0.35in,yunit=0.4in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+    \subfloat[Linear kernel: $t=5$ iterations]{\label{fig:clust:rep:kernelsLinear}
+        %\pspicture[](-0.5,1)(13,6.5)
+        \psgraph[tickstyle=bottom,Oy=1.5]{->}(0,1.5)(13,6.5){4in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/representative/kernel-linear-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/kernel-linear-W1}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/representative/kernel-linear-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/kernel-linear-W2}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/representative/kernel-linear-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/kernel-linear-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](10.02,3.0){A}
+        \pstGeonode[PointSymbol=Bsquare,
+        dotscale=2](2.48,4.22){B}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](5.53,4.21){C}
+        \psclip{
+        \psframe[](0,1.5)(13,6.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](0,1.5){a}(0,6.5){b}(13,6.5){c}(13,1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{b}{c}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{b}{c}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{a}{d}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        \endpsgraph
+    }}
+%    \vspace{0.2in}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{Kernel K-means: Gaussian Kernel}
+\begin{center}
+\begin{figure}
+  \captionsetup[subfloat]{captionskip=0.25in}
+    \centerline{
+    \subfloat[Gaussian kernel: $t=4$
+    Iterations]{\label{fig:clust:rep:kernelsGaussian}
+        %\pspicture[](-0.5,1)(13,6.5)
+        \psgraph[tickstyle=bottom,Oy=1.5]{->}(0,1.5)(13,6.5){4in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/representative/kernel-gaussian1.5-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/kernel-gaussian1.5-W1}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/representative/kernel-gaussian1.5-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/kernel-gaussian1.5-W2}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/representative/kernel-gaussian1.5-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/representative/kernel-gaussian1.5-W3}
+        \psset{fillcolor=black}
+        \psframe[](0,1.5)(13,6.5)
+        \endpsgraph
+    }}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Expectation-Maximization Clustering: Gaussian Mixture Model}
+\small
+  Let $X_a$ denote the random variable corresponding to
+the $a$th attribute. 
+Let $\bX = (X_1, X_2, \dots, X_d)$ denote the vector random
+variable across the $d$-attributes, with $\bx_{j}$ being a data
+sample from~$\bX$.
+
+
+\medskip
+We assume that
+each cluster $C_i$ is characterized by
+a multivariate normal distribution
+\begin{align*}
+f_i(\bx) = f(\bx|\bmu_i,\cov_i)
+= \frac{1}{(2\pi)^\frac{d}{2}|\cov_i|^\frac{1}{2}}
+    \exp\lB\{-\frac{(\bx-\bmu_{i})^{T} \cov_i^{-1}
+    (\bx-\bmu_{i})}{2}\rB\}
+\end{align*}
+where the cluster mean $\bmu_i \in \setR^d$ and
+covariance matrix
+$\cov_i \in \setR^{d \times d}$ are both unknown parameters.
+
+
+\medskip
+The probability density function of $\bX$
+is given as a
+{\em Gaussian mixture model} over all the $k$ clusters
+\begin{align*}
+    f(\bx) = \sum_{i=1}^k f_i(\bx) P(C_i)
+    = \sum_{i=1}^k f(\bx | \bmu_i, \cov_i) P(C_i)
+\end{align*}
+where the prior probabilities $P(C_i)$ are called the
+{\em mixture parameters}, which must satisfy the condition
+\begin{align*}
+    \sum_{i=1}^k P(C_i) = 1
+\end{align*}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Expectation-Maximization Clustering: Maximum Likelihood Estimation}
+
+  \small
+We write the set of all the model parameters compactly as
+\begin{align*}
+    \btheta = \lB\{\bmu_1,\cov_1,P(C_i) \dots, \bmu_k, \cov_k,
+   P(C_k)\rB\}
+\end{align*}
+Given the dataset $\bD$, we def\/{i}ne the {\em likelihood} of
+$\btheta$ as the conditional probability of the data $\bD$ given
+the model parameters $\btheta$
+\begin{align*}
+P(\bD | \btheta) & = \prod_{j=1}^n f(\bx_{j})
+\end{align*}
+
+The goal of maximum likelihood estimation (MLE) is to choose the
+parameters $\btheta$ that maximize the likelihood. We do this by
+maximizing the log of the likelihood function
+\begin{align*}
+    \btheta^* = \arg\max_{\btheta} \{\ln P(\bD | \btheta)\}
+\end{align*}
+where the {\em log-likelihood} function is given as
+\begin{align*}
+    \ln P(\bD | \btheta) & = \sum_{j=1}^n \ln f(\bx_{j})
+    = \sum_{j=1}^n \ln \biggl( \sum_{i=1}^k f(\bx_{j} | \bmu_i,
+\cov_i)P(C_i)\biggr)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Expectation-Maximization Clustering}
+Directly maximizing the log-likelihood over $\btheta$ is hard.
+Instead, we can use the
+expectation-maximization (EM)
+approach for f\/{i}nding the maximum likelihood estimates
+for the parameters $\btheta$.
+
+\medskip
+EM is a two-step iterative approach that
+starts from an initial guess for the parameters $\btheta$.
+Given the current estimates for $\btheta$, in the {\em expectation step}
+EM computes the cluster posterior probabilities $P(C_i|\bx_{j})$ via the Bayes
+theorem:
+\begin{align*}
+  P(C_i | \bx_{j}) = \frac{P(C_i \mbox{ and } \bx_{j})}{P(\bx_{j})} =
+  \frac{P(\bx_{j} | C_i) P(C_i)}{\sum_{a=1}^k P(\bx_{j} | C_a) P(C_a)}
+ = \frac{f_i(\bx_{j}) \cdot P(C_{i})}
+    {\sum_{a=1}^k f_a(\bx_{j}) \cdot P(C_{a})}
+\end{align*}
+
+In the {\em maximization step}, using the weights
+$P(C_i|\bx_{j})$ EM re-estimates $\btheta$, that is, it re-estimates the parameters $\bmu_i$, $\cov_i$,
+and $P(C_i)$ for each cluster $C_i$.
+The re-estimated mean is given as the weighted average of
+all the points, the re-estimated covariance matrix is given as
+the weighted covariance over all pairs of dimensions, and the
+re-estimated prior probability for each cluster is given as the
+fraction of weights that contribute to that cluster.
+\end{frame}
+
+
+
+\begin{frame}{EM in One Dimension: Expectation Step}
+
+Let $\bD$ comprise of a single attribute $X$,
+with each point $x_{j} \in \setR$ a random
+sample from $X$. 
+For the mixture model, we use univariate normals for each
+cluster:
+\begin{align*}
+  f_i(x) = f(x | \mu_i, \sigma_i^2) =
+  \frac{1}{\sqrt{2\pi}\sigma_i} \exp \lB\{-\frac{(x -
+  \mu_i)^2}{2\sigma_i^2} \rB \}
+\end{align*}
+with the cluster parameters $\mu_{i}$, $\sigma_{i}^2$, and
+$P(C_i)$.  
+
+
+\medskip{\bf Initialization:}
+For each cluster $C_{i}$, with $i =
+1,2,\ldots, k$, we can randomly initialize the cluster parameters
+$\mu_{i}$, $\sigma_{i}^2$, and $P(C_i)$. 
+
+\medskip
+{\bf Expectation Step:}
+Given 
+the mean
+$\mu_i$, variance $\sigma_i^2$, and prior probability $P(C_i)$ for each
+cluster, the cluster posterior probability is computed as
+\begin{align*}
+  w_{ij} = P(C_{i}|x_{j}) & =
+    \frac{f(x_{j}|\mu_i,\sigma_i^2) \cdot P(C_{i})}
+    {\sum_{a=1}^k f(x_{j} |\mu_a, \sigma_a^2) \cdot P(C_{a})}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{EM in One Dimension: Maximization Step}
+
+Given $w_{ij}$ values, the re-estimated cluster mean is
+\begin{align*}
+    \mu_{i} = \frac{\sum_{j=1}^n w_{ij} \cdot x_{j}}
+    {\sum_{j=1}^n w_{ij}}
+\end{align*}
+
+\smallskip
+The re-estimated value of the cluster variance is computed as the
+weighted variance across all the points:
+\begin{align*}
+\sigma_{i}^{2} =
+    \frac{\sum_{j=1}^n w_{ij}(x_{j}-\mu_{i})^2}
+        {\sum_{j=1}^n w_{ij}}
+\end{align*}
+
+\smallskip
+The prior probability of cluster $C_i$ is re-estimated as
+\begin{align*}
+P(C_{i}) & =
+    \frac{\sum_{j=1}^n w_{ij}}{n}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[fragile]{EM in One Dimension}
+\begin{center}
+\setcounter{subfigure}{0}
+\begin{figure}
+    %BASED ON EM-NEW.R
+    \psset{yunit=2in,xunit=0.4in,fillstyle=solid,arrowscale=2,dotscale=2.5}
+    \psset{dotstyle=Bo}
+    \def\pshlabel#1{ {\small $#1$}}
+    \definecolor{mygray75}{gray}{0.75}%
+    \definecolor{mygray25}{gray}{0.15}%
+    \centerline{ \scalebox{0.8}{
+    \subfloat[Initialization: $t=0$]{\label{fig:clust:rep:em1a}
+    \begin{pspicture}(-1,-0.1)(12,0.6)
+    \psaxes[Dy=0.1,showorigin=true,tickstyle=bottom]{->}(0,0)(-1,0)(12,0.5)
+    {
+    \psset{linewidth=2pt,fillcolor=mygray25,opacity=0.5}
+    \psGauss[mue=6.63, sigma=1]{0}{12}
+    \psset{linewidth=2pt,fillcolor=mygray75,opacity=0.5}
+    \psGauss[mue=7.57,sigma=1]{0}{12}%
+    }
+    \pnode(1.0,0){a}\pnode(1.3,0){b}\pnode(2.2,0){c}
+    \pnode(2.6,0){d}\pnode(2.8,0){e}\pnode(5.0,0){f}
+    \pnode(7.3,0){g}\pnode(7.4,0){h}\pnode(7.5,0){i}
+    \pnode(7.7,0){j}\pnode(7.9,0){k}
+    \psdot(a)\psdot(b)\psdot(c)\psdot(d)\psdot(e)
+    \psdot(f)\psdot(g)\psdot(h)\psdot(i)\psdot(j)\psdot(k)
+    \psline{->}(6.63,0.45)(6.63,0.01)
+    \uput[135](6.63,0.45){\small $\mu_1=6.63$}
+    %\uput[90](6.63,0.5){$\sigma_1=1$}
+    \psline{->}(7.57,0.45)(7.57,0.01)
+    \uput[45](7.57,0.45){\small $\mu_2=7.57$}
+    %\uput[90](7.57,0.5){$\sigma_2=1$}
+    \end{pspicture}
+    }}}
+    \centerline{\scalebox{0.8}{
+    \subfloat[Iteration: $t=1$]{\label{fig:clust:rep:em1b}
+    \begin{pspicture}(-2,-0.1)(12,0.65)
+    \psaxes[Dy=0.1,showorigin=true,tickstyle=bottom]{->}(0,0)(-2,0)(12,0.6)
+    {
+    \psset{linewidth=2pt,fillcolor=mygray25,opacity=0.5}
+    \psGauss[mue=3.72,sigma=2]{-2}{12}
+    \psset{linewidth=2pt,fillcolor=mygray75,opacity=0.5}
+    \psGauss[mue=7.40,sigma=0.83]{-1}{12}
+    }
+    \pnode(1.0,0){a}\pnode(1.3,0){b}\pnode(2.2,0){c}
+    \pnode(2.6,0){d}\pnode(2.8,0){e}\pnode(5.0,0){f}
+    \pnode(7.3,0){g}\pnode(7.4,0){h}\pnode(7.5,0){i}
+    \pnode(7.7,0){j}\pnode(7.9,0){k}
+    \psdot(a)\psdot(b)\psdot(c)\psdot(d)\psdot(e)\psdot(f)
+    \psdot(g)\psdot(h)\psdot(i)\psdot(j)\psdot(k)
+    \psline{->}(3.72,0.275)(3.72,0.01)
+    \uput[90](3.72,0.275){\small $\mu_1=3.72$}
+    %\uput[90](3.72,0.25){$\sigma_1=2.48$}
+    \psline{->}(7.4,0.55)(7.4,0.01)
+    \uput[90](7.4,0.55){\small $\mu_2=7.4$}
+    %\uput[90](7.4,0.6){$\sigma_2=0.83$}
+    \end{pspicture}
+    }}}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{EM in One Dimension: Final Clusters}
+\begin{center}
+\begin{figure}
+    \psset{yunit=2in,xunit=0.4in,fillstyle=solid,arrowscale=2,dotscale=2.5}
+    \psset{dotstyle=Bo}
+    \def\pshlabel#1{ {\small $#1$}}
+    \definecolor{mygray75}{gray}{0.75}%
+    \definecolor{mygray25}{gray}{0.15}%
+    \centerline{\scalebox{0.8}{
+    \subfloat[Iteration: $t=5$ (converged)]{\label{fig:clust:rep:em1c}
+    \psset{yunit=0.75in}
+    \begin{pspicture}(-1,-0.3)(12,2.2)
+    \psaxes[Dy=0.3,showorigin=true,tickstyle=bottom]{->}(0,0)(-1,0)(12,2)
+    {
+    \psset{linewidth=2pt,fillcolor=mygray25,opacity=0.5}
+    \psGauss[mue=2.49,sigma=1.3]{-1}{12}
+    \psset{linewidth=2pt,fillcolor=mygray75,opacity=0.5}
+    \psGauss[mue=7.56,sigma=0.22,plotpoints=400]{-1}{12}
+    }
+    \pnode(1.0,0){a}\pnode(1.3,0){b}\pnode(2.2,0){c}
+    \pnode(2.6,0){d}\pnode(2.8,0){e}\pnode(5.0,0){f}
+    \pnode(7.3,0){g}\pnode(7.4,0){h}\pnode(7.5,0){i}
+    \pnode(7.7,0){j}\pnode(7.9,0){k}
+    \psset{fillcolor=white}
+    \psdot(a)\psdot(b)\psdot(c)\psdot(d)\psdot(e)\psdot(f)
+    \psset{fillcolor=lightgray}
+    \psdot(g)\psdot(h)\psdot(i)\psdot(j)\psdot(k)
+    \psline{->}(2.48,0.55)(2.48,0.1)
+    \uput[90](2.48,0.55){$\mu_1=2.48$}
+    %\uput[90](2.48,0.5){$\sigma_1=1.3$}
+    \psline{->}(7.56,1.9)(7.56,0.1)
+    \uput[90](7.56,1.9){$\mu_2=7.56$}
+    %\uput[90](7.56,2){$\sigma_2=0.22$}
+    \end{pspicture}
+    }}}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{EM in $d$ Dimensions}
+Each
+cluster we have to reestiamte the $d\times d$ covariance matrix:
+\begin{align*}
+\cov_i = \matr{
+(\sigma^i_{1})^2 & \sigma^i_{12} & \ldots & \sigma^i_{1d}\\[1ex]
+\sigma^i_{21} & (\sigma^i_{2})^2 & \ldots & \sigma^i_{2d}\\[1ex]
+\vdots & \vdots & \ddots\\
+\sigma^i_{d1} & \sigma^i_{d2} & \ldots & (\sigma^i_{d})^2\\
+}
+\end{align*}
+It requires $O(d^2)$ parameters, which may be too many
+for reliable estimation.
+A simplification is to assume
+that all dimensions are independent, which leads to a diagonal
+covariance matrix:
+\begin{align*}
+\cov_i = \matr{
+      (\sigma^i_{1})^2 & 0 & \ldots & 0\\
+      0 & (\sigma^i_{2})^2 & \ldots & 0\\
+      \vdots & \vdots & \ddots\\
+      0 &  0 & \ldots & (\sigma^i_{d})^2\\
+  }
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{EM in $d$ Dimensions}
+
+{\bf Expectation Step:}
+Given $\bmu_i$, $\cov_i$, and $P(C_i)$, the posterior probability is
+given as 
+\begin{align*}
+  w_{ij} = P(C_i | \bx_{j}) 
+ = \frac{f_i(\bx_{j}) \cdot P(C_{i})}
+    {\sum_{a=1}^k f_a(\bx_{j}) \cdot P(C_{a})}
+\end{align*}
+
+
+\medskip
+{\bf Maximization Step:}
+Given the weights $w_{ij}$, in the maximization step, we
+re-estimate $\cov_i$, $\bmu_i$ and $P(C_i)$.
+
+The mean $\bmu_i$ for cluster $C_i$ can be estimated as
+\begin{align*}
+    \bmu_i = \frac{\sum_{j=1}^n w_{ij} \cdot \bx_{j}}
+                {\sum_{j=1}^n w_{ij}}
+\end{align*}
+
+The covariance matrix $\cov_i$ is re-estimated via the
+outer-product form
+\begin{align*}
+  \cov_i = \frac{\sum_{j=1}^n w_{ij}
+                    (\bx_{j}-\bmu_{i})(\bx_{j}-\bmu_{i})^T}
+                    {\sum_{j=1}^n w_{ij}}
+\end{align*}
+
+The prior probability $P(C_i)$ for each cluster is 
+\begin{align*}
+    P(C_i) = \frac{\sum_{j=1}^n w_{ij}}{n}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Expectation-Maximization Clustering Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\textsc{Expectation-Maximization} ($\bD, k, \epsilon$)}
+\Algorithm{}
+$t \assign 0$\;
+%\tcp{Initialization}
+Randomly initialize $\bmu^t_1,\ldots,\bmu^t_k$\;
+$\cov_i^t \assign \bI,\;\forall i=1,\dots,k$\;
+%$P^t(C_i) \assign {1\over k},\;\forall i=1,\dots,k$\;
+\Repeat{$\sum_{i=1}^k \norm{\bmu_i^{t} - \bmu_i^{t-1}}^2  \le \epsilon$}{
+    $t \assign t+1$\;
+    %\tcp{Expectation Step}
+    \For{$i = 1,\dots,k$ and $j=1,\dots,n$}{
+    $w_{ij}  \assign
+       \frac{f(\bx_{j} | \bmu_i, \cov_i) \cdot P(C_{i})}
+       {\sum_{a=1}^k f(\bx_{j} | \bmu_a, \cov_a)  \cdot
+       P(C_{a})}$ \tcp{ posterior probability $P^t(C_{i}|\bx_{j})$}
+    }
+    %\tcp{Maximization Step}
+    \For{$i=1,\dots,k$}{
+        $\bmu_i^t \assign \frac{\sum_{j=1}^n w_{ij} \cdot \bx_{j}}
+                {\sum_{j=1}^n w_{ij}}$ \tcp{re-estimate mean}
+        $\cov^t_i \assign \frac{\sum_{j=1}^n w_{ij}
+                    (\bx_{j}-\bmu_{i})(\bx_{j}-\bmu_{i})^T}
+                    {\sum_{j=1}^n w_{ij}}$ \tcp{re-estimate covariance
+                    matrix}
+        $P^t(C_{i}) \assign\frac{\sum_{j=1}^n w_{ij}}{n}$
+        \tcp{re-estimate priors}
+    }
+}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{EM Clustering in 2D}
+  \framesubtitle{Mixture of $\textit{k}=3$ Gaussians} 
+\setcounter{subfigure}{0}
+\begin{center}
+\begin{figure}%
+\def\mye{2.7183}
+\def\mypi{3.1416}
+\def\msigma#1{(sqrt(#1))}%
+\def\rho#1#2#3{((#3)/(\msigma{#1}*\msigma{#2}))}%sigma1, sigma2, sigma12
+\def\ccA#1#2#3{((1.0)/(2*\mypi*\msigma{#1}*\msigma{#2}*sqrt(1-\rho{#1}{#2}{#3}^
+2)))} %sigma1, sigma2,rho
+\def\ccB#1#2#3{((-1.0)/(2*(1-(\rho{#1}{#2}{#3})^2)))}%rho
+\def\fA#1#2#3#4#5{(\ccA{#3}{#4}{#5})*\mye^(
+(\ccB{#3}{#4}{#5})*(((x-(#1))/(\msigma{#3}))^2 +
+((y-(#2))/(\msigma{#4}))^2 -
+(2*(\rho{#3}{#4}{#5})*(x-(#1))*(y-(#2)))/(
+(\msigma{#3})*(\msigma{#4})) ))}%
+%
+\psset{arrowscale=2} \centerline{ \subfloat[Iteration:
+$t=0$]{\label{fig:clust:rep:em2a} \psset{unit=0.35in,dotscale=1.5}
+\begin{pspicture}(-4,-2.5)(4,3.5)
+\scalebox{0.9}{%
+\psset{viewpoint=30 -60 40 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,opacity=0.3,incolor=white}
+\psset{dotstyle=Bo,fillcolor=gray}
+\input{CLUST/representative/iris-PC-em-3d-C1}
+\input{CLUST/representative/iris-PC-em-3d-C2}
+\input{CLUST/representative/iris-PC-em-3d-C3}
+\input{CLUST/representative/iris-PC-em-3d-W1}
+\input{CLUST/representative/iris-PC-em-3d-W2}
+\input{CLUST/representative/iris-PC-em-3d-W3}
+\psPoint(-3.59,0.25,0){m1} \psPoint(-1.09,-0.46,0){m2}
+\psPoint(0.75,1.07,0){m3}
+\psdots[dotscale=2,dotstyle=Bsquare,fillcolor=black](m1)
+\psdots[dotscale=2,dotstyle=Btriangle,fillcolor=black](m2)
+\psdots[dotscale=2,dotstyle=Bo,fillcolor=black](m3)
+\psset{fillcolor=white} \psSurface[ngrid=0.1 0.1, linewidth=0.1pt,
+linecolor=gray, intersectionplan ={[0 0 1 -0.01] [0 0 1 -0.05] [0
+0 1 -0.2] [0 0 1 -0.4]}, intersectionlinewidth =1 1 1 1,
+intersectioncolor=(Black) (Black) (Black) (Black),
+intersectiontype=0, transform={1 1 8
+scaleOpoint3d},algebraic](-4,-1.5)(4,2){
+(0.333*\fA{-3.59}{0.25}{1}{1}{0}+
+0.333*\fA{-1.09}{-0.46}{1}{1}{0}+ 0.333*\fA{0.75}{1.07}{1}{1}{0})
+} \axesIIID[axisnames={X_1,X_2,f(\bx)}](-4,-1.5,0)(4,2,2.25) }
+\end{pspicture}
+}} 
+\end{figure}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{EM Clustering in 2D}
+  \framesubtitle{Mixture of $\textit{k}=3$ Gaussians} 
+\begin{center}
+\begin{figure}%
+\def\mye{2.7183}
+\def\mypi{3.1416}
+\def\msigma#1{(sqrt(#1))}%
+\def\rho#1#2#3{((#3)/(\msigma{#1}*\msigma{#2}))}%sigma1, sigma2, sigma12
+\def\ccA#1#2#3{((1.0)/(2*\mypi*\msigma{#1}*\msigma{#2}*sqrt(1-\rho{#1}{#2}{#3}^
+2)))} %sigma1, sigma2,rho
+\def\ccB#1#2#3{((-1.0)/(2*(1-(\rho{#1}{#2}{#3})^2)))}%rho
+\def\fA#1#2#3#4#5{(\ccA{#3}{#4}{#5})*\mye^(
+(\ccB{#3}{#4}{#5})*(((x-(#1))/(\msigma{#3}))^2 +
+((y-(#2))/(\msigma{#4}))^2 -
+(2*(\rho{#3}{#4}{#5})*(x-(#1))*(y-(#2)))/(
+(\msigma{#3})*(\msigma{#4})) ))}%
+%
+
+\centerline{ \subfloat[Iteration:
+$t=1$]{\label{fig:clust:rep:em2b} \psset{unit=0.35in,dotscale=1.5}
+\begin{pspicture}(-4,-2.5)(4,3.5)
+\scalebox{0.9}{%
+\psset{viewpoint=30 -60 40 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,opacity=0.3,incolor=white}
+\psset{dotstyle=Bo,fillcolor=gray}
+\input{CLUST/representative/iris-PC-em-3d-C1}
+\input{CLUST/representative/iris-PC-em-3d-C2}
+\input{CLUST/representative/iris-PC-em-3d-C3}
+\input{CLUST/representative/iris-PC-em-3d-W1}
+\input{CLUST/representative/iris-PC-em-3d-W2}
+\input{CLUST/representative/iris-PC-em-3d-W3}
+\psPoint(-2.55,0.343,0){m1} \psPoint(-1.06,-0.2,0){m2}
+\psPoint(2.1,0.1,0){m3}
+\psdots[dotscale=2,dotstyle=Bsquare,fillcolor=black](m1)
+\psdots[dotscale=2,dotstyle=Btriangle,fillcolor=black](m2)
+\psdots[dotscale=2,dotstyle=Bo,fillcolor=black](m3)
+\psset{fillcolor=white} \psSurface[ngrid=0.1 0.1, linewidth=0.1pt,
+linecolor=gray, intersectionplan ={[0 0 1 -0.01] [0 0 1 -0.1] [0 0
+1 -0.5] [0 0 1 -1.0]}, intersectionlinewidth =1 1 1 1,
+intersectioncolor=(Black) (Black) (Black), intersectiontype=0,
+transform={1 1 6 scaleOpoint3d},algebraic](-4,-1.5)(4,2){
+(0.15*\fA{-2.55}{0.343}{0.47}{0.17}{-0.18}+
+0.45*\fA{-1.06}{-0.2}{0.69}{0.17}{-0.18}+
+0.4*\fA{2.1}{0.1}{1.46}{0.25}{0.14}) }
+\axesIIID[axisnames={X_1,X_2,f(\bx)}](-4,-1.5,0)(4,2,2.25) }
+\end{pspicture}
+}} 
+\end{figure}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{EM Clustering in 2D}
+  \framesubtitle{Mixture of $\textit{k}=3$ Gaussians} 
+\begin{center}
+\begin{figure}%
+\def\mye{2.7183}
+\def\mypi{3.1416}
+\def\msigma#1{(sqrt(#1))}%
+\def\rho#1#2#3{((#3)/(\msigma{#1}*\msigma{#2}))}%sigma1, sigma2, sigma12
+\def\ccA#1#2#3{((1.0)/(2*\mypi*\msigma{#1}*\msigma{#2}*sqrt(1-\rho{#1}{#2}{#3}^
+2)))} %sigma1, sigma2,rho
+\def\ccB#1#2#3{((-1.0)/(2*(1-(\rho{#1}{#2}{#3})^2)))}%rho
+\def\fA#1#2#3#4#5{(\ccA{#3}{#4}{#5})*\mye^(
+(\ccB{#3}{#4}{#5})*(((x-(#1))/(\msigma{#3}))^2 +
+((y-(#2))/(\msigma{#4}))^2 -
+(2*(\rho{#3}{#4}{#5})*(x-(#1))*(y-(#2)))/(
+(\msigma{#3})*(\msigma{#4})) ))}%
+%
+
+
+\centerline{
+\subfloat[iteration: $t=36$]{
+\psset{unit=0.35in,dotscale=1.5}
+\begin{pspicture}(-4,-3)(4,4.5)
+\scalebox{0.90}{%
+\psset{viewpoint=30 -60 40 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,opacity=0.3,incolor=white}
+\psset{dotstyle=Bsquare,fillcolor=gray}
+\input{CLUST/representative/iris-PC-em-3d-C1}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-3d-W1}
+\psset{dotstyle=Btriangle,fillcolor=gray}
+\input{CLUST/representative/iris-PC-em-3d-C2}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-3d-W2}
+\psset{dotstyle=Bo,fillcolor=gray}
+\input{CLUST/representative/iris-PC-em-3d-C3}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-3d-W3}
+\psPoint(-2.02,0.017,0){m1}
+\psPoint(-0.51,-0.23,0){m2}
+\psPoint(2.64,0.19,0){m3}
+\psdots[dotscale=2,dotstyle=Bsquare,fillcolor=black](m1)
+\psdots[dotscale=2,dotstyle=Btriangle,fillcolor=black](m2)
+\psdots[dotscale=2,dotstyle=Bo,fillcolor=black](m3)
+\psset{fillcolor=white}
+\psSurface[ngrid=0.1 0.1, linewidth=0.1pt,
+linecolor=gray,
+intersectionplan ={[0 0 1 -0.1] [0 0 1 -0.5] [0 0 1 -1.0] [0 0 1
+-1.5]},
+intersectionlinewidth =1 1 1 1,
+intersectioncolor=(Black) (Black) (Black) (Black),
+intersectiontype=0,
+transform={1 1 6 scaleOpoint3d},algebraic](-4,-1.5)(4,2){
+(0.36*\fA{-2.02}{0.017}{0.564}{0.232}{-0.293}+
+0.31*\fA{-0.51}{-0.23}{0.364}{0.188}{-0.218}+
+0.33*\fA{2.64}{0.19}{0.048}{0.215}{-0.056})
+}
+\axesIIID[axisnames={X_1,X_2,f(\bx)}](-4,-1.5,0)(4,2,2.25)
+\multido{\ix=-4+1}{9}{%
+        \psPoint(\ix\space,-1.5,0){X1}
+        \psPoint(\ix\space,-1.6,0){X2}
+        \psline(X1)(X2)\uput[d](X1){\small $\ix$}}
+\multido{\ny=-1+1}{4}{%
+        \psPoint(-4,\ny\space,0){Y1}
+        \psPoint(-4.1,\ny\space,0){Y2}
+        \psline(Y1)(Y2)\uput[ul](Y1){\small $\ny$}}
+}
+\end{pspicture}
+}}
+\end{figure}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Iris Principal Components Data: Full Covariance Matrix}
+\setcounter{subfigure}{0}
+\begin{figure}
+\psset{unit=0.5in}
+\psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+\psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+\centerline{
+\subfloat[Full covariance matrix ($t=36$)]{
+\label{fig:clust:rep:iris-em-fulldiag-a}
+\begin{pspicture}(-4,-0.5)(4,4.5)
+%\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(4,2)
+\psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dy=0.5]{->}(-4.0,-1.5)(4,1.5){4in}{2in}%
+\psset{dotstyle=Bsquare,fillcolor=lightgray}
+\input{CLUST/representative/iris-PC-em-2d-C1}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-2d-W1}
+\psset{dotstyle=Btriangle,fillcolor=lightgray}
+\input{CLUST/representative/iris-PC-em-2d-C2}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-2d-W2}
+\psset{dotstyle=Bo,fillcolor=lightgray}
+\input{CLUST/representative/iris-PC-em-2d-C3}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-2d-W3}
+\psdot[dotscale=2,dotstyle=Bo,fillcolor=black](2.64,0.19)
+\psdot[dotscale=2,dotstyle=Btriangle,fillcolor=black](-0.51,-0.23)
+\psdot[dotscale=2,dotstyle=Bsquare,fillcolor=black](-2.02,0.017)
+\begin{psclip}{%
+\psline[linewidth=1pt](-4,-1.5)(-4,1.5)(4,1.5)(4,-1.5)(-4,-1.5)}
+%> ginv(Theta$sigma[[1]])
+%         [,1]    [,2]
+%[1,] 30.10806 7.83927
+%[2,]  7.83927 6.69827
+\psset{linewidth=1pt,linestyle=dotted}
+\psplotImp[algebraic](-4.5,-2)(4.5,2.5){%
+    30.11*(x-2.64)^2+2*7.84*(x-2.64)*(y-0.19)+6.7*(y-0.19)^2
+    + ln(0.001)}
+%> ginv(Theta$sigma[[2]])
+%          [,1]     [,2]
+%[1,]  8.958392 10.36548
+%[2,] 10.365483 17.30429
+\psplotImp[algebraic](-4.5,-2)(4.5,2.5){%
+    8.96*(x+0.51)^2+2*10.37*(x+0.51)*(y+0.23)+17.3*(y+0.23)^2
+    + ln(0.1)}
+%> ginv(Theta$sigma[[3]])
+%         [,1]      [,2]
+%[1,] 5.155760  6.516119
+%[2,] 6.516119 12.545074
+\psplotImp[algebraic](-4.5,-2)(4.5,2.5){%
+    5.16*(x+2.02)^2+2*6.52*(x+2.02)*(y-0.017)+12.55*(y-0.017)^2
+    + ln(0.15)}
+\end{psclip}
+\endpsgraph
+\end{pspicture}
+}}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Iris Principal Components Data: Diagonal Covariance Matrix}
+\begin{figure}
+\psset{unit=0.5in}
+\psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+\psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+\centerline{
+\subfloat[Diagonal covariance matrix ($t=29$)]{
+\label{fig:clust:rep:iris-em-fulldiag-b}
+\begin{pspicture}(-4,-0.5)(4,4.5)
+%\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(4,2)
+\psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dy=0.5]{->}(-4.0,-1.5)(4,1.5){4in}{2in}%
+\psset{dotstyle=Bsquare,fillcolor=lightgray}
+\input{CLUST/representative/iris-PC-em-2d-diag-C1}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-2d-diag-W1}
+\psset{dotstyle=Bo,fillcolor=lightgray}
+\input{CLUST/representative/iris-PC-em-2d-diag-C2}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-2d-diag-W2}
+\psset{dotstyle=Btriangle,fillcolor=lightgray}
+\input{CLUST/representative/iris-PC-em-2d-diag-C3}
+\psset{fillcolor=white}
+\input{CLUST/representative/iris-PC-em-2d-diag-W3}
+\psdot[dotscale=2,dotstyle=Bsquare,fillcolor=black](-2.1,0.28)
+\psdot[dotscale=2,dotstyle=Bo,fillcolor=black](2.64,0.19)
+\psdot[dotscale=2,dotstyle=Btriangle,fillcolor=black](-0.674,-0.404)
+\begin{psclip}{%
+\psline[linewidth=1pt](-4,-1.5)(-4,1.5)(4,1.5)(4,-1.5)(-4,-1.5)}
+\psset{linewidth=1pt,linestyle=dotted}
+\psplotImp[algebraic](-4.5,-2)(4.5,2.5){%
+    1.68*(x+2.1)^2+8.93*(y-0.28)^2 + ln(0.15)}
+\psplotImp[algebraic](-4.5,-2)(4.5,2.5){%
+    20.93*(x-2.64)^2+4.66*(y-0.19)^2 + ln(0.001)}
+\psplotImp[algebraic](-4.5,-2)(4.5,2.5){%
+    2.04*(x+0.67)^2+9.04*(y+0.404)^2+ ln(0.15)}
+\end{psclip}
+\endpsgraph
+\end{pspicture}
+}}
+\end{figure}
+\end{frame}

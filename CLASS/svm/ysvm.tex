@@ -1,0 +1,1356 @@
+\lecture{svm}{svm}
+
+\date{Chapter 21: Support Vector Machines}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}{Hyperplanes}
+
+Let $\bD = \{ (\bx_i, y_i) \}_{i=1}^n$ be a classif\/{i}cation
+dataset, with $n$ points in a $d$-dimensional space. We 
+assume that there are only two class labels, that is, $y_i \in
+\{+1, -1\}$, denoting the positive and negative classes.
+
+\medskip
+A hyperplane in $d$ dimensions is given as the set of all points $\bx
+\in \setR^d$ that satisfy the equation
+  $h(\bx) = 0$,
+  where $h(\bx)$ is the {\em hyperplane function}:
+\begin{align*}
+h(\bx) & =  \bw^{T}\bx+b 
+=  w_1x_1 + w_2x_2 + \cdots + w_dx_d + b
+\end{align*}
+Here, $\bw$ is a $d$ dimensional {\em weight vector} and $b$ is a
+scalar, called the {\em bias}.
+
+\medskip
+For points that lie on the hyperplane, we have
+\begin{align*}
+  h(\bx) = \bw^T\bx+b = 0
+\end{align*}
+
+\medskip
+The weight
+vector $\bw$ specif\/{i}es the direction that is orthogonal or 
+normal to the
+hyperplane, which f\/{i}xes the orientation of the hyperplane, whereas
+the bias $b$ f\/{i}xes the offset of the hyperplane in the $d$-dimensional
+space, i.e., where
+the hyperplane intersects each of the axes:
+\begin{align*}
+  w_ix_i = -b \;\;\;\mbox{ or }\;\;\; x_i = \frac{-b}{w_i}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Separating Hyperplane}
+A hyperplane splits the $d$-dimensional data space
+into two {\em half-spaces}. 
+
+\medskip
+A dataset is said to be {\em linearly
+separable} if each half-space has points only from a single class.
+
+\medskip
+If the input
+dataset is linearly separable, then we can f\/{i}nd a {\em separating}
+hyperplane $h(\bx)=0$, such that for all points labeled $y_i=-1$, we have
+$h(\bx_i) < 0$, and for all points labeled $y_i = +1$, we have
+$h(\bx_i) > 0$. 
+
+\medskip
+The hyperplane function $h(\bx)$ thus serves as a 
+linear classif\/{i}er or a linear discriminant,
+which predicts the class $y$ for any given point $\bx$,  according to
+the decision rule:
+\begin{align*}
+  y =
+  \begin{cases}
+    +1 & \mbox{if } h(\bx) > 0\\
+    -1 & \mbox{if } h(\bx) < 0
+  \end{cases}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Geometry of a Hyperplane: Distance}
+\small
+  Consider a point $\bx \in \setR^d$ that does not lie
+on the hyperplane. Let $\bx_p$ be the orthogonal projection of $\bx$ on
+the hyperplane, and let $\br = \bx - \bx_p$.
+Then we can write $\bx$ as
+\begin{align*}
+    \bx  & = \bx_p + \br = 
+	\bx_p + r {\bw \over \|\bw\|}
+\end{align*}
+where $r$ is the {\em directed distance} of the point $\bx$ from
+$\bx_p$.  
+
+To obtain an expression for $r$, consider the value $h(\bx)$, we have:
+\begin{align*}
+  h(\bx) & = h\lB(\bx_p + r {\bw \over \|\bw\|}\rB) = 
+  \bw^T\lB(\bx_p + r {\bw \over \|\bw\|}\rB) + b = 
+  r \| \bw \|
+\end{align*}
+
+The directed distance $r$ of point $\bx$ to the
+hyperplane is thus:
+\begin{align*}
+  r = {h(\bx) \over \| \bw \|}
+\end{align*}
+
+To obtain distance, which must be non-negative, we 
+multiply $r$ by the class label $y_i$ of the point $\bx_i$
+because when $h(\bx_i) < 0$, the class is $-1$, and when $h(\bx_i)
+> 0$ the class is $+1$:
+\begin{align*}
+  \dist_i = {y_i h(\bx_i) \over \| \bw \|}
+\end{align*}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]{Geometry of a Hyperplane in 2D}
+\begin{figure}%[!t]
+  %h(x) = 2y + 5x - 10 = 0
+%  \centerline{
+    %\psset{unit=0.5in,arrowscale=2,dotscale=2}
+    %\pspicture[](-1,-1)(6,6)
+    %\definecolor{mygray}{gray}{0.9}%
+    %\pspolygon[linecolor=mygray,fillcolor=mygray,fillstyle=solid](-1,-1)(2.4,-1)(-0.4,6)(-1,6) %
+    %\psaxes[]{<->}(0,0)(-1,-1)(6,6)
+    %\psgrid[subgriddiv=1,gridcolor=gray,griddots=7,gridlabels=0](0,0)(-1,-1)(6,6)
+    %\psline[linewidth=2pt]{-}(-0.4,6)(2.4,-1)
+    %\psdot[](3.5,3.5)\uput[45](3.5,3.5){$\bx$}
+    %\psdot[](1,2.5)\uput[225](1,2.5){$\bx_p$}
+    %\psline[linestyle=dashed]{-}(1,2.5)(3.5,3.5)
+    %\psline[linestyle=dashed]{-}(0,0)(1.72,0.69)
+    %\uput[225](0,0){$\bzero$}
+    %\uput[90](2.2,3){$r$}
+    %\uput[90](0.75,0.35){${b \over \|\bw\|}$}
+    %\uput[0]{-65}(0.1,4.5){$h(\bx) = 0$}
+    %\put[0](-1.5,4.5){$h(\bx) < 0$}
+    %\uput[0](1,4.5){$h(\bx) > 0$}
+    %\endpspicture
+  %}
+   %h(x) = 2y + 5x - 20 = 0
+  
+  \centerline{
+  \scalebox{0.8}{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-1,-1)(6,6)
+    \definecolor{mygray}{gray}{0.75}%
+    \pspolygon[linecolor=mygray,fillcolor=mygray,fillstyle=solid](-1,-1)(4.4,-1)(1.6,6)(-1,6) %
+    \psaxes[]{<->}(0,0)(-1,-1)(6,6)
+    \psgrid[subgriddiv=1,gridcolor=gray,griddots=10,gridlabels=0](0,0)(-1,-1)(6,6)
+    \psdots[dotstyle=o](4,3)(3.5,4.25)(5.5,3.5)(4,4)(4.5,1.75)(5,4)(5.5,2.5)(4.9,4.5)
+    \psdots[dotstyle=triangle](2,2)(2.5,0.75)(0.5,1.5)(1.5,1.5)(1,2.5)(1.25,0.5)
+    \pcline[linewidth=3pt]{-}(1.6,6)(4.4,-1)
+    \naput[nrot=:U,npos=0.1,labelsep=2pt]{$h(\bx) = 0$}
+    \psdot[](5,4)\uput[45](5,4){$\bx$}
+    \psdot[](2.76,3.1)\uput[225](2.76,3.1){$\bx_p$}
+    \uput[225](0,0){$\bzero$}
+    \pcline[linewidth=3pt,arrowscale=1,linecolor=gray]{->}(2.25,4.375)(3.18,4.75)
+    %\psline[linestyle=dashed]{-}(5,4)(2.76,3.1)
+    \pcline[linewidth=2pt,arrowscale=1.5]{->}(2.76,3.1)(5,4)
+    \nbput[nrot=:U, labelsep=2.5pt]{$\br = r \; {\bw \over \| \bw \|}$}
+    \psline[linewidth=2pt,linestyle=dashed]{-}(0,0)(3.45,1.34)
+    %\uput[0]{-65}(1.7,5.6){$h(\bx) = 0$}
+    \uput[0](0,5.8){$h(\bx) < 0$}
+    \uput[0](2.5, 5.8){$h(\bx) > 0$}
+    %\uput[90](1.75,0.75){${b \over \|\bw\|}$}
+    \uput[30](3,4.65){$\bw \over \| \bw \|$}
+    \psdots[dotstyle=o](4,2.9)
+    %\psbrace[rot=270,ref=b,linewidth=0.5pt](3.45,1.34)(0,0)
+    \uput[30](1.25,0.85){${b \over \|\bw\|}$}
+    \endpspicture
+  }
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Margin and Support Vectors}
+
+The distance of a point $\bx$ from the
+hyperplane $h(\bx)=0$ is thus given as
+\begin{align*}
+  \dist = y\; r = {y\; h(\bx) \over \| \bw \|}
+\end{align*}
+
+The {\em margin} is the minimum distance of a point from the 
+separating
+hyperplane:
+\begin{align*}
+  \dist^* = \min_{\bx_i} \; \lB\{ {y_i(\bw^T\bx_i + b) \over \|
+  \bw \|} \rB\}
+\end{align*}
+
+All the points (or vectors) that achieve the minimum
+distance are called {\em support vectors}
+for the hyperplane. They satisfy the condition:
+\begin{align*}
+\dist^* & = {y^*(\bw^T\bx^* + b) \over \| \bw \|}
+\end{align*}
+where $y^*$ is the class label for $\bx^*$.
+\end{frame}
+
+
+\begin{frame}{Canonical Hyperplane}
+Multiplying the hyperplane equation on both sides by some scalar $s$ yields an equivalent
+hyperplane:
+\begin{align*}
+    s \; h(\bx) = s\; \bw^T\bx + s\; b = (s\bw)^T\bx + (sb) = 0
+\end{align*}
+
+\medskip
+To obtain the unique or {\em canonical} hyperplane,
+we choose the scalar $s={1 \over y^*(\bw^T\bx^* + b)}$ so
+that the absolute distance of a support vector from the
+hyperplane is $1$, i.e., the margin is  
+\begin{align*}
+  \dist^* = {y^* (\bw^T\bx^* + b) \over \norm{\bw}} = {1 \over \| \bw \|}
+\end{align*}
+
+\medskip
+For the canonical hyperplane, for each support vector $\bx^*_i$
+(with label $y_i^*$), we have $y^*_i h(\bx^*_i) = 1$, and for any
+point that is not a support vector we have \hbox{$y_i h(\bx_i) > 1$}.
+Over all points, we have
+\begin{align*}
+  y_i \; (\bw^T\bx_i + b) \ge 1, \mbox{ for all points } \bx_i \in \bD
+\end{align*}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Separating Hyperplane: Margin and Support Vectors}
+  \framesubtitle{Shaded points are support vectors}
+\begin{figure}[!t]
+  \centerline{Canonical hyperplane: $h(x) = 5/6x + 2/6y - 20/6 
+  = 0.334x + 0.833y - 3.332$}
+  \centerline{~}
+\scalebox{0.7}{
+  \centerline{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-1,-1)(6,6)
+    \psaxes[]{<->}(0,0)(-1,-1)(6,6)
+    \psgrid[subgriddiv=1,gridcolor=gray,griddots=10,gridlabels=0](0,0)(-1,-1)(6,6)
+    \pcline[linewidth=3pt]{-}(1.6,6)(4.4,-1)
+    \naput*[nrot=:U,npos=0.1,labelsep=2pt]{$h(\bx) = 0$}
+    \psline[linewidth=1.5pt,linestyle=dashed]{-}(2.8,6)(5.6,-1)
+    \psline[linewidth=1.5pt,linestyle=dashed]{-}(0.4,6)(3.2,-1)
+    \psdots[dotstyle=Bo,fillcolor=gray](4.5,1.75)(4,3)(3.5,4.25)
+    \psdots[dotstyle=Btriangle,fillcolor=gray](2,2)(2.5,0.75)
+    \psline[]{<->}(2,2)(3.035,2.414)
+    \psline[]{<->}(2.965,2.586)(4,3)
+    %\psline[]{<->}(1.25,6)(4.75,-1)
+    %
+    \psdots[dotstyle=o](5.5,3.5)(4,4)(5,4)(5.5,2.5)(4.9,4.5)
+    \psdots[dotstyle=triangle](0.5,1.5)(1.5,1.5)(1,2.5)(1.25,0.5)
+    %\uput[0]{-65}(1.7,5.5){$h(\bx) = 0$}
+    \uput[90](2.4,2.2){$1 \over \| \bw \|$}
+    \uput[90](3.3,2.75){$1 \over \| \bw \|$}
+    \endpspicture
+  }
+}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{SVM: Linear and Separable Case}
+
+Assume that the points are linearly separable, that is, there exists a separating hyperplane that perfectly classif\/{i}es each point. 
+
+\medskip
+The goal of SVMs is to choose the canonical
+hyperplane, $h^*$,
+that yields the maximum margin among all possible separating
+hyperplanes
+\begin{align*}
+    h^* = \arg \max_{\bw,b} \lB\{ {1 \over \| \bw \|} \rB\}
+\end{align*}
+We can obtain an equivalent minimization
+formulation:
+\begin{align*}
+    \mbox{\bf Objective Function: } &  \min_{\bw,b}
+    \lB\{ \frac{\| \bw \|^2}{2} \rB\} \\
+  \mbox{\bf Linear Constraints: }& y_i \; (\bw^T\bx_i + b) \ge 1,\;\;
+  \forall \bx_i \in \bD
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{SVM: Linear and Separable Case}
+  \small
+We turn the constrained SVM optimization into an unconstrained one by
+introducing a
+Lagrange multiplier $\alpha_i$ for each constraint.
+The new objective function, called the {\em Lagrangian}, then becomes
+\begin{align*}
+    \min \; L = {1 \over 2}\|\bw\|^2 - \dsum_{i=1}^n \alpha_i \lB(y_i
+  (\bw^T\bx_i + b) - 1\rB)
+\end{align*}
+$L$ should be minimized with respect to $\bw$ and $b$,
+and it should be maximized with respect to $\alpha_i$.
+
+Taking the derivative of $L$ with respect to
+$\bw$ and $b$, and setting those to zero, we
+obtain
+\begin{align*}
+\frac{\partial}{\partial \bw}L & =
+\bw-\dsum_{i=1}^n \alpha_{i}y_{i}\bx_{i} = \bzero \;\;\;\mbox { or }\;\;\;
+\bw = \dsum_{i=1}^n \alpha_{i}y_{i}\bx_{i}\\
+\frac{\partial}{\partial b} L & = \dsum_{i=1}^n \alpha_{i}y_{i}= 0
+\end{align*}
+
+\medskip
+We can see that $\bw$ can be expressed as a linear combination of the
+data points $\bx_i$, with the signed Lagrange multipliers,
+$\alpha_iy_i$, serving as the coeff\/{i}cients. 
+
+\medskip
+Further, the sum of the signed
+Lagrange multipliers, $\alpha_iy_i$, must be zero.
+\end{frame}
+
+
+\begin{frame}{SVM: Linear and Separable Case}
+Incorporating $\bw = \dsum_{i=1}^n \alpha_{i}y_{i}\bx_{i}$ and 
+$\dsum_{i=1}^n \alpha_{i}y_{i}= 0$ into the Lagrangian we obtain the new 
+{\em dual
+  Lagrangian} objective function, 
+  which is specified purely in terms of the Lagrange multipliers:
+\begin{align*}
+    \mbox{\bf Objective Function: } &  \max_{\balpha}\;\;
+     L_{dual} = \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
+  \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} \bx_i^T\bx_{j}\\
+  \mbox{\bf Linear Constraints: }& \alpha_i \ge 0, \;
+  \forall i \in \bD, \text{ and } \sum_{i=1}^n \alpha_i y_i = 0
+\end{align*}
+where $\balpha = (\alpha_1, \alpha_2,\ldots, \alpha_n)^T$ is the vector comprising the Lagrange multipliers. 
+
+\medskip
+$L_{dual}$ is a convex quadratic programming problem (note the
+$\alpha_i\alpha_{j}$ terms), which admits a unique optimal solution.
+\end{frame}
+
+
+
+\begin{frame}{SVM: Linear and Separable Case}
+Once we have obtained the $\alpha_i$ values for $i=1,\ldots, n$,
+we can solve for the weight vector $\bw$ and the bias $b$. Each of the
+Lagrange multipliers $\alpha_i$ satisfies the KKT conditions at the
+optimal solution:
+\begin{align*}
+  \alpha_i \lB(y_i (\bw^T\bx_i + b) - 1\rB) = 0
+\end{align*}
+which gives rise to two cases:
+\begin{enumerate}[(1)]
+\item $\alpha_i = 0$, or
+\item $y_i (\bw^T\bx_i + b) - 1 = 0$, which implies
+  $y_i (\bw^T\bx_i + b) = 1$
+\end{enumerate}
+
+\medskip
+This is a very important result because if $\alpha_i
+> 0$, then $y_i (\bw^T\bx_i + b) = 1$, and thus the point $\bx_i$
+must be a support vector. 
+
+\medskip
+On the other hand, if $y_i (\bw^T\bx_i +
+b) > 1$, then $\alpha_i = 0$, that is, if a point is not a support
+vector, then $\alpha_i = 0$.
+\end{frame}
+
+
+\begin{frame}{Linear and Separable Case: Weight Vector and Bias}
+Once we know $\alpha_i$ for all points, we can compute the weight
+vector $\bw$ by taking the
+summation only for the support vectors:
+\begin{align*}
+    \bw = \dsum_{\mathclap{i, \alpha_i > 0}} \alpha_i y_i \bx_i
+\end{align*}
+Only the support vectors determine $\bw$, since 
+$\alpha_i=0$ for other points.
+
+To compute the bias $b$, we f\/{i}rst compute one solution $b_i$, per
+support vector, as follows:
+\begin{align*}
+  y_i (\bw^T\bx_i + b) = 1, \text{ which implies }
+  b_i = {1 \over y_i} - \bw^T\bx_i = y_i - \bw^T\bx_i
+\end{align*}
+The bias $b$ is taken as the average value:
+\begin{align*}
+   b = \displaystyle \mbox{avg}_{\alpha_i > 0} \{ b_i\}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{SVM Classif\/{i}er}
+Given the optimal hyperplane function $h(\bx) = \bw^T\bx + b$,
+for any new point $\bz$, we predict its class as
+\begin{align*}
+  \hat{y}  =  \sign(h(\bz)) = \sign(\bw^T\bz + b)
+\end{align*}
+where the $\sign(\cdot)$ function returns $+1$ if its argument is positive, and
+$-1$ if its argument is negative.
+\end{frame}
+
+
+
+\begin{frame}{Example Dataset: Separable Case}
+\renewcommand{\arraystretch}{1.1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+        \hline
+        $\bx_i$ & $x_{i1}$ & $x_{i2}$ & $y_i$\\
+        \hline
+        $\bx_1$ & $3.5$ & $4.25$ & $+1$\\
+        $\bx_2$ & $4$ & $3$ & $+1$\\
+        $\bx_3$ & $4$ & $4$ & $+1$\\
+        $\bx_4$ & $4.5$ & $1.75$ & $+1$\\
+        $\bx_5$ & $4.9$ & $4.5$ & $+1$\\
+        $\bx_6$ & $5$ & $4$ & $+1$\\
+        $\bx_7$ & $5.5$ & $2.5$ & $+1$\\
+        $\bx_8$ & $5.5$ & $3.5$ & $+1$\\
+        $\bx_9$ & $0.5$ & $1.5$ & $-1$\\
+        $\bx_{10}$ & $1$ & $2.5$ & $-1$\\
+        $\bx_{11}$ & $1.25$ & $0.5$ & $-1$\\
+        $\bx_{12}$ & $1.5$ & $1.5$ & $-1$\\
+        $\bx_{13}$ & $2$ & $2$ & $-1$\\
+        $\bx_{14}$ & $2.5$ & $0.75$ & $-1$\\
+        \hline
+    \end{tabular}%}{}
+\end{center}
+\end{frame}
+
+\begin{frame}{Optimal Separating Hyperplane}
+  \begin{columns}
+	\column{0.4\textwidth}
+\begin{figure}[!t]
+\scalebox{0.5}{
+  \centerline{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-1,-1)(6,6)
+    \psaxes[]{<->}(0,0)(-1,-1)(6,6)
+    \psgrid[subgriddiv=1,gridcolor=gray,griddots=10,gridlabels=0](0,0)(-1,-1)(6,6)
+    \pcline[linewidth=3pt]{-}(1.6,6)(4.4,-1)
+    \naput*[nrot=:U,npos=0.1,labelsep=2pt]{$h(\bx) = 0$}
+    \psline[linewidth=1.5pt,linestyle=dashed]{-}(2.8,6)(5.6,-1)
+    \psline[linewidth=1.5pt,linestyle=dashed]{-}(0.4,6)(3.2,-1)
+    \psdots[dotstyle=Bo,fillcolor=gray](4.5,1.75)(4,3)(3.5,4.25)
+    \psdots[dotstyle=Btriangle,fillcolor=gray](2,2)(2.5,0.75)
+    \psline[]{<->}(2,2)(3.035,2.414)
+    \psline[]{<->}(2.965,2.586)(4,3)
+    %\psline[]{<->}(1.25,6)(4.75,-1)
+    %
+    \psdots[dotstyle=o](5.5,3.5)(4,4)(5,4)(5.5,2.5)(4.9,4.5)
+    \psdots[dotstyle=triangle](0.5,1.5)(1.5,1.5)(1,2.5)(1.25,0.5)
+    %\uput[0]{-65}(1.7,5.5){$h(\bx) = 0$}
+    \uput[90](2.4,2.2){$1 \over \| \bw \|$}
+    \uput[90](3.3,2.75){$1 \over \| \bw \|$}
+    \endpspicture
+  }
+}
+\end{figure}
+
+\column{0.6\textwidth}
+\small
+    Solving the $L_{dual}$ quadratic program yields 
+	\begin{center}
+\scriptsize
+	  {\tabcolsep12pt\renewcommand{\arraystretch}{1.1}%
+	\begin{tabular}{|c|c|c|c|c|}
+        \hline
+        $\bx_i$ & $x_{i1}$ & $x_{i2}$ & $y_i$ & $\alpha_i$\\
+        \hline
+        $\bx_1$ & $3.5$ & $4.25$ & $+1$ & $0.0437$\\
+        $\bx_2$ & $4$ & $3$ & $+1$ & $0.2162$\\
+        $\bx_4$ & $4.5$ & $1.75$ & $+1$ & $0.1427$\\
+        $\bx_{13}$ & $2$ & $2$ & $-1$ & $0.3589$\\
+        $\bx_{14}$ & $2.5$ & $0.75$ & $-1$ & $0.0437$\\
+        \hline
+    \end{tabular}}
+    \end{center}
+The weight vector and bias are:
+\begin{align*}
+    \bw & =
+    \dsum_{\mathclap{i, \alpha_i > 0}} \alpha_i y_i \bx_i
+	= \matr{0.833\\0.334}\\
+b & = \mbox{avg} \{b_i\} = -3.332
+\end{align*}
+The optimal hyperplane is given as follows:
+\begin{align*}
+    h(\bx) = \matr{0.833\\0.334}^T \bx - 3.332 = 0
+\end{align*}
+\end{columns}
+\end{frame}
+
+
+
+
+\begin{frame}{Soft Margin SVM: Linear and Nonseparable Case}
+The assumption that the dataset be perfectly linearly
+separable is unrealistic. 
+SVMs can handle non-separable
+points by introducing {\em slack variables} $\xi_i$ 
+as follows: 
+\begin{align*}
+y_{i} (\bw^{T}\bx_{i}+b) \geq 1-\xi_{i}
+\end{align*}
+where $\xi_i \ge 0$ is the slack variable for point $\bx_i$, which
+indicates how much the point violates the separability condition,
+that is, the point may no longer be at least $1/\norm{\bw}$ away
+from the hyperplane. 
+
+\medskip
+The slack values indicate three types of
+points. If $\xi_i=0$, then the corresponding point $\bx_i$ is at least
+$1 \over \|\bw\|$ away from the hyperplane. 
+
+\medskip
+If $0 < \xi_i
+< 1$, then the point is within the margin and still correctly
+classif\/{i}ed, that is, it is on the correct side of the hyperplane.
+
+\medskip
+However, if $\xi_i \ge 1$ then the point is misclassif\/{i}ed and
+appears on the wrong side of the hyperplane.
+\end{frame}
+
+
+
+
+
+\begin{frame}{Soft Margin Hyperplane}
+  \framesubtitle{Shaded points are the support vectors}
+\begin{figure}[!b]
+  %\vspace{0.1in}
+  %h(x) = 2y + 5x - 10 = 0
+\scalebox{0.8}{
+  \centerline{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-1,-1)(6,6)
+    \psaxes[]{<->}(0,0)(-1,-1)(6,6)
+    \psgrid[subgriddiv=1,gridcolor=gray,griddots=10,gridlabels=0](0,0)(-1,-1)(6,6)
+    \pcline[linewidth=3pt]{-}(1.6,6)(4.4,-1)
+    \naput*[nrot=:U,npos=0.1,labelsep=1pt]{$h(\bx) = 0$}
+    \psline[linewidth=1.5pt,linestyle=dashed]{-}(2.8,6)(5.6,-1)
+    \psline[linewidth=1.5pt,linestyle=dashed]{-}(0.4,6)(3.2,-1)
+    \psdots[dotstyle=Bo,fillcolor=gray](4,3)(3.5,4.25)(4.5,1.75)(4,2)(2,3)
+    \psdots[dotstyle=Btriangle,fillcolor=gray](2,2)(2.5,0.75)(3,2)(5,3)
+    %slacks
+    \psset{PointSymbol=none,PointName=none}
+    \pstGeonode[](4,3){na}
+    \pstGeonode[](4.5,1.75){nb}
+    \pstGeonode[](2,3){s1}
+    \pstProjection[]{na}{nb}{s1}[sp1]
+    \pstLineAB[]{s1}{sp1}
+    \pstGeonode[](4,2){s2}
+    \pstProjection[]{na}{nb}{s2}[sp2]
+    \pstLineAB[]{s2}{sp2}
+    \pstGeonode[](2,2){ma}
+    \pstGeonode[](2.5,0.75){mb}
+    \pstGeonode[](3,2){s3}
+    \pstProjection[]{ma}{mb}{s3}[sp3]
+    \pstLineAB[]{s3}{sp3}
+    \pstGeonode[](5,3){s4}
+    \pstProjection[]{ma}{mb}{s4}[sp4]
+    \pstLineAB[]{s4}{sp4}
+    %
+    \psdots[dotstyle=o](5.5,3.5)(4,4)(5,4)(5.5,2.5)(4.9,4.5)
+    \psdots[dotstyle=triangle](0.5,1.5)(1.5,1.5)(1,2.5)(1.25,0.5)
+    %margin
+    \pstGeonode[](2.4,4){p1}
+    \vspace{0.2in}
+    \pstProjection[]{na}{nb}{p1}[pp1]
+    \pstLineAB[]{<->}{p1}{pp1}
+    \pstProjection[]{ma}{mb}{p1}[pp2]
+    \pstLineAB[]{<->}{p1}{pp2}
+    %\psline[]{<->}(2,2.1)(3,2.5)
+    %\psline[]{<->}(3,2.5)(4,2.9)
+    \uput[90](1.7,3.8){${1 \over \|\bw\|}$}
+    \uput[90](2.75,4.2){${1 \over \|\bw\|}$}
+    \endpspicture
+  }
+}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{SVM: Soft Margin or Linearly Non-separable Case}
+In the nonseparable case, also called the {\em soft margin}
+the SVM objective function is
+\begin{align*}
+  \mbox{\bf Objective Function: } & \min_{\bw,b,\xi_i} \lB\{ {\| \bw \|^2 \over 2} + C
+  \dsum_{i=1}^n (\xi_i)^k \rB \}\\
+  \mbox{\bf Linear Constraints: } & y_i \; (\bw^T\bx_i + b) \ge 1 - \xi_i,\;\;
+  \forall \bx_i \in \bD\\
+  & \xi_i \ge 0 \; \; \forall \bx_i \in \bD
+\end{align*}
+where $C$
+and $k$ are constants that incorporate the cost of
+misclassif\/{i}cation.  
+
+\medskip
+The term $\sum_{i=1}^n (\xi_i)^k$ gives the
+{\em loss}, that is, an estimate of the deviation from the
+separable case. 
+
+\medskip
+The scalar $C$ is a {\em
+regularization constant} that controls the trade-off between
+maximizing the margin  or minimizing the loss.
+For example, if $C \to 0$, then the loss component essentially
+disappears, and the objective defaults to maximizing the margin.
+On the other hand, if $C \to \infty$, then the margin ceases to
+have much effect, and the objective function tries to minimize the
+loss. 
+\end{frame}
+
+
+\begin{frame}{SVM: Soft Margin Loss Function}
+
+The constant $k$ governs the form of the loss. When $k=1$, called {\em hinge loss}, the goal is
+to minimize the sum of the slack variables, whereas when $k=2$,
+called {\em quadratic loss}, the goal is to minimize the sum of
+the squared slack variables.
+
+\medskip{\bf Hinge Loss:}
+Assuming $k=1$, the SVM dual Lagrangian is given as
+\begin{align*}
+     \max_{\balpha}\;\;
+     L_{dual} = \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
+  \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} \bx_i^T\bx_{j}
+\end{align*}
+The only difference from the separable case is that
+$0 \le \alpha_i \le C$.
+
+\medskip {\bf Quadratic Loss:} Assuming $k=2$,
+the dual objective is:
+\begin{align*}
+    \max_{\balpha}\;\;
+     L_{dual} = \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
+     \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} \lB(\bx_i^T\bx_{j} +
+     {1\over 2C}\delta_{ij} \rB)
+\end{align*}
+where $\delta$ is the {\em Kronecker delta} function, def\/{i}ned as
+$\delta_{ij} = 1$ if and only if $i=j$.
+
+\end{frame}
+
+
+\begin{frame}{Example Dataset: Linearly Non-separable Case}
+  \scriptsize
+\renewcommand{\arraystretch}{1.1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+        \hline
+        $\bx_i$ & $x_{i1}$ & $x_{i2}$ & $y_i$\\
+        \hline
+        $\bx_1$ & $3.5$ & $4.25$ & $+1$\\
+        $\bx_2$ & $4$ & $3$ & $+1$\\
+        $\bx_3$ & $4$ & $4$ & $+1$\\
+        $\bx_4$ & $4.5$ & $1.75$ & $+1$\\
+        $\bx_5$ & $4.9$ & $4.5$ & $+1$\\
+        $\bx_6$ & $5$ & $4$ & $+1$\\
+        $\bx_7$ & $5.5$ & $2.5$ & $+1$\\
+        $\bx_8$ & $5.5$ & $3.5$ & $+1$\\
+        $\bx_9$ & $0.5$ & $1.5$ & $-1$\\
+        $\bx_{10}$ & $1$ & $2.5$ & $-1$\\
+        $\bx_{11}$ & $1.25$ & $0.5$ & $-1$\\
+        $\bx_{12}$ & $1.5$ & $1.5$ & $-1$\\
+        $\bx_{13}$ & $2$ & $2$ & $-1$\\
+        $\bx_{14}$ & $2.5$ & $0.75$ & $-1$\\
+        \hline
+        $\bx_{15}$ & 4 & 2 & $+1$\\
+        $\bx_{16}$ & 2 & 3 & $+1$\\
+        $\bx_{17}$ & 3 & 2 & $-1$\\
+        $\bx_{18}$ & 5 & 3 & $-1$\\
+		\hline
+    \end{tabular}%}{}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Example Dataset: Linearly Non-separable Case}
+
+    Let $k=1$ and $C=1$, then solving the $L_{dual}$ yields the
+    following support vectors and Lagrangian values
+    $\alpha_i$:
+    \begin{center}%\vspace*{6pt}
+    {\tabcolsep12pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|c|c|c|c|}
+        \hline
+        $\bx_i$ & $x_{i1}$ & $x_{i2}$ & $y_i$ & $\alpha_i$\\
+        \hline
+        $\bx_1$ & 3.5 & 4.25 & $+1$ & 0.0271\\
+        $\bx_2$ & 4 & 3 & $+1$ & 0.2162\\
+        $\bx_4$ & 4.5 & 1.75 & $+1$ & 0.9928\\
+        $\bx_{13}$ & 2 & 2 & $-1$ & 0.9928\\
+        $\bx_{14}$ & 2.5 & 0.75 & $-1$ & 0.2434\\
+        $\bx_{15}$ & 4 & 2 & $+1$ & 1\\
+        $\bx_{16}$ & 2 & 3 & $+1$ & 1\\
+        $\bx_{17}$ & 3 & 2 & $-1$ & 1\\
+        $\bx_{18}$ & 5 & 3 & $-1$ & 1\\
+        \hline
+   \end{tabular}}\vspace*{6pt}
+    \end{center}
+The optimal hyperplane is given as follows:
+\begin{align*}
+    h(\bx) = \cramped{\matr{0.834\\0.333}^T} \bx - 3.334 = 0
+\end{align*}
+\end{frame}
+
+\begin{frame}{Example Dataset: Linearly Non-separable Case}
+
+The slack $\xi_i = 0$ for all points that are not support
+vectors, and also for those support vectors that are on the
+margin. Slack is positive only for the remaining support
+vectors and it can be computed as:
+    $\xi_i = 1 - y_i(\bw^T\bx_i+b)$.
+
+Thus, for all support vectors not on the margin, we have
+\begin{center}\vspace*{10pt}\small
+    {\tabcolsep12pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|c|c|c|}
+        \hline
+        $\bx_i$ & $\bw^T\bx_i$ & $\bw^T\bx_i + b$ & $\xi_i = 1
+        - y_i(\bw^T\bx_i+b)$\\
+        \hline
+        $\bx_{15}$ & 4.001 & 0.667 & 0.333\\
+        $\bx_{16}$ & 2.667 & $-0.667$ & 1.667\\
+        $\bx_{17}$ & 3.167 & $-0.167$ & 0.833\\
+        $\bx_{18}$ & 5.168 & 1.834 & 2.834\\
+        \hline
+    \end{tabular}}\vspace*{10pt}
+\end{center}
+The total slack is given as
+$$\sum_i \xi_i = \xi_{15} + \xi_{16} + \xi_{17} + \xi_{18} =
+0.333+ 1.667 +
+0.833 + 2.834 = 5.667$$
+
+The slack variable $\xi_i > 1$ for those points that
+are misclassif\/{i}ed (i.e., are on the wrong side of the
+hyperplane), namely $\bx_{16} = (3,3)^T$ and $\bx_{18} = (5,3)^T$.
+The other two points are correctly classif\/{i}ed, but lie within the
+margin, and thus satisfy $0 < \xi_i < 1$.
+\end{frame}
+
+
+
+
+\begin{frame}{Kernel SVM: Nonlinear Case}
+
+The linear SVM approach can be used for datasets with a nonlinear
+decision boundary via the kernel trick.
+
+\medskip
+Conceptually, the idea is to map the
+original $d$-dimensional points $\bx_i$ in the input space to
+points $\phi(\bx_i)$ in a high-dimensional feature space via some
+nonlinear transformation $\phi$. 
+
+\medskip
+Given the extra flexibility, it
+is more likely that the points $\phi(\bx_i)$ might be linearly
+separable in the feature space. 
+
+\medskip
+A linear
+decision surface in feature space actually corresponds to a
+nonlinear decision surface in the input space. 
+
+\medskip
+Further, the kernel
+trick allows us to carry out all operations via the kernel
+function computed in input space, rather than having to map the
+points into feature space.
+\end{frame}
+
+
+
+\begin{frame}{Nonlinear SVM}
+There is no linear classif\/{i}er that can discriminate between the
+points. However, there exists a perfect quadratic classif\/{i}er that can
+separate the two classes.
+
+\begin{figure}[!t]
+\scalebox{0.7}{
+  \centerline{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-0.5,-0.5)(8,6)
+   \definecolor{mygray}{gray}{0.75}
+    \psaxes[]{->}(0,0)(0,0)(8,6)
+    \psellipse[linewidth=3pt,fillcolor=mygray,
+    fillstyle=solid](4.05,2.91)(2.78,1.55)
+    \psgrid[subgriddiv=1,griddots=10,gridcolor=gray,gridlabels=0](0,0)(0,0)(8,6)
+    \psellipse[linestyle=dashed,linewidth=1.5pt](4.05,2.91)(1.957,1.093)
+    \psellipse[linestyle=dashed,linewidth=1.5pt](4.05,2.91)(3.41,1.906)
+    \psdots[dotstyle=Btriangle,fillcolor=gray](4,4)(6,3)
+    \psdots[dotstyle=Bo,fillcolor=gray](1,2)(4,1)(6,4.5)(7,2)
+    \psdots[dotstyle=triangle](4,3)(5,3.25)(5.5,3.25)(3.5,2.5)(3.5,3.5)(2.5,3)(2.75,2.75)(3,3.25)(4.25,2.75)(4.5,2.5)
+    \psdots[dotstyle=o](4,5.5)(1.25,4.5)(2,1)(2.25,5)(3,0.75)(3,5)(3,6)(5,1)(5,5.5)(6,1.25)(6.5,1)(7,4.5)(2,4.6)
+    \endpspicture
+  }
+}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Nonlinear SVMs: Kernel Trick}
+To apply the kernel trick for nonlinear SVM classif\/{i}cation, we
+have to show that all operations require only the kernel function:
+\begin{align*}
+K(\bx_i, \bx_{j}) = \phi(\bx_i)^T \phi(\bx_{j})
+%\label{eq:class:svm:K}
+\end{align*}
+
+\medskip
+Applying $\phi$ to each point, we
+can obtain the new dataset in the
+feature space
+$\bD_\phi = \{ \phi(\bx_i), y_i \}_{i=1}^n$.
+
+\medskip
+The SVM objective function in
+feature space is given as
+\begin{align*}
+        \mbox{\bf Objective Function: } & \min_{\bw,b,\xi_i}
+        \lB\{ {\| \bw \|^2 \over 2} + C \sum_{i=1}^n (\xi_i)^k\rB\}\\
+  \mbox{\bf Linear Constraints: } & y_i \; (\bw^T\phi(\bx_i) + b) \ge
+  1 - \xi_i, \text{and } \xi_i \ge 0,\;\; \forall \bx_i \in \bD
+\end{align*}
+where $\bw$ is the weight vector, $b$ is the bias, and $\xi_i$ are the slack
+variables, all in feature space.
+\end{frame}
+
+
+
+\begin{frame}{Nonlinear SVMs: Kernel Trick}
+For hinge loss, the dual Lagrangian in feature space is given as
+\begin{align*}
+    \max_{\balpha} \; L_{dual} & = \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
+  \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} \phi(\bx_i)^T
+  \phi(\bx_{j})\\
+  & =  \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
+  \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} K(\bx_i,\bx_{j})
+\end{align*}
+Subject to the constraints that $0 \le \alpha_i \le C$, and
+$\sum_{i=1}^n \alpha_i y_i = 0$.
+
+\medskip
+The dual Lagrangian depends only on the
+dot product between two vectors in feature space
+$\phi(\bx_i)^T \phi(\bx_{j})= K(\bx_i,\bx_{j})$, and thus we can
+solve the optimization problem using the kernel matrix $\bK =
+\{K(\bx_i, \bx_{j}) \}_{i,j=1,\ldots,n}$.
+
+
+\medskip 
+For quadratic loss,
+the dual Lagrangian
+corresponds to the use of a new kernel
+\begin{align*}
+    K_q(\bx_i, \bx_{j}) = \bx_i^T\bx_{j} + {1\over 2C}\delta_{ij}
+    = K(\bx_i, \bx_{j}) + {1\over 2C}\delta_{ij}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Nonlinear SVMs: Weight Vector and Bias}
+We cannot directly obtain the weight vector without transforming the
+points, since
+\begin{align*}
+    \bw  =  \dsum_{\mathclap{\alpha_i>0}} \alpha_i y_i \phi(\bx_i)
+\end{align*}
+
+
+However, we can compute the bias via kernel operations, since
+\begin{align*}
+    b_i  & =  y_i - \bw^T\phi(\bx_i) = 
+     y_i - \dsum_{\alpha_{j} >0} \alpha_{j} y_{j}
+    K(\bx_{j},\bx_i)
+\end{align*}
+
+Likewise, we can 
+predict the class for a new point $\bz$ as follows:
+\begin{align*}
+  \hat{y}  & =  \sign(\bw^T\phi(\bz) + b)
+         =  \sign\lB(\sum_{\alpha_i> 0}
+        \alpha_i y_i K(\bx_i,\bz) + b\rB)
+\end{align*}
+
+All SVM operations can be carried out in
+terms of the kernel function $K(\bx_i, \bx_{j}) =
+\phi(\bx_i)^T\phi(\bx_{j})$. 
+Thus, any nonlinear kernel function can be used to
+do nonlinear classif\/{i}cation in the input space.
+
+\end{frame}
+
+
+
+\begin{frame}{Nonlinear SVM: Inhomogeneous Quadratic Kernel}
+\begin{figure}[!t]
+\scalebox{0.7}{
+  \centerline{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-0.5,-0.5)(8,6)
+   \definecolor{mygray}{gray}{0.75}
+    \psaxes[]{->}(0,0)(0,0)(8,6)
+    \psellipse[linewidth=3pt,fillcolor=mygray,
+    fillstyle=solid](4.05,2.91)(2.78,1.55)
+    \psgrid[subgriddiv=1,griddots=10,gridcolor=gray,gridlabels=0](0,0)(0,0)(8,6)
+    \psellipse[linestyle=dashed,linewidth=1.5pt](4.05,2.91)(1.957,1.093)
+    \psellipse[linestyle=dashed,linewidth=1.5pt](4.05,2.91)(3.41,1.906)
+    \psdots[dotstyle=Btriangle,fillcolor=gray](4,4)(6,3)
+    \psdots[dotstyle=Bo,fillcolor=gray](1,2)(4,1)(6,4.5)(7,2)
+    \psdots[dotstyle=triangle](4,3)(5,3.25)(5.5,3.25)(3.5,2.5)(3.5,3.5)(2.5,3)(2.75,2.75)(3,3.25)(4.25,2.75)(4.5,2.5)
+    \psdots[dotstyle=o](4,5.5)(1.25,4.5)(2,1)(2.25,5)(3,0.75)(3,5)(3,6)(5,1)(5,5.5)(6,1.25)(6.5,1)(7,4.5)(2,4.6)
+    \endpspicture
+  }
+}
+\end{figure}
+The optimal quadratic hyperplane is obtained by setting $C=4$, and
+using an inhomogeneous polynomial kernel
+of degree $q=2$:
+    \begin{align*}
+        K(\bx_i, \bx_{j}) = \phi(\bx_i)^T\phi(\bx_{j})= (1 +
+        \bx_i^T\bx_{j})^2
+    \end{align*}
+\end{frame}
+
+
+
+\begin{frame}{SVM Training Algorithms}
+Instead of dealing
+explicitly with the bias $b$, we map each point $\bx_i \in
+\setR^d$ to the point $\bx'_i \in \setR^{d+1}$ as follows:
+\begin{align*}
+    \bx'_i = (x_{i1},\ldots,x_{id},1)^T
+\end{align*}
+We also map the weight vector to $\setR^{d+1}$, with
+$w_{d+1} = b$,
+so that
+\begin{align*}
+\bw = (w_1, \ldots, w_d, b)^T 
+\end{align*}
+
+\medskip
+The equation of the hyperplane
+is then given as follows:
+\begin{align*}
+    h(\bx'): \bw^T\bx' = 
+    w_1x_{i1} + \cdots + w_dx_{id} + b = 0
+\end{align*}
+
+\medskip
+After the mapping, the constraint $\sum_{i=1}^n \alpha_i y_i =
+0$ does not apply in the SVM dual formulations.
+The new set of constraints is
+given as
+\begin{align*}
+y_i \bw^T\bx \ge 1 - \xi_i
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Dual Optimization: Gradient Ascent}
+The dual optimization objective for
+hinge loss  is given as
+\begin{align*}
+    \max_{\balpha} J(\balpha) =
+    \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
+  \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} K(\bx_i,\bx_{j})
+\end{align*}
+subject to the constraints $0 \le \alpha_i \le C$ for all
+$i=1,\ldots,n$. Here $\balpha = (\alpha_1, \alpha_2, \cdots, \alpha_n)^T
+\in \setR^n$.
+
+\medskip
+The gradient or the rate of change in the objective function at
+$\balpha$ is given as the partial derivative of $J(\balpha)$ with
+respect to $\balpha$, that is, with respect to each $\alpha_k$:
+\begin{align*}
+    \grad J(\balpha) =
+   \matr{ \dfrac{\partial J(\balpha)}{\partial \alpha_1},
+    \dfrac{\partial J(\balpha)}{\partial \alpha_2}, \ldots,
+    \dfrac{\partial J(\balpha)}{\partial \alpha_n}
+    }^T
+\end{align*}
+where the $k$th component of the gradient is obtained by
+differentiating $J(\alpha_k)$ with respect to $\alpha_k$:
+\begin{align*}
+    {\partial J(\balpha) \over \partial \alpha_k} =
+    {\partial J(\alpha_k) \over \partial \alpha_k} =
+    1 - y_k
+    \lB( \dsum_{i=1}^n \alpha_i y_i K(\bx_i,\bx_k) \rB)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Stochastic Gradient Ascent}
+
+  Starting from an initial $\balpha$, the
+gradient ascent approach successively updates by moving in the direction
+of the gradient $\grad J(\balpha)$:
+\begin{align*}
+    \balpha_{t+1} = \balpha_t + \eta_t \grad J(\balpha_t)
+    %\label{eq:class:svm:updateA}
+\end{align*}
+where $\balpha_t$ is the estimate at the $t$th step, and $\eta_t$ is the
+step size. 
+
+\medskip
+The optimal step size is:
+\begin{align*}
+    \eta_k = {1 \over K(\bx_k, \bx_k)}
+\end{align*}
+
+\medskip
+Instead of updating the entire $\balpha$ vector in each step, in
+the stochastic gradient ascent approach, we update each component $\alpha_k$ independently and immediately
+use the new value to update other components. 
+The update rule for the $k$-th component
+is given as
+\begin{align*}
+    \alpha_{k} & = \alpha_{k} + \eta_{k}
+    \dfrac{\partial J(\balpha)}{\partial \alpha_k}
+    = \alpha_{k} + \eta_{k}
+    \lB(1 - y_k\dsum_{i=1}^n \alpha_i y_i K(\bx_i,\bx_k)
+    \rB)
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Algorithm \textsc SVM-Dual}
+%\begin{tightalgo}[!b]{\textwidth-18pt}
+\begin{footnotesize}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\textsc{SVM-Dual} ($\bD, K, C, \epsilon$)}
+\Algorithm{} 
+\lForEach{$\bx_i \in \bD$}{ 
+    $\bx_i \assign \matr{\bx_i\\ 1}$ \tcp*[h]{map to $\setR^{d+1}$} } 
+\uIf{loss = {\tt hinge}}{ 
+    $\bK \assign \{K(\bx_i, \bx_{j})\}_{i,j=1,\ldots,n}$
+\tcp{kernel matrix, hinge loss} } 
+\ElseIf{
+    loss = {\tt quadratic}}{ $\bK \assign \{K(\bx_i, \bx_{j})+{1\over
+2C}\delta_{ij}\}_{i,j=1,\ldots,n}$ \tcp{kernel matrix, quadratic
+loss}} 
+\lFor{$k = 1, \ldots, n$}{$\eta_k \assign {1\over
+K(\bx_k,\bx_k)}$ \tcp*[h]{set step size}} 
+$t \assign 0$\; 
+$\balpha_0 \assign (0, \ldots, 0)^T$\;
+\Repeat{$\norm{\balpha_t-\balpha_{t-1}} \le \epsilon$}
+{%
+$\balpha \assign \balpha_t$\;
+\For{$k = 1 \text{ to } n$ }{%
+\tcp{update $k$th component of $\balpha$}
+$\alpha_k \assign \alpha_{k} + \eta_{k}
+    \Bigl(1 - y_k\dsum_{i=1}^n \alpha_i y_i K(\bx_i,\bx_k)
+    \Bigr)$\;
+    \lIf{$\alpha_k < 0$}{$\alpha_k \assign 0$}
+    \lIf{$\alpha_k > C$}{$\alpha_k \assign C$}
+}%
+$\balpha_{t+1} = \balpha$\;
+$t \assign t+1$\;
+}%
+\end{algorithm}
+\end{footnotesize}
+\end{frame}
+
+
+
+
+\readdata{\dataSLW}{CLASS/svm/figs/iris-slwc.txt}
+\begin{frame}{SVM Dual Algorithm: Iris Data -- Linear Kernel}
+  \framesubtitle{$c_1$: {\tt Iris-setosa} (circles) and $c_2$: other
+  types of Iris flowers (triangles)}
+\begin{figure}[!t]
+    %\vspace{0.2in}
+    \scalebox{0.6}{
+        \centering
+        \psset{dotscale=1.5,fillcolor=lightgray,
+                    arrowscale=2,PointName=none}
+                    \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+        \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+        Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+        \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+            nEnd=50,plotNo=1,plotNoMax=2]{\dataSLW}
+        \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+            nStart=51,plotNo=1,plotNoMax=2]{\dataSLW}
+        \begin{psclip}{%
+            \psline[](4,2)(4,4.5)(8.5,4.5)(8.5,2)(4,2)}
+        \psplotImp[linecolor=gray,algebraic](4,2)(8.5,4.5){%
+                2.74*x-3.74*y-3.09}
+        \psplotImp[linewidth=2pt,
+            algebraic](4,0)(8.5,10.5){%
+                8.56*x-7.14*y-23.12}
+        \end{psclip}
+        \uput[0](6.25,4.6){$h_{1000}$}
+        \uput[0](7.1,4.6){$h_{10}$}
+        \endpsgraph
+     }
+\end{figure}
+\small
+    Hyperplane $h_{10}$ uses $C=10$ and
+    $h_{1000}$ uses $C=1000$:
+    \begin{align*}
+        h_{10}(\bx): & \quad 2.74 x_1 - 3.74 x_2 -3.09 = 0\\
+        h_{1000}(\bx): &\quad 8.56 x_1 -7.14 x_2 -23.12 = 0
+    \end{align*}
+    $h_{10}$ has a larger margin, but
+    also a larger slack; $h_{1000}$ 
+	has a smaller margin, but it minimizes the slack.
+\end{frame}
+
+
+
+
+\readdata{\dataPC}{CLASS/svm/figs/iris-PC.txt}
+\begin{frame}{SVM Dual Algorithm: Quadratic versus Linear Kernel}
+  \framesubtitle{$c_1$: {\tt Iris-versicolor} (circles) and $c_2$: other
+  types of Iris flowers (triangles)}
+\begin{figure}[!t]
+    %\vspace{0.2in}
+    \scalebox{0.8}{
+        \centering
+        \psset{dotscale=1.5,fillcolor=lightgray,
+                    arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+        \psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dx=1,Dy=0.5]{->}(-4.0,-1.5)(4.0,1.5){4in}{3in}%
+        \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+            nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+        \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+            nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+        \begin{psclip}{%
+            \psline[](-4,-1.5)(-4,1.5)(4,1.5)(4,-1.5)(-4,-1.5)}
+        \psplotImp[linewidth=2pt,algebraic](-4,-2)(4,3.5){%
+        1.86*x^2+1.87*x*y+0.14*x+0.85*y^2-1.22*y-3.25   }
+        \psplotImp[linecolor=gray,algebraic](-4,-2)(4,3.5){%
+        0.161*x+1.9*y+0.8025}
+    \end{psclip}
+    \uput[0](4,-0.8){$h_l$}
+    \uput[0](-2.5,1.6){$h_q$}
+        \endpsgraph
+}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Primal Solution: Newton Optimization}
+
+Consider the primal optimization function for soft margin SVMs.
+With $\bw, \bx_i
+\in \setR^{d+1}$, we have to minimize the
+objective function:
+\begin{align*}
+    \min_{\bw} J(\bw) = \frac{1}{2} \| \bw \|^2 + C \dsum_{i=1}^n
+    (\xi_i)^k
+\end{align*}
+subject to the linear constraints:
+\begin{align*}
+    y_i \; (\bw^T\bx_i) \ge 1 - \xi_i \text{ and } \xi_i \ge 0
+    \text{ for all } i=1,\ldots,n
+\end{align*}
+Rearranging the above, we obtain an expression
+for $\xi_i$
+\begin{align*}
+    \xi_i & \ge 1 - y_i \; (\bw^T\bx_i) \text{ and } \xi_i \ge
+    0, \text{ which implies that} \notag\\
+    \xi_i & = \max\lB\{0, 1-y_i \; (\bw^T\bx_i)\rB\} 
+\end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Primal Solution: Newton Optimization, Quadratic Loss}
+
+  The objective function can be rewritten as
+\begin{align*}
+    J(\bw) & = \frac{1}{2} \| \bw \|^2 +
+    C \dsum_{i=1}^n  \max\lB\{0, 1-y_i \; (\bw^T\bx_i)\rB\}^k\notag\\
+    & = \frac{1}{2} \| \bw \|^2 +
+    C \dsum_{\mathclap{y_i(\bw^T\bx_i)<1}} \lB(1 - y_i (\bw^T\bx_i)\rB)^k
+\end{align*}
+
+  For quadratic loss, we have $k=2$ and 
+  the gradient or the rate of change of the objective function at
+$\bw$ is given as the partial derivative of $J(\bw)$ with respect
+to $\bw$:
+\begin{align*}
+    \grad_\bw = {\partial J(\bw) \over \partial \bw}
+ = \bw - 2C \bv + 2C \bS \bw
+\end{align*}
+where the vector $\bv$ and the matrix $\bS$ are given as
+\begin{align*}
+    \bv & =\dsum_{\mathclap{y_i(\bw^T\bx_i)<1}} y_i \bx_i &
+\bS &= \dsum_{\mathclap{y_i(\bw^T\bx_i)<1}} \bx_i \bx_i^T
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Primal Solution: Newton Optimization, Quadratic Loss}
+
+The {\em Hessian matrix} is
+def\/{i}ned as the matrix of second-order
+partial derivatives of $J(\bw)$ with respect to $\bw$,
+which is given as
+\begin{align*}
+    \bH_\bw = {\partial \grad_\bw \over \partial \bw} = \bI +
+    2C\bS
+\end{align*}
+
+\medskip
+Because we want to minimize the objective function $J(\bw)$, we
+should move in the direction opposite to the gradient. The Newton
+optimization update rule for $\bw$ is given as
+\begin{align*}
+    \bw_{t+1} & = \bw_t - \eta_t \bH_{\bw_t}^{-1} \grad_{\bw_t}
+\end{align*}
+where $\eta_t > 0$ is a scalar value denoting the step size at
+iteration $t$. 
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Primal SVM Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\textsc{SVM-Primal} ($\bD, C, \epsilon$)}
+\Algorithm{} \ForEach{$\bx_i \in \bD$}{ $\bx_i \assign
+\matr{\bx_i\\ 1}$ \tcp{map to $\setR^{d+1}$} } 
+$t \assign 0$\;
+$\bw_0 \assign (0, \ldots, 0)^T$ \tcp{initialize $\bw_t \in
+\setR^{d+1}$} 
+\Repeat{$\norm{\bw_{t} - \bw_{t-1}} \le \epsilon$}
+{ $\bv \assign \dsum_{\mathclap{y_i(\bw_t^T\bx_i)<1}} y_i \bx_i$\;
+\nllabel{alg:class:svm:LpNewton:GHbeg} $\bS \assign
+\dsum_{\mathclap{y_i(\bw_t^T\bx_i)<1}} \bx_i \bx_i^T$\; $\grad
+\assign (\bI+2C\bS) \bw_t - 2C\bv$ \tcp{gradient} 
+$\bH \assign
+\bI + 2C\bS$ \tcp{Hessian}
+\nllabel{alg:class:svm:LpNewton:GHend} $\bw_{t+1} \assign \bw_t -
+\eta_t \bH^{-1}\grad$ \tcp{Newton update rule}%[Eq.\nosp\eqref{eq:class:svm:newtonstep}]}
+\nllabel{alg:class:svm:LpNewton:update}
+$t \assign t+1$\; }
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{SVMs: Dual and Primal Solutions}
+  \framesubtitle{$c_1$: {\tt Iris-setosa} (circles) and $c_2$: other
+  types of Iris flowers (triangles)}
+\begin{figure}[!t]
+    %\vspace{0.2in}
+    \scalebox{0.8}{
+        \centering
+        \psset{dotscale=1.5,fillcolor=lightgray,
+                    arrowscale=2,PointName=none}
+                    \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+        \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+        Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+        \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+            nEnd=50,plotNo=1,plotNoMax=2]{\dataSLW}
+        \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+            nStart=51,plotNo=1,plotNoMax=2]{\dataSLW}
+        \begin{psclip}{%
+            \psline[](4,2)(4,4.5)(8.5,4.5)(8.5,2)(4,2)}
+        \psplotImp[linecolor=gray,
+            algebraic](4,0)(8.5,10.5){%
+                7.468*x -6.337*y -19.887}
+        \psplotImp[linewidth=2pt,
+            algebraic](4,0)(8.5,10.5){%
+            7.47371498*x  -6.34019883*y -19.9082496}
+        \end{psclip}
+        \uput[0](6.2,4.6){$h_{d},h_p$}
+        \endpsgraph
+}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{SVM Primal Kernel Algorithm: Newton Optimization}
+  The linear soft margin primal algorithm, with quadratic loss, 
+  can easily be extended to work
+  on any kernel matrix $\bK$:
+\begin{algorithm}[H]
+  \small
+%\begin{tightalgo}[!t]{\textwidth-18pt}
+\SetKwInOut{Algorithm}{\textsc{SVM-Primal-Kernel} ($\bD,
+K, C, \epsilon$)}
+\Algorithm{}
+\ForEach{$\bx_i \in \bD$}{
+$\bx_i \assign \matr{\bx_i\\ 1}$ \tcp{map to $\setR^{d+1}$}
+}
+$\bK \assign \{K(\bx_i, \bx_{j})\}_{i,j=1,\ldots,n}$
+\tcp{compute kernel matrix}
+$t \assign 0$\;
+$\bbeta_0 \assign (0, \ldots, 0)^T$ \tcp{initialize $\bbeta_t \in
+\setR^{n}$}
+\Repeat{$\norm{\bbeta_{t} - \bbeta_{t-1}} \le \epsilon$}
+{
+$\bv \assign \dsum_{\mathclap{y_i(\bK_i^T\bbeta_t)<1}} y_i \bK_i$\;
+\nllabel{alg:class:svm:LpKNewton:GHbeg}
+$\bS \assign \dsum_{\mathclap{y_i(\bK_i^T\bbeta_t)<1}} \bK_i \bK_i^T$\;
+$\grad \assign (\bK+2C\bS) \bbeta_t - 2C\bv$ \tcp{gradient}
+$\bH \assign \bK + 2C\bS$ \tcp{Hessian}
+\nllabel{alg:class:svm:LpKNewton:GHend}
+$\bbeta_{t+1} \assign \bbeta_t - \eta_t \bH^{-1}\grad$
+\tcp{Newton update rule}
+\nllabel{alg:class:svm:LpKNewton:update}
+$t \assign t+1$\;
+}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{SVM Quadratic Kernel: Dual and Primal Solutions}
+  \framesubtitle{$c_1$: {\tt Iris-versicolor} (circles) and $c_2$: other
+  types of Iris flowers (triangles)}
+\begin{figure}[!t]
+    %\vspace{0.2in}
+    \scalebox{0.8}{
+        \centering
+        \psset{dotscale=1.5,fillcolor=lightgray,
+                    arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+        \psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dx=1,Dy=0.5]{->}(-4.0,-1.5)(4.0,1.5){4in}{3in}%
+        \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+            nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+        \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+            nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+        \begin{psclip}{%
+            \psline[](-4,-1.5)(-4,1.5)(4,1.5)(4,-1.5)(-4,-1.5)}
+        \psplotImp[linewidth=2pt,algebraic](-4,-2)(4,3.5){%
+        1.4*x^2+1.34*x*y-0.051*x+0.664*y^2-0.96*y-2.66}
+        \psplotImp[linewidth=2pt,linecolor=gray,algebraic](-4,-2)(4,3.5){%
+        0.87*x^2 + 0.64*x*y - 0.5*x + 0.43*y^2 - 1.04*y - 2.398}
+    \end{psclip}
+    \uput[0](0.6,1.6){$h_d$}
+    \uput[0](1.4,1.6){$h_p$}
+        \endpsgraph
+}
+\end{figure}
+\end{frame}

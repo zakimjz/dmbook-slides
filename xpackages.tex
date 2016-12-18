@@ -1,0 +1,118 @@
+%MJZ -- all the packages used by book and chapter
+
+\usepackage{tracefnt}
+\usepackage[final]{ifdraft} %comment out draft for final
+\usepackage{standalone}
+\usepackage{etex}
+%%%\usepackage[head=14pt,text={5.5in,8in},centering]{geometry}
+%\usepackage{imakeidx}         % allows index generation
+\usepackage{graphicx}        % standard LaTeX graphics tool
+                             % when including figure files
+\usepackage{multicol}        % used for the two-column index
+\usepackage{multirow}
+\usepackage{colortbl,color}
+\usepackage{pst-all,pst-func}
+\usepackage{pst-solides3d,pst-3dplot,pst-vue3d,pst-bar}
+\usepackage{pst-eucl}
+\usepackage{xkeyval}
+\usepackage{xspace}
+\usepackage{xparse}
+\usepackage{subfig}
+\usepackage{overpic}
+\usepackage{enumerate}
+%\usepackage[shortlabels]{enumitem}
+%\usepackage{longtable}
+%\usepackage{timestamp}
+%\usepackage{url}
+\usepackage{filecontents}
+\usepackage{framed}
+\usepackage{marvosym}
+\usepackage[algochapter,plain,vlined,linesnumbered]{algorithm2e}
+%\usepackage{fancyhdr}
+\usepackage{ragged2e}
+%\usepackage[sorting=nyvt,
+%            backend=biber,
+%            style=authoryear,
+%            natbib=true,
+%            maxbibnames=99,
+%            isbn=false,
+%            dashed=false,
+%            firstinits=true]{biblatex}
+%\usepackage[square,sort,sectionbib]{natbib}
+%\usepackage{chapterbib}
+\usepackage{soul}
+%\usepackage{tikz}
+\usepackage{pgf,pgfplots}
+%\usepackage{gnuplot-lua-tikz}
+%\usepackage{cmbright}
+\usepackage[T1]{fontenc}
+\usepackage{smcaps}
+%\usepackage[intlimits,cmex10]{amsmath}
+\usepackage{amsmath}
+
+\interdisplaylinepenalty=2500
+
+\usepackage{amssymb}
+\usepackage{latexsym}
+%\usepackage[amsmath,thmmarks,framed]{ntheorem}
+%\usepackage{amsthm}%%%added by NG
+\usepackage[showonlyrefs]{mathtools}
+% To deal with the too many alphabets error
+\newcommand\hmmax{0}
+\newcommand\bmmax{0}
+\usepackage{bm}
+\usepackage{auto-pst-pdf}
+\usepackage{fancybox}
+\allowdisplaybreaks[1]
+
+\usepackage[none]{hyphenat}
+\hyphenpenalty=2000
+\tolerance=2000
+
+%dedication
+%\newenvironment{dedication}
+%{
+%   %\clearpage
+%   \thispagestyle{empty}
+%   \vspace*{\stretch{1}}
+%   \hfill\begin{minipage}[t]{0.66\textwidth}
+%   \raggedright
+%}%
+%{
+%   \end{minipage}
+%   \vspace*{\stretch{3}}
+%   %\clearpage
+%}
+
+%\makeatletter
+%%adds minipage to inside of algorithms
+%  \newlength{\tightalgowidth}
+%  \newlength{\tightalgoremainder}
+%
+%  %% uncomment to use centered floating algorithms
+%  \newenvironment{tightalgo}[2][]
+%  {
+%     \setlength{\tightalgowidth}{#2}
+%     \setlength{\tightalgoremainder}{3pc}
+%     \begin{algorithm}[#1] }
+%  { \end{algorithm} }
+%%
+%  %\makeatletter
+%  %\patchcmd{\@algocf@start}{%
+%    %\begin{lrbox}{\algocf@algobox}%
+%  %}{%
+%    %\rule{0.5\tightalgoremainder}{\z@}%
+%    %\begin{lrbox}{\algocf@algobox}%
+%    %\begin{minipage}{\tightalgowidth}%
+%  %}{}{}
+%  %\patchcmd{\@algocf@finish}{%
+%    %\end{lrbox}%
+%  %}{%
+%    %\end{minipage}%
+%    %\end{lrbox}%
+%  %}{}{}
+%  %\makeatother
+%%\SetAlCapFnt{\sansb}
+%
+%
+%\makeatother

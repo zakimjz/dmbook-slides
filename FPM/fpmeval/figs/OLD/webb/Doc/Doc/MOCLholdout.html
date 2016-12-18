@@ -1,0 +1,249 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="Author" content="Geoff Webb">
+<meta name="KeyWords"
+content="Rule Discovery, Association Rules, Magnum Opus, Data Mining, G. I. Webb &amp; Associates">
+<title>Holdout evaluation</title>
+</head>
+
+<body>
+
+<h1><font
+color="#000080"> Holdout evaluation</font></h1>
+
+<p>Pattern discovery normally carries with it a high risk of 
+finding spurious patterns, patterns that appear to capture interesting 
+associations, but do so only due to chance.&nbsp; The use of statistical tests with 
+corrections for multiple comparisons, such as the <a href="MOfiltering.html">
+Unsound Filter</a>, can guard against this risk.&nbsp; However, the better such 
+measures guard against the risk of finding spurious rules, the greater the risk 
+that they will discard sound rules.&nbsp; Because of the large number of potential 
+patterns that Magnum Opus must consider, adequate control of the risk of finding 
+spurious patterns may entail discarding most patterns that are considered.</p>
+<p><b>Magnum Opus</b> provides unique facilities for statistically 
+sound exploratory data mining.&nbsp; In addition to the Unsound Filter, it also 
+supports holdout evaluation.&nbsp; This requires the use of two sets of data: the <b>
+exploratory data</b> and the <b>holdout data</b>.&nbsp; The exploratory data are used 
+to find a set of patterns that satisfy the search settings selected by the 
+user.&nbsp; The holdout data are then used to evaluate the risk of these patterns 
+being spurious.&nbsp; Because only a limited set of patterns is evaluated on the 
+holdout data it is possible to provide strong control over the risk of accepting 
+spurious patterns without undue risk of discarding sound rules and itemsets.</p>
+<p>The appropriate criteria for assessing whether or not a 
+rule or itemset should be considered spurious will vary from application to 
+application.&nbsp; Magnum Opus provides a suite of holdout evaluation tests from 
+which the user can select.&nbsp; All selected tests are applied to each rule or 
+itemset and any rule or itemset that fails any test is identified as having 
+failed holdout evaluation.</p>
+<p>The user also specifies a significance level to be used 
+with the holdout tests.&nbsp; This is adjusted using a Holm adjustment for the 
+number of distinct patterns being tested.&nbsp; This is similar to, but more 
+powerful than, the better known Bonferroni adjustment adjustment.&nbsp; The resulting critical value is applied 
+to all holdout statistical tests.&nbsp; This ensures that the probability of any rule 
+or itemset being accepted if any of the null hypotheses for the tests holds is no higher 
+than the user-specified significance level.&nbsp; See
+<a href="MOPublications.html#DiscoveringSigPats">Discovering Significant 
+Patterns</a> for more details.&nbsp; Note that any two rules X -&gt; Y and Y -&gt; X 
+(that is, two rules in which the LHS and RHS are swapped) are counted as a 
+single pattern unless holdout tests are applied for minimum lift, strength or 
+coverage.</p>
+<p>The following holdout evaluation tests are supported for 
+rules.</p>
+<table  border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse" id="table1" width="651">
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p><b>Test</b></td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p><b>Null Hypothesis</b></td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p><b>Statistical technique</b></td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Minimum Coverage</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Coverage &le; Min Coverage</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Binomial sign test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Minimum Support</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Support  &le; Min Support</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Binomial sign test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Minimum Strength</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Strength &le; Min Strength</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Binomial sign test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Minimum Lift</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Lift &le; Min Lift</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Binomial sign test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Minimum Leverage</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Leverage &le; Min Leverage</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Binomial sign test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		Positive correlation</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		Support &le; Coverage &times; RHS_Coverage</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		Fisher exact test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Improvement over generalizations</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Strength &le; the maximum 
+		Strength of any generalization of the current rule</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Fisher exact test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:129px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Partial with respect to 
+		specializations</td>
+		<td valign="top" style="width:343px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>There exists another rule GLHS 
+		-&gt; RHS in the set of best rules, that has not been rejected by holdout 
+		evaluation, that is a specialization of the current rule, and such that 
+		the LHS and RHS of the current rule are conditionally independent given 
+		the negation of GLHS.</td>
+		<td valign="top" style="width:137px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Fisher exact test</td>
+	</tr>
+</table>
+<p>The tests to be applied can be selected using the <tt>
+test-coverage</tt>, <tt>test-improvement</tt>, <tt>test-leverage</tt>, <tt>
+test-lift</tt>, <tt>test-partialness</tt>, <tt>test-positive-correlation</tt>,
+<tt>test-strength</tt> and <tt>test-support</tt> commands.&nbsp; By default, 
+only the positive correlation test is performed.</p>
+<p>The following holdout evaluation tests 
+are supported for itemsets.</p>
+<table  border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse" id="table2" width="650">
+	<tr>
+		<td valign="top" style="width:128px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p><b>Test</b></td>
+		<td valign="top" style="width:344px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p><b>Null Hypothesis</b></td>
+		<td valign="top" style="width:136px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p><b>Statistical technique</b></td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:128px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Minimum Coverage</td>
+		<td valign="top" style="width:344px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Coverage &le; Min Coverage</td>
+		<td valign="top" style="width:136px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Binomial sign test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:128px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Minimum Leverage</td>
+		<td valign="top" style="width:344px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Leverage &le; Min Leverage</td>
+		<td valign="top" style="width:136px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Binomial sign test</td>
+	</tr>
+	<tr>
+		<td valign="top" style="width:128px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Improvement over generalizations</td>
+		<td valign="top" style="width:344px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Coverage &le; the maximum of coverage(A) &times; coverage(B) for any partition of the current itemset into two subsets 
+		A and B.</td>
+		<td valign="top" style="width:136px;padding-left:5.4pt; padding-right:5.4pt; padding-top:0cm; padding-bottom:0cm">
+		<p>Fisher exact test</td>
+	</tr>
+</table>
+
+<table id="table3" style="BORDER-COLLAPSE: collapse" cellSpacing="0" cellPadding="0" width="650" border="0">
+	<tr>
+		<td style="PADDING-RIGHT: 5.4pt; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0cm; WIDTH: 128px; PADDING-TOP: 0cm" vAlign="top">
+		Self-sufficient</td>
+		<td style="PADDING-RIGHT: 5.4pt; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0cm; WIDTH: 344px; PADDING-TOP: 0cm" vAlign="top">
+		Coverage &#8804; the maximum of coverage(A) × coverage(B) for any partition of 
+		the current itemset into two subsets A and B within the set of cases not 
+		covered by the difference between the current itemset and any of its 
+		productive supersets.</td>
+		<td style="PADDING-RIGHT: 5.4pt; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0cm; WIDTH: 136px; PADDING-TOP: 0cm" vAlign="top">
+		Fisher exact test</td>
+	</tr>
+</table>
+
+<p>The tests to be applied can be selected using the <tt>
+test-coverage</tt>, <tt>test-improvement</tt>, <tt>test-leverage</tt> and <tt>
+test-self-sufficient</tt> commands.&nbsp; By default, only the improvement over 
+generalizations test is performed.</p>
+
+<p><strong>Magnum Opus</strong> prints rules and itemsets that fail one or more 
+holdout test after those
+that pass the holdout evaluation process.&nbsp; A summary line shows the adjusted 
+critical value.&nbsp; Each rule or itemset is then listed.&nbsp; Following each rule, a summary line
+presents the following information:</p> 
+
+<ul>
+  <li><strong>holdout coverage</strong>: the rule's <a href="MOcoverage.html">coverage</a> on
+    the holdout data.</li>
+  <li><strong>holdout support</strong>: the rule's <a href="MOsupport.html">support</a> on the
+    holdout data.</li>
+  <li><strong>holdout strength</strong>: the rule's <a href="MOstrength.html">strength</a> on
+    the holdout data.</li>
+</ul>
+
+<p>For itemsets, the summary line contains the holdout coverage only.</p>
+<p>The holdout evaluation summary line is followed by a further line summarizing 
+the result of each test that the rule or itemset failed.</p>
+<p>Note, it is often valuable to use holdout evaluation with the <a href="MOfiltering.html">Filter-out
+Insignificant</a> filter.&nbsp; Doing so prevents many patterns that are unlikely to 
+pass the holdout evaluation from being considered, thereby increasing the number 
+of patterns that do pass.&nbsp; It will not generally be a good idea to use holdout 
+evaluation with the <a href="MOfiltering.html">Filter-out Unsound</a>, as each 
+one strictly controls the risk of false discoveries without the need for the 
+other and the application of both processes is likely to greatly reduce the 
+number of patterns that are accepted compared to using only one or the other.</p>
+
+<p>If a single data set is to be sampled to form the exploratory and holdout sets, we
+recommend using a 50% sample so as to create equal size exploratory and holdout sets.
+&nbsp; Reducing the amount of exploratory data is likely to lead to interesting rules 
+or itemsets
+being overlooked.&nbsp; Reducing the amount of holdout data increases the risk of
+rejecting non-spurious rules and itemsets.</p>
+
+<p>If holdout evaluation is to be used, the holdout data must be specified 
+during data import.&nbsp; See the <tt>holdout-file</tt> and <tt>
+out-of-sample-holdout-evaluation</tt> <a href="MOCLcommands.html">commands</a>.</p>
+
+<p>For more information on Holdout 
+Evaluation see
+<a href="MOPublications.html#DiscoveringSigPats">Discovering Significant 
+Patterns</a>.</p>
+<p>&nbsp;</p>
+
+<table WIDTH="100%">
+  <tr>
+    <td ALIGN="LEFT"><b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></td>
+    <td ALIGN="RIGHT"></td>
+  </tr>
+</table>
+</body>
+</html>

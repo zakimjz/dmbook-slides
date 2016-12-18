@@ -1,0 +1,2085 @@
+\lecture{eval}{eval}
+
+\date{Chapter 17: Clustering Validation}
+\newcommand{\NMI}{\mathit{NMI}}
+\newcommand{\VI}{\mathit{VI}}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Clustering Validation and Evaluation}
+Cluster validation and assessment encompasses three main tasks:
+{\em clustering
+evaluation} seeks to assess the goodness or quality of the clustering,
+{\em clustering stability} seeks to understand the sensitivity of the clustering result to various algorithmic parameters,
+for example, the number of clusters,
+and {\em clustering tendency} assesses
+the suitability of applying clustering in the f\/{i}rst place, that is, whether
+the data has any inherent grouping structure.
+
+\bigskip
+Validity measures can be divided into three main types:
+
+\begin{description}
+
+\item [External:] External validation measures employ criteria that are
+  not inherent to the dataset, e.g., class labels. 
+
+\item [Internal:] Internal validation measures employ criteria that are
+  derived from the data itself, e.g., intracluster
+  and intercluster distances.
+
+\item [Relative:] Relative validation measures aim to directly compare
+  different clusterings, usually those
+  obtained via different parameter settings for the same algorithm.
+\end{description}
+\end{frame}
+
+
+
+\begin{frame}{External Measures}
+External measures assume that the correct or
+ground-truth clustering is known {\it a priori}, which 
+is used to evaluate a
+given clustering.  
+
+\medskip
+Let $\bD = \{\bx_i\}_{i=1}^n$ be a dataset consisting of $n$ points in a
+$d$-dimensional space, partitioned into $k$ clusters.  Let $y_i \in
+\left\{ 1, 2,\ldots , k \right\}$ denote the ground-truth cluster
+membership or label information for each point.  
+
+\medskip
+The ground-truth
+clustering is given as 
+$\cT = \left\{ T_1, T_2, \ldots, T_k \right\}$,
+where the cluster $T_{j}$ consists of all the points with label $j$, 
+i.e.,
+$T_{j} = \left\{ \bx_i \in \bD | y_i = j \right\}$.  
+We refer to $\cT$ as the ground-truth {\em
+partitioning}, and to each $T_i$ as a {\em partition}.
+
+
+
+\medskip
+Let $\cC=\{C_1,
+\ldots, C_r\}$ denote a clustering of the same dataset into $r$
+clusters, obtained via some clustering algorithm, and let $\hy_i \in
+\left\{ 1, 2, \ldots, r \right\}$ denote the cluster label for $\bx_i$.
+\end{frame}
+
+\begin{frame}{External Measures}
+External evaluation measures try
+capture the extent to which points from the same partition appear in the
+same cluster, and the extent to which points from different partitions
+are grouped in different clusters. 
+
+\medskip
+All of the external measures rely on the $r\times k$
+{\em contingency table} $\bN$ that is
+induced by a clustering $\cC$ and the ground-truth partitioning $\cT$, def\/{i}ned as follows
+\begin{align*}
+  \bN(i,j) = n_{ij}  = \left| C_i \cap T_{j} \right|
+\end{align*}
+The count $n_{ij}$ denotes the number of points that are
+common to cluster $C_i$ and ground-truth partition $T_{j}$.
+
+\medskip
+Let $n_{i} = |C_i|$ denote the number of points in cluster
+$C_i$, and let $m_{j} = |T_{j}|$ denote the number of points in partition
+$T_{j}$.  
+
+\medskip
+The contingency table can be computed from $\cT$ and $\cC$ in
+$O(n)$ time by examining the partition and cluster labels, $y_i$ and
+$\hy_i$, for each point $\bx_i \in \bD$ and incrementing the
+corresponding count $n_{y_i\hy_i}$.
+\end{frame}
+
+
+\begin{frame}{Matching Based Measures: Purity}
+Purity quantif\/{i}es the extent to which a
+cluster $C_i$ contains entities from only one partition: 
+\begin{align*}
+  \mathit{purity}_i = \frac{1}{n_{i}}\max_{j=1}^k\; \{n_{ij}\}
+\end{align*}
+
+\bigskip
+The purity of clustering $\cC$ is def\/{i}ned as the weighted sum of the
+clusterwise purity values:
+\begin{align*}
+  \mathit{purity} = \sum_{i=1}^r \frac{n_{i}}{n} \mathit{purity}_i =
+  \frac{1}{n}\sum_{i=1}^r \max_{j=1}^k \{n_{ij}\}
+\end{align*}
+where the ratio $\tfrac{n_{i}}{n}$ denotes the fraction of points in
+cluster $C_i$.  
+\end{frame}
+
+
+\begin{frame}{Matching Based Measures: Maximum Matching}
+The maximum matching
+measure selects the mapping between clusters and partitions, such
+that the sum of the number of common points ($n_{ij}$) is
+maximized, provided that only one cluster can match with a given
+partition.
+
+\medskip
+Let $G$ be a bipartite graph over the vertex set $V = \cC \cup \cT$, and
+let the edge set be $E = \{ (C_i, T_{j}) \}$ with 
+edge weights $w(C_i,T_{j}) = n_{ij}$.
+A {\em matching} $M$ in $G$ is a subset of $E$, such that the edges in
+$M$ are pairwise nonadjacent, that is, they do not have a common vertex.
+
+\medskip
+The {\em maximum weight matching} in $G$ is given as:
+\begin{align*}
+  \mathit{match} = \arg \max_M \lB\{ \frac{w(M)}{n} \rB\}
+\end{align*}
+where $w(M)$ is the sum of the sum of
+all the edge weights in matching $M$, given as $w(M) = \sum_{e \in M} w(e)$
+\end{frame}
+
+
+
+
+\begin{frame}{Matching Based Measures: F-measure}
+  \small
+Given cluster $C_i$, let $j_i$ denote the
+partition that contains the maximum number of points from $C_i$,
+that is, $j_i = \max_{j=1}^k \{ n_{ij} \}$.  
+
+\medskip
+The {\em precision} of a
+cluster $C_i$ is the same as its purity:
+\begin{align*}
+  \mathit{prec}_i = \frac{1}{n_{i}}\max_{j=1}^k \left\{ n_{ij} \right\} =
+  \frac{n_{ij_i}}{n_i}
+\end{align*}
+
+\medskip
+The {\em recall} of cluster $C_i$ is def\/{i}ned as
+\begin{align*}
+  \mathit{recall}_i = \frac{n_{ij_i}}{\card{T_{j_i}}} =\frac{n_{ij_i}}{m_{j_i}}
+ \end{align*}
+ where $m_{j_i} = \card{T_{j_i}}$.
+
+\medskip
+The F-measure is the harmonic mean of the precision and recall values for
+each cluster $C_i$
+\begin{align*}
+  F_i = \frac{2}{\frac{1}{\mathit{prec}_i} + \frac{1}{\mathit{recall}_i}} =
+  \frac{2 \cdot \mathit{prec}_i \cdot \mathit{recall}_i}{\mathit{prec}_i + \mathit{recall}_i} =
+  \frac{2 \; n_{ij_i}}{n_{i} + m_{j_i}}
+\end{align*}
+
+\medskip
+The F-measure for the clustering $\cC$ is the mean of clusterwise
+F-measure values:
+\begin{align*}
+  F = \frac{1}{r} \sum_{i=1}^r F_i
+\end{align*}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{K-means: Iris Principal Components Data}
+\framesubtitle{Good Case}
+\setcounter{subfigure}{0}
+\begin{figure}
+    \centering
+    \captionsetup[subfloat]{captionskip=20pt}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+	\scalebox{0.6}{
+    %\subfloat[K-means: good]{\label{fig:clust:eval:kexgood}
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W1}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](2.64,0.19){A}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-2.35,0.27){B}
+        \pstGeonode[PointSymbol=Bsquare,
+        dotscale=2](-0.66,-0.33){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    }}
+  \end{figure}
+    
+Contingency table:
+\small
+\begin{align*}
+  \begin{array}{c|ccc|c}
+  & 
+  \texttt{iris-setosa} & \texttt{iris-versicolor}
+  & \texttt{iris-virginica} &\\
+  &  T_1 & T_2 & T_3 & n_i\\
+  \hline
+  C_1 \text{(squares)} & 0 & 47 & 14 & 61\\
+  C_2 \text{(circles)} & 50 &  0 &  0 & 50\\
+  C_3 \text{(triangles)} & 0 &  3 & 36 &  39\\
+\hline
+m_{j} & 50 & 50 & 50 & n=100
+\end{array}
+\end{align*}
+\normalsize
+$\mathit{purity} = 0.887$, $\mathit{match} = 0.887$, $F = 0.885$.
+\end{frame}
+
+\begin{frame}[fragile]{K-means: Iris Principal Components Data}
+\framesubtitle{Bad Case}
+\begin{figure}
+    \captionsetup[subfloat]{captionskip=20pt}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+	\scalebox{0.6}{
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W1}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bsquare, dotscale=2](2.562,0.486){A}
+        \pstGeonode[PointSymbol=Bo,
+        dotscale=2](2.419,-0.379){B}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-1.405,-0.057){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{b}{c}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{a}{d}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    }}
+\end{figure}
+
+Contingency table:
+  \small
+\begin{align*}
+  \begin{array}{c|ccc|c}
+  & \texttt{iris-setosa} & \texttt{iris-versicolor}
+  & \texttt{iris-virginica} & \\
+  & T_1 & T_2 & T_3  & n_i\\
+  \hline
+C_1 (squares) & 30 & 0 & 0 & 30\\
+C_2 (circles) & 20 &  4 &  0 & 24\\
+C_3 (triangles) & 0 &  46 & 50 & 96\\
+\hline
+m_{j} &50 & 50 & 50 &n=150\\
+  \end{array}
+\end{align*}
+\normalsize
+$\mathit{purity} = 0.667$, $\mathit{match} = 0.560$, $F=0.658$
+\end{frame}
+
+
+
+\begin{frame}{Entropy-based Measures: Conditional Entropy}
+The entropy of a clustering $\cC$  and partitioning $\cT$ is given as
+\begin{align*}
+  H(\cC) & = - \sum_{i=1}^r p_{C_i} \log p_{C_i} &
+  H(\cT) & = - \sum_{j=1}^k p_{T_{j}} \log p_{T_{j}}
+\end{align*}
+where $p_{C_i} = \tfrac{n_i}{n}$ and $p_{T_{j}} = \tfrac{m_{j}}{n}$
+are the probabilities of cluster $C_i$ and partition $T_{j}$.
+
+\bigskip
+The cluster-specif\/{i}c entropy of $\cT$, that is, the conditional entropy of
+$\cT$ with respect to cluster $C_i$ is def\/{i}ned as
+\begin{align*}
+  H(\cT|C_i) = - \sum_{j=1}^k
+  \lB( \frac{n_{ij}}{n_i} \rB)
+  \log \lB( \frac{n_{ij}}{n_i} \rB)
+\end{align*}
+\end{frame}
+
+\begin{frame}{Entropy-based Measures: Conditional Entropy}
+The conditional entropy of $\cT$ given clustering $\cC$ is def\/{i}ned
+as the weighted sum:
+\begin{align*}
+  H(\cT|\cC) & = \sum_{i=1}^r \frac{n_{i}}{n} H(\cT|C_i)
+  = -\sum_{i=1}^r \sum_{j=1}^k p_{ij} \log \lB(
+  \frac{p_{ij}}{p_{C_i}}\rB)\\
+  & = H(\cC,\cT) - H(\cC)
+\end{align*}
+where $p_{ij}= \tfrac{n_{ij}}{n}$ is the probability that a point in
+cluster $i$ also belongs to partition and 
+where $H(\cC,\cT) = - \sum_{i=1}^r \sum_{j=1}^k p_{ij} \log p_{ij}$ is
+the joint entropy of $\cC$ and $\cT$.  
+
+\bigskip
+$H(\cT|\cC) = 0$ if and only if
+$\cT$ is completely determined by $\cC$, corresponding to the ideal
+clustering.
+If $\cC$ and $\cT$ are independent of
+each other, then $H(\cT|\cC) = H(\cT)$.
+\end{frame}
+
+
+\begin{frame}{Entropy-based Measures: Normalized Mutual Information} 
+The {\em mutual
+information} tries to quantify the amount of shared information
+between the clustering $\cC$ and partitioning $\cT$, and it is
+def\/{i}ned as
+\begin{align*}
+  I(\cC,\cT) = \sum_{i=1}^r \sum_{j=1}^k p_{ij} \log
+  \lB(\frac{p_{ij}}{p_{C_i} \cdot p_{T_{j}}} \rB)
+\end{align*}
+When $\cC$ and $\cT$
+are independent then $p_{ij} = p_{C_i} \cdot p_{T_{j}}$, and thus
+$I(\cC,\cT) = 0$. However, there is no upper bound on the mutual
+information.
+
+
+\bigskip
+The {\em normalized mutual information} (NMI) is def\/{i}ned as
+the geometric mean:
+\begin{align*}
+  \NMI(\cC,\cT) = \sqrt{\frac{I(\cC,\cT)}{H(\cC)} \cdot \frac{I(\cC,\cT)}{H(\cT)}} =
+  \frac{I(\cC,\cT)}{\sqrt{H(\cC)\cdot H(\cT)}}
+\end{align*}
+The NMI value lies in the range $[0,1]$. Values close to $1$ indicate a
+good clustering.
+\end{frame}
+
+
+
+
+\begin{frame}{Entropy-based Measures: Variation of Information}
+This criterion is based on the mutual information
+between the clustering $\cC$ and the ground-truth partitioning
+$\cT$, and their entropy; it is def\/{i}ned as
+\begin{align*}
+  \VI(\cC,\cT) &= (H(\cT)-I(\cC,\cT)) + (H(\cC)-I(\cC,\cT))\nonumber\\
+    & = H(\cT)+H(\cC)-2I(\cC,\cT)
+\end{align*}
+Variation of information (VI) is zero only when $\cC$ and $\cT$ are identical. Thus, the
+lower the VI value the better the clustering $\cC$.
+
+\bigskip
+VI can also be expressed as:
+\begin{align*}
+  \VI(\cC,\cT) & = H(\cT|\cC) + H(\cC|\cT)\\
+  \VI(\cC,\cT) & = 2H(\cT,\cC)-H(\cT)-H(\cC)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-means: Iris Principal Components Data}
+\framesubtitle{Good Case}
+
+\setcounter{subfigure}{0}
+\begin{figure}
+    \centering
+    \captionsetup[subfloat]{captionskip=20pt}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+    \subfloat[K-means: good]{
+	\scalebox{0.6}{
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W1}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](2.64,0.19){A}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-2.35,0.27){B}
+        \pstGeonode[PointSymbol=Bsquare,
+        dotscale=2](-0.66,-0.33){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+		}} \hspace{0.25in}
+		\subfloat[K-means: bad]{
+	  \scalebox{0.6}{
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W1}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bsquare, dotscale=2](2.562,0.486){A}
+        \pstGeonode[PointSymbol=Bo,
+        dotscale=2](2.419,-0.379){B}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-1.405,-0.057){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{b}{c}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{a}{d}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    }}
+	}
+\end{figure}
+\begin{center}
+\begin{tabular}{|l|ccc|ccc|}
+  \hline
+  & $\mathit{purity}$ & $\mathit{match}$ & $F$ &
+  $H(\cT|\cC)$ & $\NMI$  & $\VI$\\
+  \hline
+  (a) \text{ Good } & 0.887 & 0.887 & 0.885 & 0.418 & 0.742   & 0.812\\
+  (b) \text{ Bad } & 0.667 & 0.560 & 0.658 & 0.743 &  0.587  & 1.200\\
+  \hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}{Pairwise Measures}
+Given clustering $\cC$ and ground-truth partitioning $\cT$, let
+$\bx_i, \bx_{j} \in \bD$ be any two points, with $i\ne j$. 
+Let $y_i$ denote
+the true partition label and let $\hy_i$ denote the cluster label for
+point $\bx_i$.
+
+\medskip
+If both $\bx_i$ and $\bx_{j}$ belong to the same cluster, that is, $\hy_i =
+\hy_{j}$, we call it
+a {\em positive} event, and if they do not belong to the same cluster,
+that is, $\hy_i \ne \hy_{j}$, we call that a {\em negative} event.
+Depending on whether there is agreement between the cluster labels and
+partition labels, there are four possibilities to consider:
+
+\begin{description}
+
+\item[\textit{True Positives:}] 
+  $\bx_i$ and $\bx_{j}$ belong to the same
+  partition in $\cT$, and they are also in the same cluster in $\cC$. The number of true
+  positive pairs is given as
+  \begin{align*}
+  \mathit{TP} = \bigl|\{(\bx_i, \bx_{j}):\; y_i = y_{j}
+  \text{ and } \hy_i = \hy_{j} \}\bigr|
+  \end{align*}
+
+\item[\textit{False Negatives:}] 
+  $\bx_i$ and $\bx_{j}$ belong to the same
+  partition in $\cT$, but they do not belong to the  same cluster in $\cC$.
+The
+  number of all false negative pairs is given as
+  \begin{align*}
+  \mathit{FN} = \bigl|\{(\bx_i, \bx_{j}):\; y_i = y_{j}
+  \text{ and } \hy_i \ne \hy_{j} \}\bigr|
+  \end{align*}
+\end{description}
+\end{frame}
+
+\begin{frame}{Pairwise Measures}
+  \begin{description}
+\item[\textit{False Positives:}]
+  $\bx_i$ and $\bx_{j}$ do not belong to the
+  same partition in $\cT$, but they do belong to the same cluster in $\cC$.
+  The
+  number of false positive pairs is given as
+  \begin{align*}
+  \mathit{FP} = \bigl|\{(\bx_i, \bx_{j}):\; y_i \ne y_{j}
+  \text{ and } \hy_i = \hy_{j} \}\bigr|
+  \end{align*}
+
+\item[\textit{True Negatives:}] $\bx_i$ and $\bx_{j}$ neither belong to
+  the same partition in $\cT$, nor do they belong to the same cluster in
+  $\cC$.  The number of such true negative pairs is given as
+    \begin{align*}
+  \mathit{TN} = \bigl|\{(\bx_i, \bx_{j}):\; y_i \ne y_{j}
+  \text{ and } \hy_i \ne \hy_{j} \}\bigr|
+  \end{align*}
+\end{description}
+
+Because there are $N = {n \choose 2} = \frac{n(n-1)}{2}$ pairs of points, we
+have the following identity:
+\begin{align*}
+  N = \mathit{TP} + \mathit{FN} + \mathit{FP} + \mathit{TN}
+\end{align*}
+\end{frame}
+
+\begin{frame}{Pairwise Measures: TP, TN, FP, FN}
+They can be computed eff\/{i}ciently using the
+contingency table $\bN = \left\{ n_{ij} \right\}$.
+The number of true positives is given as
+\begin{align*}
+  \mathit{TP} 
+  & = \frac{1}{2} \biggl(\Bigl(\sum_{i=1}^r \sum_{j=1}^k n_{ij}^2\Bigr)
+  - n \biggr)
+\end{align*}
+The false negatives can be computed as
+\begin{align*}
+  \mathit{FN} 
+  & = \frac{1}{2}\biggl(
+  \sum_{j=1}^k m_{j}^2 - \sum_{i=1}^r \sum_{j=1}^k n_{ij}^2 \biggr)
+\end{align*}
+The number of false positives are:
+\begin{align*}
+\mathit{FP} & =
+  \frac{1}{2}\biggl(
+  \sum_{i=1}^r n_i^2 - \sum_{i=1}^r \sum_{j=1}^k n_{ij}^2 \biggr)
+\end{align*}
+
+F{i}nally, the number of true negatives can be obtained via
+\begin{align*}
+  \mathit{TN} = N - (\mathit{TP} + \mathit{FN} + \mathit{FP}) = \frac{1}{2} \biggl(
+  n^2 - \sum_{i=1}^r n_i^2 - \sum_{j=1}^k m_{j}^2 +
+  \sum_{i=1}^r \sum_{j=1}^k n_{ij}^2
+  \biggr)
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Pairwise Measures: Jaccard Coeff\/{i}cient, Rand
+  Statistic, FM Measure}
+\small
+{\bf Jaccard Coeff\/{i}cient:} measures the fraction of true positive point pairs,
+but after ignoring the true negative:
+\begin{align*}
+\mathit{Jaccard} = \frac{\mathit{TP}}{\mathit{TP} + \mathit{FN} + \mathit{FP}}
+\end{align*}
+
+\medskip
+{\bf Rand Statistic:} 
+measures the fraction of true positives and true negatives over
+all point pairs:
+\begin{align*}
+\mathit{Rand} = \frac{\mathit{TP} + \mathit{TN}}{N}
+\end{align*}
+
+
+\medskip {\bf Fowlkes-Mallows Measure:} 
+Def\/{i}ne the overall
+{\em pairwise
+precision} and
+{\em pairwise recall} values for a clustering $\cC$, as follows:
+\begin{align*}
+  \mathit{prec} & = \mathit{TP}/\mathit{TP}+\mathit{FP} &
+  \mathit{recall} & = \mathit{TP}/\mathit{TP}+\mathit{FN}
+\end{align*}
+The Fowlkes--Mallows (FM) measure is def\/{i}ned as the
+geometric mean of the pairwise precision and recall
+\begin{align*}
+\mathit{FM} = \sqrt{\mathit{prec}\cdot \mathit{recall}} = \frac{\mathit{TP}}{\sqrt{ (\mathit{TP}+\mathit{FN})(\mathit{TP}+\mathit{FP}) }}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[fragile]{K-means: Iris Principal Components Data}
+\framesubtitle{Good Case}
+
+\setcounter{subfigure}{0}
+\begin{columns}
+  \column{0.5\textwidth}
+\begin{figure}
+    \centering
+    \captionsetup[subfloat]{captionskip=20pt}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+	\scalebox{0.5}{
+    %\subfloat[K-means: good]{\label{fig:clust:eval:kexgood}
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W1}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](2.64,0.19){A}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-2.35,0.27){B}
+        \pstGeonode[PointSymbol=Bsquare,
+        dotscale=2](-0.66,-0.33){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    }}
+  \end{figure}
+    
+  \column{0.5\textwidth}
+Contingency table:
+\small
+\begin{align*}
+  \matr{ & \vline& \textbf{setosa} & \textbf{versicolor} &
+  \textbf{virginica}\\[-3pt]
+  & \vline & T_1 & T_2 & T_3\\
+  \hline
+C_1 &\vline& 0 & 47 & 14\\
+C_2 &\vline& 50 &  0 &  0\\
+C_3 &\vline& 0 &  3 & 36\\
+}
+\end{align*}
+\end{columns}
+The number of true
+positives is:
+\begin{align*}
+  \mathit{TP} & = {47 \choose 2} + {14 \choose 2} + {50 \choose 2} + {3 \choose 2}
+  + {36 \choose 2} = 3030
+\end{align*}
+Likewise, we have
+$\mathit{FN} = 645$, 
+$\mathit{FP} = 766$,
+$\mathit{TN} =6734$, and $N = {150 \choose 2} = 11175$.
+
+We therefore have:
+$\mathit{Jaccard} = 0.682$, $\mathit{Rand}=0.887$, 
+$\mathit{FM} = 0.811$.
+
+For the ``bad'' clustering, we have:
+$\mathit{Jaccard} = 0.477$, $\mathit{Rand}=0.717$, 
+$\mathit{FM} = 0.657$.
+
+\end{frame}
+
+
+\begin{frame}{Correlation Measures: Hubert statistic}
+\small
+  Let $\bX$ and $\bY$ be two symmetric $n \times n$ matrices,
+and let $N = {n \choose 2}$.
+Let $\bx, \by \in \setR^{N}$ denote the
+vectors obtained by
+linearizing the upper triangular elements (excluding the main diagonal)
+of $\bX$ and $\bY$.
+
+\medskip
+Let $\mu_X$ denote the element-wise mean of $\bx$,
+given as
+\begin{align*}
+  \mu_X & = \frac{1}{N}\sum_{i=1}^{n-1}\sum_{j=i+1}^n
+  \bX(i,j) = \frac{1}{N} \bx^T\bx
+\end{align*}
+and let $\bz_x$ denote the centered $\bx$ vector, def\/{i}ned as
+\begin{align*}
+  \bz_x = \bx - \bone \cdot \mu_X
+\end{align*}
+
+\medskip
+The Hubert statistic is def\/{i}ned as 
+\begin{align*}
+  \Gamma =
+  \frac{1}{N} \sum_{i=1}^{n-1} \sum_{j=i+1}^n
+\bX(i,j)\cdot \bY(i,j) = \frac{1}{N} \bx^T\by
+\end{align*}
+
+\medskip
+The normalized Hubert statistic is def\/{i}ned as the
+element-wise correlation
+\begin{align*}
+  \Gamma_n =  \frac{\bz_x^T \bz_y}{\norm{\bz_x} \cdot \norm{\bz_y}} =
+  \cos \theta
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Correlation-based Measure: Discretized Hubert Statistic}
+Let $\bT$ and $\bC$ be the $n \times n$ matrices def\/{i}ned as
+\begin{align*}
+  \bT(i,j) & =
+  \begin{cases}
+    1 & \text{if } y_i = y_{j}, i \ne j\\
+    0 & \text{otherwise}
+  \end{cases} &
+  \bC(i,j) & =
+  \begin{cases}
+    1 & \text{if } \hy_i = \hy_{j}, i \ne j\\
+    0 & \text{otherwise}
+ \end{cases}
+\end{align*}
+Let $\bt, \bc \in \setR^N$ denote the $N$-dimensional vectors
+comprising the upper triangular elements (excluding the diagonal)
+of $\bT$ and $\bC$.
+Let $\bz_t$ and $\bz_c$ denote the centered $\bt$ and $\bc$
+vectors.
+
+\medskip
+The discretized Hubert statistic is computed
+by setting $\bx = \bt$ and $\by = \bc$:
+\begin{align*}
+  \Gamma = \frac{1}{N} \bt^T\bc = \frac{\mathit{TP}}{N}
+\end{align*}
+
+\medskip
+The
+normalized version of the discretized Hubert statistic is simply
+the correlation between $\bt$ and $\bc$
+\begin{align*}
+  \Gamma_n &
+  = \frac{\bz_t^T\bz_c}
+  {\norm{\bz_t}\cdot \norm{\bz_c}} 
+=\frac{\tfrac{\mathit{TP}}{N} - \mu_T \mu_C}
+  {\sqrt{\mu_T\mu_C (1-\mu_T)(1-\mu_C)}}
+\end{align*}
+where $\mu_T = \tfrac{\mathit{TP}+\mathit{FN}}{N}$ and $\mu_C =
+\tfrac{\mathit{TP}+\mathit{FP}}{N}$.
+\end{frame}
+
+
+\begin{frame}{Internal Measures}
+Internal evaluation measures do not have recourse to the ground-truth
+partitioning. To evaluate the
+quality of the clustering, internal measures
+therefore have to utilize notions of intracluster similarity
+or compactness, contrasted with notions of intercluster separation,
+with usually a trade-off in maximizing these two aims.
+
+\medskip
+The internal measures are based on the $n\times n$ {\em
+distance matrix}, also called the {\em proximity matrix}, of all
+pairwise distances among the $n$ points:
+\begin{align*}
+  \bW = \Bigl\{ \dist(\bx_i, \bx_{j}) \Bigr\}_{i,j=1}^n 
+\end{align*}
+where $\dist(\bx_i, \bx_{j}) = \norm{\bx_i - \bx_{j}}_2$
+is the Euclidean
+distance between $\bx_i, \bx_{j} \in \bD$.
+
+
+\medskip
+The proximity matrix $\bW$ is 
+the adjacency matrix of the weighted complete graph $G$ over
+the $n$ points, that is, with nodes $V = \{\bx_i \mid \bx_i \in \bD\}$, edges
+$E=\{(\bx_i, \bx_{j})\mid \bx_i, \bx_{j} \in \bD\}$, and edge weights
+$w_{ij} = \bW(i, j)$ for all $\bx_i, \bx_{j}\in \bD$.
+\end{frame}
+
+\begin{frame}{Internal Measures}
+The clustering $\cC$ can be considered as a
+$k$-way cut in $G$.
+Given any subsets $S,R \subset V$, def\/{i}ne $W(S,R)$ as the sum of the
+weights on all edges with one vertex in $S$ and the other in $R$, given
+as
+\begin{align*}
+  W(S, R) = \sum_{\bx_i \in S} \sum_{\bx_{j} \in R} w_{ij}
+\end{align*}
+We denote by $\ol{S} = V - S$ the complementary set
+of vertices.
+
+\medskip
+The sum of all the intracluster and intercluster 
+weights are given as
+\begin{align*}
+  W_{in} & = \frac{1}{2} \sum_{i=1}^k W(C_i,C_i) &
+  W_{out} & = \frac{1}{2} \sum_{i=1}^k W(C_i, \ol{C_i})
+  = \sum_{i=1}^{k-1} \sum_{j > i} W(C_i, C_{j})
+\end{align*}
+
+The number of distinct intracluster and intracluster edges is given as
+\begin{align*}
+  N_{in} &= \sum_{i=1}^k {n_i \choose 2} & 
+  N_{out} &= \sum_{i=1}^{k-1} \sum_{j=i+1}^k n_i \cdot n_{j} 
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Clusterings as Graphs: Iris (Good Case)}
+\setcounter{subfigure}{0}
+\begin{figure}
+    \centering
+    \captionsetup[subfloat]{captionskip=20pt}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+	\scalebox{0.55}{
+    %\subfloat[K-means: good]{\label{fig:clust:eval:kexgood}
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W1}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCgood-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCgood-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bo, dotscale=2](2.64,0.19){A}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-2.35,0.27){B}
+        \pstGeonode[PointSymbol=Bsquare,
+        dotscale=2](-0.66,-0.33){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    }
+	\hspace{0.2in}
+	\scalebox{0.55}{
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}
+          %(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \input{CLUST/eval/irisPCgood-graph}
+        \endpsgraph
+    }}
+\end{figure}
+Only intracluster edges shown.
+\end{frame}
+
+\begin{frame}[fragile]{Clusterings as Graphs: Iris (Bad Case)}
+\setcounter{subfigure}{0}
+\begin{figure}
+    \captionsetup[subfloat]{captionskip=20pt}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+	\scalebox{0.55}{
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \psset{dotstyle=Bsquare,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C1}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W1}
+        \psset{dotstyle=Bo,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C2}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W2}
+        \psset{dotstyle=Btriangle,fillcolor=lightgray}
+        \input{CLUST/eval/irisPCbad-C3}
+        \psset{fillcolor=white}
+        \input{CLUST/eval/irisPCbad-W3}
+        \psset{fillcolor=black}
+        \pstGeonode[PointSymbol=Bsquare, dotscale=2](2.562,0.486){A}
+        \pstGeonode[PointSymbol=Bo,
+        dotscale=2](2.419,-0.379){B}
+        \pstGeonode[PointSymbol=Btriangle,
+        dotscale=2](-1.405,-0.057){C}
+        \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+        {
+        \psset{linestyle=none, PointSymbol=none}
+        \pstMediatorAB{A}{B}{K}{KP}
+        \pstMediatorAB{C}{A}{J}{JP}
+        \pstMediatorAB{B}{C}{I}{IP}
+        \pstInterLL[PointSymbol=none]{I}{IP}{J}{JP}{O}
+        \psset{linewidth=1pt,linestyle=dashed}
+        \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+        \pstInterLL[PointSymbol=none]{O}{I}{a}{b}{oi}
+        \pstLineAB{O}{oi}
+        \pstInterLL[PointSymbol=none]{O}{J}{b}{c}{oj}
+        \pstLineAB{O}{oj}
+        \pstInterLL[PointSymbol=none]{O}{K}{a}{d}{ok}
+        \pstLineAB{O}{ok}
+        }
+        \endpsclip
+        %\endpspicture
+        \endpsgraph
+    }
+	\hspace{0.2in}
+	\scalebox{0.55}{
+        %\pspicture[](-5,-2)(3.5,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \input{CLUST/eval/irisPCbad-graph}
+        \endpsgraph
+    }}
+\end{figure}
+Only intracluster edges shown.
+\end{frame}
+
+
+\begin{frame}{Internal Measures: BetaCV and C-index}
+
+{\bf BetaCV Measure:} The BetaCV measure is the
+ratio of the mean intracluster distance to the mean intercluster
+distance:
+\begin{align*}
+  BetaCV = \frac{W_{in}/N_{in}}{W_{out}/N_{out}} =
+  \frac{N_{out}}{N_{in}} \cdot \frac{W_{in}}{W_{out}}
+  = \frac{N_{out}}{N_{in}}
+  \frac{\sum_{i=1}^k W(C_i, C_i)}{\sum_{i=1}^k
+  W(C_i, \ol{C_i})}
+\end{align*}
+The smaller the BetaCV ratio, the better the clustering.
+
+\bigskip
+{\bf C-index:} Let $W_{\min}(N_{in})$ be the sum of the
+smallest $N_{in}$ distances in the proximity matrix $\bW$, where
+$N_{in}$ is the total number of intracluster edges, or point
+pairs. Let $W_{\max}(N_{in})$ be the sum of the largest $N_{in}$
+distances in $\bW$.
+
+\smallskip
+The C-index measures to what extent the clustering puts together the
+$N_{in}$
+points that are the closest across the $k$ clusters.
+It is def\/{i}ned as
+\begin{align*}
+  Cindex = \frac{W_{in} -
+  W_{\min}(N_{in})}{W_{\max}(N_{in})-W_{\min}(N_{in})}
+\end{align*}
+The C-index lies in the range $[0,1]$.
+The smaller the C-index, the better the clustering.
+\end{frame}
+
+
+\begin{frame}{Internal Measures: Normalized Cut and Modularity}
+
+  {\bf Normalized Cut Measure:} The normalized cut
+objective for graph clustering can
+also be used as an internal clustering evaluation measure:
+\begin{align*}
+NC = \sum_{i=1}^k {W(C_i, \ol{C_i}) \over vol(C_i)} =
+\sum_{i=1}^k {W(C_i, \ol{C_i}) \over W(C_i, V)}
+\end{align*}
+where $vol(C_i) = W(C_i,V)$ is the volume of cluster $C_i$.
+The higher the normalized cut value the better.
+
+\bigskip
+{\bf Modularity:}
+The modularity objective is given as
+\begin{align*}
+Q = \sum_{i=1}^k \Biggl(
+    {W(C_i,C_i) \over W(V,V)} -
+    \lB({W(C_i,V) \over W(V,V)}\rB)^2
+    \Biggr)
+\end{align*}
+The smaller the modularity measure the better the clustering.
+\end{frame}
+
+
+\begin{frame}{Internal Measures: Dunn Index}
+The Dunn index is def\/{i}ned as the ratio between the
+minimum distance between point pairs from different clusters and
+the maximum distance between point pairs from the same cluster
+\begin{align*}
+  Dunn = \frac{\displaystyle W_{out}^{\min}}{\displaystyle W_{in}^{\max}}
+\end{align*}
+where $W_{out}^{\min}$ is the minimum intercluster distance:
+\begin{align*}
+  \displaystyle
+  W_{out}^{\min} = \min_{i, j>i} \; \bigl\{
+  w_{ab} | \bx_a \in C_i, \bx_b \in C_{j}\bigr\}
+\end{align*}
+and $W_{in}^{\max}$ is the maximum intracluster distance:
+\begin{align*}
+  \displaystyle
+  W_{in}^{\max} = \max_{i} \; \bigl\{ w_{ab} | \bx_a,\bx_b \in C_i   \bigr\}
+\end{align*}
+The larger the Dunn index the better the clustering because it means even
+the closest distance between points in different clusters is much larger
+than the farthest distance between points in the same cluster.
+\end{frame}
+
+
+
+\begin{frame}{Internal Measures: Davies-Bouldin Index}
+Let $\mu_i$ denote the cluster mean
+\begin{align*}
+\mu_i = \frac{1}{n_i} \sum_{\bx_{j} \in C_i} \bx_{j}
+\end{align*}
+Let
+$\sigma_{\mu_i}$ denote the dispersion or spread of the points around the cluster
+mean
+\begin{align*}
+\sigma_{\mu_i} = \sqrt{\frac{\sum_{\bx_{j} \in C_i} \dist(\bx_{j},
+\mu_i)^2}{n_i}} = \sqrt{var(C_i)}
+\end{align*}
+
+The Davies--Bouldin measure for a pair of clusters $C_i$ and $C_{j}$ is
+def\/{i}ned as the ratio
+\begin{align*}
+\mathit{DB}_{ij} = \frac{\sigma_{\mu_i}+\sigma_{\mu_{j}}}{\dist(\mu_i,\mu_{j})}
+\end{align*}
+$\mathit{DB}_{ij}$ measures how compact the clusters are compared to the distance
+between the cluster means.
+The Davies--Bouldin index is then def\/{i}ned as
+\begin{align*}
+  \mathit{DB} = \frac{1}{k} \sum_{i=1}^k \max_{j\ne i} \{\mathit{DB}_{ij} \}
+\end{align*}
+The smaller the DB value the better the clustering.
+\end{frame}
+
+
+\begin{frame}{Silhouette Coefficient}
+  \small
+Define the
+silhoutte coeff\/{i}cient of a point $\bx_i$ as
+\begin{align*}
+  s_i = \frac{\displaystyle \mu_{out}^{\min}(\bx_i)-\mu_{in}(\bx_i)}
+  {\displaystyle \max
+  \Bigl\{\mu_{out}^{\min}(\bx_i), \mu_{in}(\bx_i)\Bigr\} }
+\end{align*}
+where
+$\mu_{in}(\bx_i)$ is the mean distance from $\bx_i$ to points in its own cluster $\hy_i$:
+\begin{align*}
+  \mu_{in}(\bx_i) = \frac{\sum_{\bx_{j} \in C_{\hy_i}, j \ne i}
+  \dist(\bx_i,\bx_{j})}{n_{\hy_i}-1}
+\end{align*}
+and $\mu_{out}^{\min}(\bx_i)$ is the mean of the distances from
+$\bx_i$ to points in the closest cluster:
+\begin{align*}
+  \mu_{out}^{\min}(\bx_i) = \min_{j\ne \hy_i} \lB\{
+  \frac{\sum_{\by \in C_{j}} \dist(\bx_i,\by)}{n_{j}}
+  \rB\}
+\end{align*}
+
+\medskip
+The $s_i$ value lies in the interval $[-1, +1]$. A value
+close to
+$+1$ indicates that $\bx_i$ is much closer to points in its own
+cluster, a value close to zero indicates $\bx_i$ is
+close to the boundary, and a value close to $-1$
+indicates that $\bx_i$ is much closer to another cluster, 
+and therefore
+may be mis-clustered.
+
+\medskip
+The silhouette coeff\/{i}cient is the mean $s_i$ value:
+  $SC = \frac{1}{n} \sum_{i=1}^n s_i$.
+A value close to $+1$ indicates a good clustering.
+\end{frame}
+
+
+\begin{frame}[fragile]{Iris Data: Good vs.\ Bad Clustering}
+\setcounter{subfigure}{0}
+\begin{figure}
+    \centering
+    \captionsetup[subfloat]{captionskip=20pt}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+    \centerline{
+	\subfloat[Good]{
+	\scalebox{0.55}{
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \input{CLUST/eval/irisPCgood-graph}
+        \endpsgraph
+		}}
+	\hspace{0.4in}
+	\subfloat[Bad]{
+	\scalebox{0.55}{
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){3.5in}{2in}
+        \input{CLUST/eval/irisPCbad-graph}
+        \endpsgraph
+		}}}
+\end{figure}
+  \begin{center}
+  \scalebox{0.8}{%
+\begin{tabular}{|l|cccc|ccccc|}
+  \hline
+  & \multicolumn{4}{c|}{Lower better} &
+  \multicolumn{5}{c|}{Higher better}\\\cline{2-10}
+ & $BetaCV$ &
+ $Cindex$ & $Q$ & $\mathit{DB}$ & $\mathit{NC}$  & $Dunn$  & $\mathit{SC}$ & $\Gamma$ & $\Gamma_n$\\
+\hline
+(a) Good & 0.24 & 0.034 & $-$0.23 & 0.65 & 2.67  & 0.08
+     & 0.60 & 8.19&  0.92\\
+(b) Bad & 0.33 & 0.08 & $-$0.20 & 1.11 & 2.56  & 0.03  & 0.55 & 7.32
+& 0.83\\
+\hline
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+
+
+\begin{frame}{Relative Measures: Silhouette Coeff\/{i}cient}
+The silhouette coeff\/{i}cient for each
+point $s_{j}$, and the average SC value
+can be used to estimate the number of clusters
+in the data. 
+
+\medskip
+The approach consists of plotting the $s_{j}$ values in
+descending order for each cluster, and to note the overall $SC$ value
+for a particular value of $k$, as well as clusterwise SC values:
+\begin{align*}
+  SC_i = \frac{1}{n_i}\sum_{\bx_{j} \in C_i} s_{j}
+\end{align*}
+We then pick the value $k$ that yields the best clustering, with
+many points having high $s_{j}$ values within each cluster, as well as
+high values for $SC$ and $SC_i$ ($1 \le i \le k$).
+\end{frame}
+
+
+
+\readdata{\dataKa}{CLUST/eval/figs/irisKmeans-K2-Sil.txt}
+\readdata{\dataKb}{CLUST/eval/figs/irisKmeans-K3-Sil.txt}
+\readdata{\dataKc}{CLUST/eval/figs/irisKmeans-K4-Sil.txt}
+\begin{frame}[fragile]{Iris K-means: Silhouette Coeff\/{i}cient Plot
+  ($k=2$)}
+\setcounter{subfigure}{0}
+\begin{figure}
+\captionsetup[subfloat]{captionskip=0.5in}
+\centering %\small
+\psset{xAxisLabel=$~$,yAxisLabel=silhouette coeff\/{i}cient,%
+xAxisLabelPos={c,-0.05},yAxisLabelPos={-20,c}} \psset{xLabels={}}
+\centerline{ \subfloat[$k=2$, $SC=0.706$]{
+\scalebox{0.9}{
+\label{fig:clust:eval:silplotK2}
+\begin{psgraph}[Dy=0.1,labels=y,ticks=y]{->}(0,0)(150,1.1){4in}{1.75in}
+    \listplot[%plotstyle=bar, barwidth=0.01cm,
+    %fillcolor=lightgray, fillstyle=solid,
+    plotstyle=dots, dotscale=0.75,
+    plotNoMax=2, plotNo=1]{\dataKa}
+    \psline{<->}(0,-0.05)(96,-0.05)
+    \uput[d](50,-0.05){\scriptsize
+    $\begin{array}{c}
+        SC_1=0.706\\
+        n_1=97
+      \end{array}$
+      }
+    \psline[](96.5,-0.05)(96.5,0.95)
+    \psline{<->}(98,-0.05)(150,-0.05)
+    \uput[d](120,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_2=0.662\\
+        n_2=53
+      \end{array}$
+      }
+\end{psgraph}
+}} }
+\end{figure}
+ $k=2$ yields the highest silhouette coeff\/{i}cient, with the two
+ clusters essentially well separated.
+\end{frame}
+
+\begin{frame}[fragile]{Iris K-means: Silhouette Coeff\/{i}cient Plot
+  ($k=3$)}
+\begin{figure}
+\captionsetup[subfloat]{captionskip=0.5in}
+
+\centerline{ \subfloat[$k=3$, $SC=0.598$]{
+\scalebox{0.9}{
+\label{fig:clust:eval:silplotK3}
+\begin{psgraph}[Dy=0.1,labels=y,ticks=y]{->}(0,0)(150,1){4in}{1.75in}
+    \listplot[%plotstyle=bar, barwidth=0.01cm,
+    %fillcolor=lightgray, fillstyle=solid,
+    plotstyle=dots, dotscale=0.75,
+    plotNoMax=2, plotNo=1]{\dataKb}
+    \psline{<->}(0,-0.05)(60,-0.05)
+    \uput[d](30,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_1=0.466\\
+        n_1=61
+      \end{array}$
+      }
+    \psline[](60.5,-0.05)(60.5,0.95)
+    \psline{<->}(62,-0.05)(110,-0.05)
+    \uput[d](85,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_2=0.818\\
+        n_2=50
+      \end{array}$
+      }
+    \psline[](110.5,-0.05)(110.5,0.95)
+    \psline{<->}(111,-0.05)(150,-0.05)
+    \uput[d](130,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_3=0.52\\
+        n_3=39
+      \end{array}$
+      }
+\end{psgraph}
+} } }
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Iris K-means: Silhouette Coeff\/{i}cient Plot
+  ($k=4$)}
+\begin{figure}
+\captionsetup[subfloat]{captionskip=0.5in}
+\centerline{ \subfloat[$k=4$, $SC=0.559$]{
+\scalebox{0.9}{
+\label{fig:clust:eval:silplotK4}
+\begin{psgraph}[Dy=0.1,labels=y,ticks=y]{->}(0,0)(150,1){4in}{1.75in}
+    \listplot[%plotstyle=bar, barwidth=0.01cm,
+    %fillcolor=lightgray, fillstyle=solid,
+    plotstyle=dots,dotscale=0.75,
+    plotNoMax=2, plotNo=1]{\dataKc}
+    \psline{<->}(0,-0.05)(48,-0.05)
+    \uput[d](20,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_1=0.376\\
+        n_1=49
+      \end{array}$
+      }
+    \psline[](48.5,-0.05)(48.5,0.95)
+    \psline{<->}(49,-0.05)(76,-0.05)
+    \uput[d](65,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_2=0.534\\
+        n_2=28
+      \end{array}$
+      }
+    \psline[](76.5,-0.05)(76.5,0.95)
+    \psline{<->}(77,-0.05)(126,-0.05)
+    \uput[d](100,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_3=0.787\\
+        n_3=50
+      \end{array}$
+      }
+    \psline[](126.5,-0.05)(126.5,0.95)
+    \psline{<->}(127,-0.05)(150,-0.05)
+    \uput[d](140,-0.05){\scriptsize
+      $\begin{array}{c}
+        SC_4=0.484\\
+        n_4=23
+      \end{array}$
+      }
+\end{psgraph}
+}}} 
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Relative Measures: Calinski--Harabasz Index}
+  Given the dataset $\bD =\{\bx_i\}_{i=1}^n$,
+the scatter matrix for $\bD$ is given as
+\begin{align*}
+  \bS = n\cov = \sum_{j=1}^n \lB(\bx_{j} - \bmu\rB)
+  \lB(\bx_{j} - \bmu\rB)^T
+\end{align*}
+where $\bmu = \tfrac{1}{n} \sum_{j=1}^n \bx_{j} $ is the mean and $\cov$
+is the covariance matrix.  The scatter matrix can
+be decomposed into two matrices $\bS = \bS_W + \bS_B$,
+where $\bS_W$ is the within-cluster scatter
+matrix and $\bS_B$ is the between-cluster scatter matrix, given
+as
+\begin{align*}
+  \bS_W & = \sum_{i=1}^k \sum_{\bx_{j} \in C_i}
+  \lB(\bx_{j} - \bmu_i\rB) \lB(\bx_{j} - \bmu_i\rB)^T\\
+  \bS_B & = \sum_{i=1}^k n_i
+  \lB(\bmu_i - \bmu\rB) \lB(\bmu_i - \bmu\rB)^T
+\end{align*}
+where $\bmu_i = \tfrac{1}{n_i} \sum_{\bx_{j} \in C_i} \bx_{j}$ is
+the mean for cluster $C_i$.
+\end{frame}
+
+
+\begin{frame}{Relative Measures: Calinski--Harabasz Index}
+The Calinski--Harabasz (CH) variance ratio criterion for a given value of $k$
+is def\/{i}ned as follows:
+\begin{align*}
+  \mathit{CH}(k) = \frac{tr(\bS_B)/(k-1)}{tr(\bS_W)/(n-k)} =
+  \frac{n-k}{k-1} \cdot \frac{tr(\bS_B)}{tr(\bS_W)}
+\end{align*}
+where $tr$ is the trace of the matrix.
+
+\medskip
+We plot the $\mathit{CH}$ values and look for a large increase in the
+value followed by little or no gain. We choose
+the value $k>3$ that minimizes the term
+\begin{align*}
+  \Delta(k) = \Bigl(\mathit{CH}(k+1)-\mathit{CH}(k)\Bigr) - \Bigl(\mathit{CH}(k)-\mathit{CH}(k-1)\Bigr)
+\end{align*}
+The intuition is that we want to f\/{i}nd the value of $k$ for which $\mathit{CH}(k)$ is much higher than
+$\mathit{CH}(k-1)$ and there is only a
+little improvement or a decrease in the
+$\mathit{CH}(k + 1)$ value.
+
+\end{frame}
+
+
+
+\readdata{\dataCH}{CLUST/eval/figs/CHvals.txt}
+\begin{frame}[fragile]{Calinski--Harabasz Variance Ratio}
+  \small
+  CH ratio for various values
+  of $k$ on the Iris principal components data, using the K-means
+  algorithm, with the best results chosen from 200 runs.
+\begin{figure}
+    \centering
+    \def\pshlabel#1{ {\footnotesize #1}}
+    \def\psvlabel#1{ {\footnotesize #1}}
+\psset{dotscale=2,fillcolor=lightgray}
+\psset{xAxisLabel=$k$,yAxisLabel=$\mathit{CH}$,%
+xAxisLabelPos={c,-40},yAxisLabelPos={-1.25,c}}
+\scalebox{0.8}{
+\begin{psgraph}[Dy=50,Oy=550,Ox=1,showorigin=false]{->}(0,0)(9,250){3.5in}{2in}
+\pstScalePoints(1,1){-1 add}{-550 add}
+  \listplot[showpoints=true, dotstyle=Bsquare]{\dataCH}
+\end{psgraph}
+}
+\end{figure}
+\vspace{0.2in}
+  The successive
+  $\mathit{CH}(k)$ and $\Delta(k)$ values are as follows:
+  \begin{align*}
+    \begin{array}{c|cccccccc}
+    k & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9\\
+    \hline
+    \mathit{CH}(k) & 570.25 & 692.40 & 717.79 & 683.14 & 708.26 & 700.17 & 738.05
+    & 728.63\\
+    \Delta(k) & \text{--} & -96.78 & -60.03 & 59.78 & -33.22 & 45.97 &
+    -47.30 & \text{--}\\
+    \end{array}
+  \end{align*}
+$\Delta(k)$ suggests $k=3$ as the best (lowest) value.
+\end{frame}
+
+
+\begin{frame}{Relative Measures: Gap Statistic}
+The gap statistic compares the sum of
+intracluster
+weights $W_{in}$ 
+for different values of $k$ with their expected values assuming
+no apparent clustering structure, which forms the null hypothesis.
+
+\bigskip
+Let $\cC_k$ be the clustering obtained for a specif\/{i}ed value of $k$.
+Let $W_{in}^k(\bD)$ denote
+the sum of intracluster weights (over all clusters) for $\cC_k$ on the
+input dataset $\bD$.
+
+\bigskip
+We would like to compute the probability of the observed
+$W_{in}^k$ value under the null hypothesis.
+To obtain an empirical distribution for $W_{in}$, we resort to Monte
+Carlo simulations of the sampling process.  
+\end{frame}
+
+\begin{frame}{Relative Measures: Gap Statistic}
+We generate $t$
+random samples comprising $n$ points.
+Let $\bR_i \in \setR^{n \times d}$, $1 \le i \le t$ denote the $i$th sample.
+Let $W_{in}^k(\bR_i)$ denote the sum of intracluster weights for a
+given clustering of $\bR_i$ into $k$ clusters.
+
+\medskip
+From each sample
+dataset $\bR_i$, we generate clusterings for different values of $k$,
+and record the intracluster values
+$W_{in}^k(\bR_i)$.
+
+\medskip
+Let $\mu_W(k)$ and $\sigma_W(k)$ denote the
+mean and standard deviation of these intracluster weights for each
+value of $k$.
+The {\em gap statistic} for a given $k$ is then def\/{i}ned as
+\begin{align*}
+  gap(k) = \mu_W(k) - \log  W_{in}^k(\bD)
+\end{align*}
+
+\medskip
+Choose $k$ as follows:
+\begin{align*}
+  k^* = \arg\min_k \Bigl\{ gap(k) \ge gap(k+1) - \sigma_W(k+1)\Bigr\}
+\end{align*}
+\end{frame}
+
+
+\readdata{\dataG}{CLUST/eval/figs/gapstatistic.txt}
+\readdata{\dataGE}{CLUST/eval/figs/gapstatistic-errs.txt}
+\begin{frame}[fragile]{Gap Statistic: Randomly Generated Data}
+\setcounter{subfigure}{0}
+\begin{figure}
+%\begin{figure}[!t]%fig17.5
+    \centering
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+\captionsetup[subfloat]{captionskip=0.4in}
+\centering \psset{dotscale=2,fillcolor=lightgray} \centerline{
+\subfloat[Randomly generated data ($k=3$)]{
+\label{fig:clust:eval:gapdata}
+  \pspicture[](-5,-2.25)(3.5,2.75)
+\psset{xunit=0.5in,yunit=0.65in,dotscale=1.5,arrowscale=2,PointName=none}
+  \psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(3.5,1.5)
+  \psset{dotstyle=Bsquare,fillcolor=lightgray}
+  \input{CLUST/eval/gapdata-C1}
+  \psset{dotstyle=Bo,fillcolor=lightgray}
+  \input{CLUST/eval/gapdata-C2}
+  \psset{dotstyle=Btriangle,fillcolor=lightgray}
+  \input{CLUST/eval/gapdata-C3}
+  \psset{fillcolor=black}
+  \pstGeonode[PointSymbol=Bsquare, dotscale=2]%
+      (1.95,-0.022){A}
+  \pstGeonode[PointSymbol=Bo,dotscale=2]%
+      (-0.078,0.15){B}
+  \pstGeonode[PointSymbol=Btriangle,dotscale=2]%
+      (-2.51,-0.028){C}
+    \psclip{\psframe[](-4,-1.5)(3.5,1.5)}%
+    {
+    \psset{linestyle=none, PointSymbol=none}
+    \pstMediatorAB{A}{B}{K}{KP}
+    \pstMediatorAB{C}{A}{J}{JP}
+    \pstMediatorAB{B}{C}{I}{IP}
+    \pstInterLL[PointSymbol=none]{I}{IP}{K}{KP}{O}
+    \psset{linewidth=1pt,linestyle=dashed}
+    \pstGeonode[PointSymbol=none](-4,-1.5){a}(-4,1.5){b}(3.5,1.5){c}(3.5,-1.5){d}
+    \pstInterLL[PointSymbol=none]{O}{I}{b}{c}{oi}
+    \pstLineAB{O}{oi}
+    %\pstInterLL[PointSymbol=none]{O}{J}{a}{d}{oj}
+    %\pstLineAB{O}{oj}
+    \pstInterLL[PointSymbol=none]{O}{K}{b}{c}{ok}
+    \pstLineAB{O}{ok}
+    }
+    \endpsclip
+    \endpspicture
+  }}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{Gap Statistic: Intracluster Weights and Gap
+  Values}
+\begin{figure}
+%\begin{figure}[!t]%fig17.5
+    \centering
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+\captionsetup[subfloat]{captionskip=0.4in}
+\centering \psset{dotscale=2,fillcolor=lightgray} 
+\centerline{\hskip30pt\scalebox{0.85}{ \subfloat[Intracluster
+weights]{ \label{fig:clust:eval:WK}
+\psset{xAxisLabel=$k$,yAxisLabel=$\log_2 W_{in}^k$,%
+xAxisLabelPos={c,-1},yAxisLabelPos={-2,c}}
+\pslegend[rt]{\rule[1ex]{2em}{1pt}%
+\psdot[dotstyle=Btriangle,dotscale=1.5](-0.6,0.2) & expected:
+$\mu_W(k)$\\
+\rule[1ex]{2em}{1pt}%
+\psdot[dotstyle=Bo,dotscale=1.5](-0.6,0.2) & observed: $W_{in}^k$}
+\begin{psgraph}[Dy=1,Oy=10]{->}(0,0)(10,6){2.2in}{2in}
+    \pstScalePoints(1,1){}{-10 add}
+    \listplot[showpoints=true, dotstyle=Bo,
+    plotNoMax=6, plotNo=4]{\dataG}
+    \listplot[showpoints=true, dotstyle=Btriangle,
+    plotNoMax=6, plotNo=5]{\dataG}
+\end{psgraph}
+} \hspace{0.4in} \subfloat[Gap statistic]{
+\label{fig:clust:eval:gap}
+\psset{xAxisLabel=$k$,yAxisLabel=$gap(k)$,%
+xAxisLabelPos={c,-0.15},yAxisLabelPos={-2,c}}
+\begin{psgraph}[Dy=0.1]{->}(0,0)(10,1){2.2in}{2in}
+    \listplot[showpoints=true, dotstyle=Bsquare, dotscale=1.5,
+    plotNoMax=6, plotNo=1]{\dataG}
+    \def\DoCoordinate#1#2{}\GetCoordinates{\dataGE}
+\end{psgraph}
+} }} 
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Gap Statistic as a Function of $\textit{k}$}
+% {\tabcolsep10pt
+\renewcommand{\arraystretch}{1.1} 
+\begin{center}
+\begin{tabular}{|c|ccc|}
+    \hline
+$k$ &  $gap(k)$ & $\sigma_W(k)$ & $gap(k)-\sigma_W(k)$\\
+\hline
+1 &  0.093 &0.0456 &0.047\\
+2 &  0.346 &0.0486 &0.297\\
+3 &  0.679 &0.0529 &0.626\\
+4 &  0.753 &0.0701 &0.682\\
+5 &  0.586 &0.0711 &0.515\\
+6 &  0.715 &0.0654 &0.650\\
+7 &  0.808 &0.0611 &0.746\\
+8 &  0.680 &0.0597 &0.620\\
+9 &  0.632 &0.0606 &0.571\\
+\hline
+  \end{tabular}%}
+\end{center}
+The optimal value for the number of clusters is
+$k=4$ because
+$$gap(4) = 0.753 > gap(5)-\sigma_W(5) = 0.515$$
+
+\medskip
+However, if we
+relax the gap test to be within two standard deviations, then the
+optimal value is $k=3$ because
+$$gap(3) = 0.679 >
+gap(4)-2\sigma_W(4) = 0.753-2\cdot0.0701 = 0.613$$
+\end{frame}
+
+
+
+\begin{frame}{Cluster Stability}
+The main idea behind cluster stability is that the clusterings obtained
+from several datasets sampled from the same underlying distribution as
+$\bD$ should be similar or ``stable.''
+
+\medskip
+Stability can be
+used to f\/{i}nd  a good value for
+$k$, the correct number of clusters.
+
+\medskip
+We generate $t$ samples of size $n$ by sampling from $\bD$
+with replacement.
+Let $\cC_k(\bD_i)$ denote the
+clustering obtained from sample $\bD_i$, for a given value of $k$. 
+
+\medskip
+Next,
+we compare the distance between all pairs of clusterings
+$\cC_k(\bD_i)$ and $\cC_k(\bD_{j})$ using several 
+of the external cluster evaluation measures.
+From these values we compute the
+expected pairwise distance for each value of $k$.  F{i}nally, the value
+$k^*$ that exhibits the least deviation between the clusterings obtained
+from the resampled datasets is the best choice for $k$ because it
+exhibits the most stability.
+\end{frame}
+
+
+
+\newcommand{\StabClus}{{\textsc{ClusteringStability}}}
+\begin{frame}[fragile]{Clustering Stability Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\StabClus\ ($A, t, k^{\max}, \bD$)}
+\Algorithm{}
+$n \gets \card{\bD}$\;
+%\tcp{Generate $t$ samples}
+\For{$i = 1,2,\ldots,t$}{
+  $\bD_i \gets$ sample $n$ points from $\bD$ with replacement\;
+}
+%\tcp{Generate clusterings for different values of $k$}
+\For{$i = 1,2,\ldots,t$}{
+  \For{$k =2,3,\ldots,k^{\max}$}{
+    $\cC_k(\bD_i) \assign$ cluster $\bD_i$ into $k$ clusters using
+    algorithm $A$\;
+  }
+}
+%\tcp{Compute mean difference between clusterings for each $k$}
+\ForEach{pair $\bD_i, \bD_{j}$ with $j > i$ }{
+  $\bD_{ij} \gets \bD_i \cap \bD_{j}$ \tcp{create common dataset}%using Eq.\nosp\eqref{eq:clus:eval:Dij}}\; 
+\For{$k = 2,3,\ldots,k^{\max}$}{
+  $d_{ij}(k) \gets d\bigl(\cC_k(\bD_i),\cC_k(\bD_{j}),\bD_{ij}\bigr)$ \tcp{distance between clusterings}
+  }
+}
+\For{$k = 2,3,\ldots,k^{\max}$}{
+  $\mu_d(k) \assign
+  \frac{2}{t(t-1)} \sum_{i=1}^t \sum_{j>i} d_{ij}(k)$
+  %\nllabel{alg:clust:eval:clusterstability:mud} \tcp{expected pairwise
+  %distance}\;
+}
+%\tcp{Choose best $k$}
+$k^* \gets \arg\min_k \bigl\{ \mu_d(k) \bigr\}$
+\end{algorithm}
+\end{frame}
+
+
+\readdata{\dataCS}{CLUST/eval/figs/stabilityvals.txt}
+\begin{frame}[fragile]{Clustering Stability: Iris Data}
+  \framesubtitle{$t=500$ bootstrap samples; best K-means from 100 runs}
+\begin{figure}[H]
+    \centering
+    \def\pshlabel#1{ {\footnotesize #1}}
+    \def\psvlabel#1{ {\footnotesize #1}}
+\psset{dotscale=2,fillcolor=lightgray,arrowscale=2}
+\centerline{
+\begin{pspicture}(-3,-1)(3,5)
+\psset{xAxisLabel=$k$,yAxisLabel=Expected Value,%
+xAxisLabelPos={c,-0.15},yAxisLabelPos={-1.5,c}}
+\pslegend[rb]{\rule[1ex]{2em}{1pt}%
+\psdot[dotstyle=Bo,dotscale=1.5](-0.5,0.03) & $\mu_s(k): \mathit{FM}$\\
+\rule[1ex]{2em}{1pt}%
+\psdot[dotstyle=Btriangle,dotscale=1.5](-0.5,0.03) & $\mu_d(k): VI$}
+\begin{psgraph}[Dy=0.1]{->}(0,0)(10,1){3in}{2in}
+    \listplot[showpoints=true, dotstyle=Bo,
+    plotNoMax=4, plotNo=3]{\dataCS}
+    \listplot[showpoints=true, dotstyle=Btriangle,
+    plotNoMax=4, plotNo=1]{\dataCS}
+\end{psgraph}
+\end{pspicture}
+}
+\end{figure}
+The best choice is $k=2$.
+\end{frame}
+
+
+
+\begin{frame}{Clustering Tendency: Spatial Histogram}
+
+Clustering tendency or clusterability
+aims to determine whether the dataset $\bD$ has any
+meaningful groups to begin with. 
+
+\medskip
+Let $X_1, X_2, \ldots, X_d$ denote the $d$ dimensions. Given
+$b$, the number of bins for each dimension, we divide each dimension
+$X_{j}$ into $b$ equi-width bins, and simply count how many points lie in
+each of the $b^d$ $d$-dimensional cells.  
+
+\medskip
+From this spatial histogram, we
+can obtain the empirical joint probability mass function (EPMF) for the
+dataset $\bD$
+\begin{align*}
+  f(\bi) = P(\bx_{j} \in \text{cell }\bi) =
+  \frac{\bigl|\{\bx_{j} \in \text{cell }\bi\}\bigr|}{n}
+\end{align*}
+where $\bi = (i_1,i_2,\ldots,i_d)$ denotes a cell index, with $i_{j}$
+denoting
+the bin index along dimension $X_{j}$.
+\end{frame}
+
+
+\begin{frame}{Clustering Tendency: Spatial Histogram}
+We generate $t$ random samples, each comprising $n$ points within
+the same $d$-dimensional space as the input dataset $\bD$.  
+Let $\bR_{j}$
+denote the $j$th such random sample. 
+We then compute the
+corresponding EPMF $g_{j}(\bi)$ for each $\bR_{j}$, $1\le j\le t$.
+
+\medskip
+We next compute how much the distribution $f$ differs from
+$g_{j}$ (for $j=1,\ldots,t$),
+using the Kullback--Leibler (KL) divergence from $f$ to
+$g_{j}$, def\/{i}ned as
+\index{Kullback-Leibler divergence}
+\index{KL divergence|see{Kullback-Leibler divergence}}
+\begin{align*}
+  \mathit{KL}(f|g_{j}) = \sum_{\bi} f(\bi) \log \lB(\frac{f(\bi)}{g_{j}(\bi)} \rB)
+\end{align*}
+The KL divergence is zero only when $f$ and $g_{j}$ are the same
+distributions. Using these divergence values, we can compute how much
+the dataset $\bD$ differs from a random dataset.
+\end{frame}
+
+
+
+\readdata{\dataHtwoD}{CLUST/eval/figs/tendency2dhist.txt}
+\readdata{\dataKLtwoD}{CLUST/eval/figs/kl2d.txt}
+\begin{frame}[fragile]{Spatial Histogram: Iris Data versus Uniform}
+\setcounter{subfigure}{0}
+\begin{figure}
+%\begin{figure}[!p]\vspace*{12pt}%fig17.7
+  \centering
+  \captionsetup[subfloat]{captionskip=35pt}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+    \centerline{
+        \psset{xunit=0.3in,yunit=0.6in,
+          dotscale=1.5,dotstyle=Bo,fillcolor=lightgray,
+          arrowscale=2}
+    \subfloat[Iris: spatial cells]{
+    \label{fig:clust:eval:IrisSpatialCells}
+    \scalebox{0.8}{%
+        %\pspicture[](-3,-1.25)(3,1.5)
+        %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        %  (-4,-1.5)(3.5,1.5)
+        \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+        (-4,-1.5)(3.5,1.5){2.5in}{2in}
+        \input{CLUST/eval/irisPCgood-C1}
+        \input{CLUST/eval/irisPCgood-W1}
+        \input{CLUST/eval/irisPCgood-C2}
+        \input{CLUST/eval/irisPCgood-W2}
+        \input{CLUST/eval/irisPCgood-C3}
+        \input{CLUST/eval/irisPCgood-W3}
+        \psset{linestyle=dashed}
+        \multido{\ni=-3.795+1.403}{6}{%
+        \psline(\ni,-1.262)(\ni,1.371)}
+        \multido{\ni=-1.262+0.527}{6}{%
+        \psline(-3.795,\ni)(3.225,\ni)}
+        \endpsgraph
+        }}
+    \hspace{0.5in}
+  \subfloat[Uniform: spatial cells]{
+  \label{fig:clust:eval:RandomSpatialCells}
+  \scalebox{0.8}{%
+  %\pspicture[](-3,-1.25)(3,1.5)
+  %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+%   (-4,-1.5)(3.5,1.5)
+  \psgraph[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}%
+  (-4,-1.5)(3.5,1.5){2.5in}{2in}
+  \input{CLUST/eval/gapdata-C1}
+  \input{CLUST/eval/gapdata-C1}
+  \input{CLUST/eval/gapdata-C2}
+  \input{CLUST/eval/gapdata-C3}
+        \psset{linestyle=dashed}
+        \multido{\ni=-3.795+1.403}{6}{%
+        \psline(\ni,-1.262)(\ni,1.371)}
+        \multido{\ni=-1.262+0.527}{6}{%
+        \psline(-3.795,\ni)(3.225,\ni)}
+    \endpsgraph
+    }}}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Spatial Histogram: Empirical PMF}
+\begin{figure}
+  \centering
+  \captionsetup[subfloat]{captionskip=35pt}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+  \centerline{
+  \psset{arrowscale=2}
+  \subfloat[Empirical probability mass function]{%
+\def\pshlabel#1{\scriptsize {#1}}
+\def\psvlabel#1{\scriptsize {#1}}
+  \label{fig:clust:eval:irisSpatialdistr}
+  \psset{xAxisLabel=Spatial Cells,yAxisLabel=Probability,%
+  xAxisLabelPos={c,-0.04},yAxisLabelPos={-3.5,c}}
+  \pslegend[rt]{%
+  \psline[linewidth=3pt,linecolor=darkgray](0,0)(1.15,0) & $\qquad$Iris
+  ($f$)\\
+  \psline[linewidth=3pt,linecolor=lightgray](0,0)(1.15,0) &
+  $\qquad$Uniform ($g_{j}$)}
+  \begin{psgraph}[Dy=0.02,showorigin=true]{->}(0,0)(25,0.2){3.5in}{1.75in}
+    \listplot[plotstyle=bar,barwidth=0.1cm,
+          fillcolor=darkgray,fillstyle=solid,
+          plotNoMax=2,plotNo=1]{\dataHtwoD}
+          \pstScalePoints(1,1){0.25 add}{}
+          \listplot[plotstyle=bar,barwidth=0.1cm,
+          fillcolor=lightgray,fillstyle=solid,
+          plotNoMax=2,plotNo=2]{\dataHtwoD}
+          \listplot[showpoints=false,linestyle=dashed,
+          plotNoMax=2,plotNo=2]{\dataHtwoD}
+          \pstScalePoints(1,1){}{}
+          \listplot[showpoints=false,linewidth=1.5pt,
+          plotNoMax=2,plotNo=1]{\dataHtwoD}
+  \end{psgraph}
+  }}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Spatial Histogram: KL Divergence Distribution}
+\begin{figure}
+  \centering
+  \captionsetup[subfloat]{captionskip=35pt}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \def\pshlabel#1{ {\footnotesize $#1$}}
+    \def\psvlabel#1{ {\footnotesize $#1$}}
+  \centerline{
+  \psset{arrowscale=2}
+    \subfloat[KL-divergence distribution]{
+    \label{fig:clust:eval:irisSpatialKL}
+    \psset{xAxisLabel=KL Divergence,yAxisLabel=Probability,%
+  xAxisLabelPos={c,-0.07},yAxisLabelPos={-0.2,c}}
+  \begin{psgraph}[Dy=0.05,Dx=0.15,Ox=0.65,showorigin=true]{->}(0,0)(1.2,0.3){3in}{1.5in}
+    \pstScalePoints(1,1){-0.65 add}{}
+    \listplot[plotstyle=bar,barwidth=0.2cm,
+          fillcolor=lightgray,fillstyle=solid,
+          plotNoMax=2,plotNoX=2,plotNo=2]{\dataKLtwoD}
+  \end{psgraph}
+}}
+\end{figure}
+  We generated $t=500$ random samples from the null
+  distribution, and computed the KL divergence from $f$ to $g_{j}$ for
+  each $1 \le j \le t$.
+
+  \smallskip
+ The mean KL value is
+  $\mu_{\mathit{KL}} = 1.17$, with a standard deviation of $\sigma_{\mathit{KL}}=0.18$.
+\end{frame}
+
+
+\begin{frame}{Clustering Tendency: Distance Distribution}
+We can compare the pairwise point
+distances from $\bD$, with those from the randomly generated
+samples $\bR_i$ from the null distribution. 
+
+We create the EPMF from the proximity matrix $\bW$ for $\bD$ by binning the distances into $b$ bins:
+
+\begin{align*}
+  f(i) = P(w_{pq} \in \text{ bin } i \;|\; \bx_p, \bx_q \in \bD, p<q) =
+  \frac{\bigl|\{w_{pq} \in \text{ bin } i\}\bigr|}{n(n-1)/2}
+\end{align*}
+Likewise, for each of the samples $\bR_{j}$, we determine the
+EPMF for the pairwise distances, denoted $g_{j}$. 
+
+\medskip
+F{i}nally, we 
+compute the KL divergences between $f$ and $g_{j}$.
+The expected divergence
+indicates the extent to which $\bD$ differs from the null (random)
+distribution.
+\end{frame}
+
+
+\readdata{\dataHoneD}{CLUST/eval/figs/tendency1dhist.txt}
+\readdata{\dataKLoneD}{CLUST/eval/figs/kl1d.txt}
+\begin{frame}[fragile]{Iris Data: Distance Distribution}
+\setcounter{subfigure}{0}
+\begin{figure}
+  \centering
+  \captionsetup[subfloat]{captionskip=30pt}
+    \def\pshlabel#1{ {\footnotesize #1}}
+    \def\psvlabel#1{ {\footnotesize #1}}
+  \centerline{
+  \subfloat[]{
+    \label{fig:clust:eval:irisDistdist}
+  \scalebox{0.9}{%
+  \psset{xAxisLabel=Pairwise distance,yAxisLabel=Probability,%
+  xAxisLabelPos={c,-0.015},yAxisLabelPos={-0.9,c}}
+  \pslegend[rt]{%
+  \psline[linewidth=3pt,linecolor=darkgray](0,0)(0.3,0) & $\qquad$Iris
+  ($f$)\\
+  \psline[linewidth=3pt,linecolor=lightgray](0,0)(0.3,0) &
+  $\qquad$Uniform ($g_{j}$)}
+  \begin{psgraph}[Dy=0.01]{->}(0,0)(7,0.11){3.75in}{2in}
+    \listplot[plotstyle=bar,barwidth=0.1cm,
+          fillcolor=darkgray,fillstyle=solid,
+          plotNoMax=3,plotNoX=2,plotNo=2]{\dataHoneD}
+          \pstScalePoints(1,1){0.09 add}{}
+          \listplot[plotstyle=bar,barwidth=0.1cm,
+          fillcolor=lightgray,fillstyle=solid,
+          plotNoMax=3,plotNoX=2,plotNo=3]{\dataHoneD}
+          \listplot[showpoints=false,linestyle=dashed,
+          plotNoMax=3,plotNoX=2,plotNo=3]{\dataHoneD}
+          \pstScalePoints(1,1){}{}
+          \listplot[showpoints=false,linewidth=1.5pt,
+          plotNoMax=3,plotNoX=2,plotNo=2]{\dataHoneD}
+  \end{psgraph}
+  }}}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Iris Data: Distance Distribution}
+\begin{figure}
+  \centering
+  \captionsetup[subfloat]{captionskip=30pt}
+    \def\pshlabel#1{ {\footnotesize #1}}
+    \def\psvlabel#1{ {\footnotesize #1}}
+    \centerline{
+    \subfloat[]{
+    \label{fig:clust:eval:randomKL}
+  \scalebox{0.9}{%
+  \psset{xAxisLabel=KL divergence,yAxisLabel=Probability,%
+  xAxisLabelPos={c,-0.0475},yAxisLabelPos={-0.02,c}}
+  \begin{psgraph}[Dy=0.05,Dx=0.02,Ox=0.12]{->}(0,0)(0.12,0.25){3.5in}{1.75in}
+    \pstScalePoints(1,1){-0.12 add}{}
+    \listplot[plotstyle=bar,barwidth=0.2cm,
+          fillcolor=lightgray,fillstyle=solid,
+          plotNoMax=2,plotNoX=2,plotNo=2]{\dataKLoneD}
+  \end{psgraph}
+  }}}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Clustering Tendency: Hopkins Statistic}
+Given a dataset $\bD$ comprising $n$ points,
+we generate $t$ uniform subsamples $\bR_i$ of $m$ points each, 
+sampled from the same dataspace as $\bD$.
+
+\medskip
+We also generate $t$ subsamples of $m$ points
+directly from $\bD$, using sampling without replacement. Let $\bD_i$
+denote the $i$th direct subsample. 
+
+\medskip
+Next, we compute the minimum distance
+between each point $\bx_{j} \in \bD_i$ and points in $\bD$
+\begin{align*}
+  \dist_{\min}(\bx_{j}) = \min_{\bx_i \in \bD, \bx_i \ne \bx_{j}}
+  \Bigl\{\dist(\bx_{j}, \bx_i)\Bigr\}
+\end{align*}
+We
+also compute the minimum distance $\dist_{\min}(\by_{j})$
+between a point $\by_{j} \in \bR_i$ and
+points in $\bD$.
+
+\medskip
+The Hopkins statistic (in $d$ dimensions) for the $i$th pair of samples $\bR_i$ and $\bD_i$ is then def\/{i}ned as
+\begin{align*}
+  \mathit{HS}_i = \frac{\sum_{\by_{j} \in \bR_i} \lB(\dist_{\min}(\by_{j})\rB)^d}
+  {\sum_{\by_{j} \in \bR_i} \lB(\dist_{\min}(\by_{j})\rB)^d +
+  \sum_{\bx_{j} \in \bD_i} \lB(\dist_{\min}(\bx_{j})\rB)^d}
+\end{align*}
+If the data is well clustered we expect $\dist_{\min}(\bx_{j})$ values to
+be smaller compared to the $\dist_{\min}(\by_{j})$ values, and in this
+case $\mathit{HS}_i$ tends to 1. 
+\end{frame}
+
+
+\readdata{\dataHS}{CLUST/eval/figs/hopkinsdat.txt}
+\psset{arrowscale=2}
+\def\pshlabel#1{ {\footnotesize #1}}
+\def\psvlabel#1{ {\footnotesize #1}}
+\begin{frame}{Iris Data: Hopkins Statistic Distribution}
+\begin{figure}
+\begin{center}
+  \hspace*{-40pt}
+    \begin{pspicture}(-3,-1)(3,5)
+  \psset{xAxisLabel=Hopkins Statistic,yAxisLabel=Probability,%
+  xAxisLabelPos={c,-0.025},yAxisLabelPos={-0.025,c}}
+  \begin{psgraph}[Dy=0.05,Dx=0.02,Ox=0.82,showorigin=false]{->}(0,0)(0.18,0.15){4in}{2in}
+    \pstScalePoints(1,1){-0.82 add}{}
+    \listplot[plotstyle=bar,barwidth=0.1cm,
+          fillcolor=lightgray,fillstyle=solid,
+          plotNoMax=2,plotNoX=2,plotNo=2]{\dataHS}
+  \end{psgraph}
+  \end{pspicture}
+\end{center}
+\end{figure}
+Number of sample pairs $t=500$, subsample size $m=30$.
+  The mean of the Hopkins statistic is $\mu_{\mathit{HS}} = 0.935$, with a
+  standard deviation of $\sigma_{\mathit{HS}}=0.025$. 
+\end{frame}

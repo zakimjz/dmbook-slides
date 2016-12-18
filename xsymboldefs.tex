@@ -1,0 +1,376 @@
+\makeatletter
+\let\pstdivide\pst@divide
+\makeatother
+
+\makeatletter
+\def\pst@mymult#1#2#3{%
+  \begingroup%
+  \pst@cntm=#1\pst@cntn=#2\relax%
+  \pst@cnto=\pst@cntm%
+  \multiply\pst@cnto by \pst@cntn%
+  \edef\value{\endgroup\def\noexpand#3{\number\pst@cnto}}\value%
+}
+\let\pstmymultiply\pst@mymult
+\makeatother
+
+%for error bars
+\makeatletter
+\SpecialCoor
+\def\errorLine{\@ifnextchar[{\pst@errorLine}{\pst@errorLine[]}}
+\def\pst@errorLine[#1](#2)#3#4{{%
+    \ifx#1\empty\else\psset{#1}\fi
+    \pst@getcoor{#2}\pst@tempb
+    \def\@errorMin{#3}
+    \def\@errorMax{#4}
+    \psline{|-|}%
+    (!%
+        /yDot \pst@tempb exch pop \pst@number\psyunit div def
+        /xDot \pst@tempb pop \pst@number\psxunit div def
+        xDot yDot \@errorMin\space add%
+    )(!%
+        /yDot \pst@tempb exch pop \pst@number\psyunit div def
+        /xDot \pst@tempb pop \pst@number\psxunit div def
+        xDot yDot \@errorMax\space add%
+    )
+}}
+%
+\def\GetCoordinates#1{\expandafter\GetCoordinates@i#1}
+\def\GetCoordinates@i #1{\GetCoordinates@ii#1}
+\def\GetCoordinates@ii#1 #2 #3 #4 #5 #6 #7 #8 {%
+    \DoCoordinate{#2}{#4}%
+    \errorLine[linewidth=1pt](#2,#4){#6}{#8}% <<<<<
+    \@ifnextchar D{\GetCoordinates@ii}{}%
+}
+\makeatother
+
+
+% for inserting comments on the text that are printable and easily
+% removed whenever necessary
+
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+%\newcommand{\meira}[1]{{\bf MEIRA: #1}}
+%\newcommand{\zaki}[1]{{\bf ZAKI: #1}}
+\newcommand{\meira}[1]{}
+\newcommand{\zaki}[1]{}
+\newcommand{\comment}[1]{}
+\newcommand{\TimeStamp}{{\bf\color{red}{Last Modified: \timestamp}}}
+
+% for generating draft versions and final version of the graphs
+% draft version
+\newcommand{\draftgraph}[1]{#1}
+\newcommand{\finalgraph}[1]{}
+% final version
+%\newcommand{\draftgraph}[1]{}
+%\newcommand{\finalgraph}[1]{#1}
+
+%for algorithms style
+\DontPrintSemicolon
+%\SetEndCharOfAlgoLine{}
+
+% after stop using svmono, we had to define.
+
+\newcommand{\sectionstar}[1]{\section{$\star$ #1}}
+\newcommand{\subsectionstar}[1]{\subsection{$\star$ #1}}
+\newcommand{\subsubsectionstar}[1]{\subsubsection{$\star$ #1}}
+\newcommand{\paragraphstar}[1]{\paragraph{$\star$ #1}}
+
+
+%\newtheorem{theorem}{Theorem}[chapter]
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{corollary}[theorem]{Corollary}
+%\newtheorem{fact}[theorem]{Fact}
+
+%\newenvironment{proof}[1][Proof]{\begin{trivlist}
+%  \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+%\newenvironment{definition}[1][Definition]{\begin{trivlist}
+%  \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+%\newenvironment{remark}[1][Remark]{\begin{trivlist}
+%  \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+%\newcommand{\qed}{\nobreak \ifvmode \relax \else
+%  \ifdim\lastskip<1.5em \hskip-\lastskip
+%  \hskip1.5em plus0em minus0.5em \fi \nobreak
+%  \vrule height0.75em width0.5em depth0.25em\fi}
+%\newcommand{\qed}{\hfill \mbox{\raggedright \rule{.07in}{.1in}}}
+
+\newcommand{\download}{{\LARGE \ComputerMouse}}
+%\newcommand{\download}{\MVAt}
+
+%%EXAMPLE%%
+
+%\theoremstyle{plain}
+%\theoremseparator{.}
+%\theoremsymbol{}
+%\theorembodyfont{\upshape}
+%
+%%%\def\exf{\fontfamily{opl}\selectfont\fontseries{b}\fontshape{n}\fontsize{10}{10}\selectfont}
+
+%\newtheorem{myexample}{Example}[chapter]
+%\theoreminframepreskip{0pt}
+%\theoreminframepostskip{0pt}
+%\def\theoremframecommand{%
+%    \psframebox[fillstyle=solid,fillcolor=gray!10,linecolor=gray!10]}
+%\newshadedtheorem{example}[myexample]{Example}
+%
+%\theoremstyle{nonumberplain}
+%\theoremseparator{}
+%\theoreminframepreskip{0pt}
+%\theoreminframepostskip{0pt}
+%\def\theoremframecommand{%
+%    \psframebox[fillstyle=solid,fillcolor=gray!10,linecolor=gray!10]}
+%\newshadedtheorem{conexample}{}
+
+
+%%%\makeatletter
+%%%\newtheoremstyle{common}
+%%%    {12pt plus 3\p@}% above space (default)
+%%%    {12pt plus 3\p@}% below space
+%%%    {\rm}% body
+%%%    {0em}% indent
+%%%    {\bfseries}% head
+%%%    {}% punct
+%%%    {0.5em}% space
+%%%    {}% custom
+%%%\theoremstyle{common}
+%%%
+%%%\makeatother
+%%%
+%%%\newtheorem{example}[myexample]{Example}
+
+%\newcounter{examp}
+%\setcounter{examp}{0}
+%\renewcommand{\theexamp}{\thechapter.\arabic{examp}}
+
+\def\exf{\fontfamily{opl}\fontseries{b}\fontshape{n}\selectfont\fontsize{10}{10}\selectfont}
+
+%\makeatletter
+%\newtheoremstyle{tintthit}
+%    {12pt plus 3\p@}% above space (default)
+%    {12pt plus 3\p@}% below space
+%    {\rm}% body
+%    {0em}% indent
+%    {\bfseries}% head
+%    {}% punct
+%    {0.5em}% space
+%    {}% custom
+%\theoremstyle{tintthit}
+%
+%\newtheorem{ohtheorem}{Example}[chapter]%
+%
+%\newenvironment{example}{\vskip 12pt plus 3pt minus 1pt\fboxsep10pt\fboxrule0.5pt\noindent\begin{Sbox}\begin{minipage}{366pt}\begin{ohtheorem}}{\end{ohtheorem}\end{minipage}\end{Sbox}\fboxrule\z@\fboxsep3\p@\fcolorbox{ctinta}{ctinta}{\TheSbox}\vskip 12pt plus 3pt minus 1pt}
+%
+%\makeatother
+
+
+
+%\newtheoremstyle{example_contd}
+%{\topsep} {\topsep}%
+%{\upshape}% Body font
+%{}% Indent amount (empty = no indent, \parindent = para indent)
+%{\bfseries\scshape}% Thm head font
+%{}% Punctuation after thm head
+%{}
+%{\thmname{#1}\thmnumber{ #2}\thmnote{#3}\enspace(continued)}% Thm head spec
+%
+%\theoremstyle{example_contd}
+%\newtheorem{example}[myexample]{Example}
+%\newtheorem*{example_contd}{Example}
+
+%%%% EDA %%%%%%%%%%%%%
+\newcommand{\dsum}{\displaystyle \sum}
+
+\newcommand{\setR}{{\mathord{\mathbb R}}}
+\newcommand{\setD}{{\mathord{\mathbb D}}}
+\newcommand{\setI}{{\mathord{\mathbb I}}}
+\newcommand{\setN}{{\mathord{\mathbb N}}}
+\newcommand{\area}{{\mathord{\mathbb A}}}
+%\newcommand{\vol}{{\mathord{\mathbb V}}}
+\def\vol{\qopname\relax{no}{vol}}
+\def\area{\qopname\relax{no}{area}}
+
+\DeclareMathOperator{\erf}{erf}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\avg}{avg}
+\DeclareMathOperator{\sign}{sign}
+%\newcommand{\avg}{\operatorname{avg}}
+%\newcommand{\vect}[1]{\mathbold{#1}}
+\newcommand{\vect}[1]{\mathbf{#1}}
+%\newcommand{\vect}[1]{{\boldsymbol #1}}
+
+
+\newcommand{\pvalue}{{p\text{-}value}}
+\newcommand{\vi}{{\vec{i}}}
+\newcommand{\ba}{\vect{a}}
+\newcommand{\bb}{\vect{b}}
+\newcommand{\bc}{\vect{c}}
+\newcommand{\bd}{\vect{d}}
+\newcommand{\be}{\vect{e}}
+\newcommand{\bff}{\vect{f}}
+\newcommand{\bg}{\vect{g}}
+\newcommand{\bh}{\vect{h}}
+\newcommand{\bi}{\vect{i}}
+\newcommand{\bl}{\boldsymbol l}
+%%%\newcommand{\bl}{\vect{l}}
+\newcommand{\bmm}{\vect{m}}
+\newcommand{\bn}{\vect{n}}
+\newcommand{\bp}{\vect{p}}
+\newcommand{\bq}{\vect{q}}
+\newcommand{\br}{\vect{r}}
+\newcommand{\bs}{\vect{s}}
+\newcommand{\bt}{\vect{t}}
+\newcommand{\bu}{\vect{u}}
+\newcommand{\bv}{\vect{v}}
+\newcommand{\bw}{\vect{w}}
+\newcommand{\bx}{\vect{x}}
+\newcommand{\by}{\vect{y}}
+\newcommand{\bz}{\vect{z}}
+
+\newcommand{\bA}{\vect{A}}
+\newcommand{\bB}{\vect{B}}
+\newcommand{\bC}{\vect{C}}
+\newcommand{\bD}{\vect{D}}
+\newcommand{\bE}{\vect{E}}
+\newcommand{\bH}{\vect{H}}
+\newcommand{\bI}{\vect{I}}
+\newcommand{\bK}{\vect{K}}
+\newcommand{\bL}{\vect{L}}
+\newcommand{\bM}{\vect{M}}
+\newcommand{\bN}{\vect{N}}
+\newcommand{\bO}{\vect{O}}
+\newcommand{\bP}{\vect{P}}
+\newcommand{\bQ}{\vect{Q}}
+\newcommand{\bR}{\vect{R}}
+\newcommand{\bS}{\vect{S}}
+\newcommand{\bT}{\vect{T}}
+\newcommand{\bU}{\vect{U}}
+\newcommand{\bV}{\vect{V}}
+\newcommand{\bW}{\vect{W}}
+\newcommand{\bX}{\vect{X}}
+\newcommand{\bY}{\vect{Y}}
+\newcommand{\bZ}{\vect{Z}}
+
+\newcommand{\bone}{\mathbf{1}}
+\newcommand{\bzero}{\mathbf{0}}
+
+\newcommand{\cov}{{\bm \Sigma}}
+\newcommand{\bLambda}{{\bm \Lambda}}
+\newcommand{\bDelta}{{\bm \Delta}}
+\newcommand{\balpha}{{\bm \alpha}}
+\newcommand{\bbeta}{{\bm \beta}}
+\newcommand{\bdelta}{{\bm \delta}}
+\newcommand{\bomega}{{\bm \omega}}
+\newcommand{\bpi}{{\bm \pi}}
+\newcommand{\bsigma}{{\bm \sigma}}
+\newcommand{\btheta}{{\bm \theta}}
+\newcommand{\bmu}{{\bm \mu}}
+\newcommand{\bepsilon}{{\bm \epsilon}}
+\newcommand{\lB}{\left}
+\newcommand{\rB}{\right}
+\newcommand{\marr}[1]{\begin{array}{c} #1 \end{array}}
+\newcommand{\matr}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+%alignedmatr uses mathtools aligned pmatrix
+\newcommand{\amatr}[2]{%
+    \begin{pmatrix*}[#1] #2 \end{pmatrix*}}
+
+\newcommand{\hf}{\kern3pt\hat{\kern-3pt f}}
+%%%\newcommand{\hf}{\hat{f}}
+\newcommand{\hy}{\hat{y}}
+\newcommand{\hF}{\hat{F}}
+\newcommand{\hp}{\hat{p}}
+\newcommand{\hbp}{\hat{\bp}}
+\newcommand{\hP}{\hat{P}}
+\newcommand{\hbM}{\widehat{\bM}}
+\newcommand{\hbP}{\widehat{\bP}}
+\newcommand{\htheta}{\hat{\theta}}
+\newcommand{\hmu}{\hat{\mu}}
+\newcommand{\hbmu}{\hat{\bmu}}
+\newcommand{\hsigma}{\hat{\sigma}}
+\newcommand{\hbsigma}{\hat{\bsigma}}
+\newcommand{\hcov}{\widehat{\cov}}
+\newcommand{\hrho}{\hat{\rho}}
+
+
+\newcommand{\hrul}{\rule[1pt]{0.3in}{0.5pt}}
+%%%%%%%%%%
+
+
+
+%%%% FPM %%%%%%%%%%%%
+\newcommand{\cA}{{\mathcal A}}
+\newcommand{\cB}{{\mathcal B}}
+\newcommand{\cC}{{\mathcal C}}
+\newcommand{\cD}{{\mathcal D}}
+\newcommand{\cE}{{\mathcal E}}
+\newcommand{\cF}{{\mathcal F}}
+\newcommand{\cG}{{\mathcal G}}
+\newcommand{\cI}{{\mathcal I}}
+\newcommand{\cL}{{\mathcal L}}
+\newcommand{\cK}{{\mathcal K}}
+\newcommand{\cM}{{\mathcal M}}
+\newcommand{\cN}{{\mathcal N}}
+\newcommand{\cO}{{\mathcal O}}
+\newcommand{\cP}{{\mathcal P}}
+\newcommand{\cQ}{{\mathcal Q}}
+\newcommand{\cR}{{\mathcal R}}
+\newcommand{\cS}{{\mathcal S}}
+\newcommand{\cT}{{\mathcal T}}
+\newcommand{\cX}{{\mathcal X}}
+\newcommand{\bcX}{\vect{\cX}}
+\newcommand{\cY}{{\mathcal Y}}
+\newcommand{\cZ}{{\mathcal Z}}
+\newcommand{\vI}{{\vect{i}}}
+\newcommand{\vT}{{\vect{t}}}
+\newcommand{\vc}{{\vect{c}}}
+\newcommand{\Ik}{\cI^{(k)}}
+\newcommand{\Fk}[1]{\cF^{(#1)}}
+\newcommand{\Ck}[1]{\cC^{(#1)}}
+\newcommand{\pow}[1]{2^{#1}}
+\newcommand{\tup}[1]{\langle #1 \rangle}
+\newcommand{\ltup}[2]{{#1\langle #2 #1\rangle}}
+\newcommand{\card}[1]{|#1|}
+\newcommand{\bcard}[2]{#1| #2 #1|}
+\newcommand{\join}{{\times}}
+\newcommand{\assign}{\leftarrow}
+\newcommand{\ol}{\overline}
+\newcommand{\supp}{\mathit{sup}}%%%
+\newcommand{\rsupp}{\mathit{rsup}}%%%
+\newcommand{\minsup}{\mathit{minsup}}%%%%
+\newcommand{\conff}{\mathit{conf}}
+\newcommand{\minconf}{\mathit{minconf}}
+
+\NewDocumentCommand{\arule}{G{}}{
+  \IfNoValueTF{#1}
+    {\rightarrow}
+    {\stackrel{#1}{\longrightarrow}}%
+}
+
+
+% Stuff for Algorithm2e Styles
+\setlength{\algomargin}{2em}
+%\SetKwInOut{Input}{Input}
+%\SetKwInOut{Output}{Output}
+%\SetKwInOut{Initial}{Initialization}
+
+
+%SEQUENCES
+\newcommand{\estring}{\epsilon}
+
+%CLUSTERING
+\newcommand{\dist}{\delta}
+\newcommand{\grad}{\nabla}
+\newcommand{\minpts}{minpts}
+
+
+\newcommand{\domain}{domain}
+
+\renewcommand{\approx}{\simeq}
+
+\newcommand{\Iff}{{\it iff}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

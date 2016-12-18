@@ -1,0 +1,55 @@
+*******************************IMPORTANT NOTICE*******************************
+This version of Magnum Opus is distributed without charge under the licence
+agreement in http://www.giwebb.com/demoeula.html.  Use of this software or of
+its documentation signifies your willingness to be bound by this agreement.
+******************************************************************************
+
+
+MAGNUM OPUS COMMAND LINE SYSTEM (Demonstration Version)
+-------------------------------------------------------
+
+
+The demonstration version of the Magnum Opus command line system is mocl-demo.
+Move mocl-demo to the directory in which you wish to install it.
+
+
+Documentation
+-------------
+
+The directory Doc contains a file UserManual.html and a subdirectory named
+Doc.  To access the documentation open UserManual.html with a web browser.
+You may move the contents of the directory Doc to the location from which you
+wish to access them.  Both UserManual.html and the subdirectory must be placed
+in the same directory.  The existing directory structure must be maintained.
+
+
+Examples
+--------
+
+The directory examples contains the following example files.
+
+   * example1.mos, example2.mos, ... example7.mos: example settings files.
+   * tutorial.data: an example data file for use with tutorial.nam
+   * tutorial.idi: an example identifier-item file
+   * tutorial.itl: an example item-list file
+   * tutorial.nam: an example names file for use with tutorial.data
+
+tutorial.data, tutorial.idi, tutorial.itl, and tutorial.nam are 
+used in the tutorials contained in the manual.
+
+Move the contents of this directory to the location from which you wish to
+access them.  
+
+To execute one of the example settings files, cd to the examples
+directory and then execute the command
+
+   % mocl-demo settings=example1.mos
+
+substituting the desired settings file for example1.mos, and specifying the
+full path for mocl-demo if required.
+
+
+Problems
+--------
+
+If you discover any bugs in the system, please email support@giwebb.com.

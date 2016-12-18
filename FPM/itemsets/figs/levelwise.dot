@@ -1,0 +1,79 @@
+digraph "Itemset Lattice" {
+      node [fontsize=24];
+      ranksep=2;
+      fontsize=24;
+      labeljust=l;
+        subgraph cluster0{
+	label = "Level 0";
+	style=dashed;
+	{node [label="{}"] empty;}
+	}
+	subgraph cluster1 {
+	label = "Level 1";
+	style=dashed;
+	{node [label="A(4)"] A;}
+	{node [label="B(6)"] B;}
+	{node [label="C(4)"] C;}
+	{node [label="D(4)"] D;}
+	{node [label="E(5)"] E;}		
+	{rank = same; A; B; C; D; E;  }
+	{edge [style=invis] A -> B -> C -> D -> E;}
+	}	
+	subgraph cluster2{
+	label = "Level 2";
+	style=dashed;
+	{node [label="AB(4)"] AB;}
+	{node [label="AC(2)", style=filled, fillcolor=lightgray] AC;}
+	{node [label="AD(3)"] AD;}
+	{node [label="AE(4)"] AE;}
+	{node [label="BC(4)"] BC;}
+	{node [label="BD(4)"] BD;}
+	{node [label="BE(5)"] BE;}
+	{node [label="CD(2)", style=filled, fillcolor = "lightgray"] CD;}
+	{node [label="CE(3)"] CE;}
+	{node [label="DE(3)"] DE;}
+	{rank = same; AB; AC; AD; AE; BC; BD; BE; CD; CE; DE; } 
+	{edge [style=invis] 
+	AB -> AC -> AD -> AE -> BC -> BD -> BE -> CD -> CE -> DE;}
+	}
+	subgraph cluster3{
+	style=dashed;
+	label = "Level 3";
+	{node [label="ABD(3)"] ABD;}
+	{node [label="ABE(4)"] ABE;}
+	{node [label="ADE(3)"] ADE;}
+	{node [label="BCE(3)"] BCE;}
+	{node [label="BDE(3)"] BDE;}
+	{rank = same; ABD; ABE; ADE; BCE; BDE;}
+	}
+	subgraph cluster4{
+	label = "Level 4";
+	style=dashed;
+	{node [label="ABDE(3)"] ABDE;}
+	{edge [style=invis] ABD -> ABE->ADE->BCE->BDE;}
+	}
+
+	{edge [ sametail="true"]
+	empty -> A;
+	empty -> B;
+	empty -> C;
+	empty -> D;
+	empty -> E;
+	A -> AB;
+	A -> AC;
+	A -> AD;
+	A -> AE;
+	B -> BC;
+	B -> BD;
+	B -> BE;
+	C -> CD;
+	C -> CE;
+	D -> DE;
+	AB -> ABD;
+	AB -> ABE;
+	AD -> ADE;
+	BC -> BCE;
+	BD -> BDE;
+	ABD -> ABDE;
+	}
+}

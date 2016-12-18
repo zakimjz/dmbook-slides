@@ -1,0 +1,113 @@
+\ProvidesPackage{NGmacro}
+
+\renewcommand{\familydefault}{ptt}
+\renewcommand{\rmdefault}{ptt}
+
+\usepackage[T1]{fontenc}
+\usepackage[T1,cmbold]{mathtime}
+
+\def\mathrm#1{\textrm{#1}}
+
+
+\DeclareFontFamily{OT1}{mtt}{}
+\DeclareFontShape{OT1}{mtt}{m}{it}{ <-> mtmi }{}
+\DeclareFontShape{OT1}{mtt}{m}{n}{ <-> mtsy }{}
+\DeclareFontShape{OT1}{mtt}{bx}{it}{ <-> mtmib }{}%
+\DeclareFontShape{OT1}{mtt}{bx}{n}{ <-> mtsyb }{}
+
+%\DeclareSymbolFont{numbers}{\encodingdefault}{\rmdefault}{m}{n}
+
+\DeclareSymbolFont{alphabets}{OT1}{ptt}{m}{it}
+%\SetSymbolFont{alphabets}{normal}{\encodingdefault}{\rmdefault}{m}{it}
+
+
+%%%%\DeclareSymbolFont{cmletters}{OML}{cmm}{m}{it}
+%%%%\DeclareMathSymbol{v}{\mathalpha}{cmletters}{`v}
+
+%\SetSymbolFont{numbers}{normal}{\encodingdefault}{\rmdefault}{m}{n}
+\SetSymbolFont{operators}{normal}{\encodingdefault}{\rmdefault}{m}{n}
+\SetSymbolFont{letters}{normal}{OT1}{mtt}{m}{it}
+\SetSymbolFont{symbols}{normal}{OT1}{mtt}{m}{n}
+
+
+\SetSymbolFont{operators}{bold}{\encodingdefault}{\rmdefault}{bx}{n}
+\SetSymbolFont{letters}{bold}{OT1}{mtt}{bx}{it}
+\SetSymbolFont{symbols}{bold}{OT1}{mtt}{bx}{n}
+\SetSymbolFont{largesymbols}{bold}{OMX}{mtt}{bx}{n}
+
+
+\DeclareMathSymbol{A}{\mathalpha}{alphabets}{"41}
+\DeclareMathSymbol{B}{\mathalpha}{alphabets}{"42}
+\DeclareMathSymbol{C}{\mathalpha}{alphabets}{"43}
+\DeclareMathSymbol{D}{\mathalpha}{alphabets}{"44}
+\DeclareMathSymbol{E}{\mathalpha}{alphabets}{"45}
+\DeclareMathSymbol{G}{\mathalpha}{alphabets}{"47}
+\DeclareMathSymbol{H}{\mathalpha}{alphabets}{"48}
+\DeclareMathSymbol{I}{\mathalpha}{alphabets}{"49}
+\DeclareMathSymbol{J}{\mathalpha}{alphabets}{"4A}
+\DeclareMathSymbol{K}{\mathalpha}{alphabets}{"4B}
+\DeclareMathSymbol{L}{\mathalpha}{alphabets}{"4C}
+\DeclareMathSymbol{M}{\mathalpha}{alphabets}{"4D}
+\DeclareMathSymbol{N}{\mathalpha}{alphabets}{"4E}
+\DeclareMathSymbol{O}{\mathalpha}{alphabets}{"4F}
+\DeclareMathSymbol{Q}{\mathalpha}{alphabets}{"51}
+\DeclareMathSymbol{R}{\mathalpha}{alphabets}{"52}
+\DeclareMathSymbol{S}{\mathalpha}{alphabets}{"53}
+\DeclareMathSymbol{T}{\mathalpha}{alphabets}{"54}
+\DeclareMathSymbol{U}{\mathalpha}{alphabets}{"55}
+\DeclareMathSymbol{V}{\mathalpha}{alphabets}{"56}
+\DeclareMathSymbol{W}{\mathalpha}{alphabets}{"57}
+\DeclareMathSymbol{X}{\mathalpha}{alphabets}{"58}
+\DeclareMathSymbol{Y}{\mathalpha}{alphabets}{"59}
+\DeclareMathSymbol{Z}{\mathalpha}{alphabets}{"5A}
+
+
+
+\RequirePackage{graphicx,stfloats,lenval,calc,floatpag,soul,dcolumn,xrlocal,NGgrid,Optima}
+\RequirePackage[cam,noinfo]{crop}
+
+%\postdisplaypenalty     0
+%\interlinepenalty       0
+%\@lowpenalty            51
+%\displaywidowpenalty    100
+%\@medpenalty            151
+%\@highpenalty           301
+%\brokenpenalty          10000
+%\clubpenalty            10000
+%\widowpenalty           10000
+%\predisplaypenalty      10000
+
+\lefthyphenmin=3
+\righthyphenmin=3
+
+\hyphenation{Chapters Chapter Sections Section Figures Figure Tables Table Equations Equation}
+
+\newcounter{chapter}
+
+
+\thinmuskip=2mu
+\medmuskip=2.8mu plus 1.5mu minus 1.5mu
+\thickmuskip=3.7mu plus 2mu minus 1mu
+
+\def\mc{\multicolumn}
+
+\DeclareMathSizes{5}{5}{5}{5}
+\DeclareMathSizes{6}{6}{5}{5}
+\DeclareMathSizes{7}{7}{5}{5}
+\DeclareMathSizes{8}{8}{6}{5}
+\DeclareMathSizes{9}{9}{6.2}{5}
+\DeclareMathSizes{10}{10}{6.7}{6}
+\DeclareMathSizes{10.95}{10.95}{8}{6}
+\DeclareMathSizes{12}{12}{9}{7}
+\DeclareMathSizes{14.4}{14.4}{10.95}{8}
+\DeclareMathSizes{17.28}{17.28}{12}{10}
+\DeclareMathSizes{20.74}{20.74}{14.4}{12}
+\DeclareMathSizes{24.88}{24.88}{17.28}{14.4}
+
+\usepackage[OT1]{fontenc}
+\DeclareFontFamily{OT1}{cmtt}{\hyphenchar \font\m@ne}
+\DeclareMathAlphabet{\mathtt}{OT1}{cmtt}{m}{n}
+
+\def\nosp{\ignorespaces\hskip1.8pt\ignorespaces}
+
+\endinput

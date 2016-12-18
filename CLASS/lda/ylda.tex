@@ -1,0 +1,614 @@
+\lecture{lda}{lda}
+
+\date{Chap.\ 20: Linear Discriminant Analysis}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Linear Discriminant Analysis}
+Given
+labeled data consisting of $d$-dimensional points $\bx_i$ along
+with their classes $y_i$, the goal of linear discriminant analysis
+(LDA) is to f\/{i}nd a vector $\bw$ that maximizes the separation
+between the classes after projection onto $\bw$. 
+
+\medskip
+The key difference between principal component analysis and LDA is
+that the former deals with unlabeled data and tries to maximize
+variance, whereas the latter deals with labeled data and tries to
+maximize the discrimination between the classes.
+\end{frame}
+
+
+\begin{frame}{Projection onto a Line}
+ Let $\bD_i$ denote the subset of points
+labeled with class $c_i$, i.e., $\bD_i = \{\bx_{j} | y_{j} = c_i\}$,
+and let $\card{\bD_i} = n_i$ denote the number of points with
+class $c_i$. We assume that there are only $k=2$ classes. 
+
+
+\medskip
+The projection  of any $d$-dimensional
+point $\bx_i$ onto a unit vector $\bw$ is given as
+\begin{align*}
+  \bx'_i = \lB( \frac{\bw^T \bx_i}{\bw^T\bw} \rB) \bw
+    = \lB( \bw^T \bx_i \rB) \bw = a_i \bw
+\end{align*}
+where $a_i$ specif\/{i}es the offset or coordinate of $\bx'_i$ along
+the line $\bw$:
+\begin{align*}
+  a_i  = \bw^T\bx_i
+\end{align*}
+
+\medskip
+The set of $n$ scalars $\{a_1, a_2, \ldots, a_n\}$ represents the mapping from $\setR^d$ to $\setR$, that is, from the original
+$d$-dimensional space to a 1-dimensional space (along $\bw$).
+\end{frame}
+
+
+\begin{frame}{Projection onto $\bw$: Iris 2D Data}
+  \framesubtitle{{\tt iris-setosa} as class $c_1$
+(circles), and the other two Iris types as class $c_2$
+(triangles)}
+\begin{figure}[!t]
+    \centering
+    \scalebox{0.75}{%
+    \psset{dotscale=1.5,arrowscale=2,PointName=none,
+    dotsep=0.05, unit=1.0in}
+    \begin{pspicture}(4,1.5)(8.5,5)
+    \psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.5,5)
+    \pstGeonode[PointSymbol=none](8.04,4.15){na}
+    \pstGeonode[PointSymbol=none](3.94,2.1){nb}
+    \pstLineAB[linewidth=2pt]{<-}{na}{nb}
+    \nput{90}{na}{$\bw$}
+    \input{CLASS/lda/figs/proj}
+        \psset{dotscale=2,fillcolor=black}
+    \pstGeonode[PointSymbol=none,
+        fillcolor=lightgray](5.01,3.42){mu1}
+    \pstProjection[PointSymbol=Bo]{na}{nb}{mu1}[m1]
+    \pstGeonode[PointSymbol=none,
+        fillcolor=lightgray](6.26,2.87){mu2}
+    \pstProjection[PointSymbol=Btriangle]{na}{nb}{mu2}[m2]
+    \end{pspicture}
+    }
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Optimal Linear Discriminant Direction}
+\begin{figure}[!t]\vspace*{-14pt}
+    \centering
+    %\vspace{0.2in}
+    \scalebox{0.8}{%
+    \psset{dotscale=1.5,dotsep=0.03,arrowscale=2,PointName=none,unit=1.0in}
+    \begin{pspicture}(4,1.5)(8.5,5)
+    \psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.5,5)
+    %\begin{pspicture}(4,1.5)(8,4.5)
+    %\psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.0,4.5)
+    \pstGeonode[PointSymbol=none](4.88,4.51){na}
+    \pstGeonode[PointSymbol=none](6.89,1.47){nb}
+    \pstLineAB[linewidth=2pt]{->}{na}{nb}
+    \uput[90](6.9,1.6){$\bw$}
+    \input{CLASS/lda/figs/proj}
+    \psset{dotscale=2,fillcolor=black}
+    \pstGeonode[PointSymbol=none,
+        fillcolor=lightgray](5.01,3.42){mu1}
+    \pstProjection[PointSymbol=Bo]{na}{nb}{mu1}[m1]
+    \pstGeonode[PointSymbol=none,
+        fillcolor=lightgray](6.26,2.87){mu2}
+    \pstProjection[PointSymbol=Btriangle]{na}{nb}{mu2}[m2]
+    \end{pspicture}
+    }
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Optimal Linear Discriminant}
+The mean of the projected points is given as:
+\begin{align*}
+    m_1  = & \bw^T\bmu_1 & 
+	m_2 = & \bw^T\bmu_2
+\end{align*}
+
+To maximize the separation between the classes, we 
+maximize the difference between the projected means,
+$|m_1 - m_2|$. However, for good separation,
+the variance of the projected points for each class should also
+not be too large. 
+LDA
+maximizes the separation by ensuring that the {\em
+  scatter} $s_i^2$ for the projected points within each class is
+small, where scatter is def\/{i}ned as
+\begin{align*}
+  s_i^2 = \dsum_{\bx_{j} \in \bD_i} (a_{j} - m_i)^2 = n_i \sigma_i^2
+\end{align*}
+where $\sigma_i^2$ is the
+variance for class $c_i$.
+\end{frame}
+
+
+
+\begin{frame}{Linear Discriminant Analysis: F{i}sher Objective}
+  \small
+We incorporate the two LDA criteria, namely, maximizing the
+distance between projected means and minimizing the sum of
+projected scatter, into a single maximization criterion called the
+{\em F{i}sher LDA objective}: 
+\begin{align*}
+    \max_{\bw} \;\; J(\bw) = \frac{(m_1 - m_2)^2}{s_1^2 + s_2^2}
+\end{align*}
+
+\medskip
+In matrix terms, we can rewrite $(m_1 - m_2)^2$ as follows:
+\begin{align*}
+  (m_1 - m_2)^2 = & \lB(\bw^T(\bmu_1 - \bmu_2)\rB)^2 = \bw^T\bB\bw
+\end{align*}
+where $\bB = (\bmu_1 - \bmu_2) (\bmu_1 - \bmu_2)^T$ is a $d\times
+d$ rank-one matrix called the {\em between-class scatter matrix}.
+
+\medskip
+The projected scatter for class $c_i$ is given as
+\begin{align*}
+  s_i^2 = &
+  \dsum_{\bx_j \in \bD_1} (\bw^T\bx_j - \bw^T\bmu_i)^2
+  =  \bw^T \lB(\dsum_{\bx_j \in \bD_i} (\bx_j - \bmu_i)(\bx_j -
+  \bmu_i)^T \rB) \bw
+  =  \bw^T\bS_i\bw
+\end{align*}
+where $\bS_i$ is the {\em scatter matrix} for $\bD_i$.
+\end{frame}
+
+
+\begin{frame}{Linear Discriminant Analysis: F{i}sher Objective}
+The combined scatter for both classes is given as
+\begin{align*}
+  s_1^2 + s_2^2 = \bw^T \bS_1 \bw + \bw^T \bS_2 \bw
+  = \bw^T (\bS_1 + \bS_2) \bw= \bw^T \bS \bw
+\end{align*}
+where the symmetric positive semidef\/{i}nite matrix 
+$\bS = \bS_1 + \bS_2$ denotes the {\em within-class scatter
+matrix} for the pooled data. 
+
+The LDA objective function in matrix form is
+\begin{align*}
+    \max_{\bw} \;\; J(\bw) = \frac{\bw^T\bB\bw}{\bw^T\bS\bw}
+\end{align*}
+
+\medskip
+To solve for the best direction $\bw$, we differentiate the objective
+function with respect to $\bw$; after simplification it yields the 
+{\em generalized eigenvalue problem}
+\begin{align*}
+  \bB \bw  = &\; \lambda \bS \bw
+\end{align*}
+where $\lambda = J(\bw)$ is
+a generalized
+eigenvalue of $\bB$ and $\bS$.
+To maximize the objective
+$\lambda$ should be chosen to be the largest generalized
+eigenvalue, and $\bw$ to be the corresponding eigenvector.
+\end{frame}
+
+
+
+\newcommand{\LDA}{\textsc{LinearDiscriminant}\xspace}
+\begin{frame}[fragile]{Linear Discriminant Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{
+\LDA($\bD = \{(\bx_i, y_i)\}_{i=1}^n$)}
+\Algorithm{} 
+$\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}, i=1,2$ \tcp{class-specif\/{i}c subsets} 
+$\bmu_i
+\assign \text{mean}(\bD_i), i=1,2$ \tcp{class means} 
+$\bB \assign (\bmu_1-\bmu_2)(\bmu_1-\bmu_2)^T$ \tcp{between-class
+scatter matrix} 
+$\bZ_i \assign \bD_i - \bone_{n_i} \bmu_i^T, i=1,2$ \tcp{center class matrices}
+$\bS_i  \assign \bZ_i^T\bZ_i, i=1,2$ \tcp{class scatter matrices}
+$\bS \assign \bS_1 + \bS_2$ \tcp{within-class scatter matrix}
+$\lambda_1, \bw \assign \text{eigen}(\bS^{-1}\bB)$ \tcp{compute dominant eigenvector}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{Linear Discriminant Direction: Iris 2D Data}
+  \begin{columns}
+	\column{0.5\textwidth}
+\begin{figure}[!t]\vspace*{-14pt}
+    \centering
+    %\vspace{0.2in}
+    \scalebox{0.45}{%
+    \psset{dotscale=1.5,dotsep=0.03,arrowscale=2,PointName=none,unit=1.0in}
+    \begin{pspicture}(4,1.5)(8.5,5)
+    \psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.5,5)
+    %\begin{pspicture}(4,1.5)(8,4.5)
+    %\psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.0,4.5)
+    \pstGeonode[PointSymbol=none](4.88,4.51){na}
+    \pstGeonode[PointSymbol=none](6.89,1.47){nb}
+    \pstLineAB[linewidth=2pt]{->}{na}{nb}
+    \uput[90](6.9,1.6){$\bw$}
+    \input{CLASS/lda/figs/proj}
+    \psset{dotscale=2,fillcolor=black}
+    \pstGeonode[PointSymbol=none,
+        fillcolor=lightgray](5.01,3.42){mu1}
+    \pstProjection[PointSymbol=Bo]{na}{nb}{mu1}[m1]
+    \pstGeonode[PointSymbol=none,
+        fillcolor=lightgray](6.26,2.87){mu2}
+    \pstProjection[PointSymbol=Btriangle]{na}{nb}{mu2}[m2]
+    \end{pspicture}
+    }
+\end{figure}
+
+\column{0.5\textwidth} 
+\scriptsize
+The between-class scatter matrix is
+\begin{align*}
+    \bB & = \amatr{r}{1.587 & -0.693\\-0.693 & 0.303}
+\end{align*}
+and the within-class scatter matrix is
+\begin{align*}
+    \bS_1 & = \matr{6.09 & 4.91\\4.91 & 7.11}\\
+    \bS_2 & = \matr{43.5 & 12.09\\12.09 & 10.96}\\
+    \bS & = \matr{49.58 & 17.01\\17.01 & 18.08}
+\end{align*}
+The direction of most separation between $c_1$ and $c_2$ is the
+dominant eigenvector corresponding to the largest eigenvalue of
+the matrix $\bS^{-1} \bB$. The solution is
+\begin{align*}
+    J(\bw) & = \lambda_1 = 0.11\\
+    \bw & = \amatr{r}{0.551\\-0.834}
+\end{align*}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Linear Discriminant Analysis: Two Classes}
+For the two class scenario, if $\bS$ is nonsingular, we can
+directly solve for $\bw$ without computing the eigenvalues and
+eigenvectors. 
+
+\medskip
+The between-class scatter matrix $\bB$
+points in the same direction as $(\bmu_1-\bmu_2)$ because
+\begin{align*}
+  \bB\bw = & \Bigl( (\bmu_1 - \bmu_2) (\bmu_1 - \bmu_2)^T\Bigr) \bw\notag\\
+  = & (\bmu_1 - \bmu_2) \Bigl((\bmu_1 - \bmu_2)^T \bw\Bigr)\notag\\
+  = & b (\bmu_1 - \bmu_2)
+\end{align*}
+
+\medskip
+The generalized eigenvectors equation can then be 
+rewritten as 
+\begin{align*}
+  \bw = & \frac{b}{\lambda} \bS^{-1} (\bmu_1 - \bmu_2)
+\end{align*}
+Because ${b \over \lambda}$ is just a scalar, we can solve for the
+best linear discriminant as
+\begin{align*}
+  \bw = & \bS^{-1} (\bmu_1 - \bmu_2)
+\end{align*}
+We can finally normalize $\bw$ to be a unit vector.
+\end{frame}
+
+
+
+\begin{frame}{Kernel Discriminant Analysis} 
+The goal of kernel LDA is to f\/{i}nd the direction vector $\bw$ in
+feature space that maximizes
+\begin{align*}
+        \max_{\bw} \;\; J(\bw) = \frac{(m_1 - m_2)^2}{s_1^2 + s_2^2}
+\end{align*}
+It is well known that 
+$\bw$ can be expressed as a linear combination of the
+points in feature space
+\begin{align*}
+  \bw 
+  & = \sum_{j=1}^n a_{j} \phi(\bx_{j})
+\end{align*}
+The mean for class $c_i$ in feature space is given as
+\begin{align*}
+\bmu^\phi_i = {1 \over n_i} \sum_{\bx_{j} \in \bD_i} \phi(\bx_{j})
+\end{align*}
+and the covariance matrix for class $c_i$ in feature space is
+\begin{align*}
+  \cov_i^\phi = {1 \over n_i} \sum_{\bx_{j} \in \bD_i}
+  \Bigl(\phi(\bx_{j}) - \bmu_i^\phi\Bigr)
+  \Bigl(\phi(\bx_{j})- \bmu_i^\phi\Bigr)^T
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Kernel Discriminant Analysis} 
+The between-class scatter matrix in feature space is
+\begin{align*}
+  \bB_\phi & = \Bigl(\bmu_1^\phi - \bmu_2^\phi\Bigr)
+  \Bigl(\bmu_1^\phi - \bmu_2^\phi\Bigr)^T
+\end{align*}
+and the within-class scatter matrix in feature space is
+\begin{align*}
+  \bS_\phi &= n_1\cov_1^\phi + n_2\cov_2^\phi
+\end{align*}
+$\bS_\phi$ is a $d \times d$ symmetric, positive semidef\/{i}nite
+matrix, where $d$ is the dimensionality of the feature space. 
+
+\medskip
+The best linear
+discriminant vector $\bw$ in feature space is the dominant
+eigenvector, which satisf\/{i}es the expression
+\begin{align*}
+  \lB(\bS_\phi^{-1}\bB_\phi\rB) \bw = \lambda \bw
+ \label{eq:class:lda:eigeqF}
+\end{align*}
+where we assume that $\bS_\phi$ is non-singular. 
+\end{frame}
+
+
+\begin{frame}{LDA Objective via Kernel Matrix: Between-class Scatter}
+\small
+The projected mean for class $c_i$ is given as
+\begin{align*}
+   m_i & = \bw^T \bmu^\phi_i
+   = {1 \over n_i} \dsum_{j=1}^n \dsum_{\bx_k \in \bD_i} a_{j}
+  K(\bx_{j},\bx_k) = \ba^T \bmm_i 
+\end{align*}
+where $\ba = (a_1, a_2, \ldots, a_n)^T$ is the weight vector, and
+\begin{align*}
+  \bmm_i & = {1 \over n_i}
+  \matr{
+      \sum_{\bx_k \in \bD_i} K(\bx_1,\bx_k)\\
+      \sum_{\bx_k \in \bD_i} K(\bx_2,\bx_k)\\
+      \vdots\\
+      \sum_{\bx_k \in \bD_i} K(\bx_n,\bx_k)
+      }  = {1\over n_i}\bK^{c_i} \bone_{n_i}
+\end{align*}
+where $\bK^{c_i}$ is the $n \times n_i$ subset of the kernel
+matrix, restricted to columns belonging to points only in $\bD_i$,
+and $\bone_{n_i}$ is the $n_i$-dimensional vector all of whose
+entries are one. 
+
+\medskip
+The separation between the projected means is thus
+\begin{align*}
+  (m_1 - m_2)^2  & =  \lB(\ba^T\bmm_1 - \ba^T\bmm_2\rB)^2 
+     =  \ba^T\bM\ba
+\end{align*}
+where $\bM = (\bmm_1 - \bmm_2)(\bmm_1-\bmm_2)^T$ is the
+between-class scatter matrix.
+\end{frame}
+
+
+\begin{frame}{LDA Objective via Kernel Matrix: Within-class Scatter}
+
+We can compute the projected scatter for each class, $s_1^2$
+and $s_2^2$, purely in terms of the kernel function, as follows
+\begin{align*}
+    s_1^2 & = \sum_{\bx_i \in \bD_1}
+    \norm{\bw^T\phi(\bx_i) - \bw^T\bmu^\phi_1}^2
+    = \ba^T \biggl(
+    \Bigl(\sum_{\bx_i \in \bD_1} \bK_i\bK_i^T\Bigr)
+    - n_1 \bmm_1 \bmm_1^T \biggr) \ba
+     = \ba^T \bN_1 \ba
+\end{align*}
+where $\bK_i$ is the $i$th column of the kernel matrix, and $\bN_1$
+is the class scatter matrix for $c_1$. 
+
+\medskip
+The sum of projected scatter values is then given as
+\begin{align*}
+  s_1^2 + s_2^2 = \ba^T (\bN_1 + \bN_2) \ba = \ba^T \bN \ba
+\end{align*}
+where $\bN$ is the $n\times n$ within-class scatter matrix.
+\end{frame}
+
+\begin{frame}{Kernel LDA}
+The kernel LDA maximization condition is
+\begin{align*}
+    \max_{\bw} J(\bw) = \max_{\ba} J(\ba) =
+    {\ba^T\bM\ba \over \ba^T\bN\ba}
+\end{align*}
+
+
+\medskip
+The weight vector $\ba$ is the eigenvector
+corresponding to the largest eigenvalue of the generalized
+eigenvalue problem:
+\begin{align*}
+    \bM\ba = \lambda_1\bN\ba
+\end{align*}
+
+\medskip
+When there are only two classes $\ba$ can be
+obtained directly:
+\begin{align*}
+    \ba = \bN^{-1} (\bmm_1 - \bmm_2)
+\end{align*}
+
+\medskip
+To normalize $\bw$ to be a unit vector  we
+scale $\ba$ by $1 \over \sqrt{\ba^T\bK\ba}$.
+
+
+\medskip
+We can project any point $\bx$ onto the discriminant
+direction as follows:
+\begin{align*}
+  \bw^T\phi(\bx) = \dsum_{j=1}^n a_{j}\phi(\bx_{j})^T\phi(\bx) =
+  \dsum_{j=1}^n a_{j} K(\bx_{j},\bx)
+\end{align*}
+\end{frame}
+
+
+
+\newcommand{\KLDA}{\textsc{KernelDiscriminant}}
+\begin{frame}[fragile]{Kernel Discriminant Analysis Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{
+    \KLDA\ ($\bD = \{(\bx_i, y_i)\}_{i=1}^n,
+K$)} 
+\Algorithm{} 
+$\bK \assign \bigl\{K(\bx_i, \bx_{j})
+\bigr\}_{i,j=1,\ldots,n}$ \tcp{compute $n \times n$ kernel
+matrix}
+$\bK^{c_i} \assign \bigl\{\bK(j,k) \mid y_k=c_i, 1\le
+j,k \le n\bigr\}, i=1,2$ \tcp{class kernel matrix}
+$\bmm_i
+\assign {1\over n_i}\bK^{c_i}  \bone_{n_i}, i=1,2$ \tcp{class
+means}
+$\bM \assign (\bmm_1-\bmm_2)(\bmm_1-\bmm_2)^T$
+\tcp{between-class scatter matrix}
+$\bN_i  \assign \bK^{c_i}
+(\bI_{n_i} - {1\over n_i}\bone_{n_i \times n_i}) (\bK^{c_i})^T$, $i = 1, 2$
+\tcp{class scatter matrices}
+$\bN \assign \bN_1 + \bN_2$
+\tcp{within-class scatter matrix}
+$\lambda_1, \ba \assign
+\text{eigen}(\bN^{-1}\bM)$ \tcp{compute weight vector}
+$\ba
+\assign {\ba \over \sqrt{\ba^T \bK \ba}}$ \tcp{normalize $\bw$ to
+be unit vector}
+\end{algorithm}
+\end{frame}
+
+
+
+\readdata{\dataPC}{CLASS/lda/figs/iris-PC.txt}
+\readdata{\dataW}{CLASS/lda/figs/projw.dat} 
+
+\begin{frame}[fragile]{Kernel Discriminant Analysis: Quadratic Homogeneous Kernel}
+
+\begin{center}
+\begin{small}
+Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and
+  $c_2$ (triangles; other two Iris types).\\
+  Kernel Function: $K(\bx_i, \bx_j) = (\bx_i^T\bx_j)^2$. \\
+  Contours of constant projection onto optimal kernel
+  discriminant. 
+\end{small}
+\end{center}
+
+
+\begin{figure}
+\scalebox{0.6}{
+\psset{stepFactor=0.3} \psset{dotscale=1.5,fillcolor=lightgray,
+            arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+\psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dx=1,Dy=0.5]{->}(-4.0,-1.5)(4.0,1.5){4in}{3in}%
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+    nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+    nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\psset{algebraic=true}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        0.5+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        0.1+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -0.1+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -0.5+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -1+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -2+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -3+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -4+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -5+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -6+0.51*x*y+0.76*x^2-0.4*y^2}
+\psplotImp[algebraic](-4,-1.5)(4,1.5){%
+        -8+0.51*x*y+0.76*x^2-0.4*y^2}
+\endpsgraph
+}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Kernel Discriminant Analysis: Quadratic Homogeneous Kernel}
+
+\begin{center}
+\begin{small}
+Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and $c_2$ (triangles; other two Iris types).\\
+  Kernel Function: $K(\bx_i, \bx_j) = (\bx_i^T\bx_j)^2$.\\
+  Projection onto Optimal Kernel Discriminant.
+\end{small}
+\end{center}
+
+  \begin{figure}
+\scalebox{0.8}{
+\psset{dotscale=1.8, arrowscale=2,PointName=none} 
+\psset{xAxisLabel=$\bw$, yAxisLabel=$~$}
+%\psgraph[tickstyle=bottom,Ox=-1,Oy=-0.1,Dx=2,Dy=-0.1]{->}
+%(-1,-0.1)(11,0.1){5in}{1in}%
+\pspicture[](-1,-1)(11,1)
+%\psline[linewidth=2pt]{->}(-1,0)(11,0)
+%\def\tick{\psline(0,0)(0,-0.3)}%
+%\multips(-1,0)(2,0){6}{\tick}
+\psaxes[Ox=-1]{->}(-1,-0.1)(11,0.1) \uput[0](11.05,0){$\bw$}
+\listplot[plotstyle=dots,dotstyle=Btriangle,
+    showpoints=true,nStart=51, fillcolor=lightgray]{\dataW}
+%\listplot[plotstyle=dots,dotstyle=Bo,
+%    showpoints=true,nEnd=50, fillcolor=lightgray]{\dataW}
+\psset{dotscale=2.2} \psdot[dotstyle=Bo,fillcolor=white](0.378,0)
+\psdot[dotstyle=Btriangle,fillcolor=white](4.476,0)
+%\endpsgraph
+\endpspicture
+}
+\end{figure}
+\end{frame}
+
+
+
+\readdata{\dataQHca}{CLASS/lda/figs/iris-QHc1.dat}
+\readdata{\dataQHcb}{CLASS/lda/figs/iris-QHc2.dat}
+\readdata{\dataMca}{CLASS/lda/figs/kdamappedPoints-c1.dat}
+\readdata{\dataMcb}{CLASS/lda/figs/kdamappedPoints-c2.dat}
+\begin{frame}{Kernel Feature Space and Optimal Discriminant}
+
+\begin{center}
+\begin{small}
+Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and
+  $c_2$ (triangles; other two Iris types).\\ Kernel Function: 
+  $K(\bx_i, \bx_j) = (\bx_i^T\bx_j)^2$.
+\end{small}
+\end{center}
+
+\begin{figure}[!t]
+\scalebox{0.7}{
+\centering 
+\psset{unit=0.4in} \psset{arrowscale=2}
+\psset{Alpha=120,Beta=-150}
+%\psset{Alpha=-190,Beta=-45}
+\psset{nameX=$~$, nameY=$~$, nameZ=$~$} \scalebox{0.75}{
+\hskip15pt\begin{pspicture}(0,-7.5)(11,4.5)
+\pstThreeDCoor[xMin=-6.5, xMax= 5, yMin=0,
+        yMax=15, zMin=0, zMax=2.3, Dx=2, Dy=3, Dz=.5,
+        linewidth=1pt,linecolor=black]
+\pstThreeDBox[linecolor=gray](-6.5,0,0)(11,0,0)(0,13,0)(0,0,2)
+\pstThreeDPut(5.3,0,0){$X_1X_2$} \pstThreeDPut(0,15.2,0){$X_1^2$}
+\pstThreeDPut(0,0,2.5){$X_2^2$}
+\input{CLASS/lda/figs/kdaproject.tex}
+\psset{dotstyle=Btriangle,dotscale=1.75,fillcolor=lightgray}
+\listplotThreeD[plotstyle=dots,showpoints=true]{\dataQHcb}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=lightgray}
+\listplotThreeD[plotstyle=dots,showpoints=true]{\dataQHca}
+%w = (0.511, 0.761, -0.4)
+\pstThreeDLine[linewidth=2pt,arrows=->](-0.509,-0.758,0.398)
+(5.754, 8.566, -4.5) \pstThreeDPut(5.9,8.6,-4.5){$\bw$}
+\psset{dotstyle=Btriangle,dotscale=1.75,fillcolor=white}
+\listplotThreeD[plotstyle=dots,showpoints=true]{\dataMcb}
+\psset{dotstyle=Bo,dotscale=1.75,fillcolor=white}
+\listplotThreeD[plotstyle=dots,showpoints=true]{\dataMca}
+\psset{dotscale=2,fillcolor=black}
+\pstThreeDDot[dotstyle=Bo](0.173,0.257,-0.135)
+\pstThreeDDot[dotstyle=Btriangle](2.287,3.405,-1.79)
+\end{pspicture}
+}}
+\end{figure}
+\end{frame}

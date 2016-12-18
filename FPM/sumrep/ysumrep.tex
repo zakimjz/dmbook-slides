@@ -1,0 +1,993 @@
+\lecture{sumrep}{sumrep}
+
+\date{Chapter 9: Summarizing Itemsets}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\newcommand{\alggenmax}{\textsc{GenMax}\xspace}
+\newcommand{\algcharm}{\textsc{Charm}\xspace}
+\newcommand{\algndi}{\textsc{NDI}\xspace}
+\newcommand{\algcomputebounds}{\textsc{ComputeBounds}\xspace}
+
+
+\begin{frame}{Maximal Frequent Itemsets}
+
+Given a binary database $\bD \subseteq \cT \times \cI$,
+over the tids $\cT$ and items $\cI$, let $\cF$
+denote the set of all frequent itemsets, that is,
+\begin{align*}
+\cF = \bigl\{X \mid X \subseteq \cI \mbox{ and } \supp(X) \ge \minsup
+\bigr\}
+\end{align*}
+
+\medskip
+A frequent itemset $X \in \cF$ is called {\em maximal}
+\index{maximal itemsets}
+\index{itemsets!maximal}
+if it has no
+frequent supersets. Let $\cM$ be the set of all maximal frequent
+itemsets, given as
+\begin{align*}
+\cM = \bigl\{X \mid X \in \cF \mbox{ and } \not\exists Y \supset X, \mbox{
+  such that } Y \in \cF \bigr\}
+\end{align*}
+
+\medskip
+The set $\cM$ is a condensed representation of the set of all frequent
+itemset $\cF$, because we can determine whether any itemset $X$ is
+frequent or not using $\cM$. If there exists a maximal itemset $Z$ such
+that $X \subseteq Z$, then $X$ must be frequent; otherwise $X$ cannot be
+frequent. 
+\end{frame}
+
+
+\begin{frame}{An Example Database}
+\begin{footnotesize}
+\begin{minipage}{1.5in}
+\begin{center}
+Transaction database \\[0.5cm]
+
+  \centering
+\begin{tabular}{|c|c|}
+  \hline
+  Tid & Itemset\\
+\hline
+1 & $\mathit{ABDE}$\\
+2 & $\mathit{BCE}$\\
+3 & $\mathit{ABDE}$\\
+4 & $\mathit{ABCE}$\\
+5 & $\mathit{ABCDE}$\\
+6 & $\mathit{BCD}$\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\hspace{0.1in} 
+\begin{minipage}{6cm}
+\begin{center}
+Frequent itemsets ($\minsup = 3$) \\[0.5cm]
+
+\begin{tabular}{|c|c|}
+\hline
+$\supp$ & Itemsets\\
+\hline
+6 & $B$\\
+5 & $E, \mathit{BE}$\\
+4 & $A, C, D, \mathit{AB}, \mathit{AE}, \mathit{BC}, \mathit{BD}, \mathit{ABE}$\\
+3 &  $\mathit{AD}, \mathit{CE}, \mathit{DE}, \mathit{ABD}, \mathit{ADE}, \mathit{BCE}, \mathit{BDE}, \mathit{ABDE}$\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\end{footnotesize}
+\end{frame}
+
+
+\begin{frame}{Closed Frequent Itemsets}
+  \small
+Given $T \subseteq \cT$, and $X
+\subseteq \cI$, define
+\begin{align*}
+  \vT(X) & = \{ t \in \cT \mid\; t \text{ contains } X\}\\
+  \vI(T) & = \{ x \in \cI \mid\; \forall t\in T, \;t \mbox{ contains } x
+  \}\\
+   \vc(X) & =  \vI \circ \vT (X) = \vI ( \vT (X))
+\end{align*}
+
+\medskip
+The function $\vc$ is a {\em closure operator} 
+and an itemset $X$ is called {\em closed} if $\vc(X) = X$.
+It follows that $\vT(\vc(X))=\vT(X)$. The
+set of all closed frequent itemsets is thus def\/{i}ned as
+\begin{align*}
+\cC = \bigl\{X \mid X \in  \cF \text{ and } \not\exists Y \supset X
+\text{  such that } \supp(X) = \supp(Y)\bigr\}
+\end{align*}
+$X$ is closed if all supersets of $X$ have strictly less
+support, that is, $\supp(X) > \supp(Y)$, for all $Y \supset X$.
+
+\medskip
+The set of all closed frequent itemsets $\cC$ is a condensed
+representation, as we can determine whether an itemset $X$ is
+frequent, as well as the exact support of $X$ using $\cC$ alone.
+\end{frame}
+
+
+\begin{frame}{Minimal Generators}
+A frequent itemset $X$ is a {\em minimal generator} if
+it has no subsets with the same support:
+\begin{align*}
+\cG = \bigl\{X \mid X \in  \cF \text{ and } \not\exists Y \subset X,
+\text{ such that } \supp(X) = \supp(Y)\bigr\}
+\end{align*}
+
+  \medskip
+In other words, all subsets of $X$
+have strictly higher support, that is,
+  $\supp(X) < \supp(Y)$, for all $Y \subset X$.
+
+  \medskip
+Given an equivalence class of itemsets that have the
+same tidset, a closed itemset is the unique maximum element of the class,
+whereas the minimal generators are the minimal elements of the class.
+\end{frame}
+
+
+\begin{frame}{\large Frequent Itemsets: Closed, Minimal Generators and Maximal}
+\scalebox{0.8}{
+ \def\nA{\Tr{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox{$A$}\\
+		1345\\
+		\hline
+	\end{tabular}}}
+\def\nB{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox[fillcolor=lightgray,fillstyle=solid]{$B$}\\
+		123456\\
+		\hline
+	\end{tabular}}}
+\def\nC{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox{$C$}\\
+		2456\\
+		\hline
+	\end{tabular}}}
+\def\nD{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox{$D$}\\
+		1356\\
+		\hline
+	\end{tabular}}}
+\def\nE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox{$E$}\\
+		12345\\
+		\hline
+	\end{tabular}}}
+\def\nAB{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		$AB$\\
+		1345\\
+		\hline
+	\end{tabular}}}
+\def\nAD{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox{$AD$}\\
+		135\\
+		\hline
+	\end{tabular}}}
+\def\nAE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		$AE$\\
+		1345\\
+		\hline
+	\end{tabular}}}
+\def\nBC{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox[fillcolor=lightgray,fillstyle=solid]{$BC$}\\
+		2456\\
+		\hline
+	\end{tabular}}}
+\def\nBD{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox[fillcolor=lightgray,fillstyle=solid]{$BD$}\\
+		1356\\
+		\hline
+	\end{tabular}}}
+\def\nBE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox[fillcolor=lightgray,fillstyle=solid]{$BE$}\\
+		12345\\
+		\hline
+	\end{tabular}}}
+\def\nCE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox{$CE$}\\
+		245\\
+		\hline
+	\end{tabular}}}
+\def\nDE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox{$DE$}\\
+		135\\
+		\hline
+	\end{tabular}}}
+\def\nABE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox[fillcolor=lightgray,fillstyle=solid]{$ABE$}\\
+		1345\\
+		\hline
+	\end{tabular}}}
+\def\nABD{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		$ABD$\\
+		135\\
+		\hline
+	\end{tabular}}}
+\def\nADE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		$ADE$\\
+		135\\
+		\hline
+	\end{tabular}}}
+\def\nBDE{\TR{
+	\begin{tabular}{|c|}
+		\hline
+		$BDE$\\
+		135\\
+		\hline
+	\end{tabular}}}
+\def\nBCE{\TR*{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox[doubleline=true,
+		fillcolor=lightgray,fillstyle=solid]{$BCE$}\\
+		245\\
+		\hline
+	\end{tabular}}}
+\def\nABDE{\TR*{
+	\begin{tabular}{|c|}
+		\hline
+		\psframebox[doubleline=true,
+		fillcolor=lightgray,fillstyle=solid]{$ABDE$}\\
+		135\\
+		\hline
+	\end{tabular}}}
+  \centerline{
+  \scalebox{0.6}{%
+ \psset{unit=0.75in}
+  \psmatrix[colsep=0.5in,rowsep=1in]
+  &&[name=empty]$\emptyset$\psspan{3}\\\empty
+  &[name=A]\nA & [name=B]\nB 
+   & [name=D]\nD 
+  & [name=E]\nE
+  & [name=C]\nC\\\empty
+  [name=AD]\nAD & [name=DE]\nDE & 
+  [name=AB]\nAB  &  [name=AE]\nAE 
+  & [name=BD]\nBD & [name=BE]\nBE& [name=BC]\nBC  & 
+  [name=CE]\nCE\\\empty
+   & [name=ABD]\nABD & [name=ADE]\nADE & [name=BDE]\nBDE 
+   & [name=ABE]\nABE &[mnode=none]&
+   [name=BCE]\nBCE\psspan{1}\\\empty
+   &&[name=ABDE]\nABDE\psspan{2}
+  \endpsmatrix
+  \psset{linewidth=2pt}
+  \pscurve(-6.75,-0.5)(-6.1,-0.4)(-5.9,0)(-5.5,2)(-8.1,3)%
+  (-8.5,4)(-9.5,4.4)(-10.9,4)%
+  (-10.5,3)(-9.5,1)(-8.1,-0.2)(-6.75,-0.5)
+  \pscurve(-4.5,1.4)(-3.7,1.6)(-4.5,3)(-5.1,3.4)(-5.5,4)%
+  (-8.1,5)(-8.5,6)(-9,6.2)%
+  (-9.5,6)(-9.1,4.8)(-8.3,4.4)%
+  (-7.9,3.4)(-5.5,2.6)(-5.1,1.6)(-4.5,1.4)
+  \ncbox[linearc=0.3,boxsize=0.5,nodesep=0.1in]{B}{B}
+  \ncbox[linearc=0.5,boxsize=0.5,nodesep=0.1in]{D}{BD}
+  \ncbox[linearc=0.5,boxsize=0.5,nodesep=0.1in]{E}{BE}
+  \ncbox[linearc=0.5,boxsize=0.5,nodesep=0.1in]{C}{BC}
+  \ncbox[linearc=0.5,boxsize=0.5,nodesep=0.1in]{CE}{BCE}
+   \psset{linewidth=1pt,linecolor=gray}
+   \ncline{ABDE}{ABD}
+   \ncline{ABDE}{ABE}
+   \ncline{ABDE}{ADE}
+   \ncline{ABDE}{BDE}
+   %
+   \ncline{ABD}{AB}
+   \ncline{ABD}{AD}
+   \ncline{ABD}{BD}
+   %
+   \ncline{ABE}{AB}
+   \ncline{ABE}{AE}
+   \ncline{ABE}{BE}
+   %
+   \ncline{ADE}{AD}
+   \ncline{ADE}{AE}
+   \ncline{ADE}{DE}
+   %
+   \ncline{BCE}{BC}
+   \ncline{BCE}{BE}
+   \ncline{BCE}{CE}
+   %
+   \ncline{BDE}{BD}
+   \ncline{BDE}{BE}
+   \ncline{BDE}{DE}
+   %
+   \ncline{AB}{A}
+   \ncline{AB}{B}
+   %
+   \ncline{AD}{A}
+   \ncline{AD}{D}
+   %
+   \ncline{AE}{A}
+   \ncline{AE}{E}
+   %
+   \ncline{BC}{B}
+   \ncline{BC}{C}
+   %
+   \ncline{BD}{B}
+   \ncline{BD}{D}
+   %
+   \ncline{BE}{B}
+   \ncline{BE}{E}
+   %
+   \ncline{CE}{C}
+   \ncline{CE}{E}
+   %
+   \ncline{DE}{D}
+   \ncline{DE}{E}
+   %
+   \ncline{A}{empty}
+   \ncline{B}{empty}
+   \ncline{C}{empty}
+   \ncline{D}{empty}
+   \ncline{E}{empty}
+  }}%scalebox
+}
+
+\small\medskip
+Itemsets boxed and shaded are closed, double boxed are
+maximal, and those boxed are minimal generators
+\end{frame}
+
+
+\begin{frame}{Mining Maximal Frequent Itemsets: GenMax Algorithm}
+Mining maximal itemsets requires additional steps beyond
+simply determining the frequent itemsets.
+Assuming that the set of maximal frequent itemsets is initially
+empty, that is, $\cM = \emptyset$, each time we generate a new
+frequent itemset $X$, we have to perform the following maximality checks
+\begin{itemize}
+\item {\bf Subset Check:} $\not \exists  Y \in {\cM}$, such that $X
+  \subset Y$. If such a $Y$ exists, then clearly $X$ is not maximal.
+  Otherwise, we add $X$ to $\cM$, as a potentially maximal itemset.
+
+\item {\bf Superset Check:} $\not \exists  Y \in {\cM}$, such that $Y
+  \subset X$. If such a $Y$ exists, then $Y$ cannot be maximal, and we
+  have to remove it from $\cM$.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{GenMax Algorithm: Maximal Itemsets}
+  \small
+  GenMax is based on dEclat, i.e., it uses diffset intersections for
+  support computation.
+The initial call takes as input the set of
+frequent items
+along with their tidsets, $\tup{i,\vT(i)}$, and the initially
+empty set of maximal itemsets, $\cM$. Given a set of itemset--tidset
+pairs, called IT-pairs, of the form
+$\tup{X, \vT(X)}$, the recursive GenMax method works as follows.
+
+\medskip
+If the union of all the itemsets, $Y = \bigcup X_i$,
+is already subsumed by (or contained in) some maximal pattern $Z
+\in \cM$, then no maximal itemset can be generated from the
+current branch, and it is pruned.
+Otherwise,
+we intersect each IT-pair
+$\tup{X_i,\vT(X_i)}$ with all the other IT-pairs
+$\tup{X_{j},\vT(X_{j})}$, with $j > i$, to
+generate new candidates $X_{ij}$, which are added to the IT-pair
+set $P_i$. 
+
+\medskip
+If $P_i$ is not empty, a recursive call to GenMax is made
+to f\/{i}nd other potentially frequent extensions of
+$X_i$. On the other hand, if $P_i$ is empty, it
+means that $X_i$ cannot be extended, and it is potentially
+maximal. In this case, we add $X_i$ to the set $\cM$, provided
+that $X_i$ is not contained in any previously added maximal set
+$Z \in \cM$.
+\end{frame}
+
+\begin{frame}[fragile]{GenMax Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmA}{\alggenmax($P$, $\minsup$, $\cM$)}
+\tcp{Initial Call: $\cM \assign \emptyset$,
+$P \assign \bigl\{ \tup{i,\vT(i)} \mid i \in
+\cI, \supp(i)\ge \minsup \bigr\}$}
+\AlgorithmA{}
+$Y \assign \bigcup X_i$ \nllabel{alg:fpm:sumrep:alggenmax:Us}\;
+\If{$\exists Z \in \cM, \text{ such that } Y \subseteq Z$}{
+\Return \nllabel{alg:fpm:sumrep:alggenmax:Ue} \tcp{prune entire branch}
+}
+\ForEach{$\tup{X_i, \vT(X_i)} \in P$}{
+  $P_i \assign \emptyset$\;
+  \ForEach{$\tup{X_{j},\vT(X_{j})} \in P$, with $j > i$}{
+    \nllabel{alg:fpm:sumrep:alggenmax:Ps}
+    $X_{ij} \assign X_i \cup X_{j}$\;
+    $\vT(X_{ij}) = \vT(X_i)\; \cap\; \vT(X_{j})$\;
+    \lIf{$\supp(X_{ij}) \geq \minsup$}{
+      $P_i \assign P_i \cup \{ \tup{X_{ij}, \vT(X_{ij})} \}$
+      \nllabel{alg:fpm:sumrep:alggenmax:Pe}
+    }
+  }
+  \lIf{$P_i \ne \emptyset$}{
+    \alggenmax($P_i$, $\minsup$, $\cM$)
+  }
+  \ElseIf{$\not\exists Z \in \cM, X_i \subseteq Z$}{
+  $\cM = \cM \cup X_i\quad$ \nllabel{alg:fpm:sumrep:alggenmax:addM}
+  \tcp{add $X_i$ to maximal set}}
+}
+\end{algorithm}
+\end{frame}
+
+
+  \def\ON#1{\ovalnode[fillstyle=solid,fillcolor=lightgray!50]{#1}{#1}}
+  \def\nr{\Tr{
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        $A$ & $B$ & $C$ & $D$ & \st{$E$}\\
+        \hline
+        1345 & 123456 & 2456 & 1356 & 12345\\
+        \hline
+    \end{tabular}}}
+  \def\nA{\Tr{
+    \begin{tabular}{|c|c|c|}
+        \hline
+        $AB$ & $AD$ & \st{$AE$}\\
+        \hline
+        1345 & 135 & 1345\\
+        \hline
+    \end{tabular}}}
+  \def\nAB{\Tr{
+    \begin{tabular}{|c|c|}
+        \hline
+        $ABD$ & \st{$ABE$}\\
+        \hline
+        135 & 1345\\
+        \hline
+    \end{tabular}}}
+  \def\nABD{\Tr{
+    \begin{tabular}{|c|}
+        \hline
+        \ON{$ABDE$}\\
+        \hline
+        135\\
+        \hline
+    \end{tabular}}}
+  \def\nAD{\Tr{
+    \begin{tabular}{|c|}
+        \hline
+        \st{$ADE$}\\
+        \hline
+        135\\
+        \hline
+    \end{tabular}}}
+  \def\nB{\Tr{
+    \begin{tabular}{|c|c|c|}
+        \hline
+        $BC$ & $BD$ & \st{$BE$}\\
+        \hline
+        2456 & 1356 & 12345\\
+        \hline
+    \end{tabular}}}
+  \def\nBC{\Tr{
+    \begin{tabular}{|c|}
+        \hline
+        \ON{$BCE$}\\
+        \hline
+        245\\
+        \hline
+    \end{tabular}}}
+  \def\nBD{\Tr{
+    \begin{tabular}{|c|}
+        \hline
+        \st{$BDE$}\\
+        \hline
+        135\\
+        \hline
+    \end{tabular}}}
+  \def\nC{\Tr{
+    \begin{tabular}{|c|}
+        \hline
+        \st{$CE$}\\
+        \hline
+        245\\
+        \hline
+    \end{tabular}}}
+  \def\nD{\Tr{
+    \begin{tabular}{|c|}
+        \hline
+        \st{$DE$}\\
+        \hline
+        135\\
+        \hline
+    \end{tabular}}}
+\begin{frame}{Mining Maximal Frequent Itemsets}
+  \centering
+  \psset{unit=1in}
+  \scalebox{0.7}{
+  \psset{tpos=0.5,treesep=0.15,levelsep=*0.75,radius=0.05}
+  \pstree[]{\nr}{
+    \pstree[]{\nA\ncput*{$P_A$}}{
+    \pstree[]{\nAB\ncput*{$P_{AB}$}}{\nABD\ncput*{$P_{ABD}$}}
+    \nAD\ncput*{$P_{AD}$}
+    }
+    \pstree[]{\nB\ncput*{$P_B$}}{
+    \nBC\ncput*{$P_{BC}$}
+    \nBD\ncput*{$P_{BD}$}
+    }
+    \nC\ncput*{$P_C$}
+    \nD\ncput*{$P_D$}
+  }
+  }
+\end{frame}
+
+
+\begin{frame}{Mining Closed Frequent Itemsets: Charm Algorithm}
+Mining closed frequent itemsets requires that we perform closure
+checks, that is, whether $X = \vc(X)$. Direct closure checking
+can be very expensive.
+
+Given a collection of IT-pairs $\{\tup{X_i, \vT(X_i)}\}$, Charm
+uses the following three properties:
+
+\begin{enumerate}[Property (1)]
+\item If $\vT(X_i) = \vT(X_{j})$, then $\vc(X_i)=\vc(X_{j})=\vc(X_i \cup
+  X_{j})$, which implies that we can replace every occurrence of $X_i$
+  with $X_i \cup X_{j}$ and prune the branch under $X_{j}$ because its
+  closure is identical to the closure of $X_i \cup X_{j}$.
+
+\item If $\vT(X_i) \subset \vT(X_{j})$, then $\vc(X_i) \neq \vc(X_{j})$ but
+  $\vc(X_i)=\vc(X_i \cup X_{j})$, which means that we can replace every
+  occurrence of $X_i$ with $X_i \cup X_{j}$, but we cannot prune $X_{j}$
+  because it generates a different closure. Note that if $\vT(X_i) \supset
+  \vT(X_{j})$ then we simply interchange the role of $X_i$ and $X_{j}$.
+
+\item If $\vT(X_i) \neq \vT(X_{j})$, then $\vc(X_i) \neq \vc(X_{j}) \neq
+  \vc(X_i \cup X_{j})$. In this case we cannot remove either $X_i$ or
+  $X_{j}$, as each of them generates a different closure.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Charm Algorithm: Closed Itemsets}
+\begin{footnotesize}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmA}{\algcharm\ ($P$, $\minsup$, $\cC$)}
+\tcp{Initial Call: $\cC \assign \emptyset$,
+$P \assign \bigl\{ \tup{i,\vT(i)} : i \in \cI,
+sup(i) \ge \minsup\bigr\}$}
+\AlgorithmA{}
+Sort $P$ in increasing order of support (i.e., by increasing $|\vT(X_i)|$)\;
+\ForEach{$\tup{X_i, \vT(X_i)} \in P$}{
+  $P_i \assign \emptyset$\;
+  \ForEach{$\tup{X_{j},\vT(X_{j})} \in P$, with $j > i$}{
+    $X_{ij} = X_i \cup X_{j}$\;
+    $\vT(X_{ij}) = \vT(X_i)\; \cap\; \vT(X_{j})$\;
+    \If{$\supp(X_{ij}) \geq \minsup$}{
+      \eIf(\tcp*[h]{Property 1}
+        \nllabel{alg:fpm:sumrep:algcharm:P1}){$\vT(X_i) = \vT(X_{j})$ }{
+            Replace $X_i$ with  $X_{ij}$ in $P$ and $P_i$\;
+            Remove $\tup{X_{j},\vT(X_{j})}$ from
+            $P$
+      }{
+        \eIf(\tcp*[h]{Property 2}
+        \nllabel{alg:fpm:sumrep:algcharm:P2}){%
+        $\vT(X_i) \subset \vT(X_{j})$}{
+            Replace $X_i$ with  $X_{ij}$ in $P$ and
+            $P_i$
+        }(~\tcp*[h]{Property 3}
+          \nllabel{alg:fpm:sumrep:algcharm:P3}){
+            $P_i \assign P_i \cup \bigl\{ \tup{X_{ij}, \vT(X_{ij})}
+            \bigr\}$
+        }
+      }
+    }
+  }
+  \lIf{$P_i \ne \emptyset$}{
+    \algcharm($P_i$, $\minsup$, $\cC$)\;
+  }
+  \If{$\not\exists Z \in \cC, \text{ such that }
+  X_i \subseteq Z \text{ and } \vT(X_i) = \vT(Z)$}{
+        $\cC = \cC \cup X_i\quad$ \tcp{Add $X_i$ to closed
+        set}\nllabel{alg:fpm:sumrep:algcharm:addtoC}
+  }
+}
+\end{algorithm}
+\end{footnotesize}
+\end{frame}
+
+  
+\def\ON#1{\ovalnode[fillstyle=solid,fillcolor=lightgray!50]{#1}{#1}}
+  \vspace{0.2in}
+\label{fig:fpm:sumrep:charmA}
+  \def\nrA{\TR{
+    \begin{tabular}{|c|}
+        \hline
+        \st{$A$} \st{$AE$} \ON{$AEB$}\\
+        \hline
+        1345\\
+        \hline
+    \end{tabular}}}
+  \def\nrC{\TR{
+    \begin{tabular}{|c|}
+        \hline
+        $C$\\
+        \hline
+        2456\\
+        \hline
+    \end{tabular}}}
+  \def\nrD{\TR{
+    \begin{tabular}{|c|}
+        \hline
+        $D$\\
+        \hline
+        1356\\
+        \hline
+    \end{tabular}}}
+  \def\nrE{\TR{
+    \begin{tabular}{|c|}
+        \hline
+        $E$\\
+        \hline
+        12345\\
+        \hline
+    \end{tabular}}}
+  \def\nrB{\TR{
+    \begin{tabular}{|c|}
+        \hline
+        $B$\\
+        \hline
+        123456\\
+        \hline
+    \end{tabular}}}
+    \def\nPA{\TR{
+        \begin{tabular}{|c|}
+            \hline
+            \st{$AD$} \st{$ADE$} \ON{$ADEB$}\\
+            \hline
+            135\\
+            \hline
+        \end{tabular}}}
+\begin{frame}{Mining Frequent Closed Itemsets: Charm}
+\framesubtitle{Process $A$}
+  \psset{unit=1in}
+  \psmatrix[rowsep=0.75in,colsep=0in]
+  [name=A]\nrA & \nrC & \nrD & \nrE & [name=B]\nrB\\
+  [name=PA]\nPA
+  \endpsmatrix
+  \ncline{A}{PA}\ncput*{$P_A$}
+  \ncbox[nodesep=2pt,boxsize=0.3]{A}{B}
+\end{frame}
+
+
+
+  \def\nr{\Tr{
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \st{$A$} \st{$AE$} \ON{$AEB$} & \st{$C$} \ON{$CB$} & \st{$D$}
+        \ON{$DB$}
+        & \st{$E$} \ON{$EB$} & \ON{$B$}\\
+        \hline
+        1345 & 2456 & 1356 & 12345 & 123456\\
+        \hline
+    \end{tabular}}}
+    \def\nA{\Tr{
+        \begin{tabular}{|c|}
+            \hline
+            \st{$AD$} \st{$ADE$} \ON{$ADEB$}\\
+            \hline
+            135\\
+            \hline
+        \end{tabular}}}
+  \def\nC{\Tr{
+    \begin{tabular}{|c|}
+            \hline
+            \st{$CE$} \ON{$CEB$}\\
+            \hline
+            245\\
+            \hline
+        \end{tabular}}}
+  \def\nD{\Tr{
+    \begin{tabular}{|c|}
+            \hline
+            \st{$DE$} $DEB$\\
+            \hline
+            135\\
+            \hline
+        \end{tabular}}}
+\begin{frame}{Mining Frequent Closed Itemsets: Charm}
+  \psset{unit=1in}
+  \psset{tpos=0.5,treesep=0.15,levelsep=*0.75,radius=0.05}
+  \pstree[]{\nr}{
+    \nA\ncput*{$P_A$}
+    \nC\ncput*{$P_C$}
+    \nD\ncput*{$P_D$}
+    }%}}
+\end{frame}
+
+
+\begin{frame}{Nonderivable Itemsets}
+\small
+
+An itemset is called {\em nonderivable} if its support cannot be deduced
+from the supports of its subsets.  The set of all frequent nonderivable
+itemsets is a summary or condensed representation of the set of all
+frequent itemsets.  Further, it is lossless with respect to support,
+that is, the exact support of all other frequent itemsets can be deduced
+from~it.
+
+\medskip{\bf Generalized Itemsets:} Let $X$ be a $k$-itemset, that is,
+$X=\{x_1,x_2,\ldots,x_k\}$.  The $k$ tidsets  $\vT(x_i)$ for each item
+$x_i\in X$ induce a partitioning of the set of all tids into $2^k$
+regions, where each partition contains the tids for some subset of items
+$Y\subseteq X$, but for none of the remaining items $Z=X\setminus Y$. 
+
+\medskip Each partition is therefore the tidset of a {\em generalized
+itemset} $Y\ol{Z}$, where $Y$ consists of regular items and $Z$ consists
+of negated items. 
+
+\medskip
+Def\/{i}ne the support of a generalized itemset $Y\ol{Z}$ as the number
+of transactions that contain all items in $Y$ but no item in $Z$:
+\begin{align*}
+  \supp(Y\ol{Z}) = \bigl| \{ t \in \cT \mid Y \subseteq \vI(t)
+  \text{ and } Z \cap \vI(t) = \emptyset\} \bigr|
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Inclusion--Exclusion Principle: Support Bounds}
+
+The inclusion--exclusion principle allows one to directly compute the
+support of $Y\ol{Z}$
+\begin{align*}
+  \supp(Y\ol{Z}) & = \sum_{Y \subseteq W \subseteq X}
+  -1^{\card{W\setminus Y}}\cdot \supp(W)
+\end{align*}
+
+\medskip
+From the $2^k$
+possible subsets $Y\subseteq X$, we derive $2^{k-1}$ lower bounds and
+$2^{k-1}$ upper bounds  for $\supp(X)$, obtained after
+setting $\supp(Y\ol{Z}) \ge 0$
+\begin{align*}
+\text{{\bf Upper Bounds} ($|X\setminus Y|$ is odd):} & &
+\supp(X) & \leq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus
+Y|+1\rB)} \supp(W)\\[2pt]
+\text{{\bf Lower Bounds} ($|X\setminus Y|$ is even):} & &
+\supp(X) & \geq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus
+Y|+1\rB)} \supp(W)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Tidset Partitioning Induced by $\vT({\it A})$,$\vT({\it C})$, and $\vT({\it D})$} 
+
+\begin{tabular}{TT}
+{
+\begin{tabular}{|c|c|}
+  \hline
+  Tid & Itemset\\
+\hline
+1 & $\mathit{ABDE}$\\
+2 & $\mathit{BCE}$\\
+3 & $\mathit{ABDE}$\\
+4 & $\mathit{ABCE}$\\
+5 & $\mathit{ABCDE}$\\
+6 & $\mathit{BCD}$\\
+\hline
+\end{tabular} 
+} & { 
+\small
+\psset{unit=1cm}
+\scalebox{0.75}{
+\begin{pspicture}(11,9.5)
+  \psframe[](0.5,0)(10.5,9.5)
+  \pscircle[linewidth=2pt](4,6){3}
+  \pscircle[linewidth=2pt](7,6){3}
+  \pscircle[linewidth=2pt](5.5,3.5){3}
+  \uput[d](2.5,7){$\vT(A\ol{C}\ol{D})=\emptyset$}
+  \uput[d](8.5,7){$\vT(\ol{A}C\ol{D})=2$}
+  \uput[d](5.5,2.5){$\vT(\ol{A}\ol{C}D)=\emptyset$}
+  \uput[d](5.5,7.5){$\vT(\mathit{AC}\ol{D})=4$}
+  \uput[d](3.75,4.15){$\vT(A\ol{C}D)=13$}
+  \uput[d](7.25,4.15){$\vT(\ol{A}\mathit{CD})=6$}
+  \uput[d](5.5,5.5){$\vT(\mathit{ACD})=5$}
+  \uput[d](2,1.5){$\vT(\ol{A}\ol{C}\ol{D})=\emptyset$}
+  \uput[ur](1,8){$\vT(A)$}
+  \uput[ur](9.15,8){$\vT(C)$}
+  \uput[d](5.5,0.6){$\vT(D)$}
+\end{pspicture}
+}
+} \\
+\end{tabular}
+\end{frame}
+
+
+
+\begin{frame}{Inclusion--Exclusion for Support}
+Consider the generalized itemset
+$\ol{A}C\ol{D} = C\ol{\mathit{AD}}$, where $Y=C$, $Z=\mathit{AD}$ and $X=\mathit{YZ}=\mathit{ACD}$.
+In the Venn diagram,
+we start with all the tids in $\vT(C)$,
+and remove the tids contained in $\vT(AC)$ and $\vT(CD)$.
+However, we
+realize that in terms of support this removes $\supp(\mathit{ACD})$ twice, so we need to add
+it back. In other words, the support of $C\ol{\mathit{AD}}$ is given as
+\begin{align*}
+\supp(C\ol{\mathit{AD}}) &= \supp(C) - \supp(\mathit{AC}) - \supp(\mathit{CD}) + \supp(\mathit{ACD})\\[2pt]
+  & = 4-2-2+1=1
+\end{align*}
+But, this is precisely what the inclusion--exclusion formula gives:
+\begin{align*}
+\begin{array}{@{}l@{\,\,}c@{\,}ll@{}}
+\supp(C\ol{\mathit{AD}}) &= &~ (-1)^0 \;\supp(C)+ &  {W = C,  |W\setminus Y| = 0}\\[2pt]
+                &  &~  (-1)^1 \;\supp(\mathit{AC})+ &  {W = \mathit{AC}, |W\setminus Y| = 1}\\[2pt]
+                &  &~  (-1)^1 \;\supp(CD)+ &  {W = \mathit{CD}, |W\setminus Y| = 1}\\[2pt]
+                &  &~   (-1)^2 \;\supp(\mathit{ACD})& {W = \mathit{ACD}, |W\setminus Y| = 2}\\[2pt]
+                &= &~ \supp(C) - \supp(\mathit{AC}) -  & \\[2pt]
+                &  &~ \supp(\mathit{CD}) + \supp(\mathit{ACD}) & \\
+\end{array}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Support Bounds}
+From each of the partitions, we
+get one bound, and out of the eight possible regions, exactly four give
+upper bounds and the other four give lower bounds for the support of $\mathit{ACD}$:
+\begin{align*}
+\begin{array}{lll}
+    \supp(\mathit{ACD}) & \geq 0                   & \mbox{ when } Y=\mathit{ACD}\\
+    &\leq \supp(\mathit{AC})                     & \mbox{ when } Y=\mathit{AC}\\
+    &\leq \supp(\mathit{AD})                  & \mbox{ when } Y=\mathit{AD}\\
+    &\leq \supp(\mathit{CD})                     & \mbox{ when } Y=\mathit{CD}\\
+    &\geq \supp(\mathit{AC}) +\supp(\mathit{AD}) - \supp(A)   & \mbox{ when } Y=A\\
+    &\geq \supp(\mathit{AC}) + \supp(\mathit{CD}) - \supp(C)  & \mbox{ when } Y=C\\
+    &\geq \supp(\mathit{AD}) +\supp(\mathit{CD}) - \supp(D)   & \mbox{ when } Y=D\\
+    &\leq \supp(\mathit{AC}) + \supp(\mathit{AD}) + \supp(\mathit{CD})- \\
+    & \quad \supp(A) - \supp(C) - \supp(D)
+    + \supp(\emptyset) &\mbox{ when } Y=\emptyset\\
+\end{array}
+\end{align*}
+
+\end{frame}
+
+
+
+\begin{frame}{Support Bounds for Subsets}
+  \begin{center}
+    \scalebox{0.85}{\hskip10pt\begin{minipage}{5in}
+  \begin{pspicture}(12.75,6.5)
+  \psframe[](-0.5,-0.5)(12.75,6.5)
+  \psset{mnode=oval}
+  \psmatrix[colsep=1cm,rowsep=0.75cm]
+  & [mnode=none]subset lattice & & & &[mnode=none]\\
+  & $\mathit{ACD}$ & & [mnode=none]sign & [mnode=none]inequality
+  & [mnode=none]level\\
+  $\mathit{AC}$ & $\mathit{AD}$ & $\mathit{CD}$ & [mnode=none]1 & [mnode=none]$\le$ &
+  [mnode=none]$1$\\
+  $A$ & $C$ & $D$ & [mnode=none]$-$1 & [mnode=none]$\ge$ & [mnode=none]$2$\\
+  & $\emptyset$ & & [mnode=none]1 & [mnode=none]$\le$  & [mnode=none]$3$
+  \ncline{2,2}{3,1}
+  \ncline{2,2}{3,2}
+  \ncline{2,2}{3,3}
+  \ncline{3,1}{4,1}
+  \ncline{3,1}{4,2}
+  \ncline{3,2}{4,1}
+  \ncline{3,2}{4,3}
+  \ncline{3,3}{4,2}
+  \ncline{3,3}{4,3}
+  \ncline{5,2}{4,1}
+  \ncline{5,2}{4,2}
+  \ncline{5,2}{4,3}
+  \endpsmatrix
+  \end{pspicture}
+  \end{minipage}}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Nonderivable Itemsets}
+
+  \small
+  Given an itemset $X$, and $Y \subseteq X$, let $\mathit{IE}(Y)$ denote the
+summation
+\begin{align*}
+  \mathit{IE}(Y) = \sum_{Y \subseteq W \subset X}\, -1^{\lB(|X\setminus
+Y|+1\rB)} \cdot \supp(W)
+\end{align*}
+
+\medskip
+Then, the sets of all upper and lower bounds for
+$\supp(X)$ are given as
+\begin{align*}
+  \mathit{UB}(X) & = \Bigl\{\mathit{IE}(Y) \big|\; Y \subseteq X,\; \card{X\setminus Y}
+  \text{ is odd} \Bigr\}\\
+  \mathit{LB}(X) & = \Bigl\{\mathit{IE}(Y) \big|\; Y \subseteq X,\; \card{X\setminus Y}
+  \text{ is even} \Bigr\}
+\end{align*}
+
+\bigskip
+An itemset $X$ is called {\em nonderivable} if $\max\{\mathit{LB}(X)\} \ne
+\min\{\mathit{UB}(X)\}$,
+which implies that the support of $X$ cannot be derived from the
+support values of its subsets;
+we know only the range of possible values, that is,
+$$\supp(X) \in \Bigl[  \max\{\mathit{LB}(X)\}, \min\{\mathit{UB}(X)\} \Bigr]$$
+On the other hand, $X$ is derivable if
+$\supp(X) = \max\{\mathit{LB}(X)\} = \min\{\mathit{UB}(X)\}$
+because in this case $\supp(X)$
+can be derived exactly using the supports of its subsets.
+Thus, the set of all frequent nonderivable itemsets is given as
+\begin{align*}
+  \cN = \bigl\{X \in \cF \mid \max\{\mathit{LB}(X)\} \ne \min\{\mathit{UB}(X)\}\bigr\}
+\end{align*}
+where $\cF$ is the set of all frequent itemsets.
+\end{frame}
+
+%
+
+\begin{frame}{Nonderivable Itemsets: Example}
+  \small
+Consider the support bound formulas for
+$\supp(\mathit{ACD})$. The lower bounds are
+\begin{align*}
+ \supp(\mathit{ACD}) & \geq 0 \\
+&\geq \supp(\mathit{AC}) +\supp(\mathit{AD}) - \supp(A) = 2+3-4 = 1\\
+&\geq \supp(\mathit{AC}) + \supp(\mathit{CD}) - \supp(C) = 2+2-4 = 0\\
+&\geq \supp(\mathit{AD}) +\supp(\mathit{CD}) - \supp(D) = 3+2-4 = 0
+\end{align*}
+and the upper bounds are
+\begin{align*}
+ \supp(\mathit{ACD}) & \leq \supp(\mathit{AC})=2\\
+            &\leq \supp(\mathit{AD})=3\\
+            &\leq \supp(\mathit{CD})=2\\
+            &\leq \supp(\mathit{AC}) + \supp(\mathit{AD}) + \supp(\mathit{CD}) - \supp(A)
+            - \supp(C) -\\
+            &\quad \supp(D)
+            + \supp(\emptyset) = 2+3+2-4-4-4+6 = 1
+\end{align*}
+
+\medskip
+Thus, we have
+\begin{align*}
+  \mathit{LB}(\mathit{ACD}) & = \{ 0,1\} & \max \{ \mathit{LB}(\mathit{ACD}) \} & = 1\\
+  \mathit{UB}(\mathit{ACD}) & = \{1,2,3\} & \min \{ \mathit{UB}(\mathit{ACD}) \} & = 1
+\end{align*}
+Because $\max\{\mathit{LB}(\mathit{ACD})\} = \min\{\mathit{UB}(\mathit{ACD})\}$ we conclude that $\mathit{ACD}$ is
+derivable.
+
+\end{frame}
+

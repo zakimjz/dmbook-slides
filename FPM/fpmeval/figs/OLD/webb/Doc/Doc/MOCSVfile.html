@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>CSV files</title>
+</head>
+
+<body>
+
+<h1><font color="#000080">CSV files</font></h1>
+
+<p class="MsoNormal"><span lang="EN-US">In addition to the standard output, the 
+user can save rules and itemsets in comma separated value format.&nbsp; This format 
+is suitable for importing into a spread sheet.&nbsp; Many users find this a 
+convenient way to analyse the associations that are found.&nbsp; </span></p>
+<p class="MsoNormal">The<b> File: Export Results</b> menu command in the 
+interactive system and the <tt>csv-file</tt> option in the command-line system allow the 
+user to select a file into which the 
+associations will be recorded in comma separated value format. <span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">The first line of this file lists column 
+headers. The remaining lines each describe a single association. &nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">For rules the following columns are 
+recorded: &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">LHS</span></b><span lang="EN-US">: 
+The left-hand-side of the rule. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">RHS</span></b><span lang="EN-US">: 
+The right-hand-side of the rule. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Coverage</span></b><span lang="EN-US">: 
+The <a href="MOcoverage.html">coverage</a> (as a proportion of the data).</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Coverage 
+count</span></b><span lang="EN-US">: The <a href="MOcoverage.html">coverage</a> 
+(as a number of cases). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Support</span></b><span lang="EN-US">: 
+The <a href="MOsupport.html">support</a> (as a proportion of the data). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Support 
+count</span></b><span lang="EN-US">: The <a href="MOsupport.html">support</a> 
+(as a number of cases). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Strength</span></b><span lang="EN-US">: 
+The <a href="MOstrength.html">strength</a>. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Lift</span></b><span lang="EN-US">: 
+The <a href="MOlift.html">lift</a>. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Leverage</span></b><span lang="EN-US">: 
+The <a href="MOleverage.html">leverage</a> (as a proportion of the data). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Leverage 
+count</span></b><span lang="EN-US">: The <a href="MOleverage.html">leverage</a> 
+(as a number of cases). &nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">If either of the insignificant or 
+unsound <a href="MOfiltering.html">filters</a> were used, the <b>p</b> value is 
+also listed in another column.</span></p>
+<p class="MsoNormal"><span lang="EN-US">In addition, if holdout evaluation is 
+performed, depending upon the tests selected, a selection of the following will 
+be included:&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Holdout 
+Coverage</span></b><span lang="EN-US">: The <a href="MOcoverage.html">coverage</a> 
+of the rule on the holdout data (as a count). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Holdout 
+Support</span></b><span lang="EN-US">: The <a href="MOsupport.html">support</a> 
+of the rule on the holdout data (as a count). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Coverage p</span></b><span lang="EN-US">: 
+The binomial probability of obtaining the observed holdout coverage or higher if 
+the true coverage were the selected minimum coverage.</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Support p</span></b><span lang="EN-US">: 
+The binomial probability of obtaining the observed holdout support or higher if 
+the true support were the selected minimum support.&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Strength p</span></b><span lang="EN-US">: 
+The binomial probability of obtaining the observed holdout strength or higher if 
+the true strength were the selected minimum strength.&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Lift p</span></b><span lang="EN-US">: 
+The binomial probability of obtaining the observed holdout lift or higher if the 
+true lift were the selected minimum lift.&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Leverage p</span></b><span lang="EN-US">: 
+The binomial probability of obtaining the observed holdout leverage or higher if 
+the true leverage were the selected minimum leverage.&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Positive 
+correlation p</span></b><span lang="EN-US">:&nbsp; The probability of obtaining the 
+observed support if the true strength of the rule where less than or equal to 
+the frequency of the RHS in the whole dataset.&nbsp; Calculated using a Fisher Exact 
+Test. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">
+Improvement with respect to</span></b><span lang="EN-US">: The subset of the <u>
+LHS</u><span style="display: none">rule</span> with respect to which the rule 
+obtains the largest p for <a href="MOfiltering.html">improvement</a> on the 
+holdout data. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">
+Improvement p</span></b><span lang="EN-US">: The largest p for
+<a href="MOfiltering.html">improvement</a> on the holdout data. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Partial 
+with respect to</span></b><span lang="EN-US">: The superset of the <u>LHS</u><span style="display: none">rule</span> 
+with respect to which the rule obtains the largest p for
+<a href="MOfiltering.html">partialness</a> on the holdout data. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Partial p</span></b><span lang="EN-US">: 
+The largest p for <a href="MOfiltering.html">partialness</a> on the holdout 
+data. &nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">For itemsets the following columns are 
+recorded: &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Itemset</span></b><span lang="EN-US">: 
+The <u><a href="MOitemset.html">itemset</a></u>. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Coverage</span></b><span lang="EN-US">: 
+The <a href="MOcoverage.html">coverage</a> (as a proportion of the data).&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Coverage 
+count</span></b><span lang="EN-US">: The <a href="MOcoverage.html">coverage</a> 
+(as a number of cases). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Leverage</span></b><span lang="EN-US">: 
+The <a href="MOleverage.html">leverage</a> (as a proportion of the data). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Leverage 
+count</span></b><span lang="EN-US">: The <a href="MOleverage.html">leverage</a> 
+(as a number of cases). &nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">In addition, if holdout evaluation is 
+performed, depending upon the tests selected, a selection of the following will 
+be included:&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Holdout 
+Coverage</span></b><span lang="EN-US">: The <a href="MOcoverage.html">coverage</a> 
+of the rule on the holdout data (as a count). &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Coverage p</span></b><span lang="EN-US">: 
+The binomial probability of obtaining the observed holdout coverage or higher if 
+the true coverage were the selected minimum coverage.&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">Leverage p</span></b><span lang="EN-US">: 
+The binomial probability of obtaining the observed holdout leverage or higher if 
+the true leverage were the selected minimum leverage.&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">
+Improvement with respect to (a)</span></b><span lang="EN-US">: The first of the 
+pair of subsets of the itemset with respect to which the it obtains the largest 
+p for <a href="MOfiltering.html">improvement</a> on the holdout data.&nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">(b)</span></b><span lang="EN-US">: 
+The second of the pair of subsets of the itemset with respect to which the it 
+obtains the largest p for <a href="MOfiltering.html">improvement</a> on the 
+holdout data. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">
+Improvement p</span></b><span lang="EN-US">: The largest p for
+<a href="MOfiltering.html">improvement</a> on the holdout data. &nbsp;</span></p>
+<p class="MsoNormal" style="margin-left:36.0pt"><b><span lang="EN-US">
+Self-sufficient p</span></b><span lang="EN-US">: The largest p f</span>or
+<a href="MOfiltering.html">self-sufficiency</a> on th<span lang="EN-US">e 
+holdout data. </span></p>
+<p class="MsoNormal"><span lang="EN-US">Each column is separated by a comma.
+</span></p>
+
+<p>&nbsp;<br>
+<b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></p>
+</body>
+</html>

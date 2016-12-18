@@ -1,0 +1,1741 @@
+\lecture{itemsets}{itemsets}
+
+\date{Chapter 8: Itemset Mining}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\newcommand{\algbf}{\textsc{BruteForce}\xspace}
+\newcommand{\algcomputesupport}{\textsc{ComputeSupport}\xspace}
+\newcommand{\algApriori}{\textsc{Apriori}\xspace}
+\newcommand{\algextprefix}{\textsc{ExtendPrefixTree}\xspace}
+\newcommand{\algeclat}{\textsc{Eclat}\xspace}
+\newcommand{\algdeclat}{\textsc{dEclat}\xspace}
+\newcommand{\algfpgrowth}{\textsc{FPGrowth}\xspace}
+\newcommand{\algrulemining}{\textsc{AssociationRules}\xspace}
+
+
+\begin{frame}{Frequent Itemset Mining}
+
+In many applications one is interested in how often two or more
+objects of interest co-occur, the so-called {\em itemsets}. 
+
+\medskip
+The prototypical application was {\it market basket
+analysis}, that is, to mine the sets of items that are frequently
+bought together at a supermarket by analyzing the customer
+shopping carts (the so-called ``market baskets''). 
+
+\medskip
+Frequent itemset mining is a basic exploratory mining task, since the
+since the basic operation is to find the co-occurrence, which gives an
+estimate for the joint probability mass function.
+
+\medskip
+Once we mine the frequent sets, they allow us to extract {\em
+association rules} among the itemsets, where we make some
+statement about how likely are two sets of items to co-occur or
+to conditionally occur. 
+
+\end{frame}
+
+
+\begin{frame}{Frequent Itemsets: Terminology}
+
+{\bf Itemsets:}  
+Let $\cI = \{x_1, x_2, \ldots, x_m\}$ be a set of elements called
+{\em items}.  A set $X \subseteq \cI$ is called an {\em itemset}.
+An itemset of cardinality
+(or size) $k$ is called a $k$-itemset. Further, we denote by $\Ik$
+the set of all $k$-itemsets, that is, subsets of $\cI$ with size
+$k$.  
+
+\medskip{\bf Tidsets:}
+Let $\cT = \{t_1, t_2, \ldots, t_n\}$ be another set of
+elements called transaction identif\/{i}ers or {\em tids}.  A set $T
+\subseteq \cT$ is called a {\em tidset}. 
+Itemsets and tidsets are kept
+sorted in lexicographic order.
+
+
+\medskip{\bf Transactions:}
+A {\em transaction}
+is a tuple of the form $\tup{t,X}$, where $t
+\in \cT$ is a unique transaction identif\/{i}er, and $X$ is an
+itemset.  
+
+\medskip{\bf Database:}
+A binary database $\bD$ is a binary relation on the set of tids
+\index{binary database} and items, that is, $\bD \subseteq \cT
+\times \cI$. We say that tid $t \in \cT$ {\em contains} item $x
+\in \cI$ iff $(t,x) \in \bD$.  In other words, $(t,x) \in \bD$ iff
+$x \in X$ in the tuple $\tup{t,X}$. We say that tid $t$ {\em
+contains} itemset $X=\{x_1,x_2,\ldots,x_k\}$ iff $(t,x_i) \in \bD$
+for all $i=1,2,\ldots,k$.
+
+\end{frame}
+
+
+\begin{frame}{Database Representation}
+Let $\pow{X}$ denote the powerset of $X$, that is,
+the set of all subsets of $X$.  Let $\vI: \pow{\cT} \to
+\pow{\cI}$ be a function, def\/{i}ned as follows:
+\begin{align*}
+\vI(T) = \{ x \mid\; \forall t\in T, \;t \mbox{ contains } x \}
+\end{align*}
+where $T \subseteq \cT$, and $\vI(T)$
+is the set of items that are common to {\em
+all} the transactions in the tidset $T$. In particular, $\vI(t)$ is the
+set of items contained in tid $t \in \cT$. 
+
+\medskip
+Let $\vT: \pow{\cI} \to \pow{\cT}$ be a function, def\/{i}ned as
+follows:
+\begin{align}
+  \vT(X) = \{ t \mid\; t \in \cT \text{ and $t$ contains } X\}
+\label{eq:fpm:iset:t}
+\end{align}
+where $X \subseteq \cI$, and $\vT(X)$ is the set of
+tids that contain {\em
+all} the items in the itemset $X$. In particular, $\vT(x)$ is the
+set of tids that contain the single item $x \in \cI$.
+
+\medskip
+The binary database $\bD$ can be represented as a
+{\em horizontal} or 
+{\em transaction database} consisting of tuples of the form
+$\tup{t,\vI(t)}$, with $t \in \cT$. 
+
+\medskip
+The binary database $\bD$ can also be represented as a
+{\em vertical} or {\em tidset database} containing a collection of tuples of the form
+$\tup{x, \vT(x)}$, with $x\in \cI$.  
+\end{frame}
+
+
+\begin{frame}{Binary Database: Transaction and Vertical Format}
+  
+  \begin{tabular}{TTT}
+	\small
+      \begin{tabular}{|l||c|c|c|c|c|} \hline
+        $\bD$ & $A$ & $B$ & $C$ & $D$ & $E$\\ \hline
+        1 & 1 & 1 & 0 & 1 & 1\\ \hline
+    2 & 0 & 1 & 1 & 0 & 1\\ \hline
+    3 & 1 & 1 & 0 & 1 & 1\\ \hline
+    4 & 1 & 1 & 1 & 0 & 1\\ \hline
+    5 & 1 & 1 & 1 & 1 & 1\\ \hline
+    6 & 0 & 1 & 1 & 1 & 0\\ \hline
+      \end{tabular}
+  &
+      \begin{tabular}{|c|c|} \hline
+        $t$ & $\vI(t)$\\ \hline
+    1 & $\mathit{ABDE}$\\ \hline
+    2 & $\mathit{BCE}$\\ \hline
+    3 & $\mathit{ABDE}$\\ \hline
+    4 & $\mathit{ABCE}$\\ \hline
+    5 & $\mathit{ABCDE}$\\ \hline
+    6 & $\mathit{BCD}$\\     \hline
+      \end{tabular}
+	&
+      \begin{tabular}{|c|c|c|c|c|}
+    \hline
+	\multicolumn{5}{|c|}{$\vT(x)$}\\
+	\hline
+     $A$ & $B$ & $C$ & $D$ & $E$\\
+    \hline
+    1 & 1 & 2 & 1 & 1\\
+    3 & 2 & 4 & 3 & 2\\
+    4 & 3 & 5 & 5 & 3\\
+    5 & 4 & 6 & 6 & 4\\
+	& 5 &   &   & 5\\
+     & 6 &   &   &  \\
+    \hline
+    \end{tabular}\\
+	Binary Database & Transaction Database & Vertical Database
+  \end{tabular}
+
+  \bigskip
+  This dataset $\bD$ has 5 items, $\cI = \{A,B,C,D,E\}$ and 6 tids
+  $\cT = \{1,2,3,4,5,6\}$. 
+  
+  \medskip
+  The 
+  the f\/{i}rst
+transaction is $\tup{1, \{A,B,D,E\}}$, where we omit item $C$ since
+$(1,C) \not\in \bD$.  Henceforth, for
+convenience, we drop the set notation for itemsets and
+tidsets. Thus, we write $\tup{1,
+\{A,B,D,E\}}$ as $\tup{1,\mathit{ABDE}}$.
+\end{frame}
+
+\begin{frame}{Support and Frequent Itemsets}
+The {\em support}
+of an itemset $X$ in a dataset $\bD$, denoted
+$\supp(X)$, is the number of transactions in $\bD$ that
+contain $X$:
+\begin{align*}
+\supp(X) = \bigl|\{ t \mid \; \tup{t,\vI(t)} \in \bD \mbox{ and
+} X \subseteq \vI(t) \}\bigr| = \card{\vT(X)}
+\end{align*}
+
+\medskip
+The {\em relative support}
+of $X$ is the fraction of
+transactions that contain $X$:
+\begin{align*}
+\rsupp(X) = \frac{\supp(X)}{\card{\bD}}
+\end{align*}
+It is an estimate of the {\em joint
+  probability} of
+the items comprising $X$.
+
+\medskip
+An itemset $X$ is said to be {\em frequent}
+\index{frequent itemset}
+in $\bD$ if $\supp(X) \geq
+\minsup$, where $\minsup$ is a user def\/{i}ned {\em minimum support
+threshold}.
+
+\medskip
+The set $\cF$ to denotes the
+set of all frequent itemsets, and $\Fk{k}$ denotes the set of
+frequent $k$-itemsets.
+
+\end{frame}
+
+\begin{frame}{Frequent Itemsets}
+  \framesubtitle{Minimum support: $\minsup=3$}
+\begin{center}
+  \begin{tabular}{cc}
+      \begin{tabular}{|c|c|} \hline
+        $t$ & $\vI(t)$\\ \hline
+    1 & $\mathit{ABDE}$\\ \hline
+    2 & $\mathit{BCE}$\\ \hline
+    3 & $\mathit{ABDE}$\\ \hline
+    4 & $\mathit{ABCE}$\\ \hline
+    5 & $\mathit{ABCDE}$\\ \hline
+    6 & $\mathit{BCD}$\\     \hline
+      \end{tabular}
+&
+\begin{tabular}{|c|c|}
+\hline
+$\supp$ & itemsets\\
+\hline
+6 & $B$\\
+5 & $E, \mathit{BE}$\\
+4 & $A, C, D, \mathit{AB}, \mathit{AE}, \mathit{BC}, \mathit{BD}, \mathit{ABE}$\\
+3 &  $\mathit{AD}, \mathit{CE}, \mathit{DE}, \mathit{ABD}, \mathit{ADE}, \mathit{BCE}, \mathit{BDE}, \mathit{ABDE}$\\
+\hline
+\end{tabular}\\
+Transaction Database & Frequent Itemsets
+\end{tabular}
+\end{center}
+
+\small
+\bigskip
+The 19 frequent itemsets shown in the table comprise the set $\cF$.
+    The sets of all frequent $k$-itemsets are
+    \begin{align*}
+    \Fk{1} & = \{A,B,C,D,E\}\\[-3pt]
+    \Fk{2} & = \{\mathit{AB}, \mathit{AD}, \mathit{AE}, \mathit{BC}, \mathit{BD}, \mathit{BE}, \mathit{CE}, \mathit{DE}\}\\[-3pt]
+    \Fk{3} & = \{\mathit{ABD}, \mathit{ABE}, \mathit{ADE}, \mathit{BCE}, \mathit{BDE}\}\\[-3pt]
+    \Fk{4} & = \{\mathit{ABDE}\}
+    \end{align*}
+
+
+\end{frame}
+
+
+\begin{frame}{Association Rules}
+An {\it association rule}
+is an expression 
+$$X \arule{s,c} Y$$
+where $X$ and $Y$ are itemsets and they are disjoint, that is,
+$X,Y \subseteq \cI$, and $X \cap Y = \emptyset$.
+Let the itemset $X \cup Y$ be denoted as $\mathit{XY}$.
+
+\smallskip
+The
+{\em support}
+of the rule is the number of transactions in which
+both $X$ and $Y$ co-occur as subsets:
+\begin{align*}
+  s = \supp(X \arule Y) = \card{\vT(\mathit{XY})} = \supp(\mathit{XY})
+\end{align*}
+
+\smallskip
+The {\em relative support} of the rule is def\/{i}ned as the fraction of transactions
+where $X$ and $Y$ co-occur, and it provides an estimate of the joint probability of $X$ and $Y$:
+\begin{align*}
+  \rsupp(X \arule Y) =  \frac{\supp(\mathit{XY})}{\card{\bD}} =
+  P(X \wedge Y)
+\end{align*}
+
+\smallskip
+The {\em conf\/{i}dence}
+of a rule is the conditional probability
+that a transaction contains $Y$ given that it contains $X$:
+\begin{align*}
+c = \conff(X \arule Y) = P(Y|X) =
+\frac{P(X \wedge Y)}{P(X)} =
+ \frac{\supp (\mathit{XY})}{\supp (X)}
+\end{align*}
+
+\end{frame}
+
+
+
+\begin{frame}{Itemset Mining Algorithms: Brute Force}
+\small
+The brute-force
+algorithm enumerates all the
+possible itemsets $X \subseteq \cI$, and for each such subset determines
+its support in the input dataset $\bD$. The method comprises two main
+steps: (1) candidate generation and (2) support
+computation.
+
+\medskip{\bf Candidate Generation:}
+This step generates all the subsets of
+$\cI$, which are called {\em candidates}, as each itemset is
+potentially a candidate frequent pattern. The candidate itemset search
+space is clearly exponential because there are $2^{\card{\cI}}$
+potentially frequent itemsets.   
+
+
+\medskip{\bf Support Computation:}
+This step computes the support of each
+candidate pattern $X$ and determines if it is frequent.
+For each transaction
+$\tup{t, \vI(t)}$ in the database, we determine if $X$ is a
+subset of $\vI(t)$. If so, we increment the support of $X$.
+
+
+\medskip{\bf Computational Complexity:}
+Support computation takes time $O(|\cI| \cdot | \bD |)$ in the worst
+case, and because there are $O(2^{\card{\cI}})$ possible candidates,
+the computational complexity of the brute-force method is
+$O(\card{\cI}\cdot\card{\bD}\cdot2^{\card{\cI}})$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Brute Force Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmBF}{\algbf ($\bD$, $\cI$, $\minsup$)}
+\AlgorithmBF{}
+$\cF \assign \emptyset$ \tcp{set of frequent itemsets}
+\ForEach{$X \subseteq \cI$}{
+  $\supp(X)$ $\assign$ \algcomputesupport ($X, \bD$)\;
+  \If{$\supp(X) \geq \minsup$}{
+  $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$
+  }
+}
+\Return{$\cF$}
+\end{algorithm}
+\begin{algorithm}[H]
+\SetKwInput{AlgorithmCS}{\algcomputesupport ($X, \bD$)}
+\AlgorithmCS{}
+$\supp(X) \assign 0$\;
+\ForEach{$\tup{t, \vI(t)} \in \bD$}{
+  \If{$X \subseteq \vI(t)$}{
+    $\supp(X) \assign \supp(X)+1$
+  }
+}
+\Return{$\supp(X)$}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{Itemset lattice and pref\/{i}x-based search tree}
+
+  \begin{columns}
+	\column{0.4\textwidth}
+  \small
+Itemset search space is a
+lattice where any two itemsets $X$
+and $Y$ are connected by a link iff $X$ is an {\em immediate subset}
+of $Y$, that is, $X \subseteq Y$ and $\card{X} = \card{Y}-1$.  
+
+\bigskip
+Frequent itemsets can
+enumerated using either a BFS or DFS
+search on the {\em pref\/{i}x tree},
+where two
+itemsets $X,Y$ are connected by a link iff $X$ is an immediate
+subset and pref\/{i}x of $Y$. 
+This allows one to enumerate itemsets
+starting with an empty set, and adding one more item at a time.
+
+\column{0.6\textwidth}  
+\centerline{
+  \scalebox{0.45}{%
+  \psset{mnode=oval}
+  \psmatrix[colsep=0.25cm,rowsep=2.5cm]
+  &&&&[name=empty]$\emptyset$\psspan{2}\\\empty
+   &&[name=A]$A$ & [name=B]$B$ & [name=C]$C$\psspan{2} & [name=D]$D$ &
+   [name=E]$E$\\\empty
+   [name=AB]$\mathit{AB}$ & [name=AC]$\mathit{AC}$ & [name=AD]$\mathit{AD}$ & [name=AE]$\mathit{AE}$
+   & [name=BC]$\mathit{BC}$ & [name=BD]$\mathit{BD}$& [name=BE]$\mathit{BE}$ & [name=CD]$\mathit{CD}$
+   & [name=CE]$\mathit{CE}$ & [name=DE]$\mathit{DE}$\\\empty
+   [name=ABC]$\mathit{ABC}$ & [name=ABD]$\mathit{ABD}$ & [name=ABE]$\mathit{ABE}$ & [name=ACD]$\mathit{ACD}$
+   & [name=ACE]$\mathit{ACE}$ & [name=ADE]$\mathit{ADE}$ & [name=BCD]$\mathit{BCD}$ & [name=BCE]$\mathit{BCE}$
+   & [name=BDE]$\mathit{BDE}$ & [name=CDE]$\mathit{CDE}$\\\empty
+   &&[name=ABCD]$\mathit{ABCD}$ & [name=ABCE]$\mathit{ABCE}$ & [name=ABDE]$\mathit{ABDE}$\psspan{2}
+      & [name=ACDE]$\mathit{ACDE}$ & [name=BCDE]$\mathit{BCDE}$\\\empty
+      &&&&[name=ABCDE]$\mathit{ABCDE}$\psspan{2}
+   \ncline[linewidth=3pt]{ABCDE}{ABCD}
+   \ncline{ABCDE}{ABCE}
+   \ncline{ABCDE}{ABDE}
+   \ncline{ABCDE}{ACDE}
+   \ncline{ABCDE}{BCDE}
+   %
+   \ncline[linewidth=3pt]{ABCD}{ABC}
+   \ncline{ABCD}{ABD}
+   \ncline{ABCD}{ACD}
+   \ncline{ABCD}{BCD}
+   %
+   \ncline[linewidth=3pt]{ABCE}{ABC}
+   \ncline{ABCE}{ABE}
+   \ncline{ABCE}{ACE}
+   \ncline{ABCE}{BCE}
+   %
+   \ncline[linewidth=3pt]{ABDE}{ABD}
+   \ncline{ABDE}{ABE}
+   \ncline{ABDE}{ADE}
+   \ncline{ABDE}{BDE}
+   %
+   \ncline[linewidth=3pt]{ACDE}{ACD}
+   \ncline{ACDE}{ACE}
+   \ncline{ACDE}{ADE}
+   \ncline{ACDE}{CDE}
+   %
+   \ncline[linewidth=3pt]{BCDE}{BCD}
+   \ncline{BCDE}{BCE}
+   \ncline{BCDE}{BDE}
+   \ncline{BCDE}{CDE}
+   %
+   \ncline[linewidth=3pt]{ABC}{AB}
+   \ncline{ABC}{AC}
+   \ncline{ABC}{BC}
+   %
+   \ncline[linewidth=3pt]{ABD}{AB}
+   \ncline{ABD}{AD}
+   \ncline{ABD}{BD}
+   %
+   \ncline[linewidth=3pt]{ABE}{AB}
+   \ncline{ABE}{AE}
+   \ncline{ABE}{BE}
+   %
+   \ncline[linewidth=3pt]{ACD}{AC}
+   \ncline{ACD}{AD}
+   \ncline{ACD}{CD}
+   %
+   \ncline[linewidth=3pt]{ACE}{AC}
+   \ncline{ACE}{AE}
+   \ncline{ACE}{CE}
+   %
+   \ncline[linewidth=3pt]{ADE}{AD}
+   \ncline{ADE}{AE}
+   \ncline{ADE}{DE}
+   %
+   \ncline[linewidth=3pt]{BCD}{BC}
+   \ncline{BCD}{BD}
+   \ncline{BCD}{CD}
+   %
+   \ncline[linewidth=3pt]{BCE}{BC}
+   \ncline{BCE}{BE}
+   \ncline{BCE}{CE}
+   %
+   \ncline[linewidth=3pt]{BDE}{BD}
+   \ncline{BDE}{BE}
+   \ncline{BDE}{DE}
+   %
+   \ncline[linewidth=3pt]{CDE}{CD}
+   \ncline{CDE}{CE}
+   \ncline{CDE}{DE}
+   %
+   \ncline[linewidth=3pt]{AB}{A}
+   \ncline{AB}{B}
+   %
+   \ncline[linewidth=3pt]{AC}{A}
+   \ncline{AC}{C}
+   %
+   \ncline[linewidth=3pt]{AD}{A}
+   \ncline{AD}{D}
+   %
+   \ncline[linewidth=3pt]{AE}{A}
+   \ncline{AE}{E}
+   %
+   \ncline[linewidth=3pt]{BC}{B}
+   \ncline{BC}{C}
+   %
+   \ncline[linewidth=3pt]{BD}{B}
+   \ncline{BD}{D}
+   %
+   \ncline[linewidth=3pt]{BE}{B}
+   \ncline{BE}{E}
+   %
+   \ncline[linewidth=3pt]{CD}{C}
+   \ncline{CD}{D}
+   %
+   \ncline[linewidth=3pt]{CE}{C}
+   \ncline{CE}{E}
+   %
+   \ncline[linewidth=3pt]{DE}{D}
+   \ncline{DE}{E}
+   %
+   \ncline[linewidth=3pt]{A}{empty}
+   \ncline[linewidth=3pt]{B}{empty}
+   \ncline[linewidth=3pt]{C}{empty}
+   \ncline[linewidth=3pt]{D}{empty}
+   \ncline[linewidth=3pt]{E}{empty}
+  \endpsmatrix
+  }}%scalebox
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Level-wise Approach: Apriori Algorithm}
+If $X \subseteq Y$, then
+$\supp(X) \geq \supp(Y)$, which leads to the following two observations:
+(1) if $X$ is frequent, then any subset $Y \subseteq X$ is also frequent,
+and (2) if $X$ is not frequent, then any superset $Y \supseteq X$ cannot
+be frequent. 
+
+\medskip
+The {\em Apriori algorithm} utilizes these two properties
+to signif\/{i}cantly improve the brute-force approach.  It employs a
+level-wise or breadth-f\/{i}rst exploration of the itemset search space, and
+prunes all supersets of any infrequent candidate, as no superset of
+an infrequent itemset can be frequent. It also avoids generating any
+candidate that has an infrequent subset.
+
+\medskip
+In addition to improving the candidate generation step via itemset
+pruning, the Apriori method also signif\/{i}cantly improves the I/O
+complexity. Instead of counting the support for a single itemset, it
+explores the pref\/{i}x tree in a breadth-f\/{i}rst manner, and computes the
+support of all the valid candidates of size $k$ that comprise level $k$ in the
+pref\/{i}x tree.
+\end{frame}
+
+
+\begin{frame}{Apriori Algorithm: Pref\/{i}x Search Tree and Pruning}
+  \psset{unit=1in}
+  \centerline{
+  \scalebox{0.45}{%
+  \psset{mnode=oval, dash=3pt 2pt}
+  \psmatrix[colsep=0.15cm,rowsep=2.5cm]
+  &&&&[name=empty]$\emptyset$\psspan{2}\\\empty
+  &[name=A]$A$(4)\psspan{2} & [mnode=none]& [name=B]$B$(6)\psspan{2}
+   & [name=C]$C$(4)\psspan{2}
+   & [name=D]$D$(4) &
+   [name=E]$E$(5)\\\empty
+   [name=AB]$\mathit{AB}$(4)
+   & [name=AC,fillcolor=lightgray,fillstyle=solid]$\mathit{AC}$(2)
+   & [name=AD]$\mathit{AD}$(3)
+   & [name=AE]$\mathit{AE}$(4)
+   & [name=BC]$\mathit{BC}$(4) & [name=BD]$\mathit{BD}$(4)& [name=BE]$\mathit{BE}$(5)
+   & [name=CD,fillcolor=lightgray,fillstyle=solid]$\mathit{CD}$(2)
+   & [name=CE]$\mathit{CE}$(3) & [name=DE]$\mathit{DE}$(3)\\\empty
+   [name=ABC,linestyle=dashed]$\mathit{ABC}$ & [name=ABD]$\mathit{ABD}$(3)
+   & [name=ABE]$\mathit{ABE}$(4) & [name=ACD,linestyle=dashed]$\mathit{ACD}$
+   & [name=ACE,linestyle=dashed]$\mathit{ACE}$ & [name=ADE]$\mathit{ADE}$(3)
+   & [name=BCD,linestyle=dashed]$\mathit{BCD}$
+   & [name=BCE]$\mathit{BCE}$(3)
+   & [name=BDE]$\mathit{BDE}$(3) & [name=CDE,linestyle=dashed]$\mathit{CDE}$\\\empty
+   [name=ABCD,linestyle=dashed]$\mathit{ABCD}$
+   & [name=ABCE,linestyle=dashed]$\mathit{ABCE}$ &
+   [name=ABDE]$\mathit{ABDE}$(3)
+   & [name=ACDE,linestyle=dashed]$\mathit{ACDE}$ & [mnode=none]
+   & [mnode=none]& [name=BCDE,linestyle=dashed]$\mathit{BCDE}$\\\empty
+      [name=ABCDE,linestyle=dashed]$\mathit{ABCDE}$
+  \endpsmatrix
+   \ncline[linestyle=dashed]{ABCDE}{ABCD}
+   %
+   \ncline[linestyle=dashed]{ABCD}{ABC}
+   %
+   \ncline[linestyle=dashed]{ABCE}{ABC}
+   %
+   \ncline{ABDE}{ABD}
+   %
+   \ncline[linestyle=dashed]{ACDE}{ACD}
+   %
+   \ncline[linestyle=dashed]{BCDE}{BCD}
+   %
+   \ncline{ABC}{AB}
+   %
+   \ncline{ABD}{AB}
+   %
+   \ncline{ABE}{AB}
+   %
+   \ncline[linestyle=dashed]{ACD}{AC}
+   %
+   \ncline[linestyle=dashed]{ACE}{AC}
+   %
+   \ncline{ADE}{AD}
+   %
+   \ncline{BCD}{BC}
+   %
+   \ncline{BCE}{BC}
+   %
+   \ncline{BDE}{BD}
+   %
+   \ncline[linestyle=dashed]{CDE}{CD}
+   %
+   \ncline{AB}{A}
+   %
+   \ncline{AC}{A}
+   %
+   \ncline{AD}{A}
+   %
+   \ncline{AE}{A}
+   %
+   \ncline{BC}{B}
+   %
+   \ncline{BD}{B}
+   %
+   \ncline{BE}{B}
+   %
+   \ncline{CD}{C}
+   %
+   \ncline{CE}{C}
+   %
+   \ncline{DE}{D}
+   %
+   \ncline{A}{empty}
+   \ncline{B}{empty}
+   \ncline{C}{empty}
+   \ncline{D}{empty}
+   \ncline{E}{empty}
+ %
+    \nput[labelsep=17pt]{120}{A}{\large Level 1}
+    \nput[labelsep=17pt]{120}{AB}{\large Level 2}
+    \nput[labelsep=17pt]{120}{ABC}{\large Level 3}
+    \nput[labelsep=17pt]{120}{ABCD}{\large Level 4}
+    \nput[labelsep=17pt]{120}{ABCDE}{\large Level 5}
+    \psset{linestyle=dotted}
+    \ncbox[linearc=0.3,boxsize=0.3,nodesep=0.1]{A}{E}
+    \ncbox[linearc=0.3,boxsize=0.3,nodesep=0.1]{AB}{DE}
+    \ncbox[linearc=0.3,boxsize=0.3,nodesep=0.1]{ABC}{CDE}
+    \ncbox[linearc=0.3,boxsize=0.3,nodesep=0.1]{ABCD}{BCDE}
+    \ncbox[linearc=0.3,boxsize=0.3,nodesep=0.1]{ABCDE}{ABCDE}
+    }
+  }
+\end{frame}
+
+
+\SetKwInput{AlgorithmA}{\algApriori ($\bD$, $\cI$, $\minsup$)}
+\SetKwInput{AlgorithmB}{\algcomputesupport ($\Ck{k}, \bD$)}
+\SetKwInput{AlgorithmC}{\algextprefix ($\Ck{k}$)}
+\begin{frame}[fragile]{The Apriori Algorithm}
+\begin{algorithm}[H]
+\AlgorithmA{}
+$\cF \assign \emptyset$\;
+$\Ck{1} \assign \{\emptyset\}$ \tcp{Initial pref\/{i}x tree with single items}
+\lForEach{$i \in \cI$}{
+Add $i$ as child of $\emptyset$ in $\Ck{1}$ with $sup(i) \assign 0$
+}
+$k \assign 1$ \tcp{$k$ denotes the level}
+\While{$\Ck{k} \not= \emptyset$}{
+  \nllabel{alg:fpm:iset:apr:whilestart}
+  \algcomputesupport ($\Ck{k}, \bD$)\;
+  \ForEach{ leaf $X \in \Ck{k}$}{
+    \lIf{$\supp(X) \ge \minsup$}{
+      $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$
+    }
+    \lElse{
+    remove $X$ from $\Ck{k}$\nllabel{alg:fpm:iset:apr:rem}
+    }
+  }
+ $\Ck{k+1} \assign$ \algextprefix ($\Ck{k}$)
+ \nllabel{alg:fpm:iset:apr:ext}\;
+  $k \assign k+1$\;
+\nllabel{alg:fpm:iset:apr:whileend}
+}
+\Return{$\Fk{k}$}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Apriori Algorithm}
+\begin{algorithm}[H]
+\AlgorithmB{}
+\ForEach{$\tup{t, \vI(t)} \in \bD$}{
+  \ForEach{$k$-subset $X \subseteq \vI(t)$}{
+    \lIf{$X \in \Ck{k}$}{
+      $\supp(X) \assign \supp(X)+1$
+    }
+  }
+}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\AlgorithmC{}
+\ForEach{$ \text{leaf } X_a \in \Ck{k}$}{
+\ForEach{$\text{leaf } X_b \in \textsc{sibling}(X_a),
+    \text{such that } b > a$}{
+    $X_{ab} \assign X_a \cup X_b$\;
+    \tcp{prune candidate if there are any infrequent subsets}
+    \If{$X_{j} \in \Ck{k}, \textbf{ for all }
+    X_{j} \subset X_{ab}, \text{ such that }
+    \card{X_{j}} = \card{X_{ab}}-1$}{
+     Add $X_{ab}$ as child of $X_a$ with
+     $sup(X_{ab}) \assign 0$}
+   }
+   \If{no extensions from $X_a$}{remove $X_a$, and all ancestors of
+   $X_a$ with no extensions, from $\Ck{k}$ }
+}
+\Return $\Ck{k}$\;
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{Apriori Algorithm: Details}
+  \small 
+  
+  Let $\Ck{k}$ denote the pref\/{i}x tree comprising all the
+  candidate $k$-itemsets.  
+
+\medskip
+Apriori begins by inserting the single items into an initially
+empty pref\/{i}x tree to populate $\Ck{1}$.
+
+\medskip   The
+support for the current candidates is obtained via
+\algcomputesupport procedure that generates $k$-subsets of each
+transaction in the database $\bD$, and for each such subset it
+increments the support of the corresponding candidate in $\Ck{k}$ if it
+exists. Next, we remove any infrequent candidate.
+
+\medskip
+The leaves of the pref\/{i}x tree that survive comprise the set of
+frequent $k$-itemsets $\Fk{k}$, which are used to generate the candidate
+$(k+1)$-itemsets for the next level. The \algextprefix procedure employs
+pref\/{i}x-based extension for candidate generation. Given two frequent
+$k$-itemsets $X_a$ and $X_b$ with a common $k-1$ length pref\/{i}x, that
+is, given two sibling leaf nodes with a common parent, we generate the
+$(k+1)$-length candidate $X_{ab} = X_a \cup X_b$.  This candidate is
+retained only if it has no infrequent subset. F{i}nally, if a
+$k$-itemset $X_a$ has no extension, it is pruned from the pref\/{i}x
+tree, and we recursively prune any of its ancestors with no $k$-itemset
+extension, so that in $\Ck{k}$ all leaves are at level $k$.  
+
+\medskip If new
+candidates were added, the whole process is repeated for the next level.
+This process continues until no new candidates are added.
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Itemset Mining: Apriori Algorithm}
+  \framesubtitle{Infrequent itemsets in gray}
+  \psset{unit=0.75in}
+  %C1
+  \begin{center}
+
+  %\begin{tabular}[t]{TTT}
+  \begin{tabular}[t]{ccc}
+  $\bD$ & & $\Ck{1}$\\
+  {
+      \begin{tabular}{|c|c|} \hline
+        $t$ & $\vI(t)$\\ \hline
+    1 & $\mathit{ABDE}$\\ \hline
+    2 & $\mathit{BCE}$\\ \hline
+    3 & $\mathit{ABDE}$\\ \hline
+    4 & $\mathit{ABCE}$\\ \hline
+    5 & $\mathit{ABCDE}$\\ \hline
+    6 & $\mathit{BCD}$\\     \hline
+      \end{tabular}
+  }
+	  & \hspace{0.5in} &
+    {
+    \scalebox{0.65}{
+    \psset{treesep=0.3,levelsep=*0.75}
+    \pstree[]{\Toval{$\emptyset(6)$}}{
+    \Toval{$A$(4)}
+    \Toval{$B$(6)}
+    \Toval{$C$(4)}
+    \Toval{$D$(4)}
+    \Toval{$E$(5)}
+    }
+    }
+    } \\
+  \end{tabular}
+ % C2
+  \centerline{\hspace{0.8in}$\Ck{2}$}
+
+  \scalebox{0.65}{%
+  \psset{treesep=0.125,levelsep=*0.75}
+  \pstree[]{\Toval{$\emptyset(6)$}}{
+    \pstree[]{\Toval{$A$(4)}}{
+      \Toval{$\mathit{AB}$(4)}
+      \Toval[fillstyle=solid,fillcolor=lightgray]{$\mathit{AC}$(2)}
+      \Toval{$\mathit{AD}$(3)}
+      \Toval{$\mathit{AE}$(4)}
+    }
+    \pstree[]{\Toval{$B$(6)}}{
+      \Toval{$\mathit{BC}$(4)}
+      \Toval{$\mathit{BD}$(4)}
+      \Toval{$\mathit{BE}$(5)}
+    }
+    \pstree[]{\Toval{$C$(4)}}{
+      \Toval[fillstyle=solid,fillcolor=lightgray]{$\mathit{CD}$(2)}
+      \Toval{$\mathit{CE}$(3)}
+    }
+    \pstree[]{\Toval{$D$(4)}}{
+      \Toval{$\mathit{DE}$(3)}
+    %}
+    }}
+    }
+\end{center}
+\end{frame}
+
+\begin{frame}{Itemset Mining: Apriori Algorithm}
+  \psset{unit=0.75in}
+ % C3
+\begin{minipage}{5cm}
+  \begin{center}
+	\hspace{1.2in}$\Ck{3}$
+
+  \scalebox{0.65}{%
+  \psset{treesep=0.2,levelsep=*0.75}
+  \pstree[]{\Toval{$\emptyset(6)$}}{
+    \pstree[]{\Toval{$A$(4)}}{
+      \pstree[]{\Toval{$\mathit{AB}$(4)}}{
+        \Toval{$\mathit{ABD}$(3)}
+        \Toval{$\mathit{ABE}$(4)}
+      }
+      \pstree[]{\Toval{$\mathit{AD}$(3)}}{
+        \Toval{$\mathit{ADE}$(3)}
+      }
+    }
+    \pstree[]{\Toval{$B$(6)}}{
+      \pstree[]{\Toval{$\mathit{BC}$(4)}}{
+        \Toval{$\mathit{BCE}$(3)}
+      }
+      \pstree[]{\Toval{$\mathit{BD}$(4)}}{
+        \Toval{$\mathit{BDE}$(3)}
+      }
+    }
+    }
+    }
+\end{center}
+\end{minipage}
+ % C4
+\hspace{3cm}
+\begin{minipage}{2cm}
+\begin{center}
+ $\Ck{4}$
+
+  \scalebox{0.7}{%
+  \psset{treesep=0.2,levelsep=*0.5}
+  \pstree[]{\Toval{$\emptyset(6)$}}{
+    \pstree[]{\Toval{$A$(4)}}{
+      \pstree[]{\Toval{$\mathit{AB}$(4)}}{
+      \pstree[]{\Toval{$\mathit{ABD}$(3)}}{
+        \Toval{$\mathit{ABDE}$(3)}
+      }
+      }
+    }
+    }}
+    %}}
+\end{center}
+\end{minipage}
+\end{frame}
+
+
+
+\begin{frame}{Tidset Intersection Approach: Eclat Algorithm}
+
+  The support counting step can be improved signif\/{i}cantly if we can
+  index the database in such a way that it allows fast frequency
+  computations.
+
+\medskip
+The Eclat algorithm leverages the tidsets directly for support
+computation. The basic idea is that the support of a candidate itemset
+can be computed by intersecting the tidsets of suitably chosen subsets.
+In general, given $\vT(X)$ and $\vT(Y)$ for any two frequent itemsets
+$X$ and $Y$, we have $$\vT(\mathit{XY}) = \vT(X) \cap \vT(Y)$$ The
+support of candidate $\mathit{XY}$ is simply the cardinality of
+$\vT(\mathit{XY})$, that is, $\supp(\mathit{XY}) =
+\card{\vT(\mathit{XY})}$.  
+
+
+\medskip
+Eclat intersects the tidsets only if the
+frequent itemsets share a common pref\/{i}x, and it traverses the
+pref\/{i}x search tree in a DFS-like manner, processing a group of
+itemsets that have the same pref\/{i}x, also called a {\em pref\/{i}x
+equivalence class}.
+
+\end{frame}
+
+
+\begin{frame}{Eclat Algorithm: Tidlist Intersections}
+  \framesubtitle{Infrequent itemsets in gray}
+    \psset{unit=1in}
+  \centerline{
+  \scalebox{0.6}{%
+  \psset{treesep=0.1,levelsep=*0.75,treefit=loose}
+  \def\cedge{\ncarc[angle=30]}
+  \pstree[]{\TR[]{
+    \begin{tabular}{|c|}\hline
+    $\emptyset$\\\hline
+    %123456\\\hline
+    \end{tabular}}
+  }{
+  %A
+      \pstree[treefit=tight]{
+          \TR[]{
+          \begin{tabular}{|c|}\hline
+          $A$\\\hline
+          1345\\\hline
+          \end{tabular}}
+      }{
+      \pstree[]{
+      \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{AB}$\\\hline
+        1345\\\hline
+      \end{tabular}}
+      }{
+        \pstree[]{
+        \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{ABD}$\\\hline
+        135\\\hline
+      \end{tabular}}
+        }{
+          \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{ABDE}$\\\hline
+        135\\\hline
+      \end{tabular}}
+        }
+        \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{ABE}$\\\hline
+        1345\\\hline
+      \end{tabular}}
+      }
+      \TR*[fillstyle=solid,
+          fillcolor=lightgray]{
+      \begin{tabular}{|c|}\hline
+        $\mathit{AC}$\\\hline
+        45\\\hline
+      \end{tabular}}
+      %AD
+      \pstree[]{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{AD}$\\\hline
+          135\\\hline
+          \end{tabular}}
+      }{
+        \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{ADE}$\\\hline
+          135\\\hline
+          \end{tabular}}
+      }
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{AE}$\\\hline
+          1345\\\hline
+          \end{tabular}}
+    }
+    %B
+    \pstree[treefit=tight]{
+    \TR{
+          \begin{tabular}{|c|}\hline
+          $B$\\\hline
+          123456\\\hline
+          \end{tabular}}
+      }{
+      \pstree[]{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BC}$\\\hline
+          2456\\\hline
+          \end{tabular}}
+      }{
+        \TR*[fillstyle=solid,
+          fillcolor=lightgray]{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BCD}$\\\hline
+          56\\\hline
+          \end{tabular}}
+        \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BCE}$\\\hline
+          245\\\hline
+          \end{tabular}}
+      }
+      \pstree[]{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BD}$\\\hline
+          1356\\\hline
+          \end{tabular}}
+      }{
+        \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BDE}$\\\hline
+          135\\\hline
+          \end{tabular}}
+      }
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BE}$\\\hline
+          12345\\\hline
+          \end{tabular}}
+    }
+    %C
+    \pstree[]{
+    \TR{ \begin{tabular}{|c|}\hline
+          $C$\\\hline
+          2456\\\hline
+          \end{tabular}}
+      }{
+      \TR*[fillstyle=solid,
+          fillcolor=lightgray]{
+          \begin{tabular}{|c|}\hline
+          $\mathit{CD}$\\\hline
+          56\\\hline
+          \end{tabular}}
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{CE}$\\\hline
+          245\\\hline
+          \end{tabular}}
+    }
+    %D
+    \pstree[xbbl=-4pt]{
+    \TR[]{
+          \begin{tabular}{|c|}\hline
+          $D$\\\hline
+          1356\\\hline
+          \end{tabular}}
+          }{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{DE}$\\\hline
+          135\\\hline
+          \end{tabular}}
+    }
+    %E
+    \tspace{0.15in}
+    \TR[edge=\cedge]{\begin{tabular}{|c|}\hline
+          $E$\\\hline
+          12345\\\hline
+          \end{tabular}}}
+    }
+  }
+\end{frame}
+
+
+\begin{frame}[fragile]{Eclat Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmA}{\algeclat ($P$, $\minsup$, $\cF$)}
+\tcp{Initial Call: $\cF \assign \emptyset,
+P\assign \bigl\{\tup{i,\vT(i)} \mid i \in \cI,
+\card{\vT(i)} \ge \minsup\bigr\}$}
+\AlgorithmA{}
+\ForEach{$\tup{X_a, \vT(X_a)} \in P$}{
+  $\cF \assign \cF \cup \bigl\{(X_{a}, \supp(X_{a}))\bigr\}$\;
+  $P_a \assign \emptyset$\;
+  \ForEach{$\tup{X_b,\vT(X_b)} \in P$, with $X_b > X_a$}{
+  $X_{ab} = X_a \cup X_b$\;
+    $\vT(X_{ab}) = \vT(X_a) \cap \vT(X_b)$\;
+    \If{$\supp(X_{ab}) \geq \minsup$}{
+      $P_a \assign P_a \cup \bigl\{ \tup{X_{ab}, \vT(X_{ab})} \bigr\}$\;
+    }
+  }
+  \lIf{$P_a \ne \emptyset$}{
+    \algeclat($P_a$, $\minsup$, $\cF$)
+  }
+}
+\end{algorithm}
+\end{frame}
+
+
+
+
+\begin{frame}{Diffsets: Difference of Tidsets}
+
+The Eclat algorithm can be
+signif\/{i}cantly improved if we can shrink the size of the
+intermediate tidsets. This can be achieved by keeping track of the
+differences in the tidsets as opposed to the full tidsets.
+
+\medskip
+Let $X_a = \{x_1, \ldots, x_{k-1}, x_a\}$
+and $X_b = \{x_1, \ldots, x_{k-1}, x_b\}$, so that
+$X_{ab} = X_a \cup X_b = \{x_1, \ldots, x_{k-1}, x_a,
+x_b \}$. 
+
+\medskip
+The {\em diffset} of $X_{ab}$ is the set of tids
+that contain the pref\/{i}x $X_a$, but not
+the item $X_b$
+\begin{align*}
+  \bd(X_{ab}) &= \vT(X_{a}) \setminus \vT(X_{ab}) =
+    \vT(X_{a}) \setminus \vT(X_{b})
+\end{align*}
+
+\medskip
+We can obtain an expression for $\bd(X_{ab})$ in terms of
+$\bd(X_a)$ and $\bd(X_b)$ as follows:
+\begin{align*}
+  \bd(X_{ab}) 
+    & = \bd(X_b) \setminus \bd(X_a)
+\end{align*}
+which means that we can replace all
+intersection operations in Eclat with diffset operations. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm dEclat}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmA}{\algdeclat ($P$, $\minsup$, $\cF$)}
+\tcp{Initial Call: $\cF \assign \emptyset$,
+$P \assign \bigl\{\tup{i,\bd(i),\supp(i)} \mid i \in \cI,
+\bd(i) = \cT \setminus \vT(i), \supp(i) \ge \minsup\bigr\}$}
+\AlgorithmA{}
+\ForEach{$\tup{X_a, \bd(X_a), \supp(X_a)} \in P$}{
+  $\cF \assign \cF \cup \bigl\{(X_{a}, \supp(X_{a}))\bigr\}$\;
+  $P_a \assign \emptyset$\;
+  \ForEach{$\tup{X_b,\bd(X_b), \supp(X_b)} \in P$, with $X_b > X_a$}{
+  $X_{ab} = X_a \cup X_b$\;
+  $\bd(X_{ab}) = \bd(X_b) \setminus \bd(X_a)$
+  \nllabel{alg:fpm:iset:declat:diff}\;
+    $\supp(X_{ab}) = \supp(X_a) - \card{\bd(X_{ab})}$
+    \nllabel{alg:fpm:iset:declat:dsup}\;
+    \If{$\supp(X_{ab}) \geq \minsup$}{
+      $P_a \assign P_a \cup \bigl\{ \tup{X_{ab}, \bd(X_{ab}),
+      \supp(X_{ab})} \bigr\}$\;
+    }
+  }
+  \lIf{$P_a \ne \emptyset$}{
+    \algdeclat($P_a$, $\minsup$, $\cF$)
+  }
+}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{dEclat Algorithm: Diffsets}
+  \framesubtitle{support shown within brackets; infrequent itemsets in
+  gray}
+    \psset{unit=1in}
+  \centerline{
+  \scalebox{0.55}{%
+  \psset{treesep=0.15,levelsep=*0.75,treefit=loose}
+  \def\cedge{\ncarc[angle=30]}
+  \pstree[]{\TR[]{
+    \begin{tabular}{|c|}\hline
+    $\emptyset$\\\hline
+    \end{tabular}}
+  }{
+  %A
+      \pstree[treefit=tight]{
+          \TR[]{
+          \begin{tabular}{|c|}\hline
+          $A$\\(4)\\\hline
+          26\\\hline
+          \end{tabular}}
+      }{
+      \pstree[]{
+      \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{AB}$\\(4)\\\hline
+        $\emptyset$\\\hline
+      \end{tabular}}
+      }{
+        \pstree[]{
+        \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{ABD}$\\(3)\\\hline
+        4\\\hline
+      \end{tabular}}
+        }{
+          \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{ABDE}$\\(3)\\\hline
+        $\emptyset$\\\hline
+      \end{tabular}}
+        }
+        \TR{
+      \begin{tabular}{|c|}\hline
+        $\mathit{ABE}$\\(4)\\\hline
+        $\emptyset$\\\hline
+      \end{tabular}}
+      }
+      \TR*[fillstyle=solid,
+          fillcolor=lightgray]{
+      \begin{tabular}{|c|}\hline
+        $\mathit{AC}$\\(2)\\\hline
+        13\\\hline
+      \end{tabular}}
+      %AD
+      \pstree[]{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{AD}$\\(3)\\\hline
+          4\\\hline
+          \end{tabular}}
+      }{
+        \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{ADE}$\\(3)\\\hline
+          $\emptyset$\\\hline
+          \end{tabular}}
+      }
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{AE}$\\(4)\\\hline
+          $\emptyset$\\\hline
+          \end{tabular}}
+    }
+    %B
+    \pstree[treefit=tight]{
+    \TR{
+          \begin{tabular}{|c|}\hline
+          $B$\\(6)\\\hline
+          $\emptyset$\\\hline
+          \end{tabular}}
+      }{
+      \pstree[]{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BC}$\\(4)\\\hline
+          13\\\hline
+          \end{tabular}}
+      }{
+        \TR*[fillstyle=solid,
+          fillcolor=lightgray]{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BCD}$\\(2)\\\hline
+          24\\\hline
+          \end{tabular}}
+        \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BCE}$\\(3)\\\hline
+          6\\\hline
+          \end{tabular}}
+      }
+      \pstree[]{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BD}$\\(4)\\\hline
+          24\\\hline
+          \end{tabular}}
+      }{
+        \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BDE}$\\(3)\\\hline
+          6\\\hline
+          \end{tabular}}
+      }
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{BE}$\\(5)\\\hline
+          6\\\hline
+          \end{tabular}}
+    }
+    %C
+    \pstree[]{
+    \TR{ \begin{tabular}{|c|}\hline
+          $C$\\(4)\\\hline
+          13\\\hline
+          \end{tabular}}
+      }{
+      \TR*[fillstyle=solid,
+          fillcolor=lightgray]{
+          \begin{tabular}{|c|}\hline
+          $\mathit{CD}$\\(2)\\\hline
+          24\\\hline
+          \end{tabular}}
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{CE}$\\(3)\\\hline
+          6\\\hline
+          \end{tabular}}
+    }
+    %D
+    \pstree[xbbl=-4pt]{
+    \TR[]{
+          \begin{tabular}{|c|}\hline
+          $D$\\(4)\\\hline
+          24\\\hline
+          \end{tabular}}
+          }{
+      \TR{
+          \begin{tabular}{|c|}\hline
+          $\mathit{DE}$\\(3)\\\hline
+          6\\\hline
+          \end{tabular}}
+    }
+    %E
+    \tspace{0.15in}
+    \TR[edge=\cedge]{\begin{tabular}{|c|}\hline
+          $E$\\(5)\\\hline
+          6\\\hline
+          \end{tabular}}}
+    }
+  }
+\end{frame}
+
+
+\begin{frame}{Frequent Pattern Tree Approach: FPGrowth Algorithm}
+The FPGrowth method indexes the database for fast support
+computation via the use of an augmented pref\/{i}x tree called the
+{\em frequent pattern tree} (FP-tree).  
+
+\medskip
+Each
+node in the tree is labeled with a single item, and each child node
+represents a different item. Each node also stores the support
+information for the itemset comprising the items on the path from the
+root to that node. 
+
+\medskip
+The FP-tree is constructed as follows.
+Initially the tree contains as root the null item
+$\emptyset$. Next, for each tuple
+$\tup{t, X} \in \bD$, where $X=\vI(t)$,
+we insert the itemset $X$ into the FP-tree,
+incrementing the count of all nodes
+along the path that represents $X$.
+
+\medskip
+If $X$ shares a pref\/{i}x with some previously inserted
+transaction, then $X$ will follow the same path until the common
+pref\/{i}x. For the remaining items in $X$, new nodes are created
+under the common pref\/{i}x, with counts initialized to $1$. The
+FP-tree is complete when all transactions have been inserted.
+\end{frame}
+
+
+
+\begin{frame}{Frequent Pattern Tree}
+  The FP-tree is a pref\/{i}x compressed representation of
+  $\bD$. For most compression items are sorted in descending order of
+  support.
+
+  \psset{unit=0.75in,treefit=loose}
+  \def\bedge{\ncline[linewidth=3pt]}
+  %
+  \centerline{
+  \begin{minipage}[t][][c]{2cm}
+  \begin{footnotesize}
+  \begin{tabular}{|l|}
+  \hline
+  Transactions \\ \hline
+  BEAD \\ \hline
+  BEC \\ \hline
+  BEAD \\ \hline
+  BEAC \\ \hline
+  BEACD \\ \hline
+  BCD \\ \hline
+  \end{tabular}
+  \end{footnotesize}
+  \end{minipage}
+  \hspace{0.2in}
+  \psset{treesep=0.1,levelsep=*0.5}
+  %\subfloat[$\tup{1,\mathit{BEAD}}$]{
+    \label{fig:fpm:iset:APT1}
+    \scalebox{0.4}{%
+    \pstree[edge=\bedge,xbbl=0.3in,xbbr=0.3in]{\Toval{$\emptyset(1)$}}{
+      \pstree[]{\Toval{$B$(1)}}{
+        \pstree[]{\Toval{$E$(1)}}{
+          \pstree[]{\Toval{$A$(1)}}{
+            \Toval{$D$(1)}
+          }
+       }
+      }
+    }
+  }
+  %}
+  \hspace{0.2in}
+  %\subfloat[$\tup{2,\mathit{BEC}}$]{
+    \label{fig:fpm:iset:APT2}
+    \scalebox{0.4}{%
+    \pstree[]{\Toval{$\emptyset(2)$}}{
+      \pstree[]{\Toval[edge=\bedge]{$B$(2)}}{
+        \pstree[]{\Toval[edge=\bedge]{$E$(2)}}{
+          \pstree[]{\Toval{$A$(1)}}{
+            \Toval{$D$(1)}
+          }
+          \Toval[edge=\bedge]{$C$(1)}
+       }
+      }
+    }
+  }
+  %}
+  \hspace{0.2in}
+  %\subfloat[$\tup{3,\mathit{BEAD}}$]{
+    \label{fig:fpm:iset:APT3}
+    \scalebox{0.4}{%
+    \pstree[]{\Toval{$\emptyset(3)$}}{
+      \pstree[]{\Toval[edge=\bedge]{$B$(3)}}{
+        \pstree[]{\Toval[edge=\bedge]{$E$(3)}}{
+          \pstree[]{\Toval[edge=\bedge]{$A$(2)}}{
+            \Toval[edge=\bedge]{$D$(2)}
+          }
+          \Toval{$C$(1)}
+       }
+      }
+    }
+   }
+  }
+  %}
+  \vspace{0.2in}
+  \centerline{
+  %\subfloat[$\tup{4,\mathit{BEAC}}$]{
+    \label{fig:fpm:iset:APT4}
+    \scalebox{0.4}{%
+    \pstree[]{\Toval[edge=\bedge]{$\emptyset(4)$}}{
+      \pstree[]{\Toval[edge=\bedge]{$B$(4)}}{
+        \pstree[]{\Toval[edge=\bedge]{$E$(4)}}{
+          \pstree[]{\Toval[edge=\bedge]{$A$(3)}}{
+            \Toval[edge=\bedge]{$C$(1)}
+            \Toval{$D$(2)}
+          }
+          \Toval{$C$(1)}
+       }
+      }
+    }
+   }
+  %}
+  \hspace{0.2in}
+  \psset{treesep=0.1,levelsep=*0.4}
+  %\subfloat[$\tup{5,\mathit{BEACD}}$]{
+    \label{fig:fpm:iset:APT5}
+    \scalebox{0.4}{%
+    \pstree[]{\Toval[edge=\bedge]{$\emptyset(5)$}}{
+      \pstree[]{\Toval[edge=\bedge]{$B$(5)}}{
+        \pstree[]{\Toval[edge=\bedge]{$E$(5)}}{
+          \pstree[]{\Toval[edge=\bedge]{$A$(4)}}{
+            \pstree{\Toval[edge=\bedge]{$C$(2)}}{
+              \Toval[edge=\bedge]{$D$(1)}
+            }
+            \Toval{$D$(2)}
+          }
+          \Toval{$C$(1)}
+       }
+      }
+    }
+   %}
+  }
+  \hspace{0.2in}
+  %\subfloat[$\tup{6,\mathit{BCD}}$]{
+    \label{fig:fpm:iset:APT6}
+    \scalebox{0.4}{%
+    \pstree[]{\Toval[edge=\bedge]{$\emptyset(6)$}}{
+      \pstree[]{\Toval[edge=\bedge]{$B$(6)}}{
+      \pstree[]{\Toval[edge=\bedge]{$C$(1)}}{
+        \Toval[edge=\bedge]{$D$(1)}
+       }
+        \pstree[]{\Toval{$E$(5)}}{
+          \pstree[]{\Toval{$A$(4)}}{
+            \pstree{\Toval{$C$(2)}}{
+              \Toval{$D$(1)}
+            }
+            \Toval{$D$(2)}
+          }
+          \Toval{$C$(1)}
+       }
+      }
+    }
+   }
+  %}
+  }
+\end{frame}
+
+
+\begin{frame}{FPGrowth Algorithm: Details}
+Given an FP-tree $R$, projected FP-trees are built for each
+frequent item $i$ in $R$ in increasing order of support in a recursive
+manner.
+
+\medskip
+To project $R$ on item $i$, we f\/{i}nd
+all the occurrences of $i$ in the tree, and for each occurrence,
+we determine the corresponding path from the root to $i$.
+The count of item $i$ on a given
+path is recorded in $cnt(i)$
+and the
+path is inserted into the new projected tree $R_X$, where $X$ is
+the itemset obtained by extending the pref\/{i}x $P$ with the item
+$i$.  While inserting the path, the count of each node in $R_X$ along
+the given path is incremented by the path count $cnt(i)$.
+
+
+\medskip
+The base case
+for the recursion happens when the input FP-tree $R$ is a single
+path. FP-trees that are paths are handled by enumerating all
+itemsets that are subsets of the path, with the support of each
+such itemset being given by the least frequent item in it.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{FPGrowth Algorithm}
+\begin{footnotesize}
+\begin{algorithm}[H]
+\SetKwInOut{AlgorithmA}{\algfpgrowth ($R$, $P$, $\cF$, $\minsup$)}
+\tcp{Initial Call: $R \assign \text{FP-tree}(\bD)$,
+    $P \assign \emptyset$, $\cF \assign \emptyset$ }
+\AlgorithmA{}
+Remove infrequent items from $R$\;
+\eIf(\tcp*[h]{insert subsets of $R$ into $\cF$}){\textsc{IsPath}($R$)}{
+    \nllabel{alg:fpm:iset:fp:pathS}
+    \ForEach{$Y \subseteq R$}{
+        $X \assign P \cup Y$\;
+        $\supp(X) \assign \min_{x \in Y} \{cnt(x)\}$ \;
+        $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$
+        \nllabel{alg:fpm:iset:fp:pathE}\;
+    }
+}($\quad$ \tcp*[h]{process projected FP-trees for each frequent item $i$})
+{
+    \ForEach{$i \in R$ in increasing order of $\supp(i)$}{
+        $X \assign P \cup \{i\}$\nllabel{alg:fpm:iset:fp:Pi} \;
+        $\supp(X) \assign \supp(i)$ \tcp{sum of $cnt(i)$ for all nodes
+        labeled $i$}
+        $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$\;
+        $R_X \assign \emptyset$ \tcp{projected FP-tree for $X$}
+        \ForEach{$path \in \textsc{PathFromRoot}(i)$ \nllabel{alg:fpm:iset:fp:ptr}}{
+            $cnt(i) \assign $ count of $i$ in $path$\;
+            \nllabel{alg:fpm:iset:fp:pathsup}
+            Insert $path$, excluding $i$,
+            into FP-tree $R_X$ with count $cnt(i)$
+            \nllabel{alg:fpm:iset:fp:atr}\;
+        }
+        \lIf{$R_X \neq \emptyset$}{
+            \algfpgrowth ($R_X$, $X$, $\cF$, $\minsup$)
+            \nllabel{alg:fpm:iset:fp:recurse}
+        \nllabel{alg:fpm:iset:fp:condE}
+        }
+    }
+}
+\end{algorithm}
+\end{footnotesize}
+\end{frame}
+
+
+\begin{frame}{Projected Frequent Pattern Tree for {\it D}}
+  \psset{unit=0.75in,treefit=loose}
+  \def\bedge{\ncline[linewidth=3pt]}
+  \begin{tabular}{TTTT}
+  FP-Tree & Add $\mathit{BC},cnt=1$  &
+  Add $\mathit{BEAC},cnt=1$ & Add $\mathit{BEA},cnt=2$\\
+  \begin{minipage}{1in}
+  \scalebox{0.5}{%
+    \pstree[]{\Toval[edge=\bedge]{$\emptyset(6)$}}{
+      \pstree[]{\Toval[edge=\bedge]{$B$(6)}}{
+      \pstree[]{\Toval[edge=\bedge]{$C$(1)}}{
+        \Toval[edge=\bedge]{$D$(1)}
+       }
+        \pstree[]{\Toval{$E$(5)}}{
+          \pstree[]{\Toval{$A$(4)}}{
+            \pstree{\Toval{$C$(2)}}{
+              \Toval{$D$(1)}
+            }
+            \Toval{$D$(2)}
+          }
+          \Toval{$C$(1)}
+       }
+      }
+    }
+   }
+ \end{minipage}
+   &
+   \begin{minipage}{0.5in}
+    \scalebox{0.6}{%
+    \psset{treesep=0.1,levelsep=*0.45}
+    \pstree[xbbl=0.5in,xbbr=0.5in]{\Toval{$\emptyset(1)$}}{
+      \pstree[]{\Toval{$B$(1)}}{
+        \Toval{$C$(1)}
+       }
+      }
+    }
+  \end{minipage}
+	&
+  \begin{minipage}{0.4in}
+    \scalebox{0.6}{%
+    \psset{treesep=0.1,levelsep=*0.45}
+    \pstree[xbbl=0.3in,xbbr=0.3in]{\Toval{$\emptyset(2)$}}{
+      \pstree[]{\Toval{$B$(2)}}{
+        \Toval{$C$(1)}
+        \pstree[]{\Toval{$E$(1)}}{
+          \pstree[]{\Toval{$A$(1)}}{
+            \Toval{$C$(1)}
+          }
+       }
+      }
+    }
+   }
+ \end{minipage}
+   & 
+  \begin{minipage}{0.4in}
+   \scalebox{0.6}{%
+    \psset{treesep=0.1,levelsep=*0.45}
+    \pstree[xbbl=0.3in,xbbr=0.3in]{\Toval{$\emptyset(4)$}}{
+      \pstree[]{\Toval{$B$(4)}}{
+        \Toval{$C$(1)}
+        \pstree[]{\Toval{$E$(3)}}{
+          \pstree[]{\Toval{$A$(3)}}{
+            \Toval{$C$(1)}
+          }
+       }
+      }
+    }
+   }
+ \end{minipage} \\
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}{FPGrowth Algorithm: Frequent Pattern Tree Projection}
+  \captionsetup[subfloat]{captionskip=0.1in}
+  \psset{unit=0.75in,treefit=loose}
+  \def\bedge{\ncline[linewidth=3pt]}
+  \def\nedge{\ncdiag[angleA=-90,armA=0,armB=0.25,angleB=90,
+        linewidth=2pt]}
+  %
+  \centerline{
+  \psset{treesep=0.1,levelsep=*0.5}
+    \scalebox{0.38}{%
+    \psmatrix[colsep=0.5in,rowsep=1in]
+    & \Rnode[vref=-1.5in]{R}{
+      \TR[showbbox=true,xbbl=0.1in,xbbr=0.15in,xbbh=0.1in,xbbd=0.25in]{%
+        \begin{tabular}{c}
+        \pstree[]{\Toval{$\emptyset(6)$}}{
+          \pstree[]{\Toval{$B$(6)}}{
+            \pstree[]{\Toval{$C$(1)}}{
+              \Toval{$D$(1)}
+            }
+            \pstree[]{\Toval{$E$(5)}}{
+              \pstree[]{\Toval{$A$(4)}}{
+                \pstree{\Toval{$C$(2)}}{
+                  \Toval{$D$(1)}
+                }
+                \Toval{$D$(2)}
+              }
+              \Toval{$C$(1)}
+            }
+          }
+        }\\
+       \end{tabular}
+      }
+    }\\
+    \Rnode{RD}{
+      \TR[showbbox=true,xbbl=0.1in,xbbr=0.15in,xbbh=0.1in,xbbd=0.2in]{%
+        \pstree{\Toval{$\emptyset(4)$}}{
+          \pstree[]{\Toval{$B$(4)}}{
+            \Toval{$C$(1)}
+            \pstree[]{\Toval{$E$(3)}}{
+              \pstree[]{\Toval{$A$(3)}}{
+                \Toval{$C$(1)}
+              }
+            }
+          }
+        }
+      }
+    } &
+    \Rnode{RC}{
+      \TR[showbbox=true,xbbl=0.1in,xbbr=0.1in,xbbh=0.1in,xbbd=0.2in]{%
+        \pstree{\Toval{$\emptyset(4)$}}{
+          \pstree[]{\Toval{$B$(4)}}{
+            \pstree[]{\Toval{$E$(3)}}{
+              \Toval{$A$(2)}
+            }
+          }
+        }
+      }
+    } &
+    \Rnode{RA}{
+      \TR[showbbox=true,xbbl=0.1in,xbbr=0.1in,xbbh=0.1in,xbbd=0.2in]{%
+        \pstree{\Toval{$\emptyset(4)$}}{
+          \pstree[]{\Toval{$B$(4)}}{
+            \Toval{$E$(4)}
+          }
+        }
+      }
+    } &
+    \Rnode{RE}{
+      \TR[showbbox=true,xbbl=0.1in,xbbr=0.1in,xbbh=0.1in,xbbd=0.2in]{%
+        \pstree{\Toval{$\emptyset(5)$}}{
+          \Toval{$B$(5)}
+        }
+      }
+    }
+    \endpsmatrix
+    %\psset{npos=0.75}
+    \ncline{R}{RD}\ncput*{$R_D$}
+    \ncline{R}{RC}\ncput*{$R_C$}
+    \ncline{R}{RA}\ncput*{$R_A$}
+    \ncline{R}{RE}\ncput*{$R_E$}
+    } }
+\end{frame}
+
+
+\begin{frame}{Generating Association Rules}
+Given a frequent itemset $Z \in \cF$,
+we look at all proper subsets
+$X\subset Z$ to compute rules of the form
+\begin{align*}
+  X \arule{s,c} Y, \text{ where } Y = Z\setminus X
+\end{align*}
+where $Z \setminus X  = Z - X$.
+
+\medskip
+The rule must be frequent
+because
+\begin{align*}
+s = \supp(\mathit{XY}) = \supp(Z) \geq \minsup
+\end{align*}
+
+\medskip
+We compute the conf\/{i}dence as follows:
+\begin{align*}
+c = \frac{\supp(X \cup Y)}{\supp(X)} = \frac{\supp(Z)}{\supp(X)}
+\end{align*}
+If $c \geq \minconf$, then the rule is a strong rule. On the other
+hand, if $\conff(X\arule Y) < c$, then
+$\conff(W \arule Z \setminus W) < c$ for all subsets $W \subset X$,
+as $\supp(W) \ge \supp(X)$. We can thus
+avoid checking subsets of $X$.
+\end{frame}
+
+
+\begin{frame}[fragile]{Association Rule Mining Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{AlgoRuleMining}{\algrulemining ($\cF$, $\minconf$)}
+\AlgoRuleMining{}
+\ForEach{$Z \in \cF$, such that $\card{Z} \ge 2$}{
+  $\cA \gets \bigl\{X \mid X \subset Z, X \ne \emptyset \bigr\}$
+  \nllabel{alg:fpm:iset:arule:initA}\;
+  \While{$\cA \ne \emptyset$}{
+    $X \gets \text{maximal element in } \cA$\;
+    $\cA \gets \cA \setminus X$\tcp{remove $X$ from $\cA$}
+    $c \gets \supp(Z)/\supp(X)$ \nllabel{alg:fpm:iset:arule:conf}\;
+    \eIf{$c \ge \minconf$}{
+      print $X \arule Y$, $\supp(Z)$, $c$\;
+    }{
+      $\cA \gets \cA \setminus
+      \bigl\{W \mid W \subset X\bigr\}$ \;
+      \nllabel{alg:fpm:iset:arule:removeW}
+      \tcp{remove all subsets of $X$ from $\cA$}
+    }
+  }
+}
+\end{algorithm}
+\end{frame}

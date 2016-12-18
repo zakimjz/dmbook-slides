@@ -1,0 +1,39 @@
+digraph G {
+      ranksep=0.75;
+      /*nodesep=1.5;*/
+      fontsize=24;
+      {node [shape=record]
+      node [label = "\{\}"] empty;
+      node1 [style=filled, fillcolor=gray, label = "{ A(4)|1345 }"];
+      node2 [style=filled, fillcolor=gray,label = "{ B(4)|2456 }"];
+      node3 [style=filled, fillcolor=gray,label = "{ C(5)|12356 }"];
+      node4 [style=filled, fillcolor=gray,label = "{ D(5)|12345 }"];
+      node11 [style=filled, fillcolor=gray,label = "{ AB(2)|45 }"];
+      node12 [label = "{ AC(3)|135 }"];
+      node13 [style=filled, fillcolor=red,label = "{ AD(4)|1345 }"];
+      node111 [label = "{ ABC(1)|5 }"];
+      node112 [label = "{ ABD(2)|45 }"];      
+      node1111 [style=filled, fillcolor=red,label = "{ ABCD(1)|5 }"];
+      node121 [style=filled, fillcolor=red,label = "{ ACD(3)|135 }"];
+      node21 [style=filled, fillcolor=red,label = "{ BC(3)|256 }"];
+      node22 [style=filled, fillcolor=red,label = "{ BD(3)|245 }"];
+      node211 [label = "{ BCD(2)|25 }"];
+      node31 [style=filled, fillcolor=red,label = "{ CD(4)|1235 }"];
+      }
+
+      empty->node1;
+      empty->node2;
+      empty->node3;
+      empty->node4;
+      node1->node11;
+      node1->node12;
+      node1->node13;
+      node11->node111;
+      node11->node112;
+      node111->node1111;
+      node12->node121;
+      node2->node21;
+      node2->node22;
+      node21->node211;
+      node3->node31;
+}

@@ -1,0 +1,35 @@
+%%%
+%%% Copyright Newgen Imaging systems pvt ltd.
+%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{NGgrid}[2003/07/18 v1.0 grid for text area]
+
+\RequirePackage{graphics,color,ifthen,lenval}
+
+\newboolean{Gd@on}
+\setboolean{Gd@on}{false}
+\newcommand{\grid}{\setboolean{Gd@on}{true}}
+
+\newlength{\Gd@topoffset} %%usually value of \headsep + 0.25pt(rule height) + \headheight
+
+\definecolor{tint}{gray}{0.7}
+
+\newcommand{\Gd@draw}[1]{%
+     \setlength{\Gd@topoffset}{#1}%
+     \addtolength{\Gd@topoffset}{\textheight}%
+     \addtolength{\Gd@topoffset}{0.25pt}%
+     \lenval{\Gd@topoffset}%
+     \ifthenelse{\boolean{Gd@on}}%
+        {\begin{picture}(0,0)(0,\LV@value)%
+              \put(0,0){\textcolor{tint}{\rule{0.25pt}{\textheight}}}%  left
+              \lenval{\textwidth}%
+              \put(\LV@value,0){\textcolor{tint}{\rule{0.25pt}{\textheight}}}%  right
+              \addtolength{\Gd@topoffset}{-#1}%
+              \addtolength{\Gd@topoffset}{-0.25pt}
+              \lenval{\Gd@topoffset}%
+              \put(0,\LV@value){\textcolor{tint}{\rule{\textwidth}{0.25pt}}}%  top
+              \put(0,0){\textcolor{tint}{\rule{\textwidth}{0.25pt}}}%  bottom
+         \end{picture}}%
+        {\relax}%
+    }

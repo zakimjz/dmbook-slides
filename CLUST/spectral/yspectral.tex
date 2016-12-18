@@ -1,0 +1,1067 @@
+\lecture{spectral}{spectral}
+
+\date{Chapter 16: Spectral \& Graph Clustering}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Graphs and Matrices: Adjacency Matrix}
+Given a dataset $\bD = \{\bx_i \}_{i=1}^n$ consisting of $n$ points in $\setR^d$, let $\bA$
+denote the $n \times n$ symmetric {\em similarity matrix} between
+the points, given as
+\begin{align*}
+    \bA = \matr{
+        a_{11} & a_{12} & \cdots & a_{1n}\\
+        a_{21} & a_{22} & \cdots & a_{2n}\\
+        \vdots & \vdots & \cdots & \vdots\\
+        a_{n1} & a_{n2} & \cdots & a_{nn}\\
+    }
+\end{align*}
+where $\bA(i,j) = a_{ij}$ denotes the similarity or aff\/{i}nity
+between points $\bx_i$ and $\bx_{j}$. 
+
+\medskip
+We require the similarity to
+be symmetric and non-negative, that is, $a_{ij} = a_{ji}$ and $a_{ij}
+\ge 0$, respectively. 
+
+\medskip
+The matrix $\bA$ is 
+the {\em weighted adjacency matrix} for the data graph.
+If all aff\/{i}nities are 0 or 1, then $\bA$ represents
+the regular adjacency relationship between the vertices.
+\end{frame}
+
+
+\begin{frame}{Iris Similarity Graph: Mutual Nearest Neighbors}
+  \framesubtitle{$|V|=n=150$, $|E|=m=1730$}
+\begin{figure}
+    \centerline{
+        \scalebox{0.75}{
+        \psset{unit=0.75in,dotscale=2}
+        \begin{pspicture}(5,5)
+            \input{CLUST/spectral/iris-graph}
+        \end{pspicture}
+        }
+    }
+\end{figure}
+Edge weight given as
+\begin{align*}
+    a_{ij} =
+    \exp \lB\{-{\norm{\bx_i - \bx_{j}}^2 \over 2\sigma^2} \rB\}
+\end{align*}
+using $\sigma=1$. An edge exists if both nodes are mutual nearest
+neighbors among top 15 neighbors. Self-loops not shown.
+\end{frame}
+
+
+
+\begin{frame}{Graphs and Matrices: Degree Matrix}
+For a vertex $\bx_i$, let $d_i$ denote the {\em degree} of the
+vertex, def\/{i}ned as
+\begin{align*}
+    d_i = \sum_{j=1}^n a_{ij}
+\end{align*}
+
+We def\/{i}ne the {\em
+degree matrix} $\bDelta$ of graph $G$ as the $n \times n$ diagonal
+matrix:
+\begin{align*}
+    \bDelta = \matr{
+      d_1 & 0 & \cdots & 0 \\
+      0 & d_2 & \cdots & 0\\
+      \vdots & \vdots & \ddots & \vdots\\
+      0 & 0 &\cdots  & d_n \\
+    } =
+    \matr{
+      \sum_{j=1}^n a_{1j} & 0 & \cdots & 0 \\
+      0 & \sum_{j=1}^n a_{2j} & \cdots & 0\\
+      \vdots & \vdots & \ddots & \vdots\\
+      0 & 0 &\cdots  & \sum_{j=1}^n a_{nj} \\
+    }
+\end{align*}
+$\bDelta$ can be compactly written as $\bDelta(i,i) = d_i$ for all
+$1 \le i \le n$.
+\end{frame}
+
+
+
+\begin{frame}{Graphs and Matrices: Normalized Adjacency Matrix}
+The normalized adjacency
+matrix is obtained by dividing each row of the adjacency matrix by
+the degree of the corresponding node. Given the weighted 
+adjacency
+matrix $\bA$ for a graph $G$, its normalized adjacency matrix is
+def\/{i}ned as
+\begin{align*}
+    \bM =  \bDelta^{-1} \bA & =
+    \matr{
+        {a_{11}\over d_1} &  {a_{12}\over d_1} &
+        \cdots &  {a_{1n}\over d_1}\\[1ex]
+        {a_{21}\over d_2} &  {a_{22}\over d_2} &
+        \cdots &  {a_{2n}\over d_2}\\[1ex]
+        \vdots & \vdots & \ddots & \vdots\\
+        {a_{n1}\over d_n} &  {a_{n2}\over d_n} & \cdots &
+        {a_{nn}\over d_n}\\
+    }
+\end{align*}
+Because $\bA$ is assumed to have non-negative elements, this implies
+that each element of $\bM$, namely $m_{ij}$ is also non-negative,
+as $m_{ij} = \tfrac{a_{ij}}{d_i} \ge 0$. 
+
+
+\medskip
+Each row in $\bM$ sums to $1$, which implies that $1$ is an
+eigenvalue of $\bM$. In fact, $\lambda_1 = 1$ is the largest
+eigenvalue of $\bM$, and the other eigenvalues satisfy the
+property that $|\lambda_i| \le 1$. 
+Because $\bM$
+is not symmetric, its eigenvectors are not necessarily orthogonal.
+\end{frame}
+
+
+\begin{frame}{Example Graph: Adjacency and Degree Matrices}
+\begin{figure}
+    \centerline{
+	\scalebox{0.7}{
+        \psset{unit=0.75in,dotscale=2,fillcolor=lightgray,dotstyle=Bo}
+        \begin{pspicture}(0,-0.25)(0,2.25)
+            \psmatrix[mnode=circle]
+                & [name=a] 1 & & & [name=f]6\\
+                [name=b]2 & & [name=d]4 & [name=e]5 & [mnode=none]\\
+                & [name=c]3  & & & [name=g]7
+            \endpsmatrix
+   %         \circlenode*(2,3){a}{1}
+            %\circlenode*(1,2){b}{2}
+            %\circlenode*(2,1){c}{3}
+            %\circlenode*(3,2){d}{4}
+            %\circlenode*(4,2){e}{5}
+            %\circlenode*(5,3){f}{6}
+            %\circlenode*(5,1){g}{7}
+            \ncline{a}{b}
+            \ncline{a}{d}
+            \ncline{a}{f}
+            \ncline{b}{c}
+            \ncline{b}{d}
+            \ncline{c}{d}
+            \ncline{c}{g}
+            \ncline{d}{e}
+            \ncline{e}{f}
+            \ncline{e}{g}
+            \ncline{f}{g}
+        \end{pspicture}
+		}}
+ \end{figure}
+ \small
+    Its adjacency and degree matrices are given as
+    \begin{align*}
+        \bA &= \matr{0 & 1 & 0 & 1 & 0 & 1 & 0\\
+                    1 & 0 & 1 & 1 & 0 & 0 & 0\\
+                    0 & 1 & 0 & 1 & 0 & 0 & 1\\
+                    1 & 1 & 1 & 0 & 1 & 0 & 0\\
+                    0 & 0 & 0 & 1 & 0 & 1 & 1\\
+                    1 & 0 & 0 & 0 & 1 & 0 & 1\\
+                    0 & 0 & 1 & 0 & 1 & 1 & 0} &
+        \bDelta & = \matr{
+                3 & 0 & 0 & 0 & 0 & 0 & 0\\
+                0 & 3 & 0 & 0 & 0 & 0 & 0\\
+                0 & 0 & 3 & 0 & 0 & 0 & 0\\
+                0 & 0 & 0 & 4 & 0 & 0 & 0\\
+                0 & 0 & 0 & 0 & 3 & 0 & 0\\
+                0 & 0 & 0 & 0 & 0 & 3 & 0\\
+                0 & 0 & 0 & 0 & 0 & 0 & 3}
+    \end{align*}
+\end{frame}
+
+
+\begin{frame}{Example Graph: Normalized Adjacency Matrix}
+\begin{figure}
+    \centerline{
+	\scalebox{0.7}{
+        \psset{unit=0.75in,dotscale=2,fillcolor=lightgray,dotstyle=Bo}
+        \begin{pspicture}(0,-0.25)(0,2.25)
+            \psmatrix[mnode=circle]
+                & [name=a] 1 & & & [name=f]6\\
+                [name=b]2 & & [name=d]4 & [name=e]5 & [mnode=none]\\
+                & [name=c]3  & & & [name=g]7
+            \endpsmatrix
+   %         \circlenode*(2,3){a}{1}
+            %\circlenode*(1,2){b}{2}
+            %\circlenode*(2,1){c}{3}
+            %\circlenode*(3,2){d}{4}
+            %\circlenode*(4,2){e}{5}
+            %\circlenode*(5,3){f}{6}
+            %\circlenode*(5,1){g}{7}
+            \ncline{a}{b}
+            \ncline{a}{d}
+            \ncline{a}{f}
+            \ncline{b}{c}
+            \ncline{b}{d}
+            \ncline{c}{d}
+            \ncline{c}{g}
+            \ncline{d}{e}
+            \ncline{e}{f}
+            \ncline{e}{g}
+            \ncline{f}{g}
+        \end{pspicture}
+		}}
+		\vspace{-0.2in}
+ \end{figure}
+ \small
+    The normalized adjacency matrix is as follows:
+    \begin{align*}
+        \bM & = \bDelta^{-1}\bA =
+        \amatr{r}{
+        0& 0.33& 0& 0.33& 0& 0.33& 0\\
+        0.33& 0& 0.33& 0.33& 0& 0& 0\\
+        0& 0.33& 0& 0.33& 0& 0& 0.33\\
+        0.25& 0.25& 0.25& 0& 0.25& 0& 0\\
+        0& 0& 0& 0.33& 0& 0.33& 0.33\\
+        0.33& 0& 0& 0& 0.33& 0& 0.33\\
+        0& 0& 0.33& 0& 0.33& 0.33& 0\\
+        }
+    \end{align*}
+    The eigenvalues of $\bM$ are:
+    $\lambda_1   = 1 $,
+    $\lambda_2  =0.483 $,
+    $\lambda_3  =0.206$,
+    $\lambda_4  = -0.045$,
+    $\lambda_5  =-0.405 $,
+    $\lambda_6  = -0.539 $,
+    $\lambda_7 =-0.7$
+  \end{frame}
+
+
+
+\begin{frame}{Graph Laplacian Matrix}
+The {\em
+Laplacian matrix} of a graph is def\/{i}ned as
+\begin{align*}
+    \bL & = \bDelta - \bA \nonumber\\ %\label{eq:clus:spectral:L}\\
+    & =     \matr{
+      \sum_{j=1}^n a_{1j} & 0 & \cdots & 0 \\
+      0 & \sum_{j=1}^n a_{2j} & \cdots & 0\\
+      \vdots & \vdots & \ddots & \vdots\\
+      0 & 0 &\cdots  & \sum_{j=1}^n a_{nj} \\
+    }
+    -
+    \matr{
+        a_{11} & a_{12} & \cdots & a_{1n}\\
+        a_{21} & a_{22} & \cdots & a_{2n}\\
+        \vdots & \vdots & \cdots & \vdots\\
+        a_{n1} & a_{n2} & \cdots & a_{nn}\\
+    } \notag\\
+     & =    \matr{
+    \sum_{j\ne1} a_{1j} & -a_{12} & \cdots & -a_{1n} \\
+    -a_{21} & \sum_{j\ne2} a_{2j} & \cdots & -a_{2n}\\
+      \vdots & \vdots & \cdots & \vdots\\
+      -a_{n1} & -a_{n2} &\cdots  & \sum_{j\ne n} a_{nj} \\
+    } 
+\end{align*}
+
+$\bL$ is a symmetric, positive
+semidef\/{i}nite matrix.
+This means that $\bL$ has $n$ real, non-negative eigenvalues,
+which can be arranged in decreasing order as follows: $\lambda_1
+\ge \lambda_2 \ge \cdots \ge \lambda_n \ge 0$.  Because $\bL$ is
+symmetric, its eigenvectors are orthonormal. 
+The rank of $\bL$ is at most $n-1$, and the
+smallest eigenvalue is $\lambda_n = 0$.
+\end{frame}
+
+
+
+\begin{frame}{Example Graph: Laplacian Matrix}
+\begin{figure}
+    \centerline{
+	\scalebox{0.7}{
+        \psset{unit=0.75in,dotscale=2,fillcolor=lightgray,dotstyle=Bo}
+        \begin{pspicture}(0,-0.25)(0,2.25)
+            \psmatrix[mnode=circle]
+                & [name=a] 1 & & & [name=f]6\\
+                [name=b]2 & & [name=d]4 & [name=e]5 & [mnode=none]\\
+                & [name=c]3  & & & [name=g]7
+            \endpsmatrix
+   %         \circlenode*(2,3){a}{1}
+            %\circlenode*(1,2){b}{2}
+            %\circlenode*(2,1){c}{3}
+            %\circlenode*(3,2){d}{4}
+            %\circlenode*(4,2){e}{5}
+            %\circlenode*(5,3){f}{6}
+            %\circlenode*(5,1){g}{7}
+            \ncline{a}{b}
+            \ncline{a}{d}
+            \ncline{a}{f}
+            \ncline{b}{c}
+            \ncline{b}{d}
+            \ncline{c}{d}
+            \ncline{c}{g}
+            \ncline{d}{e}
+            \ncline{e}{f}
+            \ncline{e}{g}
+            \ncline{f}{g}
+        \end{pspicture}
+		}}
+		\vspace{-0.2in}
+ \end{figure}
+\small
+ The graph Laplacian is given as
+    \begin{align*}
+        \bL = \bDelta-\bA =
+        \amatr{r}{
+                 3 &  -1 &   0 &  -1 &   0 &  -1 &   0\\
+                -1 &   3 &  -1 &  -1 &   0 &   0 &   0\\
+                 0 &  -1 &   3 &  -1 &   0 &   0 &  -1\\
+                -1 &  -1 &  -1 &   4 &  -1 &   0 &   0\\
+                 0 &   0 &   0 &  -1 &   3 &  -1 &  -1\\
+                -1 &   0 &   0 &   0 &  -1 &   3 &  -1\\
+                 0 &   0 &  -1 &   0 &  -1 &  -1 &   3}
+    \end{align*}
+    The eigenvalues of $\bL$ are as follows:
+    $\lambda_1= 5.618$,
+    $\lambda_2=4.618$,
+    $\lambda_3= 4.414 $,
+    $\lambda_4=3.382$,
+    $\lambda_5=2.382 $,
+    $\lambda_6=1.586 $,
+    $\lambda_7= 0$  
+\end{frame}
+
+
+\begin{frame}{Normalized Laplacian Matrices}
+  \small
+The {\em normalized
+symmetric Laplacian matrix} of a graph is def\/{i}ned as
+\begin{align*}
+    \bL^s & = \bDelta^{-1/2}\bL\bDelta^{-1/2}
+          =    \matr{
+     {\sum_{j\ne1} a_{1j} \over \sqrt{d_1d_1}} & -{a_{12} \over
+     \sqrt{d_1d_2}} & \cdots & -{a_{1n} \over \sqrt{d_1d_n}}
+     \\[1ex]
+     -{a_{21} \over \sqrt{d_2d_1}} & {\sum_{j\ne2}a_{2j} \over
+     \sqrt{d_2d_2}} & \cdots & -{a_{2n} \over \sqrt{d_2d_n}} \\
+      \vdots & \vdots & \ddots & \vdots\\
+      -{a_{n1} \over \sqrt{d_nd_1}} & -{a_{n2} \over
+      \sqrt{d_nd_2}} & \cdots & {\sum_{j\ne n}a_{nj} \over
+      \sqrt{d_nd_n}} \\
+      } 
+\end{align*}
+$\bL^s$ is a symmetric, positive semidef\/{i}nite matrix, with 
+rank at most $n-1$. The
+smallest eigenvalue $\lambda_n = 0$.
+
+The {\em normalized asymmetric Laplacian} matrix is def\/{i}ned as
+\begin{align*}
+    \bL^a &= \bDelta^{-1} \bL
+     = \matr{
+    {\sum_{j\ne1} a_{1j} \over d_1} & -{a_{12} \over d_1} &
+    \cdots & -{a_{1n} \over d_1} \\[1ex]
+    -{a_{21}\over d_2} & {\sum_{j\ne2} a_{2j} \over d_2}
+    & \cdots & -{a_{2n} \over d_2}\\
+      \vdots & \vdots & \ddots & \vdots\\
+      -{a_{n1} \over d_n} & -{a_{n2} \over d_n} &\cdots
+      & {\sum_{j\ne n} a_{nj} \over d_n} \\
+    }
+\end{align*}
+$\bL^a$ is also a
+positive semi-def\/{i}nite matrix with $n$ real eigenvalues $\lambda_1
+\ge \lambda_2 \ge \dots \ge \lambda_n = 0$.
+\end{frame}
+
+
+
+\begin{frame}{Example Graph: Normalized Symmetric Laplacian Matrix}
+\begin{figure}
+    \centerline{
+	\scalebox{0.6}{
+        \psset{unit=0.75in,dotscale=2,fillcolor=lightgray,dotstyle=Bo}
+        \begin{pspicture}(0,-0.25)(0,2.25)
+            \psmatrix[mnode=circle]
+                & [name=a] 1 & & & [name=f]6\\
+                [name=b]2 & & [name=d]4 & [name=e]5 & [mnode=none]\\
+                & [name=c]3  & & & [name=g]7
+            \endpsmatrix
+            \ncline{a}{b}
+            \ncline{a}{d}
+            \ncline{a}{f}
+            \ncline{b}{c}
+            \ncline{b}{d}
+            \ncline{c}{d}
+            \ncline{c}{g}
+            \ncline{d}{e}
+            \ncline{e}{f}
+            \ncline{e}{g}
+            \ncline{f}{g}
+        \end{pspicture}
+		}}
+		\vspace{-0.2in}
+ \end{figure}
+\small
+The    normalized symmetric Laplacian is given as
+    \begin{align*}
+        \bL^s & = \amatr{r}{
+     1 &-0.33 & 0 &-0.29 & 0 &-0.33 & 0\\
+    -0.33 & 1 &-0.33 &-0.29 & 0 & 0 & 0\\
+     0 &-0.33 & 1 &-0.29 & 0 & 0 &-0.33\\
+    -0.29 &-0.29 &-0.29 & 1 &-0.29 & 0 & 0\\
+     0 & 0 & 0 &-0.29 & 1 &-0.33 &-0.33\\
+    -0.33 & 0 & 0 & 0 &-0.33 & 1 &-0.33\\
+     0 & 0 &-0.33 & 0 &-0.33 &-0.33 & 1\\
+    }
+    \end{align*}
+    The eigenvalues of $\bL^s$ are as follows:
+    $\lambda_1 = 1.7$,
+    $\lambda_2 =1.539$,
+    $\lambda_3 = 1.405$,
+    $\lambda_4 =1.045$,
+    $\lambda_5 =0.794$,
+    $\lambda_6 =0.517$,
+    $\lambda_7 = 0 $
+\end{frame}
+
+
+
+\begin{frame}{Example Graph: Normalized Asymmetric Laplacian Matrix}
+\begin{figure}
+    \centerline{
+	\scalebox{0.6}{
+        \psset{unit=0.75in,dotscale=2,fillcolor=lightgray,dotstyle=Bo}
+        \begin{pspicture}(0,-0.25)(0,2.25)
+            \psmatrix[mnode=circle]
+                & [name=a] 1 & & & [name=f]6\\
+                [name=b]2 & & [name=d]4 & [name=e]5 & [mnode=none]\\
+                & [name=c]3  & & & [name=g]7
+            \endpsmatrix
+            \ncline{a}{b}
+            \ncline{a}{d}
+            \ncline{a}{f}
+            \ncline{b}{c}
+            \ncline{b}{d}
+            \ncline{c}{d}
+            \ncline{c}{g}
+            \ncline{d}{e}
+            \ncline{e}{f}
+            \ncline{e}{g}
+            \ncline{f}{g}
+        \end{pspicture}
+		}}
+		\vspace{-0.2in}
+ \end{figure}
+\small
+    The normalized asymmetric Laplacian matrix is given as
+    \begin{align*}
+        \bL^a = \bDelta^{-1}\bL =
+        \amatr{r}{
+         1   & -0.33&  0   & -0.33&  0   & -0.33&  0\\
+        -0.33&  1   & -0.33& -0.33&  0   &  0   &  0\\
+         0   & -0.33&  1   & -0.33&  0   &  0   & -0.33\\
+        -0.25& -0.25& -0.25&  1   & -0.25&  0   &  0\\
+         0   &  0   &  0   & -0.33&  1   & -0.33& -0.33\\
+        -0.33&  0   &  0   &  0   & -0.33&  1   & -0.33\\
+         0   &  0   & -0.33&  0   & -0.33& -0.33&  1}
+    \end{align*}
+    The eigenvalues of $\bL^a$ are identical to those for $\bL^s$,
+    namely
+    $\lambda_1 = 1.7$,
+    $\lambda_2 =1.539$,
+    $\lambda_3 = 1.405$,
+    $\lambda_4 =1.045$,
+    $\lambda_5 =0.794$,
+    $\lambda_6 =0.517$,
+    $\lambda_7 = 0 $
+  \end{frame}
+
+
+\begin{frame}{Clustering as Graph Cuts}
+A {\em $k$-way cut} in a graph is a partitioning or clustering of
+the vertex set, given as $\cC = \{C_1, \ldots, C_k\}$.
+We require $\cC$ to optimize
+some objective function that captures the intuition that nodes
+within a cluster should have high similarity, and nodes from
+different clusters should have low similarity.
+
+\medskip
+Given a weighted graph $G$ def\/{i}ned by its similarity matrix $\bA$,
+let $S, T \subseteq V$ be any two
+subsets of the vertices. We denote by $W(S,T)$ the sum of the
+weights on all edges with one vertex in $S$ and the other in $T$,
+given as
+\begin{align*}
+    W(S, T) = \sum_{v_i \in S} \sum_{v_{j} \in T} a_{ij}
+\end{align*}
+
+\medskip
+Given $S \subseteq V$, we denote by $\ol{S}$ the complementary set
+of vertices, that is, $\ol{S} = V - S$. A {\em (vertex) cut} in a
+graph is def\/{i}ned as a partitioning of $V$ into $S \subset V$ and
+$\ol{S}$. The {\em weight of the cut} or {\em cut weight} is
+def\/{i}ned as the sum of all the weights on
+edges between vertices in $S$
+and $\ol{S}$, given as $W(S, \ol{S})$.
+\end{frame}
+
+
+\begin{frame}{Cuts and Matrix Operations}
+  \small
+Given a clustering $\cC = \{C_1,\dots,C_k\}$ comprising $k$ clusters.
+Let $\bc_i \in \{0,1\}^n$ be the {\em cluster indicator vector}
+that records the cluster membership for cluster $C_i$, def\/{i}ned as
+\begin{align*}
+    c_{ij} =
+        \begin{cases}
+            1 & \text{if $v_{j} \in C_i$}\\
+            0 & \text{if $v_{j} \not\in C_i$}\\
+        \end{cases}
+\end{align*}
+The cluster size can be written as
+\begin{align*}
+    \card{C_i} = \bc_i^T\bc_i = \norm{\bc_i}^2
+\end{align*}
+The {\em volume} of a cluster
+$C_i$ is def\/{i}ned as the sum of all the weights on edges with one
+end in cluster $C_i$:
+\begin{align*}
+    vol(C_i) = W(C_i, V)  = \sum_{v_r \in C_i} d_r
+    = \sum_{v_r \in C_i} c_{ir} d_r c_{ir}
+     = \sum_{r=1}^n \sum_{s=1}^n c_{ir} \bDelta_{rs} c_{is}
+     = \bc_i^T \bDelta \bc_i
+\end{align*}
+The sum of weights of all internal edges is:
+\begin{align*}
+    W(C_i, C_i) & = \sum_{v_r \in C_i} \sum_{v_s \in C_i}
+    a_{rs}
+     = \sum_{r=1}^n \sum_{s=1}^n c_{ir} a_{rs} c_{is} = \bc_i^T
+    \bA \bc_i
+\end{align*}
+We can get the sum of weights for all the external edges as follows:
+\begin{align*}
+    W(C_i, \ol{C_i}) & = \sum_{v_r \in C_i} \sum_{v_s \in
+    V- C_i} a_{rs} = W(C_i,V) - W(C_i,C_i)
+     = \bc_i (\bDelta - \bA) \bc_i = \bc_i^T \bL \bc_i
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Clustering Objective Functions: Ratio Cut}
+The clustering objective function can be formulated as an
+optimization \hbox{problem} over the $k$-way cut $\cC =
+\{C_1,\dots,C_k\}$. 
+
+The {\em ratio cut} objective is def\/{i}ned
+over a $k$-way cut as follows:
+\begin{align*}
+    \min_\cC \; J_{rc}(\cC) & = \sum_{i=1}^k {W(C_i, \ol{C_i}) \over
+    \card{C_i}} =  \sum_{i=1}^k {\bc_i^T \bL \bc_i \over
+    \bc_i^T\bc_i} = \sum_{i=1}^k {\bc_i^T \bL \bc_i \over
+    \norm{\bc_i}^2}
+\end{align*}
+Ratio cut tries to minimize the sum of the similarities from a
+cluster $C_i$ to other points not in the cluster $\ol{C_i}$,
+taking into account the size of each cluster. 
+
+
+Unfortunately, for binary cluster indicator vectors $\bc_i$, the
+ratio cut objective is NP-hard. An obvious relaxation is to allow
+$\bc_i$ to take on any real value. In this case, we can rewrite
+the objective as
+\begin{align*}
+    \min_\cC \; J_{rc}(\cC) = \sum_{i=1}^k {\bc_i^T \bL \bc_i
+    \over \norm{\bc_i}^2} =
+    \sum_{i=1}^k \cramped{\lB({\bc_i \over \norm{\bc_i}}\rB)^T}
+        \bL
+        \cramped{\lB({\bc_i \over \norm{\bc_i}}\rB)}
+        =  \sum_{i=1}^k \bu_i^T \bL \bu_i
+\end{align*}
+The optimal solution comprises the eigenvectors corresponding to the 
+$k$ smallest eigenvalues of $\bL$, i.e., the eigenvectors
+$\bu_n, \bu_{n-1}, \dots, \bu_{n-k+1}$ represent the relaxed
+cluster indicator vectors.
+\end{frame}
+
+
+\begin{frame}{Clustering Objective Functions: Normalized Cut}
+
+{\em Normalized cut} is similar to
+ratio cut, except that it divides the cut weight of each cluster
+by the volume of a cluster instead of its size. The objective
+function is given as
+\begin{align*}
+    \min_\cC \; J_{nc}(\cC) = \sum_{i=1}^k {W(C_i, \ol{C_i}) \over
+    vol(C_i)} = \sum_{i=1}^k {\bc_i^T \bL \bc_i  \over
+    \bc_i^T \bDelta \bc_i}
+\end{align*}
+We can obtain an optimal solution by allowing $\bc_i$ to 
+be an arbitrary real vector. 
+
+\medskip
+The optimal solution comprise the eigenvectors corresponding to the 
+$k$ smallest eigenvalues of either the normalized symmetric or asymmetric
+ Laplacian matrices, $\bL^s$ and $\bL^a$.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Spectral Clustering Algorithm}
+
+The spectral clustering algorithm takes a dataset $\bD$ as
+input and computes the similarity matrix $\bA$.  
+For normalized cut we chose either $\bL^s$
+or $\bL^a$, whereas for ratio cut we choose $\bL$. 
+Next, we
+compute the $k$ smallest eigenvalues and corresponding 
+eigenvectors of the chosen matrix.
+
+\medskip
+The main problem is that the eigenvectors $\bu_i$
+are not binary, and thus it is not immediately clear how we can
+assign points to clusters. 
+
+\medskip
+One solution to this problem is to
+treat the $n \times k$ matrix of eigenvectors as a new data matrix:
+\begin{align*}
+    \bU = \matr{
+    | & | &  & | \\
+    \bu_n & \bu_{n-1} & \cdots & \bu_{n-k+1}\\
+    | & | &  & | \\
+    }
+	\rightarrow
+	\text{ normalize rows }
+	\rightarrow
+	\matr{
+    \mbox{---} & \by_1^T &\mbox{---}\\
+    \mbox{---} & \by_2^T &\mbox{---}\\
+    &\vdots&\\
+    \mbox{---} & \by_n^T &\mbox{---}\\
+    }
+	= \bY
+\end{align*}
+We then cluster the new points in $\bY$ into $k$ clusters via
+the K-means algorithm or any other fast clustering method to obtain
+binary cluster indicator vectors $\bc_i$.
+\end{frame}
+
+
+
+\newcommand{\spectral}{\textsc{Spectral Clustering}}
+\begin{frame}[fragile]{Spectral Clustering Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\spectral\ ($\bD, k$)} \Algorithm{} Compute
+the similarity matrix $\bA \in \setR^{n\times n}$\; \lIf{ratio
+cut}{
+    \nllabel{alg:clus:spectral:spectral:lineBs}
+    $\bB \assign \bL$}
+\lElseIf{normalized cut}{$\bB \assign \bL^s \text{ or } \bL^a$}
+Solve $\bB \bu_i = \lambda_i \bu_i$ for $i=n,\dots,n-k+1$, where
+$\lambda_n \le \lambda_{n-1} \le \dots \le \lambda_{n-k+1}$
+\nllabel{alg:clus:spectral:spectral:eig}\;
+$\bU \assign \matr{\bu_n & \bu_{n-1}& \cdots & \bu_{n-k+1}}$\;
+$\bY \assign$ normalize rows of $\bU$ \; %using Eq.\nosp\eqref{eq:clus:spectral:yi}\;
+ $\cC \assign \{C_1,\dots,C_k\}$ via K-means on $\bY$\;
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{Spectral Clustering on Example Graph}
+  \framesubtitle{$k=2$, normalized cut (normalized asymmetric Laplacian)}
+\begin{figure}
+    \centerline{
+	\scalebox{0.6}{
+        \psset{unit=0.75in,dotscale=2,fillcolor=lightgray,dotstyle=Bo}
+        \begin{pspicture}(0,-0.25)(0,2.25)
+            \psmatrix[mnode=circle]
+                & [name=a] 1 & & & [name=f]6\\
+                [name=b]2 & & [name=d]4 & [name=e]5 & [mnode=none]\\
+                & [name=c]3  & & & [name=g]7
+            \endpsmatrix
+            \ncline{a}{b}
+            \ncline{a}{d}
+            \ncline{a}{f}
+            \ncline{b}{c}
+            \ncline{b}{d}
+            \ncline{c}{d}
+            \ncline{c}{g}
+            \ncline{d}{e}
+            \ncline{e}{f}
+            \ncline{e}{g}
+            \ncline{f}{g}
+        \end{pspicture}
+		}}
+		\vspace{0.2in}
+    \centerline{
+	\scalebox{0.6}{
+    \psset{xunit=5in,yunit=1in,
+        dotscale=1.5,arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$\bu_1$,yAxisLabel= $\bu_2$}
+    \psgraph[tickstyle=bottom,Dx=0.1,Ox=-1,Dy=0.5,Oy=-1]{->}%
+    (-1,-1)(-1,-1)(-0.5,1){3in}{2in}
+    \psset{dotstyle=Bo,fillcolor=lightgray}
+    \psdots[](-0.8585673,-0.5127008)(-0.6036752,-0.7972304)%
+    (-0.8585673,-0.5127008)(-0.8117383,-0.5840214)%
+    (-0.6644345,0.7473465)(-0.6482062,0.7614649)%
+    (-0.6482062,0.7614649)
+      \uput[90](-0.86,-0.5){\small $1,3$}
+        \uput[90](-0.6,-0.8){\small $2$}
+        \uput[90](-0.81,-0.584){\small $4$}
+        \uput[90](-0.66,0.747){\small $5$}
+        \uput[30](-0.65,0.761){\small $6,7$}
+    \psset{fillcolor=black}
+    \pstGeonode[PointSymbol=none, dotscale=2](-0.654,0.756){A}
+    \pstGeonode[PointSymbol=none, dotscale=2](-0.783,-0.602){B}
+    \psclip{\psframe[](-1,-1)(-0.5,1)}%
+    {
+    \psset{linestyle=none, PointSymbol=none}
+    \pstMediatorAB{A}{B}{K}{KP}
+    \psset{linewidth=1pt,linestyle=dashed}
+    \pstGeonode[PointSymbol=none](-1,-1){a}(-1,1){b}(-0.5,1){c}(-0.5,-1){d}
+    \pstInterLL[PointSymbol=none]{K}{KP}{b}{c}{ku}
+    \pstLineAB{K}{ku}
+    \pstInterLL[PointSymbol=none]{K}{KP}{a}{d}{kd}
+    \pstLineAB{K}{kd}
+    }
+    \endpsclip
+    \endpsgraph
+	}}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Normalized Cut on Iris Graph}
+  \framesubtitle{$k=3$, normalized asymmetric Laplacian}
+\begin{figure}
+    \centerline{
+        \scalebox{0.55}{
+            \psset{unit=0.75in,dotscale=2}
+            \begin{pspicture}(5,5)
+                \input{CLUST/spectral/iris-graph-normalized}
+            \end{pspicture}
+        }
+    }
+\end{figure}
+\centerline{
+\begin{tabular}{|c|c|c|c|}
+        \hline
+         & {\tt setosa} & {\tt virginica} & {\tt versicolor}\\
+         \hline
+        $C_1$ (triangle) & 50 & 0 & 4\\
+        $C_2$ (square) & 0 & 36 & 0\\
+        $C_3$ (circle) & 0 & 14 & 46 \\
+        \hline
+    \end{tabular}
+	}
+\end{frame}
+
+
+\begin{frame}{Maximization Objectives: Average Cut}
+ The {\em average weight} objective is
+def\/{i}ned as
+\begin{align*}
+    \max_{\cC}\; J_{aw}(\cC) & =
+    \sum_{i=1}^k {W(C_i,C_i) \over |C_i|} =
+    \sum_{i=1}^k {\bc^T_i \bA \bc_i
+    \over \bc_i^T\bc_i}
+	= \sum_{i=1}^k \bu_i^T \bA \bu_i
+\end{align*}
+where $\bu_i$ is an arbitrary real vector, which is a relaxation of the
+binary cluster indicator vectors $\bc_i$.
+
+\medskip
+We can maximize
+the objective by selecting the $k$ largest eigenvalues of $\bA$,
+and the corresponding eigenvectors.
+
+\begin{align*}
+    \max_{\cC} \; J_{aw}(\cC) &=
+    \bu^T_1 \bA \bu_1 + \dots + \bu^T_k \bA \bu_k\\
+    & = \lambda_1 + \dots + \lambda_k
+\end{align*}
+where $\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_n$.
+In general, while $\bA$ is symmetric, it may not be 
+positive semidef\/{i}nite. This means
+that $\bA$ can have negative eigenvalues, and to maximize the objective 
+we must consider only the positive eigenvalues and the
+corresponding eigenvectors.
+\end{frame}
+
+\begin{frame}{Maximization Objectives: Modularity}
+Given $\bA$, the weighted adjacency
+matrix, the modularity of a clustering is the
+difference between the observed and expected fraction of weights
+on edges within the clusters. 
+The clustering objective is given as
+\begin{align*}
+    \max_{\cC} \; J_{Q}(\cC) &= \sum_{i=1}^k
+    \lB( {\bc_i^T \bA \bc_i \over tr(\bDelta)} -
+        {(\bd_i^T \bc_i)^2 \over tr(\bDelta)^2}
+    \rB)
+    = \sum_{i=1}^k \bc_i^T \bQ \bc_i
+\end{align*}
+where $\bQ$ is the {\em modularity matrix}:
+\begin{align*}
+    \bQ = {1 \over tr(\bDelta)} \lB(\bA - {\bd \cdot
+    \bd^T \over tr(\bDelta)} \rB)
+\end{align*}
+The optimal solution comprises the eigenvectors corresponding to the $k$
+largest eigenvalues of $\bQ$.
+Since $\bQ$ is
+symmetric, but not positive semidef\/{i}nite, we use only 
+the positive eigenvalues.
+\end{frame}
+
+
+\begin{frame}{Markov Chain Clustering}
+A Markov chain is a discrete-time stochastic process
+over a set of states, in our case the set of vertices $V$. 
+
+\medskip
+The
+Markov chain makes a transition from one node to another at
+discrete timesteps $t=1,2,\dots$, with the probability of making
+a transition from node $i$ to node $j$ given as $m_{ij}$. 
+
+\medskip
+Let the
+random variable $X_t$ denote the state at time $t$. The Markov
+property means that the probability distribution of $X_t$ over the
+states at time $t$ depends only on the probability distribution of
+$X_{t-1}$, that is,
+\begin{align*}
+P(X_{t}=i | X_0, X_1, \dots, X_{t-1}) = P(X_{t}=i | X_{t-1})
+\end{align*}
+Further, we assume that the Markov chain is {\em homogeneous},
+that is, the transition probability
+\begin{align*}
+P(X_t = j | X_{t-1} = i) = m_{ij}
+\end{align*}
+is independent of the time step $t$.
+\end{frame}
+
+
+
+\begin{frame}{Markov Chain Clustering: Markov Matrix}
+The normalized adjacency matrix
+$\bM = \bDelta^{-1} \bA$ can be interpreted as
+the $n\times n$ {\em transition matrix} where the entry $m_{ij} =
+{a_{ij} \over d_i}$ is the probability of
+transitioning or jumping from node $i$ to node $j$ in the graph
+$G$. 
+
+\medskip
+The matrix $\bM$ is thus the transition matrix for a {\em Markov
+chain} 
+or a Markov random walk on
+graph $G$. That is,
+given node $i$ the transition matrix $\bM$ specif\/{i}es the
+probabilities of reaching any other node $j$ in one time step.
+
+
+\medskip
+In general, the transition probability matrix
+for
+ $t$ time steps is given as
+\begin{align*}
+     \bM^{t-1} \cdot \bM = \bM^t
+\end{align*}
+\end{frame}
+
+\begin{frame}{Markov Chain Clustering: Random Walk}
+A random walk on $G$ thus corresponds to taking successive powers
+of the transition matrix $\bM$. 
+
+\medskip
+Let $\bpi_0$ specify the initial
+state probability vector at time $t=0$.
+The state probability vector after 
+$t$ steps is
+\begin{align*}
+    \bpi_t^T & = \bpi_{t-1}^T \bM =
+    \bpi_{t-2}^T\bM^2 = \cdots
+     = \bpi_0^T \bM^{t}
+\end{align*}
+Equivalently, taking transpose on both sides, we
+get
+  $$\bpi_t  = (M^t)^T \bpi_0 = (\bM^T)^t \bpi_0$$
+The state probability vector thus converges to the dominant
+eigenvector of $\bM^T$.
+\end{frame}
+
+
+\begin{frame}{Markov Clustering Algorithm}
+Consider a variation of the random walk, where the
+probability of transitioning from node $i$ to $j$ is inflated by
+taking each element $m_{ij}$ to the power $r \ge 1$. Given a
+transition matrix $\bM$, def\/{i}ne the inflation operator $\Upsilon$
+as follows:
+\begin{align*}
+    \Upsilon(\bM,r) = \lB\{
+        \frac{(m_{ij})^r}{\sum_{a=1}^n (m_{ia})^r}
+    \rB\}_{i,j=1}^n
+\end{align*}
+The net
+effect of the inflation operator is to increase the higher
+probability transitions and decrease the lower probability
+transitions.
+
+\medskip
+The Markov clustering
+algorithm (MCL) is an iterative method that interleaves matrix expansion
+and inflation steps. Matrix expansion corresponds to taking
+successive powers of the transition matrix, leading to random
+walks of longer lengths. On the other hand, matrix inflation makes
+the higher probability transitions even more likely and reduces
+the lower probability transitions.
+
+\medskip
+MCL
+takes as input the inflation parameter $r\ge1$. Higher values lead
+to more, smaller clusters, whereas smaller values lead to fewer,
+but larger clusters.  
+
+\end{frame}
+
+
+\begin{frame}{Markov Clustering Algorithm: MCL}
+The f\/{i}nal clusters are found by enumerating the weakly connected
+components in the directed graph induced by the converged
+transition matrix $\bM_t$, where the edges are defined as:
+\begin{align*}
+    E = \bigl\{(i,j) \mid \bM_t(i,j) > 0\bigr\}
+\end{align*}
+A directed edge $(i,j)$ exists only if node $i$
+can transition to node $j$ within $t$ steps of the expansion and
+inflation process. 
+
+\medskip
+A node $j$ is called an {\em attractor} if
+$\bM_t(j,j) > 0$, and we say that node $i$ is attracted to
+attractor $j$ if $\bM_t(i,j) > 0$. The MCL process yields a set of
+attractor nodes, $V_a \subseteq V$, such that other nodes are
+attracted to at least one attractor in $V_a$. 
+
+\medskip
+To extract the
+clusters from $G_t$, MCL f\/{i}rst f\/{i}nds the strongly
+connected components $S_1, S_2, \dots, S_q$ over the set of
+attractors $V_a$. Next, for each strongly connected set of
+attractors $S_{j}$, MCL f\/{i}nds the weakly connected
+ components consisting of all nodes $i \in V_t-V_a$
+ attracted to an attractor in $S_{j}$. If a node $i$ is attracted to
+ multiple strongly connected components, it is added to each such
+ cluster, resulting in possibly overlapping clusters.
+\end{frame}
+
+
+
+
+\newcommand{\MCL}{{\textsc{Markov Clustering}}}
+\begin{frame}{Algorithm \MCL}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\MCL\ ($\bA, r, \epsilon$)} \Algorithm{}
+$t\assign 0$\; Add self-edges to $\bA$ if they do not exist\;
+$\bM_t \assign  \bDelta^{-1} \bA$\; \Repeat{$\norm{\bM_t -
+\bM_{t-1}}_F \le \epsilon$}{
+    $t \assign  t+1$\;
+    $\bM_t \assign  \bM_{t-1} \cdot \bM_{t-1}$\;
+    $\bM_t \assign  \Upsilon(\bM_t, r)$\;
+} $G_t \assign  \text{directed graph induced by } \bM_t$\; $\cC
+\assign  \{ \text{weakly connected components in } G_t\}$\;
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{MCL Attractors and Clusters}
+  \framesubtitle{$r=2.5$}
+\begin{figure}
+    \centerline{
+	\scalebox{0.6}{
+        \psset{unit=0.75in,dotscale=2,fillcolor=lightgray,dotstyle=Bo}
+        \begin{pspicture}(0,-0.25)(0,2.25)
+            \psmatrix[mnode=circle]
+                & [name=a] 1 & & & [name=f]6\\
+                [name=b]2 & & [name=d]4 & [name=e]5 & [mnode=none]\\
+                & [name=c]3  & & & [name=g]7
+            \endpsmatrix
+            \ncline{a}{b}
+            \ncline{a}{d}
+            \ncline{a}{f}
+            \ncline{b}{c}
+            \ncline{b}{d}
+            \ncline{c}{d}
+            \ncline{c}{g}
+            \ncline{d}{e}
+            \ncline{e}{f}
+            \ncline{e}{g}
+            \ncline{f}{g}
+        \end{pspicture}
+		}}
+		\vspace{0.2in}
+\centerline{
+\scalebox{0.8}{
+\psset{unit=0.75in,fillcolor=lightgray,arrowscale=1.5}
+\begin{pspicture}(0,-0.25)(0,2.25)
+    \psmatrix[mnode=circle]
+        & [name=a] 1 & & & [name=f,fillstyle=solid]6\\
+        [name=b]2 & & [name=d,fillstyle=solid]4 & [name=e]5 & [mnode=none]\\
+        & [name=c]3  & & & [name=g,fillstyle=solid]7
+    \endpsmatrix
+    \ncline{->}{a}{d}\naput{1}
+    \ncline{->}{b}{d}\naput{1}
+    \ncline{->}{c}{d}\naput{1}
+    \ncline{->}{e}{f}\naput{0.5}
+    \ncline{->}{e}{g}\naput{0.5}
+    \ncline{-}{f}{g}\naput{0.5}
+    \nccircle[angleA=-90]{->}{d}{0.15in}
+    \nccircle[angleA=-90]{->}{f}{0.15in}
+    \nccircle[angleA=-90]{->}{g}{0.15in}
+\end{pspicture}
+} }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{MCL on Iris Graph}
+\begin{figure}
+    \begin{center}
+        \subfloat[$r=1.3$]{
+        \label{fig:clust:spectral:irisMCLa}
+        \scalebox{0.55}{
+            \psset{unit=0.75in,dotscale=2}
+            \begin{pspicture}(5,5)
+                \input{CLUST/spectral/iris-graph-MCL1.3}
+            \end{pspicture}
+        }}
+        \hspace{0.1in}
+        \subfloat[$r=2$]{
+        \label{fig:clust:spectral:irisMCLb}
+        \scalebox{0.55}{
+            \psset{unit=0.75in,dotscale=2}
+            \begin{pspicture}(5,5)
+                \input{CLUST/spectral/iris-graph-MCL2}
+            \end{pspicture}
+        }}
+    \end{center}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Contingency Table: MCL Clusters versus Iris Types}
+  \framesubtitle{$r=1.3$}
+\renewcommand{\arraystretch}{1.1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+        \hline
+         & {\tt iris-setosa} & {\tt iris-virginica} & {\tt
+         iris-versicolor}\\
+         \hline
+        $C_1$ (triangle) & 50 & 0 & 1\\
+        $C_2$ (square) & 0 & 36 & 0\\
+        $C_3$ (circle) & 0 & 14 & 49 \\
+        \hline
+    \end{tabular}
+\end{center}
+\end{frame}

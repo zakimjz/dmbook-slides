@@ -1,0 +1,13 @@
+\ProvidesPackage{smcaps}
+\DeclareRobustCommand{\sm@ller}{%
+\dimen@\f@size\p@
+\ifdim \dimen@ > 12\p@
+	\dimen@=0.83333\dimen@
+\else
+	\advance \dimen@ -2\p@
+\fi
+\math@fontsfalse
+\fontsize{\the\dimen@}\z@
+\selectfont
+}
+\newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}

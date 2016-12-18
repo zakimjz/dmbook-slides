@@ -1,0 +1,20 @@
+  855  more run.csh
+  856  history
+  857  ln -s ../iris30/cleanswap.sed 
+  858  ls *.dat | awk '{print "sed -f cleanswap.sed " $1 "| awk -f statsfreq.awk > " $1".stat"}' | sh
+  859  ca *dat.stat | awk -f sumstat.awk
+  860  ln -s ../iris30/sumstat.awk 
+  861  cat *dat.stat | awk -f sumstat.awk
+  862  cd ../iris1
+  863  ls
+  864  history
+  865  ln -s ../iris30/cleanswap.sed 
+  866  ln -s ../iris30/sumstat.awk 
+  867  ls *.dat | awk '{print "sed -f cleanswap.sed " $1 "| awk -f statsfreq.awk > " $1".stat"}' | sh
+  868  history
+  869  ln -s ../iris30/statsfreq.awk 
+  870  ls *.dat | awk '{print "sed -f cleanswap.sed " $1 "| awk -f statsfreq.awk > " $1".stat"}' | sh
+  871  ln -s ../iris30/sumstat.awk 
+  872  cat *dat.stat | awk -f sumstat.awk
+  873  history | tail -20
+  874  history | tail -20 > tt

@@ -1,0 +1,869 @@
+\lecture{decisiontrees}{decisiontrees}
+
+\date{Chapter 19: Decision Tree Classifier}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\begin{frame}{Decision Tree Classif\/{i}er}
+  \small
+Let the training dataset $\bD = \{\bx_i, y_i\}_{i=1}^n$ consist of
+$n$ points in a $d$-dimensional space, with $y_i$ being the class
+label for point $\bx_i$.  
+
+\medskip
+A
+decision tree classif\/{i}er is a recursive, partition-based tree
+model that predicts the class $\hat{y}_i$ for each point $\bx_i$.
+
+\medskip
+Let $\cR$ denote the data space that encompasses the set of input
+points $\bD$. A decision tree uses an axis-parallel hyperplane
+ to
+split the data space $\cR$ into two resulting half-spaces or
+regions, say $\cR_1$ and $\cR_2$, which also induces a partition
+of the input points into $\bD_1$ and $\bD_2$, respectively. 
+
+\medskip
+Each
+of these regions is recursively split via axis-parallel
+hyperplanes until most of
+the points belong to the same class.  
+
+
+\medskip
+To classify a new {\em test} point we have to
+recursively evaluate which half-space it belongs to until we reach
+a leaf node in the decision tree, at which point we predict its
+class as the label of the leaf.
+\end{frame}
+
+
+
+\readdata{\dataSLW}{CLASS/decisiontrees/figs/iris-slwc.txt}
+\begin{frame}{Decision Tree: Recursive Splits}
+\begin{figure}
+%\begin{figure}[!t]\vspace*{14pt}
+%    \vspace{0.2in}
+%    \psset{dotscale=1.5,fillcolor=lightgray,
+%        arrowscale=2,PointName=none}
+%    \centerline{
+%    \subfloat[Recursive Splits]{
+%  \label{fig:class:dt:irisSlwc:data}
+
+    \hspace*{-1.5cm}
+    \scalebox{0.83}{%
+    \begin{pspicture}(-3.5,-1)(4,7)
+    \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+    %\psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+    %Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+    \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+    Ox=4.3,Oy=2]{->}(4.3,2.0)(7.9,4.4){4in}{3in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+        nEnd=50,plotNo=1,plotNoMax=2]{\dataSLW}
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+        nStart=51,plotNo=1,plotNoMax=2]{\dataSLW}
+    %\psline[](4,2)(4,4.5)(8.5,4.5)(8.5,2)(4,2)
+    \psline[](4.3,2)(4.3,4.4)(7.9,4.4)(7.9,2)(4.3,2)
+    %\psline[linewidth=2pt](5.45,2)(5.45,4.5)
+    %\psline[linewidth=2pt,linecolor=lightgray](4,2.8)(5.45,2.8)
+    %\psline[linewidth=2pt,linestyle=dashed](4.7,2)(4.7,2.8)
+    %\psline[linewidth=2pt,linecolor=lightgray](5.45,3.45)(8.5,3.45)
+    %\psline[linewidth=2pt,linestyle=dashed](6.5,3.45)(6.5,4.5)
+    \psline[linewidth=2pt](5.45,2)(5.45,4.4)
+    \psline[linewidth=2pt,linecolor=lightgray](4.3,2.8)(5.45,2.8)
+    \psline[linewidth=2pt,linestyle=dashed](4.7,2)(4.7,2.8)
+    \psline[linewidth=2pt,linecolor=lightgray](5.45,3.45)(7.9,3.45)
+    \psline[linewidth=2pt,linestyle=dashed](6.5,3.45)(6.5,4.4)
+    \uput[0](5.35,4.5){$h_{0}$}
+    \uput[0](4.05,2.8){$h_{2}$}
+    \uput[0](7.9,3.45){$h_{3}$}
+    \uput[90](4.7,2.8){$h_{4}$}
+    \uput[0](6.4,4.5){$h_{5}$}
+    \uput[90](4.8,4.2){$\cR_{1}$}
+    \uput[90](6.8,2.0){$\cR_{2}$}
+    \uput[90](4.5,2.0){$\cR_{3}$}
+    \uput[90](5.1,2.0){$\cR_{4}$}
+    \uput[90](6.0,4.2){$\cR_{5}$}
+    \uput[90](7.2,4.2){$\cR_{6}$}
+    \psdot[dotstyle=Bsquare,dotscale=2,fillcolor=white](6.75,4.25)
+        \uput[45](6.75,4.25){$\bz$}
+    %\uput[0](5.15,4.6){$h_{5.45}$}
+    %\uput[0](6.25,4.6){$h_{6.5}$}
+    %\uput[0](8.5,3.45){$h_{3.45}$}
+    %\uput[0](3.55,2.8){$h_{2.8}$}
+    %\uput[0](4.55,1.925){\small $h_{4.7}$}
+    \vspace{0.3in}
+    \endpsgraph
+    \end{pspicture}
+}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Decision Tree}
+\begin{figure}
+\hspace*{-3.5cm}
+  \scalebox{0.85}{%
+  \begin{pspicture}(-4,-7)(4,1)
+  \psset{unit=0.75in}
+  \def\bedge{\ncline[linewidth=2pt]}
+  \def\gedge{\ncline[linewidth=2pt,linecolor=lightgray]}
+  \def\dedge{\ncline[linewidth=2pt,linestyle=dashed]}
+  \psset{tpos=0.5,treesep=0.5,levelsep=*0.5,treefit=tight}
+  \pstree[edge=\bedge]{\Toval[name=D]{$X_1 \le 5.45$}}{%
+    \pstree[edge=\gedge]{\Toval[name=L]{$X_2 \le 2.8$}\nbput{Yes}}{%
+      \pstree[edge=\dedge]{\Toval[name=LL]{$X_1 \le 4.7$}\naput{Yes}}{%
+          \TR[]{%
+            \begin{tabular}{|c|c|}
+                \hline
+            \psdot[dotstyle=Bo](0,0) $~~c_1$ & 1\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0) $~~c_2$ & 0\\
+            \hline
+                \multicolumn{2}{c}{$\cR_3$}
+            \end{tabular}
+          }\nbput{Yes}
+          \TR[]{%
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 0\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 6\\
+            \hline
+                \multicolumn{2}{c}{$\cR_4$}
+            \end{tabular}
+            %}
+          }\naput{No}
+      }
+      \TR[edge=\gedge]{%
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 44\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 1\\
+            \hline
+                \multicolumn{2}{c}{$\cR_1$}
+            \end{tabular}
+          }\naput{No}
+    }
+    \pstree[edge=\gedge]{\Toval[name=R]{$X_2 \le 3.45$}\naput{No}}{%
+        \TR[]{
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 0\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 90\\
+            \hline
+                \multicolumn{2}{c}{$\cR_2$}
+            \end{tabular}
+        }\nbput{Yes}
+        \pstree[edge=\dedge]{\Toval[name=RR]{$X_1 \le 6.5$}\naput{No}}{%
+             \TR[]{
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 5\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 0\\
+            \hline
+                \multicolumn{2}{c}{$\cR_5$}
+            \end{tabular}
+            }\nbput{Yes}
+            \TR[]{
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 0\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 3\\
+            \hline
+                \multicolumn{2}{c}{$\cR_6$}
+            \end{tabular}
+            }\naput{No}
+        }
+    }
+  }
+  \end{pspicture}
+}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Decision Trees: Axis-Parallel Hyperplanes}
+
+A hyperplane $h(\bx)$ is def\/{i}ned as the set of all points $\bx$ that
+satisfy the following equation
+\begin{align*}
+    h(\bx)\!: & \;\bw^T \bx + b = 0
+\end{align*}
+where $\bw \in \setR^d$ is a {\em weight vector} that is normal to
+the hyperplane, and $b$ is the offset of the hyperplane from the
+origin. 
+
+\medskip
+A decision tree considers only {\em axis-parallel
+hyperplanes}, that is, the weight vector must be parallel to one
+of the original dimensions or axes $X_{j}$:
+\begin{align*}
+   h(\bx)\!:& \; x_{j} + b = 0
+\end{align*}
+where the choice of the offset $b$ yields different hyperplanes along
+dimension $X_{j}$.
+\end{frame}
+
+
+
+\begin{frame}{Decision Trees: Split Points} 
+A hyperplane specif\/{i}es a decision or {\em
+split point} because it splits the data space $\cR$ into two
+half-spaces. All points $\bx$ such that $h(\bx) \le 0$ are on the
+hyperplane or to one side of the hyperplane, whereas all points
+such that $h(\bx) > 0$ are on the other side. 
+
+\medskip
+The split point is written as $h(\bx) \le 0$, i.e.
+\begin{align*}
+  X_{j} \le v
+\end{align*}
+where $v = -b$ is some value in the domain of attribute $X_{j}$. 
+
+\medskip
+The
+decision or split point $X_{j} \le v$ thus splits the input data
+space $\cR$ into two regions $\cR_Y$ and $\cR_N$, which denote the
+set of {\em all possible points} that satisfy the decision and
+those that do not.
+
+\bigskip
+{\bf Categorical Attributes:}
+ For a categorical attribute $X_{j}$, the split points or
+decisions are of the $X_{j} \in V$, where $V \subset dom(X_{j})$, and
+$dom(X_{j})$ denotes the domain for $X_{j}$. 
+
+\end{frame}
+
+
+
+\begin{frame}{Decision Trees: Data Partition and Purity}
+Each split of $\cR$ into
+$\cR_Y$ and $\cR_N$ also induces a binary partition of the
+corresponding input data points $\bD$. A split point of
+the form $X_{j} \le v$ induces the data partition
+\begin{align*}
+  \bD_Y & = \{\bx \mid \; \bx \in \bD, x_{j} \le v\}\\
+  \bD_N & = \{\bx \mid \; \bx \in \bD, x_{j} > v\}
+\end{align*}
+
+\bigskip
+The purity of a region $\cR_{j}$ is the
+fraction of points with the majority label in $\bD_{j}$, that is,
+\begin{align*}
+  \mathit{purity}(\bD_{j}) = \max_i \lB\{ {n_{ji} \over n_{j}} \rB \}
+\end{align*}
+where $n_{j}=\card{\bD_{j}}$ is the total number of data points in the
+region $\cR_{j}$, and $n_{ji}$ is the number of points in $\bD_{j}$
+with class label $c_i$.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Decision Trees to Rules}
+\begin{figure}
+  \vspace{-0.3in}
+  \scalebox{0.6}{%
+  \begin{pspicture}(-4,-7)(4,1)
+  \psset{unit=0.75in}
+  \def\bedge{\ncline[linewidth=2pt]}
+  \def\gedge{\ncline[linewidth=2pt,linecolor=lightgray]}
+  \def\dedge{\ncline[linewidth=2pt,linestyle=dashed]}
+  \psset{tpos=0.5,treesep=0.5,levelsep=*0.5,treefit=tight}
+  \pstree[edge=\bedge]{\Toval[name=D]{$X_1 \le 5.45$}}{%
+    \pstree[edge=\gedge]{\Toval[name=L]{$X_2 \le 2.8$}\nbput{Yes}}{%
+      \pstree[edge=\dedge]{\Toval[name=LL]{$X_1 \le 4.7$}\naput{Yes}}{%
+          \TR[]{%
+            \begin{tabular}{|c|c|}
+                \hline
+            \psdot[dotstyle=Bo](0,0) $~~c_1$ & 1\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0) $~~c_2$ & 0\\
+            \hline
+                \multicolumn{2}{c}{$\cR_3$}
+            \end{tabular}
+          }\nbput{Yes}
+          \TR[]{%
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 0\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 6\\
+            \hline
+                \multicolumn{2}{c}{$\cR_4$}
+            \end{tabular}
+            %}
+          }\naput{No}
+      }
+      \TR[edge=\gedge]{%
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 44\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 1\\
+            \hline
+                \multicolumn{2}{c}{$\cR_1$}
+            \end{tabular}
+          }\naput{No}
+    }
+    \pstree[edge=\gedge]{\Toval[name=R]{$X_2 \le 3.45$}\naput{No}}{%
+        \TR[]{
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 0\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 90\\
+            \hline
+                \multicolumn{2}{c}{$\cR_2$}
+            \end{tabular}
+        }\nbput{Yes}
+        \pstree[edge=\dedge]{\Toval[name=RR]{$X_1 \le 6.5$}\naput{No}}{%
+             \TR[]{
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 5\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 0\\
+            \hline
+                \multicolumn{2}{c}{$\cR_5$}
+            \end{tabular}
+            }\nbput{Yes}
+            \TR[]{
+            \begin{tabular}{|c|c|}
+            \hline
+            \psdot[dotstyle=Bo](0,0)$~~c_1$  & 0\\
+            \hline
+            \psdot[dotstyle=Btriangle](0,0)$~~c_2$  & 3\\
+            \hline
+                \multicolumn{2}{c}{$\cR_6$}
+            \end{tabular}
+            }\naput{No}
+        }
+    }
+  }
+  \end{pspicture}
+}
+  \vspace{-0.4in}
+\end{figure}
+
+\small
+%\scalebox{0.7}{
+A tree is a set of
+decision rules; each comprising the
+decisions on the path to a leaf:
+  \begin{align*}
+    \cR_3\!: & \text{ If $X_1 \le 5.45$ and $X_2 \le 2.8$ and
+    $X_1 \le 4.7$, then class is $c_1$, or}\\
+    \cR_4\!: & \text{ If $X_1 \le 5.45$ and $X_2 \le 2.8$ and
+    $X_1 > 4.7$, then class is $c_2$, or}\\
+    \cR_1\!: & \text{ If $X_1 \le 5.45$ and $X_2 > 2.8$, then class is
+    $c_1$, or}\\
+    \cR_2\!: & \text{ If $X_1 > 5.45$ and $X_2 \le 3.45$, then class is
+    $c_2$, or}\\
+    \cR_5\!: & \text{ If $X_1 > 5.45$ and $X_2 > 3.45$
+    and $X_1 \le 6.5$, then class is $c_1$, or}\\
+    \cR_6\!: & \text{ If $X_1 > 5.45$ and $X_2 > 3.45$
+    and $X_1 > 6.5$, then class is $c_2$}\\[-20pt]
+  \end{align*}
+ % }
+\end{frame}
+
+
+\begin{frame}{Decision Tree Algorithm}
+
+The method takes as input a training
+dataset $\bD$, and two parameters $\eta$ and $\pi$, where $\eta$
+is the leaf size and $\pi$ the leaf purity threshold. 
+
+\medskip
+Different
+split points are evaluated for each attribute in $\bD$. Numeric
+decisions are of the form $X_{j} \le v$ for some value $v$ in the value range for attribute $X_{j}$, and categorical decisions are of the
+form $X_{j} \in V$ for some subset of values in the domain of $X_{j}$.
+
+\medskip
+The best split point is chosen to partition the data into two
+subsets, $\bD_Y$ and $\bD_N$, where $\bD_Y$ corresponds to all
+points $\bx \in \bD$ that satisfy the split decision, and $\bD_N$
+corresponds to all points that do not satisfy the split decision.
+The decision tree method is then called recursively on $\bD_Y$ and
+$\bD_N$. 
+
+\medskip
+We stop the process if the leaf size drops below $\eta$ or if the purity
+is at least $\pi$.
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Decision Tree Algorithm}
+\footnotesize{
+\begin{algorithm}[H]
+    \SetKwInOut{Algorithm}{{\textsc{DecisionTree}} ($\bD, \eta, \pi$)}
+    \Algorithm{}
+    $n \assign \card{\bD}$ \tcp{partition size}
+    $n_i \assign \card{\{ \bx_{j} | \bx_{j} \in \bD, y_{j} = c_i\}}$
+    \tcp{size of class $c_i$}
+    $\mathit{purity}(\bD) \assign \max_i \lB\{\frac{n_i}{n}\rB\}$\;
+    \If(\tcp*[h]{stopping condition}){$n \le \eta$ or
+    $\mathit{purity}(\bD) \ge \pi$}{
+      $c^* \assign  \arg\max_{c_i} \lB\{\frac{n_i}{n}\rB\}$ \tcp{majority
+        class}
+        create leaf node, and label it with class $c^*$\;
+        \Return\;
+    }
+    $(\mathit{split\text{ }point}^*, \mathit{score}^*) \assign (\emptyset, 0)$
+    \tcp{initialize best split point}
+    \ForEach{(attribute $X_{j}$)}{
+        \If{($X_{j}$ is numeric)}{
+        $(v,\mathit{score}) \assign$  \textsc{Evaluate-Numeric-Attribute}($\bD, X_{j}$)\;
+        \lIf{$\mathit{score} > \mathit{score}^*$}{
+        $(\mathit{split\text{ }point}^*, \mathit{score}^*) \assign
+        (X_{j} \le v, \mathit{score})$
+            }
+        }
+        \ElseIf{($X_{j}$ is categorical)}{
+        $(V, \mathit{score}) \assign$
+            \textsc{Evaluate-Categorical-Attribute}($\bD, X_{j}$)\;
+            \lIf{$\mathit{score} > \mathit{score}^*$}{
+            $(\mathit{split\text{ }point}^*, \mathit{score}^*) \assign
+            (X_{j} \in V, \mathit{score})$
+            }
+        }
+    }
+%    \tcp{partition $\bD$ into $\bD_Y$ and $\bD_N$ using
+%    $\mathit{split\text{ }point}^*$, and call recursively}\;
+    $\bD_Y \assign \{ \bx \in \bD \mid \bx \text{ satisfies }
+    \mathit{split\text{ }point}^* \}$\;
+    $\bD_N \assign \{ \bx \in \bD \mid \bx \text{ does not satisfy }
+    \mathit{split\text{ }point}^* \}$\;
+    create internal node $\mathit{split\text{ }point}^*$, with
+    two child nodes, $\bD_Y$ and $\bD_N$\;
+    \textsc{DecisionTree}($\bD_Y$); \textsc{DecisionTree}($\bD_N$)\;
+\end{algorithm}
+}
+\end{frame}
+
+
+
+\begin{frame}{Split Point Evaluation Measures: Entropy}
+Intuitively, we want to
+select a split point that gives the best separation or
+discrimination between the different class labels.
+
+\medskip
+Entropy measures the amount of disorder or
+uncertainty in a system.
+A partition has lower entropy (or low
+ disorder) if it is relatively pure, that is, if most of the points have the same label. On the other hand, a partition
+has higher entropy (or more
+disorder) if the class labels are mixed, and there is no majority class
+as such.
+
+\medskip
+The entropy of a set of labeled points $\bD$ is def\/{i}ned as
+follows:
+\begin{align*}
+  H(\bD) = -\sum_{i=1}^k \;P(c_i|\bD) \;\log_2 P(c_i|\bD)
+\end{align*}
+where $P(c_i|\bD)$ is the probability of class $c_i$ in $\bD$, and
+$k$ is the number of classes. 
+
+\medskip
+If a region is pure, that is, has
+points from the same class, then the entropy is zero. On the other
+hand, if the classes are all mixed up, and each appears with equal
+probability $P(c_i|\bD)=\tfrac{1}{k}$, then the entropy has the
+highest value, $H(\bD) = \log_2 k$.
+\end{frame}
+
+
+
+
+\begin{frame}{Split Point Evaluation Measures: Entropy}
+Def\/{i}ne the {\em split entropy} as the
+weighted entropy of each of the resulting partitions
+\begin{align*}
+  H(\bD_Y,\bD_N) =
+  \frac{n_Y}{n}H(\bD_Y)+\frac{n_N}{n}H(\bD_N)
+\end{align*}
+where $n = |\bD|$ is the number of points in $\bD$, and $n_Y = |\bD_Y|$
+and $n_N = |\bD_N|$ are the number of points in $\bD_Y$ and
+$\bD_N$.
+
+\medskip
+Def\/{i}ne the {\em information gain}
+for a split point as
+\begin{align*}
+  \mathit{Gain}(\bD,\bD_Y,\bD_N) = H(\bD) - H(\bD_Y,\bD_N)
+\end{align*}
+The higher the information gain, the more the reduction in
+entropy, and the better the split point.  
+
+\medskip
+We score each split point
+and choose the one that gives the highest information gain.
+\end{frame}
+
+
+\begin{frame}{Split Point Evaluation Measures: Gini Index and CART
+  Measure}
+
+{\bf Gini Index:}
+The Gini index is def\/{i}ned as follows:
+\begin{align*}
+  G(\bD) = 1 - \sum_{i=1}^{k}{P(c_i|\bD)^2}
+\end{align*}
+If the partition is pure, then Gini index is $0$. 
+
+\medskip
+The weighted Gini index of a split point is as follows:
+\begin{align*}
+  G(\bD_Y,\bD_N) = \frac{n_Y}{n}G(\bD_Y)+\frac{n_N}{n}G(\bD_N)
+\end{align*}
+The lower the Gini index
+value, the better the split point.
+
+\bigskip
+{\bf CART: }
+The CART measure is
+\begin{align*}
+  \mathit{CART}(\bD_Y,\bD_N) =
+  2 \frac{n_Y}{n} \frac{n_N}{n}
+  \sum_{i=1}^{k}{\Bigl|P(c_i|\bD_Y)-P(c_i|\bD_N)\Bigr|}
+\end{align*}
+This measure thus prefers a split point that maximizes the
+difference between the class probability mass function for the two partitions; the higher the CART measure, the better the
+split point.
+\end{frame}
+
+
+
+\begin{frame}{Evaluating Split Points: Numeric Attributes}
+All of the
+split point evaluation measures depend on the class probability mass function (PMF) for $\bD$,
+namely, $P(c_i | \bD)$, and the class PMFs for the resulting
+partitions $\bD_Y$ and $\bD_N$, namely $P(c_i | \bD_Y)$ and
+$P(c_i| \bD_N)$. 
+
+\medskip
+We have to evaluate split points of
+the form $X \le v$. We consider only the
+midpoints between two successive distinct values for $X$ in the
+sample $\bD$. 
+Let $\{v_1, \ldots, v_m\}$ denote the set of all such midpoints,
+such that $v_1 < v_2 < \cdots < v_m$. 
+
+\medskip
+For each split point $X \le
+v$, we have to estimate the class PMFs:
+\begin{align*}
+  \hP(c_i|\bD_Y) & = \hP(c_i | X \le v) \\
+\hP(c_i|\bD_N) &= \hP(c_i | X > v) 
+\end{align*}
+
+\medskip
+Using 
+Bayes theorem, we have
+\begin{align*}
+  \hP(c_i | X \le v) = \frac{\hP(X \le v|c_i) \hP(c_i)}{\hP(X \le v)}
+  = \frac{\hP(X \le v|c_i) \hP(c_i)}{\sum_{j=1}^k\hP(X \le v|c_{j}) \hP(c_{j})}
+\end{align*}
+Thus we have to estimate the prior probability and likelihood for each
+class in each partition.
+\end{frame}
+
+
+\begin{frame}{Evaluating Split Points: Numeric Attributes}
+\small
+The prior probability for each class in $\bD$ can be estimated as
+\begin{align*}
+    \hP(c_i) = {1 \over n} \sum_{j=1}^n I(y_{j}=c_i) =
+    {n_i \over n}
+\end{align*}
+where $y_{j}$ is the class for point $\bx_{j}$,
+$n = \card{\bD}$ is the total number of points, and $n_i$ is
+the number of points in $\bD$ with class $c_i$.
+
+\medskip
+Def\/{i}ne $N_{vi}$ as
+the number of points $x_{j} \le v$ with
+class $c_i$,
+where $x_{j}$ is the value of data point $\bx_{j}$
+for the attribute $X$, given as
+\begin{align*}
+N_{vi} = \sum_{j=1}^n I(x_{j} \le v \text{ and } y_{j}=c_i)
+\end{align*}
+\end{frame}
+
+\begin{frame}{Evaluating Split Points: Numeric Attributes}
+We can estimate  $\hP(X \le v|c_i)$ and $\hP(X > v | c_i)$ as follows:
+\begin{align*}
+    \hP(X \le v| c_i) & = {N_{vi} \over n_i}\\
+  \hP(X > v|c_i) & = 1 - \hP(X \le v | c_i) =
+	  {n_i - N_{vi} \over n_i}
+\end{align*}
+
+\medskip
+Finally, we have
+\begin{align*}
+  \hP(c_i | \bD_Y) & = \hP(c_i | X \le v) = {N_{vi} \over \sum_{j=1}^k
+  N_{vj}}\\
+    \hP(c_i | \bD_N)  & =
+    \hP(c_i | X > v) = 
+    {n_i - N_{vi} \over \sum_{j=1}^k (n_{j} - N_{vj})}
+\end{align*}
+
+The total cost of evaluating a
+numeric attribute is $O(n \log n + nk)$, where $k$ is the number of
+classes, and $n$ is the number of points.
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm \textsc{Evaluate-Numeric-Attribute}}
+\footnotesize{
+\begin{algorithm}[H]
+    \SetKwInOut{Algorithm}{{\textsc{Evaluate-Numeric-Attribute}} ($\bD, X$)}
+    \Algorithm{}
+    sort $\bD$ on attribute $X$, so that $x_{j} \le x_{j+1},
+    \forall j=1,\dots,n-1$ \nllabel{alg:class:dt:ENA:sort}\;
+    $\cM \assign \emptyset$ \tcp{set of midpoints}
+    \lFor{$i=1,\dots,k$}{$n_i \assign 0$}
+    \For{$j=1,\dots,n-1$}{ \nllabel{alg:class:dt:ENA:For1}
+        \lIf{$y_{j} = c_i$}{$n_i \assign n_i + 1$} \tcp{running
+        count for class $c_i$}
+        \If{$x_{j+1} \ne x_{j}$}{
+            $v \assign \frac{x_{j+1}\;+\;x_{j}}{2}$; $\cM \assign \cM \cup \{ v\}$
+            \tcp{midpoints}
+            \For{$i=1,\dots,k$}{
+                $N_{vi} \assign n_i$ \tcp{Number of points such that $x_{j}
+                \le v$ and $y_{j}=c_i$}
+            }
+        }
+    }
+    \lIf{$y_n = c_i$}{$n_i \assign n_i + 1$}
+    %\tcp{evaluate split points of the form $X \le v$}\;
+    $v^* \assign \emptyset$; $\mathit{score}^* \assign 0$ \tcp{initialize best split point}
+    \ForAll{$v \in \cM$}{\nllabel{alg:class:dt:ENA:For2}
+        \For{$i=1,\dots,k$}{
+            $\hP(c_i|\bD_Y) \assign {N_{vi} \over \sum_{j=1}^k N_{vj}}$\;
+            $\hP(c_i|\bD_N) \assign {n_i-N_{vi} \over \sum_{j=1}^k
+            n_{j}-N_{vj}}$\;
+        }
+        $\mathit{score}(X \le v) \assign Gain(\bD, \bD_Y, \bD_N)$ \;
+        %\tcp{use Eq.\nosp\eqref{eq:class:dt:gain}}\;
+        \If{$\mathit{score}(X \le v) > \mathit{score}^*$}{
+            $v^* \assign v; \mathit{score}^* \assign \mathit{score}(X \le v)$\;
+        }
+    }
+    \Return{$(v^*, \mathit{score}^*)$}
+\end{algorithm}
+}
+\end{frame}
+
+
+
+\readdata{\dataSL}{CLASS/decisiontrees/figs/iris-sl-gain-cdf.dat}
+\readdata{\dataSW}{CLASS/decisiontrees/figs/iris-sw-gain-cdf.dat}
+\begin{frame}{Iris Data: Class-specific Frequencies ${\it N}_{{\it
+  vi}}$}
+  \framesubtitle{Classes ${\it c}_1$ and ${\it c}_2$ for 
+  attribute {\tt sepal length}}
+\begin{figure}[!t]
+    \centering
+    \hspace{0.4in}
+    \psset{arrowscale=2}
+    \psset{dotscale=1.5,fillcolor=lightgray}
+    \psset{xAxisLabel=Midpoints: $v$,
+        yAxisLabel= Frequency: $N_{vi}$,%
+        xAxisLabelPos={c,-1.75},yAxisLabelPos={-0.4,c}}
+    \pstScalePoints(1,0.1){}{}
+    \scalebox{0.90}{%
+    \begin{psgraph}[Dy=10,dy=1,Dx=0.5,Ox=4]{->}%
+            (4,0)(8,11){4.5in}{2.5in}
+    \listplot[showpoints, dotstyle=Btriangle,plotNo=2,plotNoMax=3]{\dataSL}
+    \listplot[showpoints, dotstyle=Bo,plotNo=3,%
+        plotNoMax=3]{\dataSL}
+        \psline[linestyle=dotted](5.45,0)(5.45,6.0)
+        \uput[90](5.4,6.1){$v=5.45$}
+        \psdot[dotstyle=Btriangle,fillcolor=black](5.45,0.7)
+        \psdot[dotstyle=Bo,fillcolor=black](5.45,4.5)
+        \uput[120](5.45,4.5){$45$}
+        \uput[120](5.45,0.7){$7$}
+        \uput[45](6.75,5.25){{\tt iris-setosa} ($c_1$)}
+        \uput[45](7.25,10){{\tt other} ($c_2$)}
+    \end{psgraph}
+    }
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Iris Data: Information Gain for Different Splits}
+\begin{figure}[!t]
+  \psset{arrowscale=2}
+    \psset{xAxisLabel=Split points: $X_i \le v$,
+        yAxisLabel=Information Gain,%
+        xAxisLabelPos={c,-1.75},yAxisLabelPos={-0.75,c}}
+    \pstScalePoints(1,20){}{}
+    \centerline{
+    \hspace{0.5in}
+    \scalebox{0.90}{%
+    \begin{psgraph}[Dy=0.05,dy=1,Dx=0.5,Ox=2]{->}%
+            (2,0)(8,12){4.5in}{2.5in}
+        \listplot[plotstyle=bar,barwidth=0.2cm,
+        fillcolor=lightgray,fillstyle=solid,plotNo=1,plotNoMax=3]{%
+        \dataSL
+        }
+        \listplot[plotstyle=bar,barwidth=0.2cm,
+        fillstyle=none,plotNo=1,plotNoMax=3]{%
+        \dataSW
+        }
+        \psline[linewidth=5pt](5.45,0)(5.45,10.6)
+        %\pnode(6.5,9){nA}
+        %\pnode(5.5,10.6){nB}
+        %\ncarc[angle=-60]{->}{nA}{nB}
+        \uput[0](6.0,10.6){\small $X_1 \le 5.45$}
+        \psline{->}(6.0,10.6)(5.5,10.6)
+        \uput[90](3.25,5.5){{\tt sepal-width}($X_2$)}
+        \uput[90](5.5,11){{\tt sepal-length}($X_1$)}
+    \end{psgraph}
+    }}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Categorical Attributes}
+  \small
+For categorical $X$ the split points are of 
+the form $X \in V$, where $V \subset dom(X)$ and $V
+\ne \emptyset$. All distinct partitions of the set of
+values of $X$ are considered.
+
+\medskip
+If $m = \card{dom(X)}$, then there are $O(2^{m-1})$ distinct
+partitions, which can be too many.
+One simplif\/{i}cation is to restrict $V$ to be of size one, so
+that there are only $m$ split points of the form $X_{j} \in \{v\}$,
+where $v \in dom(X_{j})$.
+
+\medskip
+Def\/{i}ne $n_{vi}$ as the number of points $\bx_{j} \in \bD$, with
+value $x_{j}=v$ for attribute $X$ and having class $y_{j}=c_i$:
+\begin{align*}
+  n_{vi} = \sum_{j=1}^n I(x_{j} = v \mbox{ and } y_{j}=c_i)
+\end{align*}
+The class conditional empirical PMF for $X$ is then given as
+\begin{align*}
+    \hP(X=v|c_i) & =
+    {\hP\bigl(X = v \text{ and } c_i\bigr) \over \hP(c_i)}
+   = {n_{vi} \over n_i}
+\end{align*}
+
+\medskip
+We then have
+\begin{align*}
+    \hP(c_i|\bD_Y) &
+    = \frac{\sum_{v \in V} n_{vi}}
+    {\sum_{j=1}^k \sum_{v \in V} n_{vj}} &
+    \hP(c_i|\bD_N) &
+    = \frac{\sum_{v \not\in V} n_{vi}}
+    {\sum_{j=1}^k \sum_{v \not\in V} n_{vj}}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm \textsc{Evaluate-Categorical-Attribute}}
+\begin{algorithm}[H]
+  \small
+%\begin{tightalgo}[!t]{\textwidth-18pt}
+    \SetKwInOut{Algorithm}{{\textsc{Evaluate-Categorical-Attribute}}
+    ($\bD, X, l$)}
+    \Algorithm{}
+    \For{$i=1,\dots,k$}{
+        $n_i\assign0$\;
+        \lForAll{$v \in dom(X)$}{$n_{vi}\assign0$}
+    }
+    \For{$j=1,\dots,n$}{\label{alg:class:dt:ECA:For1}
+        \lIf{$x_{j} = v \text{ and } y_{j}=c_i$}{
+            $n_{vi} \assign n_{vi} + 1$ \tcp*[h]{frequency statistics}
+        }
+    }
+    \tcp{evaluate split points of the form $X \in V$}
+    $V^* \assign \emptyset$; $\mathit{score}^* \assign 0$ \tcp{initialize best split point}
+    \ForAll{$V\subset dom(X)$, such that $1 \le |V| \le l$}{
+        \nllabel{alg:class:dt:ECA:For2}
+        \For{$i=1,\dots,k$}{
+            $\hP(c_i|\bD_Y) \assign \frac{\sum_{v \in V} n_{vi}}
+            {\sum_{j=1}^k \sum_{v \in V} n_{vj}}$\;
+            $\hP(c_i|\bD_N) \assign \frac{\sum_{v \not\in V} n_{vi}}
+                {\sum_{j=1}^k \sum_{v \not\in V} n_{vj}}$\;
+        }
+        $\mathit{score}(X \in V) \assign Gain(\bD, \bD_Y, \bD_N)$\;
+        %\tcp{use Eq.\nosp\eqref{eq:class:dt:gain}}\;
+        \If{$\mathit{score}(X \in V) > \mathit{score}^*$}{
+            $V^* \assign V; \mathit{score}^* \assign \mathit{score}(X \in V)$\;
+        }
+    }
+    \Return{$(V^*, \mathit{score}^*)$}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}{Discretized {\tt sepal length}: Class Frequencies}
+\begin{center}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{|c|l|c|c|}
+                \hline
+                \multirow{2}{*}{Bins} & \multirow{2}{*}{$v$: values }
+                    & \multicolumn{2}{c|}{Class frequencies
+                        ($n_{vi}$)}\\
+                    \cline{3-4}
+                & & $c_1$:{\tt iris-setosa} & $c_2$:{\tt other}\\
+                \hline
+                $[4.3, 5.2]$ & Very Short ($a_1$) & 39 & 6\\
+                $(5.2, 6.1]$ & Short ($a_2$) & 11 & 39\\
+                $(6.1, 7.0]$ & Long ($a_3$) & 0 & 43\\
+                $(7.0, 7.9]$ & Very Long ($a_4$) & 0 & 12\\
+                \hline
+\end{tabular}%}{}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Categorical Split Points for {\tt sepal length}}
+\begin{center}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{|c|c|c|}
+    \hline
+    $V$ & Split entropy & Info.\ gain\\
+    \hline
+    $\{ a_1 \}$ & 0.509 & 0.410\\
+    $\{ a_2 \}$ & 0.897 & 0.217\\
+    $\{ a_3 \}$ & 0.711 & 0.207\\
+    $\{ a_4 \}$ & 0.869 & 0.049\\
+    $\{ a_1, a_2\}$ & 0.632 & 0.286\\
+    $\{ a_1, a_3\}$ & 0.860 & 0.058\\
+    $\{ a_1, a_4\}$ & 0.667 & 0.251\\
+    $\{ a_2, a_3\}$ & 0.667 & 0.251\\
+    $\{ a_2, a_4\}$ & 0.860 & 0.058\\
+    $\{ a_3, a_4\}$ & 0.632 & 0.286\\
+    \hline
+    \end{tabular}%}{}
+\end{center}
+Best split: $X \in \{a_1\}$.
+\end{frame}

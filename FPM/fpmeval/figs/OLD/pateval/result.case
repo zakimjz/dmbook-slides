@@ -1,0 +1,306 @@
+0.579839 avg 0.000000 var 2 sz  13 supp  I-1    I11 sl1  I21 sw1 
+1.832886 avg 0.722726 var 6 sz  11 supp  I-1    I11 sl1  I21 sw1  I42 pw2 
+1.881140 avg 1.786198 var 14 sz  1 supp  I-1    I11 sl1  I21 sw1  I42 pw2  I53 cl3 
+2.609276 avg 0.879571 var 14 sz  10 supp  I-1    I11 sl1  I21 sw1  I42 pw2  I52 cl2 
+0.994471 avg 1.610480 var 6 sz  1 supp  I-1    I11 sl1  I21 sw1  I53 cl3 
+1.815931 avg 0.686031 var 6 sz  10 supp  I-1    I11 sl1  I21 sw1  I52 cl2 
+1.038631 avg 1.381181 var 6 sz  2 supp  I-1    I11 sl1  I21 sw1  I51 cl1 
+1.038631 avg 1.381181 var 6 sz  2 supp  I-1    I11 sl1  I21 sw1  I41 pw1 
+2.214125 avg 1.652922 var 14 sz  2 supp  I-1    I11 sl1  I21 sw1  I41 pw1  I51 cl1 
+1.038631 avg 1.381181 var 6 sz  2 supp  I-1    I11 sl1  I21 sw1  I31 pl1 
+2.214125 avg 1.652922 var 14 sz  2 supp  I-1    I11 sl1  I21 sw1  I31 pl1  I51 cl1 
+2.214125 avg 1.652922 var 14 sz  2 supp  I-1    I11 sl1  I21 sw1  I31 pl1  I41 pw1 
+2.684322 avg 0.946144 var 30 sz  2 supp  I-1    I11 sl1  I21 sw1  I31 pl1  I41 pw1  I51 cl1 
+2.035578 avg 0.842972 var 6 sz  11 supp  I-1    I11 sl1  I21 sw1  I32 pl2 
+2.876163 avg 1.079266 var 14 sz  11 supp  I-1    I11 sl1  I21 sw1  I32 pl2  I42 pw2 
+4.822389 avg 17.033897 var 30 sz  1 supp  I-1    I11 sl1  I21 sw1  I32 pl2  I42 pw2  I53 cl3 
+3.159007 avg 0.744595 var 30 sz  10 supp  I-1    I11 sl1  I21 sw1  I32 pl2  I42 pw2  I52 cl2 
+3.657316 avg 13.293184 var 14 sz  1 supp  I-1    I11 sl1  I21 sw1  I32 pl2  I53 cl3 
+2.833326 avg 1.123600 var 14 sz  10 supp  I-1    I11 sl1  I21 sw1  I32 pl2  I52 cl2 
+0.847458 avg 0.000000 var 2 sz  19 supp  I-1    I11 sl1  I22 sw2 
+0.178330 avg 0.001116 var 6 sz  1 supp  I-1    I11 sl1  I22 sw2  I42 pw2 
+1.157450 avg 1.380811 var 14 sz  1 supp  I-1    I11 sl1  I22 sw2  I42 pw2  I52 cl2 
+0.188874 avg 0.001549 var 6 sz  1 supp  I-1    I11 sl1  I22 sw2  I52 cl2 
+2.130772 avg 0.774556 var 6 sz  18 supp  I-1    I11 sl1  I22 sw2  I51 cl1 
+2.130772 avg 0.774556 var 6 sz  18 supp  I-1    I11 sl1  I22 sw2  I41 pw1 
+2.682185 avg 0.549131 var 14 sz  18 supp  I-1    I11 sl1  I22 sw2  I41 pw1  I51 cl1 
+2.130772 avg 0.774556 var 6 sz  18 supp  I-1    I11 sl1  I22 sw2  I31 pl1 
+2.682185 avg 0.549131 var 14 sz  18 supp  I-1    I11 sl1  I22 sw2  I31 pl1  I51 cl1 
+2.682185 avg 0.549131 var 14 sz  18 supp  I-1    I11 sl1  I22 sw2  I31 pl1  I41 pw1 
+2.902750 avg 0.295256 var 30 sz  18 supp  I-1    I11 sl1  I22 sw2  I31 pl1  I41 pw1  I51 cl1 
+0.202200 avg 0.000441 var 6 sz  1 supp  I-1    I11 sl1  I22 sw2  I32 pl2 
+1.227530 avg 1.566556 var 14 sz  1 supp  I-1    I11 sl1  I22 sw2  I32 pl2  I42 pw2 
+1.699664 avg 1.566794 var 30 sz  1 supp  I-1    I11 sl1  I22 sw2  I32 pl2  I42 pw2  I52 cl2 
+1.276222 avg 1.666152 var 14 sz  1 supp  I-1    I11 sl1  I22 sw2  I32 pl2  I52 cl2 
+0.564972 avg 0.000000 var 2 sz  12 supp  I-1    I11 sl1  I42 pw2 
+1.178751 avg 1.547494 var 6 sz  1 supp  I-1    I11 sl1  I42 pw2  I53 cl3 
+2.032838 avg 1.282799 var 6 sz  11 supp  I-1    I11 sl1  I42 pw2  I52 cl2 
+0.050847 avg 0.000000 var 2 sz  1 supp  I-1    I11 sl1  I53 cl3 
+0.559322 avg 0.000000 var 2 sz  11 supp  I-1    I11 sl1  I52 cl2 
+2.389830 avg 0.000000 var 2 sz  47 supp  I-1    I11 sl1  I51 cl1 
+2.389830 avg 0.000000 var 2 sz  47 supp  I-1    I11 sl1  I41 pw1 
+2.796610 avg 0.099282 var 6 sz  47 supp  I-1    I11 sl1  I41 pw1  I51 cl1 
+2.389830 avg 0.000000 var 2 sz  47 supp  I-1    I11 sl1  I31 pl1 
+2.796610 avg 0.099282 var 6 sz  47 supp  I-1    I11 sl1  I31 pl1  I51 cl1 
+2.796610 avg 0.099282 var 6 sz  47 supp  I-1    I11 sl1  I31 pl1  I41 pw1 
+2.912833 avg 0.049095 var 14 sz  47 supp  I-1    I11 sl1  I31 pl1  I41 pw1  I51 cl1 
+0.677966 avg 0.000000 var 2 sz  12 supp  I-1    I11 sl1  I32 pl2 
+2.263026 avg 1.569177 var 6 sz  12 supp  I-1    I11 sl1  I32 pl2  I42 pw2 
+3.890974 avg 14.305644 var 14 sz  1 supp  I-1    I11 sl1  I32 pl2  I42 pw2  I53 cl3 
+2.680166 avg 0.809489 var 14 sz  11 supp  I-1    I11 sl1  I32 pl2  I42 pw2  I52 cl2 
+2.041902 avg 2.051672 var 6 sz  1 supp  I-1    I11 sl1  I32 pl2  I53 cl3 
+2.239642 avg 1.611839 var 6 sz  11 supp  I-1    I11 sl1  I32 pl2  I52 cl2 
+1.906780 avg 0.000000 var 2 sz  27 supp  I-1    I11 sl1  I23 sw3 
+2.560584 avg 0.118077 var 6 sz  27 supp  I-1    I11 sl1  I23 sw3  I51 cl1 
+2.560584 avg 0.118077 var 6 sz  27 supp  I-1    I11 sl1  I23 sw3  I41 pw1 
+2.775205 avg 0.085125 var 14 sz  27 supp  I-1    I11 sl1  I23 sw3  I41 pw1  I51 cl1 
+2.560584 avg 0.118077 var 6 sz  27 supp  I-1    I11 sl1  I23 sw3  I31 pl1 
+2.775205 avg 0.085125 var 14 sz  27 supp  I-1    I11 sl1  I23 sw3  I31 pl1  I51 cl1 
+2.775205 avg 0.085125 var 14 sz  27 supp  I-1    I11 sl1  I23 sw3  I31 pl1  I41 pw1 
+2.861053 avg 0.047079 var 30 sz  27 supp  I-1    I11 sl1  I23 sw3  I31 pl1  I41 pw1  I51 cl1 
+1.100479 avg 0.000000 var 2 sz  23 supp  I-1    I21 sw1  I33 pl3 
+0.969882 avg 0.386557 var 6 sz  6 supp  I-1    I21 sw1  I33 pl3  I42 pw2 
+1.781640 avg 1.434230 var 14 sz  3 supp  I-1    I21 sw1  I33 pl3  I42 pw2  I53 cl3 
+1.420133 avg 0.710321 var 14 sz  3 supp  I-1    I21 sw1  I33 pl3  I42 pw2  I52 cl2 
+2.093404 avg 0.623397 var 6 sz  20 supp  I-1    I21 sw1  I33 pl3  I53 cl3 
+0.649245 avg 0.271109 var 6 sz  3 supp  I-1    I21 sw1  I33 pl3  I52 cl2 
+2.036674 avg 0.699534 var 6 sz  17 supp  I-1    I21 sw1  I33 pl3  I43 pw3 
+2.522558 avg 0.457743 var 14 sz  17 supp  I-1    I21 sw1  I33 pl3  I43 pw3  I53 cl3 
+1.851852 avg 0.000000 var 2 sz  38 supp  I-1    I21 sw1  I42 pw2 
+0.983384 avg 0.764268 var 6 sz  4 supp  I-1    I21 sw1  I42 pw2  I53 cl3 
+2.429327 avg 0.220158 var 6 sz  34 supp  I-1    I21 sw1  I42 pw2  I52 cl2 
+1.105263 avg 0.000000 var 2 sz  21 supp  I-1    I21 sw1  I53 cl3 
+1.789474 avg 0.000000 var 2 sz  34 supp  I-1    I21 sw1  I52 cl2 
+0.105263 avg 0.000000 var 2 sz  2 supp  I-1    I21 sw1  I51 cl1 
+0.105263 avg 0.000000 var 2 sz  2 supp  I-1    I21 sw1  I41 pw1 
+2.035088 avg 2.234533 var 6 sz  2 supp  I-1    I21 sw1  I41 pw1  I51 cl1 
+0.105263 avg 0.000000 var 2 sz  2 supp  I-1    I21 sw1  I31 pl1 
+2.035088 avg 2.234533 var 6 sz  2 supp  I-1    I21 sw1  I31 pl1  I51 cl1 
+2.035088 avg 2.234533 var 6 sz  2 supp  I-1    I21 sw1  I31 pl1  I41 pw1 
+2.586466 avg 1.104989 var 14 sz  2 supp  I-1    I21 sw1  I31 pl1  I41 pw1  I51 cl1 
+0.972540 avg 0.000000 var 2 sz  17 supp  I-1    I21 sw1  I43 pw3 
+2.211301 avg 0.914827 var 6 sz  17 supp  I-1    I21 sw1  I43 pw3  I53 cl3 
+1.871345 avg 0.000000 var 2 sz  32 supp  I-1    I21 sw1  I32 pl2 
+2.485380 avg 0.226394 var 6 sz  32 supp  I-1    I21 sw1  I32 pl2  I42 pw2 
+1.625720 avg 2.050701 var 14 sz  1 supp  I-1    I21 sw1  I32 pl2  I42 pw2  I53 cl3 
+2.766169 avg 0.160119 var 14 sz  31 supp  I-1    I21 sw1  I32 pl2  I42 pw2  I52 cl2 
+0.961353 avg 1.674637 var 6 sz  1 supp  I-1    I21 sw1  I32 pl2  I53 cl3 
+2.599844 avg 0.337246 var 6 sz  31 supp  I-1    I21 sw1  I32 pl2  I52 cl2 
+1.291866 avg 0.000000 var 2 sz  27 supp  I-1    I22 sw2  I33 pl3 
+0.577096 avg 0.065251 var 6 sz  3 supp  I-1    I22 sw2  I33 pl3  I42 pw2 
+0.930078 avg 0.705753 var 14 sz  1 supp  I-1    I22 sw2  I33 pl3  I42 pw2  I53 cl3 
+1.582344 avg 1.117431 var 14 sz  2 supp  I-1    I22 sw2  I33 pl3  I42 pw2  I52 cl2 
+2.227625 avg 0.529417 var 6 sz  24 supp  I-1    I22 sw2  I33 pl3  I53 cl3 
+0.731526 avg 0.213818 var 6 sz  3 supp  I-1    I22 sw2  I33 pl3  I52 cl2 
+2.332940 avg 0.558761 var 6 sz  24 supp  I-1    I22 sw2  I33 pl3  I43 pw3 
+2.710069 avg 0.354142 var 14 sz  23 supp  I-1    I22 sw2  I33 pl3  I43 pw3  I53 cl3 
+1.912203 avg 3.378647 var 14 sz  1 supp  I-1    I22 sw2  I33 pl3  I43 pw3  I52 cl2 
+0.730994 avg 0.000000 var 2 sz  15 supp  I-1    I22 sw2  I42 pw2 
+0.280686 avg 0.037620 var 6 sz  1 supp  I-1    I22 sw2  I42 pw2  I53 cl3 
+2.048157 avg 1.016805 var 6 sz  14 supp  I-1    I22 sw2  I42 pw2  I52 cl2 
+1.263158 avg 0.000000 var 2 sz  24 supp  I-1    I22 sw2  I53 cl3 
+0.789474 avg 0.000000 var 2 sz  15 supp  I-1    I22 sw2  I52 cl2 
+0.947368 avg 0.000000 var 2 sz  18 supp  I-1    I22 sw2  I51 cl1 
+0.947368 avg 0.000000 var 2 sz  18 supp  I-1    I22 sw2  I41 pw1 
+2.315789 avg 1.123546 var 6 sz  18 supp  I-1    I22 sw2  I41 pw1  I51 cl1 
+0.947368 avg 0.000000 var 2 sz  18 supp  I-1    I22 sw2  I31 pl1 
+2.315789 avg 1.123546 var 6 sz  18 supp  I-1    I22 sw2  I31 pl1  I51 cl1 
+2.315789 avg 1.123546 var 6 sz  18 supp  I-1    I22 sw2  I31 pl1  I41 pw1 
+2.706767 avg 0.555600 var 14 sz  18 supp  I-1    I22 sw2  I31 pl1  I41 pw1  I51 cl1 
+1.372998 avg 0.000000 var 2 sz  24 supp  I-1    I22 sw2  I43 pw3 
+2.448343 avg 0.742881 var 6 sz  23 supp  I-1    I22 sw2  I43 pw3  I53 cl3 
+0.991323 avg 1.615970 var 6 sz  1 supp  I-1    I22 sw2  I43 pw3  I52 cl2 
+0.701754 avg 0.000000 var 2 sz  12 supp  I-1    I22 sw2  I32 pl2 
+2.048733 avg 1.091080 var 6 sz  12 supp  I-1    I22 sw2  I32 pl2  I42 pw2 
+2.543970 avg 0.617256 var 14 sz  12 supp  I-1    I22 sw2  I32 pl2  I42 pw2  I52 cl2 
+2.128123 avg 1.215793 var 6 sz  12 supp  I-1    I22 sw2  I32 pl2  I52 cl2 
+0.454545 avg 0.000000 var 2 sz  9 supp  I-1    I33 pl3  I42 pw2 
+1.247303 avg 0.768893 var 6 sz  4 supp  I-1    I33 pl3  I42 pw2  I53 cl3 
+1.419925 avg 0.866013 var 6 sz  5 supp  I-1    I33 pl3  I42 pw2  I52 cl2 
+2.672727 avg 0.000000 var 2 sz  49 supp  I-1    I33 pl3  I53 cl3 
+0.327273 avg 0.000000 var 2 sz  6 supp  I-1    I33 pl3  I52 cl2 
+2.727273 avg 0.000000 var 2 sz  46 supp  I-1    I33 pl3  I43 pw3 
+2.885577 avg 0.015754 var 6 sz  45 supp  I-1    I33 pl3  I43 pw3  I53 cl3 
+1.111989 avg 1.611231 var 6 sz  1 supp  I-1    I33 pl3  I43 pw3  I52 cl2 
+1.004785 avg 0.000000 var 2 sz  21 supp  I-1    I13 sl3  I21 sw1 
+1.548234 avg 0.244061 var 6 sz  15 supp  I-1    I13 sl3  I21 sw1  I33 pl3 
+1.126768 avg 0.425369 var 14 sz  3 supp  I-1    I13 sl3  I21 sw1  I33 pl3  I42 pw2 
+1.203738 avg 0.804177 var 30 sz  1 supp  I-1    I13 sl3  I21 sw1  I33 pl3  I42 pw2  I53 cl3 
+2.315090 avg 2.811943 var 30 sz  2 supp  I-1    I13 sl3  I21 sw1  I33 pl3  I42 pw2  I52 cl2 
+2.029374 avg 0.347989 var 14 sz  13 supp  I-1    I13 sl3  I21 sw1  I33 pl3  I53 cl3 
+1.088166 avg 0.576747 var 14 sz  2 supp  I-1    I13 sl3  I21 sw1  I33 pl3  I52 cl2 
+2.079354 avg 0.372490 var 14 sz  12 supp  I-1    I13 sl3  I21 sw1  I33 pl3  I43 pw3 
+2.461003 avg 0.332259 var 30 sz  12 supp  I-1    I13 sl3  I21 sw1  I33 pl3  I43 pw3  I53 cl3 
+1.050733 avg 0.101458 var 6 sz  9 supp  I-1    I13 sl3  I21 sw1  I42 pw2 
+0.638747 avg 0.262384 var 14 sz  1 supp  I-1    I13 sl3  I21 sw1  I42 pw2  I53 cl3 
+1.786085 avg 0.575330 var 14 sz  8 supp  I-1    I13 sl3  I21 sw1  I42 pw2  I52 cl2 
+1.474216 avg 0.219563 var 6 sz  13 supp  I-1    I13 sl3  I21 sw1  I53 cl3 
+1.033453 avg 0.098058 var 6 sz  8 supp  I-1    I13 sl3  I21 sw1  I52 cl2 
+1.547324 avg 0.289611 var 6 sz  12 supp  I-1    I13 sl3  I21 sw1  I43 pw3 
+2.246421 avg 0.543945 var 14 sz  12 supp  I-1    I13 sl3  I21 sw1  I43 pw3  I53 cl3 
+0.926511 avg 0.129822 var 6 sz  6 supp  I-1    I13 sl3  I21 sw1  I32 pl2 
+1.616531 avg 0.553657 var 14 sz  6 supp  I-1    I13 sl3  I21 sw1  I32 pl2  I42 pw2 
+2.029559 avg 0.505724 var 30 sz  6 supp  I-1    I13 sl3  I21 sw1  I32 pl2  I42 pw2  I52 cl2 
+1.754481 avg 0.710316 var 14 sz  6 supp  I-1    I13 sl3  I21 sw1  I32 pl2  I52 cl2 
+1.387560 avg 0.000000 var 2 sz  29 supp  I-1    I13 sl3  I22 sw2 
+1.964610 avg 0.191298 var 6 sz  23 supp  I-1    I13 sl3  I22 sw2  I33 pl3 
+1.237459 avg 0.573024 var 14 sz  3 supp  I-1    I13 sl3  I22 sw2  I33 pl3  I42 pw2 
+1.388490 avg 1.077594 var 30 sz  1 supp  I-1    I13 sl3  I22 sw2  I33 pl3  I42 pw2  I53 cl3 
+2.859448 avg 4.003368 var 30 sz  2 supp  I-1    I13 sl3  I22 sw2  I33 pl3  I42 pw2  I52 cl2 
+2.504328 avg 0.295588 var 14 sz  21 supp  I-1    I13 sl3  I22 sw2  I33 pl3  I53 cl3 
+0.994337 avg 0.356971 var 14 sz  2 supp  I-1    I13 sl3  I22 sw2  I33 pl3  I52 cl2 
+2.488124 avg 0.285795 var 14 sz  20 supp  I-1    I13 sl3  I22 sw2  I33 pl3  I43 pw3 
+2.879632 avg 0.251046 var 30 sz  20 supp  I-1    I13 sl3  I22 sw2  I33 pl3  I43 pw3  I53 cl3 
+1.271407 avg 0.121088 var 6 sz  9 supp  I-1    I13 sl3  I22 sw2  I42 pw2 
+0.878112 avg 0.793357 var 14 sz  1 supp  I-1    I13 sl3  I22 sw2  I42 pw2  I53 cl3 
+2.658228 avg 2.306184 var 14 sz  8 supp  I-1    I13 sl3  I22 sw2  I42 pw2  I52 cl2 
+1.991927 avg 0.207477 var 6 sz  21 supp  I-1    I13 sl3  I22 sw2  I53 cl3 
+1.199307 avg 0.086756 var 6 sz  8 supp  I-1    I13 sl3  I22 sw2  I52 cl2 
+1.981359 avg 0.187525 var 6 sz  20 supp  I-1    I13 sl3  I22 sw2  I43 pw3 
+2.683138 avg 0.441345 var 14 sz  20 supp  I-1    I13 sl3  I22 sw2  I43 pw3  I53 cl3 
+1.123027 avg 0.113145 var 6 sz  6 supp  I-1    I13 sl3  I22 sw2  I32 pl2 
+2.505107 avg 2.331222 var 14 sz  6 supp  I-1    I13 sl3  I22 sw2  I32 pl2  I42 pw2 
+3.226353 avg 2.186610 var 30 sz  6 supp  I-1    I13 sl3  I22 sw2  I32 pl2  I42 pw2  I52 cl2 
+2.653179 avg 2.620836 var 14 sz  6 supp  I-1    I13 sl3  I22 sw2  I32 pl2  I52 cl2 
+2.132231 avg 0.000000 var 2 sz  43 supp  I-1    I13 sl3  I33 pl3 
+1.038290 avg 0.419330 var 6 sz  6 supp  I-1    I13 sl3  I33 pl3  I42 pw2 
+1.117649 avg 0.671852 var 14 sz  2 supp  I-1    I13 sl3  I33 pl3  I42 pw2  I53 cl3 
+2.521200 avg 3.192693 var 14 sz  4 supp  I-1    I13 sl3  I33 pl3  I42 pw2  I52 cl2 
+2.539630 avg 0.081680 var 6 sz  39 supp  I-1    I13 sl3  I33 pl3  I53 cl3 
+0.926357 avg 0.509653 var 6 sz  4 supp  I-1    I13 sl3  I33 pl3  I52 cl2 
+2.575604 avg 0.088757 var 6 sz  37 supp  I-1    I13 sl3  I33 pl3  I43 pw3 
+2.869490 avg 0.087342 var 14 sz  37 supp  I-1    I13 sl3  I33 pl3  I43 pw3  I53 cl3 
+0.909091 avg 0.000000 var 2 sz  18 supp  I-1    I13 sl3  I42 pw2 
+0.522231 avg 0.201324 var 6 sz  2 supp  I-1    I13 sl3  I42 pw2  I53 cl3 
+2.111661 avg 0.897154 var 6 sz  16 supp  I-1    I13 sl3  I42 pw2  I52 cl2 
+2.127273 avg 0.000000 var 2 sz  39 supp  I-1    I13 sl3  I53 cl3 
+0.872727 avg 0.000000 var 2 sz  16 supp  I-1    I13 sl3  I52 cl2 
+2.193676 avg 0.000000 var 2 sz  37 supp  I-1    I13 sl3  I43 pw3 
+2.778690 avg 0.174302 var 6 sz  37 supp  I-1    I13 sl3  I43 pw3  I53 cl3 
+0.727273 avg 0.000000 var 2 sz  12 supp  I-1    I13 sl3  I32 pl2 
+1.909091 avg 0.899745 var 6 sz  12 supp  I-1    I13 sl3  I32 pl2  I42 pw2 
+2.407933 avg 0.572105 var 14 sz  12 supp  I-1    I13 sl3  I32 pl2  I42 pw2  I52 cl2 
+2.081267 avg 1.123288 var 6 sz  12 supp  I-1    I13 sl3  I32 pl2  I52 cl2 
+0.378788 avg 0.000000 var 2 sz  5 supp  I-1    I13 sl3  I23 sw3 
+1.979681 avg 1.341346 var 6 sz  5 supp  I-1    I13 sl3  I23 sw3  I33 pl3 
+2.769212 avg 1.048366 var 14 sz  5 supp  I-1    I13 sl3  I23 sw3  I33 pl3  I53 cl3 
+2.868825 avg 1.146556 var 14 sz  5 supp  I-1    I13 sl3  I23 sw3  I33 pl3  I43 pw3 
+3.240672 avg 0.729945 var 30 sz  5 supp  I-1    I13 sl3  I23 sw3  I33 pl3  I43 pw3  I53 cl3 
+2.087154 avg 1.461897 var 6 sz  5 supp  I-1    I13 sl3  I23 sw3  I53 cl3 
+2.183735 avg 1.632892 var 6 sz  5 supp  I-1    I13 sl3  I23 sw3  I43 pw3 
+2.969250 avg 1.232707 var 14 sz  5 supp  I-1    I13 sl3  I23 sw3  I43 pw3  I53 cl3 
+0.277778 avg 0.000000 var 2 sz  5 supp  I-1    I42 pw2  I53 cl3 
+2.722222 avg 0.000000 var 2 sz  49 supp  I-1    I42 pw2  I52 cl2 
+3.000000 avg 0.000000 var 2 sz  50 supp  I-1    I41 pw1  I51 cl1 
+3.000000 avg 0.000000 var 2 sz  50 supp  I-1    I31 pl1  I51 cl1 
+3.000000 avg 0.000000 var 2 sz  50 supp  I-1    I31 pl1  I41 pw1 
+3.000000 avg 0.000000 var 6 sz  50 supp  I-1    I31 pl1  I41 pw1  I51 cl1 
+2.934783 avg 0.000000 var 2 sz  45 supp  I-1    I43 pw3  I53 cl3 
+0.065217 avg 0.000000 var 2 sz  1 supp  I-1    I43 pw3  I52 cl2 
+2.777778 avg 0.000000 var 2 sz  45 supp  I-1    I32 pl2  I42 pw2 
+1.170370 avg 1.622255 var 6 sz  1 supp  I-1    I32 pl2  I42 pw2  I53 cl3 
+2.901436 avg 0.009892 var 6 sz  44 supp  I-1    I32 pl2  I42 pw2  I52 cl2 
+0.066667 avg 0.000000 var 2 sz  1 supp  I-1    I32 pl2  I53 cl3 
+2.933333 avg 0.000000 var 2 sz  44 supp  I-1    I32 pl2  I52 cl2 
+1.681287 avg 0.000000 var 2 sz  23 supp  I-1    I12 sl2  I21 sw1 
+1.384093 avg 0.132402 var 6 sz  8 supp  I-1    I12 sl2  I21 sw1  I33 pl3 
+1.455299 avg 0.630188 var 14 sz  3 supp  I-1    I12 sl2  I21 sw1  I33 pl3  I42 pw2 
+3.382754 avg 5.174048 var 30 sz  2 supp  I-1    I12 sl2  I21 sw1  I33 pl3  I42 pw2  I53 cl3 
+1.290994 avg 0.638898 var 30 sz  1 supp  I-1    I12 sl2  I21 sw1  I33 pl3  I42 pw2  I52 cl2 
+2.616610 avg 1.691158 var 14 sz  7 supp  I-1    I12 sl2  I21 sw1  I33 pl3  I53 cl3 
+0.712613 avg 0.257279 var 14 sz  1 supp  I-1    I12 sl2  I21 sw1  I33 pl3  I52 cl2 
+2.208763 avg 1.265676 var 14 sz  5 supp  I-1    I12 sl2  I21 sw1  I33 pl3  I43 pw3 
+2.922406 avg 1.364919 var 30 sz  5 supp  I-1    I12 sl2  I21 sw1  I33 pl3  I43 pw3  I53 cl3 
+2.040427 avg 0.010691 var 6 sz  18 supp  I-1    I12 sl2  I21 sw1  I42 pw2 
+1.405043 avg 0.918511 var 14 sz  2 supp  I-1    I12 sl2  I21 sw1  I42 pw2  I53 cl3 
+2.447975 avg 0.171180 var 14 sz  16 supp  I-1    I12 sl2  I21 sw1  I42 pw2  I52 cl2 
+1.381346 avg 0.172665 var 6 sz  7 supp  I-1    I12 sl2  I21 sw1  I53 cl3 
+1.959468 avg 0.013138 var 6 sz  16 supp  I-1    I12 sl2  I21 sw1  I52 cl2 
+1.132121 avg 0.118664 var 6 sz  5 supp  I-1    I12 sl2  I21 sw1  I43 pw3 
+2.472011 avg 1.783395 var 14 sz  5 supp  I-1    I12 sl2  I21 sw1  I43 pw3  I53 cl3 
+2.002246 avg 0.018760 var 6 sz  15 supp  I-1    I12 sl2  I21 sw1  I32 pl2 
+2.473076 avg 0.188641 var 14 sz  15 supp  I-1    I12 sl2  I21 sw1  I32 pl2  I42 pw2 
+2.829894 avg 0.180865 var 30 sz  15 supp  I-1    I12 sl2  I21 sw1  I32 pl2  I42 pw2  I52 cl2 
+2.636068 avg 0.298606 var 14 sz  15 supp  I-1    I12 sl2  I21 sw1  I32 pl2  I52 cl2 
+0.657895 avg 0.000000 var 2 sz  9 supp  I-1    I12 sl2  I22 sw2 
+0.902199 avg 0.071141 var 6 sz  4 supp  I-1    I12 sl2  I22 sw2  I33 pl3 
+1.505308 avg 0.583663 var 14 sz  3 supp  I-1    I12 sl2  I22 sw2  I33 pl3  I53 cl3 
+1.108840 avg 0.660243 var 14 sz  1 supp  I-1    I12 sl2  I22 sw2  I33 pl3  I52 cl2 
+1.979132 avg 0.775393 var 14 sz  4 supp  I-1    I12 sl2  I22 sw2  I33 pl3  I43 pw3 
+2.037786 avg 0.566475 var 30 sz  3 supp  I-1    I12 sl2  I22 sw2  I33 pl3  I43 pw3  I53 cl3 
+6.841033 avg 89.197403 var 30 sz  1 supp  I-1    I12 sl2  I22 sw2  I33 pl3  I43 pw3  I52 cl2 
+1.160115 avg 0.229393 var 6 sz  5 supp  I-1    I12 sl2  I22 sw2  I42 pw2 
+1.908418 avg 0.522244 var 14 sz  5 supp  I-1    I12 sl2  I22 sw2  I42 pw2  I52 cl2 
+0.770102 avg 0.046145 var 6 sz  3 supp  I-1    I12 sl2  I22 sw2  I53 cl3 
+1.451055 avg 0.372950 var 6 sz  6 supp  I-1    I12 sl2  I22 sw2  I52 cl2 
+1.104437 avg 0.116501 var 6 sz  4 supp  I-1    I12 sl2  I22 sw2  I43 pw3 
+1.730091 avg 0.785073 var 14 sz  3 supp  I-1    I12 sl2  I22 sw2  I43 pw3  I53 cl3 
+3.734463 avg 31.785677 var 14 sz  1 supp  I-1    I12 sl2  I22 sw2  I43 pw3  I52 cl2 
+1.404843 avg 0.366108 var 6 sz  5 supp  I-1    I12 sl2  I22 sw2  I32 pl2 
+2.187252 avg 0.711588 var 14 sz  5 supp  I-1    I12 sl2  I22 sw2  I32 pl2  I42 pw2 
+2.539414 avg 0.474672 var 30 sz  5 supp  I-1    I12 sl2  I22 sw2  I32 pl2  I42 pw2  I52 cl2 
+2.161820 avg 0.622865 var 14 sz  5 supp  I-1    I12 sl2  I22 sw2  I32 pl2  I52 cl2 
+0.909091 avg 0.000000 var 2 sz  12 supp  I-1    I12 sl2  I33 pl3 
+0.808081 avg 0.227400 var 6 sz  3 supp  I-1    I12 sl2  I33 pl3  I42 pw2 
+2.279228 avg 2.445994 var 14 sz  2 supp  I-1    I12 sl2  I33 pl3  I42 pw2  I53 cl3 
+0.766799 avg 0.184339 var 14 sz  1 supp  I-1    I12 sl2  I33 pl3  I42 pw2  I52 cl2 
+2.025871 avg 0.839454 var 6 sz  10 supp  I-1    I12 sl2  I33 pl3  I53 cl3 
+0.708681 avg 0.291427 var 6 sz  2 supp  I-1    I12 sl2  I33 pl3  I52 cl2 
+1.996047 avg 0.852478 var 6 sz  9 supp  I-1    I12 sl2  I33 pl3  I43 pw3 
+2.327912 avg 0.479507 var 14 sz  8 supp  I-1    I12 sl2  I33 pl3  I43 pw3  I53 cl3 
+3.468180 avg 16.516428 var 14 sz  1 supp  I-1    I12 sl2  I33 pl3  I43 pw3  I52 cl2 
+1.851852 avg 0.000000 var 2 sz  24 supp  I-1    I12 sl2  I42 pw2 
+0.824074 avg 0.444650 var 6 sz  2 supp  I-1    I12 sl2  I42 pw2  I53 cl3 
+2.425918 avg 0.186657 var 6 sz  22 supp  I-1    I12 sl2  I42 pw2  I52 cl2 
+0.833333 avg 0.000000 var 2 sz  10 supp  I-1    I12 sl2  I53 cl3 
+1.916667 avg 0.000000 var 2 sz  23 supp  I-1    I12 sl2  I52 cl2 
+0.250000 avg 0.000000 var 2 sz  3 supp  I-1    I12 sl2  I51 cl1 
+0.250000 avg 0.000000 var 2 sz  3 supp  I-1    I12 sl2  I41 pw1 
+2.083333 avg 2.016667 var 6 sz  3 supp  I-1    I12 sl2  I41 pw1  I51 cl1 
+0.250000 avg 0.000000 var 2 sz  3 supp  I-1    I12 sl2  I31 pl1 
+2.083333 avg 2.016667 var 6 sz  3 supp  I-1    I12 sl2  I31 pl1  I51 cl1 
+2.083333 avg 2.016667 var 6 sz  3 supp  I-1    I12 sl2  I31 pl1  I41 pw1 
+2.607143 avg 0.997253 var 14 sz  3 supp  I-1    I12 sl2  I31 pl1  I41 pw1  I51 cl1 
+0.815217 avg 0.000000 var 2 sz  9 supp  I-1    I12 sl2  I43 pw3 
+2.005368 avg 0.960241 var 6 sz  8 supp  I-1    I12 sl2  I43 pw3  I53 cl3 
+1.547259 avg 4.124117 var 6 sz  1 supp  I-1    I12 sl2  I43 pw3  I52 cl2 
+1.944444 avg 0.000000 var 2 sz  21 supp  I-1    I12 sl2  I32 pl2 
+2.546296 avg 0.221193 var 6 sz  21 supp  I-1    I12 sl2  I32 pl2  I42 pw2 
+2.862270 avg 0.150529 var 14 sz  21 supp  I-1    I12 sl2  I32 pl2  I42 pw2  I52 cl2 
+2.677371 avg 0.284992 var 6 sz  21 supp  I-1    I12 sl2  I32 pl2  I52 cl2 
+0.462963 avg 0.000000 var 2 sz  4 supp  I-1    I12 sl2  I23 sw3 
+1.678241 avg 3.769612 var 6 sz  1 supp  I-1    I12 sl2  I23 sw3  I42 pw2 
+3.381555 avg 5.576910 var 14 sz  1 supp  I-1    I12 sl2  I23 sw3  I42 pw2  I52 cl2 
+1.699275 avg 3.717529 var 6 sz  1 supp  I-1    I12 sl2  I23 sw3  I52 cl2 
+2.277778 avg 2.812963 var 6 sz  3 supp  I-1    I12 sl2  I23 sw3  I51 cl1 
+2.277778 avg 2.812963 var 6 sz  3 supp  I-1    I12 sl2  I23 sw3  I41 pw1 
+3.261905 avg 2.479548 var 14 sz  3 supp  I-1    I12 sl2  I23 sw3  I41 pw1  I51 cl1 
+2.277778 avg 2.812963 var 6 sz  3 supp  I-1    I12 sl2  I23 sw3  I31 pl1 
+3.261905 avg 2.479548 var 14 sz  3 supp  I-1    I12 sl2  I23 sw3  I31 pl1  I51 cl1 
+3.261905 avg 2.479548 var 14 sz  3 supp  I-1    I12 sl2  I23 sw3  I31 pl1  I41 pw1 
+3.655556 avg 1.803512 var 30 sz  3 supp  I-1    I12 sl2  I23 sw3  I31 pl1  I41 pw1  I51 cl1 
+1.732804 avg 3.634837 var 6 sz  1 supp  I-1    I12 sl2  I23 sw3  I32 pl2 
+3.528912 avg 6.128073 var 14 sz  1 supp  I-1    I12 sl2  I23 sw3  I32 pl2  I42 pw2 
+4.343374 avg 5.257178 var 30 sz  1 supp  I-1    I12 sl2  I23 sw3  I32 pl2  I42 pw2  I52 cl2 
+3.602183 avg 6.301752 var 14 sz  1 supp  I-1    I12 sl2  I23 sw3  I32 pl2  I52 cl2 
+0.378788 avg 0.000000 var 2 sz  5 supp  I-1    I23 sw3  I33 pl3 
+2.050814 avg 1.600507 var 6 sz  5 supp  I-1    I23 sw3  I33 pl3  I53 cl3 
+2.147014 avg 1.778960 var 6 sz  5 supp  I-1    I23 sw3  I33 pl3  I43 pw3 
+2.729505 avg 0.961497 var 14 sz  5 supp  I-1    I23 sw3  I33 pl3  I43 pw3  I53 cl3 
+0.077160 avg 0.000000 var 2 sz  1 supp  I-1    I23 sw3  I42 pw2 
+1.954270 avg 2.106304 var 6 sz  1 supp  I-1    I23 sw3  I42 pw2  I52 cl2 
+0.416667 avg 0.000000 var 2 sz  5 supp  I-1    I23 sw3  I53 cl3 
+0.083333 avg 0.000000 var 2 sz  1 supp  I-1    I23 sw3  I52 cl2 
+2.500000 avg 0.000000 var 2 sz  30 supp  I-1    I23 sw3  I51 cl1 
+2.500000 avg 0.000000 var 2 sz  30 supp  I-1    I23 sw3  I41 pw1 
+2.833333 avg 0.066667 var 6 sz  30 supp  I-1    I23 sw3  I41 pw1  I51 cl1 
+2.500000 avg 0.000000 var 2 sz  30 supp  I-1    I23 sw3  I31 pl1 
+2.833333 avg 0.066667 var 6 sz  30 supp  I-1    I23 sw3  I31 pl1  I51 cl1 
+2.833333 avg 0.066667 var 6 sz  30 supp  I-1    I23 sw3  I31 pl1  I41 pw1 
+2.928571 avg 0.032967 var 14 sz  30 supp  I-1    I23 sw3  I31 pl1  I41 pw1  I51 cl1 
+0.452899 avg 0.000000 var 2 sz  5 supp  I-1    I23 sw3  I43 pw3 
+2.241278 avg 1.911052 var 6 sz  5 supp  I-1    I23 sw3  I43 pw3  I53 cl3 
+0.092593 avg 0.000000 var 2 sz  1 supp  I-1    I23 sw3  I32 pl2 
+2.067901 avg 2.402835 var 6 sz  1 supp  I-1    I23 sw3  I32 pl2  I42 pw2 
+2.715637 avg 1.279609 var 14 sz  1 supp  I-1    I23 sw3  I32 pl2  I42 pw2  I52 cl2 
+2.142677 avg 2.538755 var 6 sz  1 supp  I-1    I23 sw3  I32 pl2  I52 cl2 

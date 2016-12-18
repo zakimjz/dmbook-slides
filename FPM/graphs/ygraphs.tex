@@ -1,0 +1,3552 @@
+\lecture{graphs}{graphs}
+
+\date{Chapter 11: Graph Pattern Mining}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Unlabeled and Labeled Graphs}
+The goal of graph mining is to extract interesting subgraphs from a
+single large graph (e.g., a social network), or from a database of many
+graphs. 
+
+\medskip
+A graph is a pair $G = (V,E)$ where $V$ is a set of vertices, and
+$E \subseteq V \times V$ is a set of edges. 
+
+\medskip
+A {\em labeled graph} has labels associated with its
+vertices as well as edges. We use $L(u)$ to denote the label of
+the vertex $u$, and $L(u,v)$ to denote the label of the edge
+$(u,v)$, with the set of vertex labels denoted as $\Sigma_V$ and the
+set of edge labels as $\Sigma_E$. Given an edge $(u,v) \in G$,
+the tuple $\tup{u, v, L(u), L(v), L(u,v)}$ that augments the
+edge with the node and
+edge labels is called an {\em extended edge}.
+
+\medskip
+A graph $G'=(V',E')$ is said to be a {\em
+subgraph} of $G$ if $V' \subseteq V$ and $E' \subseteq E$.
+A {\em
+connected subgraph} is def\/{i}ned as a subgraph $G'$ such that
+$V' \subseteq V$, $E' \subseteq E$, and
+for any two nodes $u, v \in V'$,
+there exists a {\em path} from $u$ to $v$ in $G'$.
+
+\end{frame}
+
+\begin{frame}[fragile]{Unlabeled  and Labeled Graphs}
+\begin{figure}
+  \psset{unit=0.75in}
+  \def\mcnode#1{\cnodeput#1}
+  \def\mlnode#1#2#3{\uput{10pt}[#3]#1{#2}}
+  \vspace{0.2in}
+\captionsetup[subfloat]{captionskip=15pt}
+  \centerline{
+   \scalebox{0.9}{
+    \subfloat[]{\label{fig:fpm:graphs:G}
+      \begin{pspicture}(3,2)
+        \mcnode{(1,2){v1}{~~}}
+        \mcnode{(2,2){v2}{~~}}
+        \mcnode{(0,1){v3}{~~}}
+        \mcnode{(1,1){v4}{~~}}
+        \mcnode{(2,1){v5}{~~}}
+        \mcnode{(3,1){v6}{~~}}
+        \mcnode{(1,0){v7}{~~}}
+        \mcnode{(2,0){v8}{~~}}
+        \mlnode{(1,2)}{$v_1$}{u}
+        \mlnode{(2,2)}{$v_2$}{u}
+        \mlnode{(0,1)}{$v_3$}{u}
+        \mlnode{(1,1)}{$v_4$}{ul}
+        \mlnode{(2,1)}{$v_5$}{ur}
+        \mlnode{(3,1)}{$v_6$}{u}
+        \mlnode{(1,0)}{$v_7$}{d}
+        \mlnode{(2,0)}{$v_8$}{d}
+        \ncline{v1}{v2}
+        \ncline{v1}{v3}
+        \ncline{v1}{v4}
+        \ncline{v1}{v5}
+        \ncline{v2}{v4}
+        \ncline{v2}{v5}
+        \ncline{v2}{v6}
+        \ncline{v3}{v4}
+        \ncline{v3}{v7}
+        \ncline{v4}{v5}
+        \ncline{v4}{v7}
+        \ncline{v4}{v8}
+        \ncline{v5}{v8}
+        \ncline{v6}{v8}
+        \ncline{v7}{v8}
+      \end{pspicture}
+    }
+    \hspace{0.5in}
+    \subfloat[]{\label{fig:fpm:graphs:LG}
+      \begin{pspicture}(3,2)
+        \mcnode{(1,2){v1}{$a$}}
+        \mcnode{(2,2){v2}{$c$}}
+        \mcnode{(0,1){v3}{$b$}}
+        \mcnode{(1,1){v4}{$a$}}
+        \mcnode{(2,1){v5}{$d$}}
+        \mcnode{(3,1){v6}{$c$}}
+        \mcnode{(1,0){v7}{$b$}}
+        \mcnode{(2,0){v8}{$c$}}
+        \mlnode{(1,2)}{$v_1$}{u}
+        \mlnode{(2,2)}{$v_2$}{u}
+        \mlnode{(0,1)}{$v_3$}{u}
+        \mlnode{(1,1)}{$v_4$}{ul}
+        \mlnode{(2,1)}{$v_5$}{ur}
+        \mlnode{(3,1)}{$v_6$}{u}
+        \mlnode{(1,0)}{$v_7$}{d}
+        \mlnode{(2,0)}{$v_8$}{d}
+        \ncline{v1}{v2}
+        \ncline{v1}{v3}
+        \ncline{v1}{v4}
+        \ncline{v1}{v5}
+        \ncline{v2}{v4}
+        \ncline{v2}{v5}
+        \ncline{v2}{v6}
+        \ncline{v3}{v4}
+        \ncline{v3}{v7}
+        \ncline{v4}{v5}
+        \ncline{v4}{v7}
+        \ncline{v4}{v8}
+        \ncline{v5}{v8}
+        \ncline{v6}{v8}
+        \ncline{v7}{v8}
+      \end{pspicture}
+    }
+   }
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{Subgraph and Connected Subgraph}
+\begin{figure}
+  \psset{unit=0.75in}
+  \def\mlnode#1#2#3{\uput{10pt}[#3]#1{#2}}
+\captionsetup[subfloat]{captionskip=15pt}
+  \centerline{
+   \scalebox{0.9}{
+    \subfloat[]{\label{fig:fpm:graphs:sg}
+      \begin{pspicture}(3,2)
+        %\psframe[](3,2)
+        %\psgrid[subgriddiv=1,griddots=10,gridlabels=7pt](0,0)(3,2)
+        \def\mcnode#1{\cnodeput#1}
+        \mcnode{[linewidth=3pt](1,2){v1}{$a$}}
+        \mcnode{[linewidth=3pt](2,2){v2}{$c$}}
+        \mcnode{[linecolor=gray](0,1){v3}{$b$}}
+        \mcnode{[linewidth=3pt](1,1){v4}{$a$}}
+        \mcnode{[linewidth=3pt](2,1){v5}{$d$}}
+        \mcnode{[linewidth=3pt](3,1){v6}{$c$}}
+        \mcnode{[linecolor=gray](1,0){v7}{$b$}}
+        \mcnode{[linewidth=3pt](2,0){v8}{$c$}}
+        \mlnode{(1,2)}{$v_1$}{u}
+        \mlnode{(2,2)}{$v_2$}{u}
+        \mlnode{(0,1)}{$v_3$}{u}
+        \mlnode{(1,1)}{$v_4$}{ul}
+        \mlnode{(2,1)}{$v_5$}{ur}
+        \mlnode{(3,1)}{$v_6$}{u}
+        \mlnode{(1,0)}{$v_7$}{d}
+        \mlnode{(2,0)}{$v_8$}{d}
+        \ncline[linewidth=3pt]{v1}{v2}
+        \ncline[linecolor=gray]{v1}{v3}
+        \ncline[linecolor=gray]{v1}{v4}
+        \ncline[linewidth=3pt]{v1}{v5}
+        \ncline[linecolor=gray]{v2}{v4}
+        \ncline[linewidth=3pt]{v2}{v5}
+        \ncline[linewidth=3pt]{v2}{v6}
+        \ncline[linecolor=gray]{v3}{v4}
+        \ncline[linecolor=gray]{v3}{v7}
+        \ncline[linecolor=gray]{v4}{v5}
+        \ncline[linecolor=gray]{v4}{v7}
+        \ncline[linewidth=3pt]{v4}{v8}
+        \ncline[linecolor=gray]{v5}{v8}
+        \ncline[linecolor=gray]{v6}{v8}
+        \ncline[linecolor=gray]{v7}{v8}
+      \end{pspicture}
+    }
+    \hspace{0.25in}
+    \subfloat[]{\label{fig:fpm:graphs:csg}
+      \begin{pspicture}(3,2)
+        \def\mcnode#1{\cnodeput#1}
+        \mcnode{[linewidth=3pt](1,2){v1}{$a$}}
+        \mcnode{[linewidth=3pt](2,2){v2}{$c$}}
+        \mcnode{[linecolor=gray](0,1){v3}{$b$}}
+        \mcnode{[linewidth=3pt](1,1){v4}{$a$}}
+        \mcnode{[linewidth=3pt](2,1){v5}{$d$}}
+        \mcnode{[linewidth=3pt](3,1){v6}{$c$}}
+        \mcnode{[linecolor=gray](1,0){v7}{$b$}}
+        \mcnode{[linewidth=3pt](2,0){v8}{$c$}}
+        \mlnode{(1,2)}{$v_1$}{u}
+        \mlnode{(2,2)}{$v_2$}{u}
+        \mlnode{(0,1)}{$v_3$}{u}
+        \mlnode{(1,1)}{$v_4$}{ul}
+        \mlnode{(2,1)}{$v_5$}{ur}
+        \mlnode{(3,1)}{$v_6$}{u}
+        \mlnode{(1,0)}{$v_7$}{d}
+        \mlnode{(2,0)}{$v_8$}{d}
+        \ncline[linewidth=3pt]{v1}{v2}
+        \ncline[linecolor=gray]{v1}{v3}
+        \ncline[linecolor=gray]{v1}{v4}
+        \ncline[linewidth=3pt]{v1}{v5}
+        \ncline[linecolor=gray]{v2}{v4}
+        \ncline[linewidth=3pt]{v2}{v5}
+        \ncline[linewidth=3pt]{v2}{v6}
+        \ncline[linecolor=gray]{v3}{v4}
+        \ncline[linecolor=gray]{v3}{v7}
+        \ncline[linewidth=3pt]{v4}{v5}
+        \ncline[linecolor=gray]{v4}{v7}
+        \ncline[linewidth=3pt]{v4}{v8}
+        \ncline[linecolor=gray]{v5}{v8}
+        \ncline[linecolor=gray]{v6}{v8}
+        \ncline[linecolor=gray]{v7}{v8}
+      \end{pspicture}
+    }
+   }
+  }
+\end{figure}
+\end{frame}
+
+
+
+
+\begin{frame}{Graph and Subgraph Isomorphism} 
+  A graph $G'=(V', E')$ is
+said to be {\em isomorphic} to another graph $G=(V, E)$ if there exists
+a bijective function $\phi:V' \to V$, i.e., both injective (into) and
+surjective (onto), such that
+\begin{itemize}
+\item $(u, v) \in E' \iff (\phi(u),\phi(v)) \in E$
+\item $\forall u\in V', \; L(u) = L(\phi(u))$
+\item $\forall (u,v) \in E', \; L(u,v) = L(\phi(u),\phi(v))$
+\end{itemize}
+
+\bigskip
+In other words, the {\em isomorphism}
+$\phi$ preserves the edge
+adjacencies as well as the vertex and edge labels. Put differently, the
+extended tuple $\tup{u, v, L(u), L(v), L(u,v)} \in G'$ if and only if
+$\tup{\phi(u), \phi(v), L(\phi(u)), L(\phi(v)), L(\phi(u),\phi(v))} \in G$.
+
+\bigskip
+If the function $\phi$ is only injective but
+not surjective, we say that the mapping $\phi$ is a {\em subgraph
+isomorphism} from $G'$ to $G$.
+In this case, we say that $G'$ is
+isomorphic to a subgraph of $G$, that is, $G'$ is {\em subgraph
+isomorphic} to $G$, denoted $G' \subseteq G$;
+we also say that $G$ {\em contains} $G'$.
+\end{frame}
+
+
+\begin{frame}[fragile]{Graph and Subgraph Isomorphism}
+\begin{figure}
+  \psset{tnpos=l,tnsep=2pt,rowsep=1.25,colsep=0.5}
+  \centerline{
+   \scalebox{0.9}{
+    \psmatrix
+    &\Tcircle[name=u1]{$a$}~[tnpos=a]{$G_1$}~{$u_1$}\\
+    &\Tcircle[name=u2]{$a$}~{$u_2$}\\
+    \Tcircle[name=u3]{$b$}~{$u_3$} & &
+    \Tcircle[name=u4]{$b$}~{$u_4$}
+    \endpsmatrix
+    \ncline{u1}{u2}
+    \ncline{u2}{u3}
+    \ncline{u2}{u4}
+    \ncarc[arcangle=-40]{u4}{u1}
+    \ncarc[arcangle=40]{u3}{u1}
+    %
+    \hspace{0.25in}
+    \psmatrix
+    \Tcircle[name=v1]{$a$}~[tnpos=a]{$G_2$}~{$v_1$}\\
+    \Tcircle[name=v3]{$a$}~{$v_3$}\\
+    \Tcircle[name=v2]{$b$}~{$v_2$} &
+    \Tcircle[name=v4]{$b$}~{$v_4$}
+    \endpsmatrix
+    \ncline{v1}{v3}
+    \ncline{v3}{v2}
+    \ncline{v3}{v4}
+    \ncarc[arcangle=-40]{v2}{v1}
+    \ncarc[arcangle=-20]{v4}{v1}
+    %
+    \hspace{0.25in}
+    \psmatrix
+    \Tcircle[name=w1]{$a$}~[tnpos=a]{$G_3$}~{$w_1$}\\
+    \Tcircle[name=w2]{$a$}~{$w_2$}\\
+    \Tcircle[name=w3]{$b$}~{$w_3$} &
+    \endpsmatrix
+    \ncline{w1}{w2}
+    \ncline{w2}{w3}
+    \ncarc[arcangle=-60]{w3}{w1}
+    %
+    \hspace{0.25in}
+    \psmatrix
+    \Tcircle[name=x1]{$b$}~[tnpos=a]{$G_4$}~{$x_1$}\\
+    \Tcircle[name=x2]{$a$}~{$x_2$}\\
+    \Tcircle[name=x3]{$b$}~{$x_3$} &
+    \endpsmatrix
+    \ncline{x1}{x2}
+    \ncline{x2}{x3}
+    \ncarc[arcangle=-60]{x3}{x1}
+   }
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Graph Isomorphism}
+$G_1$
+and $G_2$ are isomorphic graphs. There are several possible
+isomorphisms between $G_1$ and $G_2$. An example of
+an isomorphism $\phi: V_2 \to V_1$ is
+\begin{align*}
+  \phi(v_1) & = u_1 & \phi(v_2) &= u_3 & \phi(v_3) & = u_2 &
+  \phi(v_4) & = u_4
+\end{align*}
+The inverse mapping $\phi^{-1}$ specif\/{i}es the isomorphism from $G_1$
+to $G_2$. For example, $\phi^{-1}(u_1) = v_1$,
+$\phi^{-1}(u_2) = v_3$, and so on.
+
+\bigskip
+The set of all possible isomorphisms from $G_2$ to $G_1$ are as
+follows:
+\begin{center}
+\begin{tabular}{c|cccc}
+  & $v_1$ & $v_2$ & $v_3$ & $v_4$\\
+  \hline
+  $\phi_1$ & $u_1$ & $u_3$ & $u_2$ & $u_4$\\
+  $\phi_2$ & $u_1$ & $u_4$ & $u_2$ & $u_3$\\
+  $\phi_3$ & $u_2$ & $u_3$ & $u_1$ & $u_4$\\
+  $\phi_4$ & $u_2$ & $u_4$ & $u_1$ & $u_3$
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Subgraph Isomorphism}
+The graph $G_3$ is subgraph isomorphic to
+both $G_1$ and $G_2$. The set of all possible subgraph
+isomorphisms from $G_3$ to $G_1$ are as follows:
+\begin{center}
+\begin{tabular}{c|ccc}
+  & $w_1$ & $w_2$ & $w_3$\\
+  \hline
+  $\phi_1$ & $u_1$ & $u_2$ & $u_3$\\
+  $\phi_2$ & $u_1$ & $u_2$ & $u_4$\\
+  $\phi_3$ & $u_2$ & $u_1$ & $u_3$\\
+  $\phi_4$ & $u_2$ & $u_1$ & $u_4$\\
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}{Mining Frequent Subgraph}
+
+Given a database of graphs, $\bD = \{
+G_1, G_2, \ldots, G_n\}$, and given some graph $G$, the support of
+$G$ in $\bD$ is def\/{i}ned as follows:
+\begin{align*}
+    \supp(G) = \bcard{\Big}{\bigl\{ G_i \in \bD \mid
+    G \subseteq G_i\bigr\}}
+\end{align*}
+The support is simply the number of graphs in the database that
+contain $G$. 
+
+Given a $\minsup$ threshold, the goal of graph
+mining is to mine all frequent connected subgraphs
+with $\supp(G) \ge \minsup$.
+
+\bigskip
+If we consider subgraphs with $m$ vertices, then there are ${m \choose 2} =
+O(m^2)$ possible edges. The number of possible subgraphs with $m$ nodes
+is then $O(2^{m^2})$ because we may decide either to include or exclude
+each of the edges.  Many of these subgraphs will not be connected, but
+$O(2^{m^2})$ is a convenient upper bound.  When we add labels to the vertices
+and edges, the number of labeled graphs will be even more. 
+\end{frame}
+
+
+\begin{frame}{Graph Pattern Mining}
+There are two main challenges in frequent subgraph mining. 
+
+
+\bigskip
+The f\/{i}rst is
+to systematically generate nonredundant candidate subgraphs. We use {\em edge-growth}
+as the basic mechanism for extending
+the candidates. 
+
+\bigskip
+The second challenge is to count the support of a graph in the
+database. This involves subgraph isomorphism checking, as we have to
+f\/{i}nd the set of graphs that contain a given candidate.
+\end{frame}
+
+
+\begin{frame}{Candidate Generation}
+
+An effective strategy to enumerate subgraph patterns is
+{\em rightmost path extension}.
+
+\medskip
+Given a graph $G$, we perform a
+depth-f\/{i}rst search (DFS) over its vertices, and create a DFS spanning
+tree, that is, one that covers or spans all the vertices.
+
+\medskip
+Edges that are included in the DFS tree are called
+{\em forward} edges, and all other edges are called {\em backward}
+edges. Backward edges create cycles in the graph.
+
+\medskip
+Once we have a DFS tree, def\/{i}ne the {\em rightmost} path as the
+path from the root to the rightmost leaf,
+that is, to the leaf with the
+highest index in the DFS order.
+\end{frame}
+
+
+\begin{frame}[fragile]{Depth-first Spanning Tree}
+  \framesubtitle{Starting at $v_1$, each DFS step chooses the vertex with
+  smallest index}
+\begin{figure}
+  \psset{unit=0.5in,tnpos=l,tnsep=2pt}
+  \centerline{
+    \subfloat[]{  \label{fig:fpm:graphs:cg}
+      \psmatrix[rowsep=1,colsep=0.75]
+      \Tcircle[name=v6]{$d$}~{$v_6$} & \Tcircle[name=v5]{c}~[tnpos=b]{$v_5$} &
+      \Tcircle[name=v7]{$a$}~[tnpos=r]{$v_7$}\\
+      \Tcircle[name=v1]{$a$}~{$v_1$} & \Tcircle[name=v2]{a}~[tnpos=r]{$v_2$} &
+      \Tcircle[name=v8]{$b$}~[tnpos=r]{$v_8$}\\
+      \Tcircle[name=v4]{$c$}~{$v_4$} & \Tcircle[name=v3]{b}~[tnpos=r]{$v_3$}
+      \endpsmatrix
+      \ncline{v1}{v2}
+      \ncline{v1}{v3}
+      \ncline{v1}{v4}
+      \ncline{v1}{v5}
+      \ncline{v1}{v6}
+      \ncline{v2}{v3}
+      \ncline{v2}{v4}
+      \ncline{v5}{v6}
+      \ncline{v5}{v7}
+      \ncline{v7}{v8}
+    }
+    \hspace{0.5in}
+    \subfloat[]{   \label{fig:fpm:graphs:cgst}
+      \psmatrix[rowsep=1,colsep=1]
+      \Tcircle[name=v6]{$d$}~{$v_6$} & \Tcircle[name=v5]{c}~[tnpos=b]{$v_5$} &
+      \Tcircle[name=v7]{$a$}~[tnpos=r]{$v_7$}\\
+      \Tcircle[name=v1]{$a$}~{$v_1$} & \Tcircle[name=v2]{a}~[tnpos=r]{$v_2$} &
+      \Tcircle[name=v8]{$b$}~[tnpos=r]{$v_8$}\\
+      \Tcircle[name=v4]{$c$}~{$v_4$} & \Tcircle[name=v3]{b}~[tnpos=r]{$v_3$}
+      \endpsmatrix
+      \ncline[linewidth=3pt]{v1}{v2}
+      \ncline[linecolor=gray]{v1}{v3}
+      \ncline[linecolor=gray]{v1}{v4}
+      \ncline[linewidth=3pt]{v1}{v5}
+      \ncline[linecolor=gray]{v1}{v6}
+      \ncline[linewidth=3pt]{v2}{v3}
+      \ncline[linewidth=3pt]{v2}{v4}
+      \ncline[linewidth=3pt]{v5}{v6}
+      \ncline[linewidth=3pt]{v5}{v7}
+      \ncline[linewidth=3pt]{v7}{v8}
+    }
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{Rightmost Path Extensions}
+  \small
+For generating new candidates from a given graph $G$, we extend it
+by adding a new edge to vertices only on the rightmost path.  We can
+either extend $G$ by adding backward edges from the {\em rightmost
+vertex} to some other vertex on the rightmost path (disallowing
+self-loops or multi-edges), or we can extend $G$ by adding forward edges
+from any of the vertices on the rightmost path. A backward extension does
+not add a new vertex, whereas a forward extension adds a new vertex.
+
+\bigskip
+For systematic candidate generation we impose a total order on the
+extensions, as follows:
+F{i}rst, we try all backward extensions from the rightmost
+vertex, and then we try forward extensions from vertices on the
+rightmost path.  
+
+\medskip
+Among the backward edge extensions, if $u_r$ is the
+rightmost vertex, the extension $(u_r,v_i)$ is tried before $(u_r,v_{j})$
+if $i < j$.  In other words, backward extensions closer to the root are
+considered before those farther away from the root along the rightmost
+path.  
+
+\medskip
+Among the forward edge extensions, if $v_x$ is the new vertex to
+be added, the extension $(v_i,v_x)$ is tried before $(v_{j}, v_x)$ if $i >
+j$. In other words, the vertices farther from the root (those at
+greater depth) are extended
+before those closer to the root. Also note that the new vertex will be
+numbered $x=r+1$, as it will become the new rightmost vertex after
+the extension.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Rightmost Path Extensions}
+\begin{figure}
+  \psset{unit=0.4in,tnpos=l,tnsep=2pt}
+  \centerline{
+   \scalebox{0.9}{
+    \psmatrix[rowsep=1.25,colsep=1.5]
+    & & & \Tcircle[name=v1]{$a$}~{$v_1$}\\
+    & \Tcircle[name=v2]{$a$}~{$v_2$} & & \Tcircle[name=v5]{$c$}~{$v_5$}
+    & \TC*[name=x6]~[tnpos=r]{\#6}\\
+    \Tcircle[name=v3]{$b$}~{$v_3$} & \Tcircle[name=v4]{$c$}~{$v_4$} &
+    \Tcircle[name=v6]{$d$}~{$v_6$} & \Tcircle[name=v7]{$a$}~{$v_7$} &
+    \TC*[name=x5]~[tnpos=r]{\#5}\\
+    & & & \Tcircle[doubleline=true,name=v8]{$b$}~{$v_8$} &
+    \TC*[name=x4]~[tnpos=r]{\#4}\\
+    & & & &\TC*[name=x3]~[tnpos=r]{\#3}
+    \endpsmatrix
+    \ncline{v1}{v2}
+    \ncline{v2}{v3}
+    \ncline{v2}{v4}
+    \ncline{v5}{v6}
+    \ncline[linewidth=3pt]{v1}{v5}
+    \ncline[linewidth=3pt]{v5}{v7}
+    \ncline[linewidth=3pt]{v7}{v8}
+    \ncline[linestyle=dashed]{v1}{x6}
+    \ncline[linestyle=dashed]{v5}{x5}
+    \ncline[linestyle=dashed]{v7}{x4}
+    \ncline[linestyle=dashed]{v8}{x3}
+    \ncarc[linecolor=gray,arcangle=-20]{v3}{v1}
+    \ncarc[linecolor=gray,arcangle=-20]{v4}{v1}
+    \ncarc[linecolor=gray,arcangle=-10]{v6}{v1}
+    \ncarc[linestyle=dashed,arcangle=-80]{v8}{v1}\ncput*{\#1}
+    \ncarc[linestyle=dashed,arcangle=-40]{v8}{v5}\ncput*{\#2}
+   }
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{DFS Code}
+  For systematic enumeration we rank the set of isomorphic graphs and 
+  pick one member as the {\em canonical} representative.
+
+  \medskip
+Let $G$ be a graph and let $T_G$ be a DFS spanning tree for $G$.  The
+DFS tree $T_G$ def\/{i}nes an ordering of both the nodes and edges in $G$.
+The DFS node ordering is obtained by numbering the nodes consecutively
+in the order they are visited in the DFS walk.
+
+  \medskip
+Assume that for a pattern graph $G$ the nodes are
+numbered according to their position in the DFS ordering,
+so that $i < j$ implies that $v_i$ comes
+before $v_{j}$ in the DFS walk.
+
+  \medskip
+The DFS edge
+ordering is obtained by following the edges between consecutive nodes in
+DFS order, with the condition that all the backward edges
+incident with vertex $v_i$ are listed before any of the forward edges
+incident with it.  
+
+\medskip
+The {\em DFS code}
+for a graph $G$, for a given DFS
+tree $T_G$, denoted $\text{DFScode}(G)$, is def\/{i}ned as the sequence of
+extended edge tuples of the form
+$\ltup{\big}{v_i,v_{j},L(v_i),L(v_{j}),L(v_i,v_{j})}$ listed in the DFS edge
+order.
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}{Canonical DFS Code}
+  \small
+A subgraph is {\em canonical}
+if it has the smallest
+DFS code among all possible isomorphic graphs.
+
+\medskip
+Let $t_1$ and $t_2$ be any two DFS code tuples:
+\begin{align*}
+t_1 &= \ltup{\big}{v_i, v_{j}, L(v_i), L(v_{j}), L(v_i,v_{j})}\\
+t_2 &=\ltup{\big}{v_x, v_y, L(v_x), L(v_y), L(v_x,v_y)}
+\end{align*}
+We say that $t_1$ is smaller than $t_2$, written $t_1 < t_2$, iff
+\begin{align*}
+    \text{i) }& (v_i,v_{j}) <_e (v_x,v_y), \text{or}\\
+    \text{ii) }&  (v_i,v_{j}) = (v_x,v_y) \text{ and }
+      \qquad \ltup{\big}{L(v_i), L(v_{j}), L(v_i,v_{j})}
+    <_l \ltup{\big}{L(v_x), L(v_y), L(v_x,v_y)}
+\end{align*}
+where $<_e$ is an ordering on the edges and $<_l$ is an ordering on the
+vertex and edge labels. 
+
+\medskip
+The {\em label order} $<_l$ is the standard
+lexicographic order on the vertex and edge labels.
+
+\medskip
+The {\em edge order} $<_e$ is derived from
+the rules for rightmost path extension, namely that all of a node's
+backward extensions must be considered before any forward edge from
+that node, and deep DFS trees are preferred over bushy DFS trees.
+
+\end{frame}
+
+\begin{frame}{Canonical DFS Code: Edge Ordering}
+
+Let $e_{ij} = (v_i,v_{j})$ and $e_{xy} = (v_x,v_y)$ be
+any two edges. We say that $e_{ij} <_e e_{xy}$ iff
+\begin{itemize}
+  \item If $e_{ij}$ and $e_{xy}$ are both forward edges, then (a) $j < y$, or (b) $j=y$ and $i > x$. 
+	
+  \item If $e_{ij}$ and $e_{xy}$ are both backward edges, then (a) $i<x$, or
+  (b) $i=x$ and $j < y$. 
+
+\item If $e_{ij}$ is a forward and $e_{xy}$ is a backward edge, then $j
+  \le x$. 
+
+\item If $e_{ij}$ is a backward and $e_{xy}$ is a forward edge, then $i < y$.
+\end{itemize}
+
+\bigskip
+The {\em canonical DFS code}
+for a graph $G$ is def\/{i}ned as follows:
+\begin{align*}
+  \cC = \min_{G'} \Big\{\text{DFScode}(G') \mid G' \text{ is isomorphic to } G\Big\}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[fragile]{Canonical DFS Code}
+\framesubtitle{$G_1$ has the canonical or minimal DFS code}
+\begin{figure}
+  \psset{labelsep=2.5pt}
+  \psset{unit=0.5in,tnpos=l,linewidth=2pt,rowsep=1,colsep=1,tnsep=2pt}
+  \centerline{
+   \scalebox{0.9}{
+    \hspace{0.1in}
+    \psmatrix
+    \Tcircle[name=a11]{$a$}~[tnpos=a]{$G_1$}~{$v_1$}\\
+    \Tcircle[name=a12]{$a$}~{$v_2$}\\
+    \Tcircle[name=a13]{$a$}~{$v_3$} &
+    \Tcircle[name=b11]{$b$}~[tnpos=r]{$v_4$}
+    \endpsmatrix
+    \ncline{a11}{a12}\ncput*{$q$}
+    \ncline{a12}{a13}\ncput*{$r$}
+    \ncline{a12}{b11}\ncput*{$r$}
+    \ncarc[linewidth=1pt,linecolor=gray,arcangle=-35]{a13}{a11}\ncput*{$r$}
+    \hspace{0.5in}
+    \psmatrix
+    \Tcircle[name=a21]{$a$}~[tnpos=a]{$G_2$}~{$v_1$}\\
+    \Tcircle[name=a22]{$a$}~{$v_2$}\\
+    \Tcircle[name=b21]{$b$}~{$v_3$} &
+    \Tcircle[name=a23]{$a$}~[tnpos=r]{$v_4$}
+    \endpsmatrix
+    \ncline{a21}{a22}\ncput*{$q$}
+    \ncline{a22}{b21}\ncput*{$r$}
+    \ncline{a22}{a23}\ncput*{$r$}
+    \ncarc[linewidth=1pt,linecolor=gray,arcangle=-20]{a23}{a21}\ncput*{$r$}
+    \hspace{0.5in}
+    \psmatrix
+    \Tcircle[name=a31]{$a$}~[tnpos=a]{$G_3$}~{$v_1$}\\
+    \Tcircle[name=a32]{$a$}~{$v_2$} &
+    \Tcircle[name=b31]{$b$}~[tnpos=r]{$v_4$}\\
+    \Tcircle[name=a33]{$a$}~{$v_3$}
+    \endpsmatrix
+    \ncline{a31}{a32}\ncput*{$q$}
+    \ncline{a32}{a33}\ncput*{$r$}
+    \ncline{a31}{b31}\ncput*{$r$}
+    \ncarc[linewidth=1pt,linecolor=gray,arcangle=-30]{a33}{a31}\ncput*{$r$}
+   }}
+  \end{figure}
+  \vspace{0.1in} 
+\begin{figure}
+  \psset{labelsep=2.5pt}
+  \psset{unit=0.5in,tnpos=l,linewidth=2pt,rowsep=1,colsep=1,tnsep=2pt}
+  \centerline{
+   \scalebox{0.9}{
+  \scalebox{1.0}{%
+  \small
+  \centerline{
+  \hspace{0.25in}
+    \psframebox[linewidth=1pt]{
+      \begin{tabular}{c}
+        $t_{11} = \tup{v_1,v_2,a,a,q}$\\
+        $t_{12} = \tup{v_2,v_3,a,a,r}$\\
+        $t_{13} = \tup{v_3,v_1,a,a,r}$\\
+        $t_{14} = \tup{v_2,v_4,a,b,r}$\\
+      \end{tabular}}
+    \hspace{0.25in}
+    \psframebox[linewidth=1pt]{
+      \begin{tabular}{c}
+        $t_{21} = \tup{v_1,v_2,a,a,q}$\\
+        $t_{22} = \tup{v_2,v_3,a,b,r}$\\
+        $t_{23} = \tup{v_2,v_4,a,a,r}$\\
+        $t_{24} = \tup{v_4,v_1,a,a,r}$\\
+      \end{tabular}}
+    \hspace{0.25in}
+    \psframebox[linewidth=1pt]{
+      \begin{tabular}{c}
+        $t_{31} = \tup{v_1,v_2,a,a,q}$\\
+        $t_{32} = \tup{v_2,v_3,a,a,r}$\\
+        $t_{33} = \tup{v_3,v_1,a,a,r}$\\
+        $t_{34} = \tup{v_1,v_4,a,b,r}$\\
+      \end{tabular}}
+      }}
+   }
+  }
+\end{figure}
+  \vspace{-0.1in} 
+\begin{figure}
+    \normalsize
+    \centerline{\hspace{0.35in}$\text{DFScode}(G_1)$
+    \hspace{0.75in}$\text{DFScode}(G_2)$
+    \hspace{0.65in}$\text{DFScode}(G_3)$}
+\end{figure}
+\end{frame}
+
+\begin{frame}{gSpan Graph Mining Algorithm}
+gSpan enumerates patterns in a depth-f\/{i}rst manner, starting with the
+empty code.  Given a canonical and frequent code $C$, gSpan f\/{i}rst
+determines the set of possible edge extensions  along the rightmost
+path.
+
+\medskip
+The function \textsc{RightMostPath-Extensions}
+returns the set of edge extensions along with their support values, $\cE$.
+Each extended edge $t$ in $\cE$ leads to a new candidate
+DFS code $C' = C \cup
+\{t\}$, with support $sup(C) = sup(t)$.
+
+
+\medskip
+For each new candidate code,
+gSpan checks whether it is frequent and
+canonical, and if so gSpan recursively extends $C'$
+The
+algorithm stops when there are no more frequent and canonical extensions
+possible.
+\end{frame}
+
+
+
+\newcommand{\alggspan}{\textsc{gSpan}\xspace}
+\newcommand{\algRMPE}{\textsc{RightMostPath-Extensions}\xspace}
+\newcommand{\algISO}{\textsc{SubgraphIsomorphisms}\xspace}
+\newcommand{\algcanonical}{\textsc{IsCanonical}\xspace}
+
+\begin{frame}[fragile]{Algorithm \alggspan}
+\begin{algorithm}[H]
+  \SetKwInOut{gSpan}{\alggspan($C$, $\bD$, $\minsup$)}
+  \tcp{Initial Call: $C \assign \emptyset$}
+  \gSpan{}
+  $\cE \gets \algRMPE(C, \bD)$ \tcp{extensions and supports}
+    \nllabel{alg:fpm:graphs:gspan:callrmpe}
+  \ForEach{$(t, sup(t)) \in \cE$}{
+  $C' \gets C \cup t$ \tcp{extend the code with extended edge tuple $t$}
+  \nllabel{alg:fpm:graphs:gspan:extend}
+  $sup(C') \gets sup(t)$ \tcp{record the support of new extension}
+  \nllabel{alg:fpm:graphs:gspan:sup}
+  \tcp{recursively call \alggspan if code is frequent and canonical}
+    \If{$sup(C') \ge \minsup$ {\bf and} \algcanonical($C'$)}{
+    \nllabel{alg:fpm:graphs:gspan:checkfreq}
+      \alggspan($C'$, $\bD$, $\minsup$)
+      \nllabel{alg:fpm:graphs:gspan:recurse}\;
+    }
+  }
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}[fragile]{Example Graph Database: gSpan}
+\begin{figure}[!t]
+  \psset{unit=1in}
+  \psset{mnode=circle,rowsep=0.3in,colsep=0.2in}
+  \begin{center}
+  \scalebox{0.85}{
+  \begin{tabular}{cp{0.25in}c}
+  \begin{tabular}{c}
+    $G_1$\\
+  \psmatrix[]
+  & [name=v0]$a^{10}$\\
+  [name=v1]$b^{20}$ & &[name=v2]$a^{30}$\\
+  & [name=v3]$b^{40}$
+  \endpsmatrix
+  \ncline[arrows=-]{v0}{v1}
+  \ncline[arrows=-]{v0}{v2}
+  \ncline[arrows=-]{v1}{v2}
+  \ncline[arrows=-]{v2}{v3}
+  \end{tabular}
+  & &
+  \begin{tabular}{c}
+    $G_2$\\
+  \psmatrix[]
+  & [name=v0]$b^{50}$\\
+  [name=v1]$a^{60}$ & &[name=v2]$b^{70}$\\
+  & [name=v3]$a^{80}$
+  \endpsmatrix
+  \ncline[arrows=-]{v0}{v1}
+  \ncline[arrows=-]{v0}{v2}
+  \ncline[arrows=-]{v1}{v2}
+  \ncline[arrows=-]{v1}{v3}
+  \ncline[arrows=-]{v2}{v3}
+  \end{tabular}
+\end{tabular}
+  }
+\end{center}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Frequent Graph Mining: gSpan}
+\def\czero{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_0$\\
+$\emptyset$\\
+\end{tabular}
+} }}
+\def\cone{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_1$\\
+$\tup{0,1,a,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+} }}
+\def\cfive{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_5$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{1,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+  \def\cseven{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_7$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,0,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+        \def\celeven{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{11}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{2,3,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$\\
+            [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v2}{v3}
+          \end{tabular}
+          }}}
+        \def\ctwelve{\Tr{
+        \psframebox[linewidth=2pt]{
+          \begin{tabular}{c}
+            $C_{12}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{1,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v1}{v3}
+          \end{tabular}
+          }}}
+        \def\cthirteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{13}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{0,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$ & &[name=v3]$b^3$\\
+            [name=v2]$b^2$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v0}{v3}
+          \end{tabular}
+          }}}
+    \def\ceight{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_8$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$\\
+        [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+        \end{tabular}
+        }
+      }}
+    \def\cnine{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_9$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{1,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$ & [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+        \def\cfourteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{14}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{1,3,a,b}$\\
+            $\tup{3,0,b,a}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v1}{v3}
+            \ncarc[arcangle=-30]{-}{v3}{v0}
+          \end{tabular}
+          }}}
+    \def\cten{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{10}$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$ & [name=v3] $b^3$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csix{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_6$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ctwo{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_2$\\
+$\tup{0,1,a,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfifteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{15}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$a^2$\\
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+    \def\cnineteen{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{19}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,0,a,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+    \def\ctwenty{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{20}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+        \def\ctwentythree{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{23}$\\
+            $\tup{0,1,a,b}$\\
+            $\tup{1,2,b,a}$\\
+            $\tup{2,3,a,b}$\\
+            $\tup{3,1,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2in]
+            [name=v0]$a^0$\\
+            [name=v1]$b^1$\\
+            [name=v2]$a^2$\\
+            [name=v3]$b^3$\\
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v2}{v3}
+            \ncarc[arcangle=-45]{-}{v3}{v1}
+          \end{tabular}
+          }}}
+    \def\ctwentyone{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_{21}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{1,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ \\
+        [name=v2]$a^2$ & [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentytwo{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{22}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v3]$b^3$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csixteen{\Tr{
+\psframebox[linestyle=dotted]{
+  \begin{tabular}{c}
+    $C_{16}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+\def\cseventeen{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_{17}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$a^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ceighteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{18}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+    \def\ctwentyfour{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{24}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{2,3,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$\\
+        & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentyfive{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{25}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{0,3,a,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$ & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\cthree{\Tr{
+\psframebox[linestyle=dashed]{
+\begin{tabular}{c}
+$C_3$\\
+$\tup{0,1,b,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfour{\Tr{
+\psframebox[linestyle=dotted]{
+\begin{tabular}{c}
+$C_4$\\
+$\tup{0,1,b,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cempty{\Tr{~}}
+%
+\LARGE \centering \psset{unit=1in} \psset{arrows=->,arrowscale=2}
+\def\psedge{\ncdiag[angleA=-90,armA=0,armB=0,angleB=90,
+linewidth=2pt]}
+\def\psedgece{\ncdiag[angleA=-90,armA=0,armB=1,angleB=90,
+linewidth=2pt,arrows=-]}
+\def\psedgecee{\ncdiag[angleA=-90,armA=1.5,armB=0.25,angleB=90,
+linewidth=2pt]} \vspace{-0.2in}
+\scalebox{0.45}{%
+  \psmatrix[colsep=0.25,rowsep=0.3]
+  && [name=c0]\czero\psspan{4}\\\empty
+  & [name=c1]\cone\psspan{2} && [name=c2]\ctwo
+    & [name=c3]\cthree & [name=c4]\cfour\\\empty
+  & [name=c5]\cfive & [name=c6]\csix
+    & [name=c15]\cfifteen &  [name=c16]\csixteen
+    & [name=c17]\cseventeen & [name=c18]\ceighteen\\\empty
+%  [name=c7]\cseven & [name=c8]\ceight & [name=c9]\cnine
+%    & [name=c10]\cten & [name=ce]\cempty & [name=c24]\ctwentyfour
+%    & [name=c25]\ctwentyfive\\\empty
+%   &&[name=cee]\cempty&[name=c19]\cnineteen & [name=c20]\ctwenty
+%    & [name=c21]\ctwentyone & [name=c22]\ctwentytwo\\\empty
+%   [name=c11]\celeven & [name=c12]\ctwelve
+%    & [name=c13]\cthirteen & [name=c14]\cfourteen
+%    & [name=c23]\ctwentythree\\\empty
+  \endpsmatrix
+\psedge{c0}{c1} \psedge{c0}{c2} \psedge{c0}{c3} \psedge{c0}{c4}
+\psedge{c1}{c5} \psedge{c1}{c6} \psedge{c2}{c15} \psedge{c2}{c16}
+\psedge{c2}{c17} \psedge{c2}{c18} %\psedge{c5}{c7} \psedge{c5}{c8}
+%\psedge{c5}{c9} \psedge{c5}{c10} \psedgece{c15}{ce}
+%\psedgecee{ce}{c19} \psedgecee{ce}{c20} \psedgecee{ce}{c21}
+%\psedgecee{ce}{c22} \psedge{c18}{c24} \psedge{c18}{c25}
+%\psedge{c7}{c11} \psedge{c7}{c12} \psedge{c7}{c13}
+%\psedgece{c9}{cee} \psedgecee{cee}{c14} \psedge{c20}{c23} 
+}
+\end{frame}
+
+\begin{frame}{Frequent Graph Mining: gSpan}
+\def\czero{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_0$\\
+$\emptyset$\\
+\end{tabular}
+} }}
+\def\cone{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_1$\\
+$\tup{0,1,a,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+} }}
+\def\cfive{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_5$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{1,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+  \def\cseven{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_7$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,0,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+        \def\celeven{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{11}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{2,3,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$\\
+            [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v2}{v3}
+          \end{tabular}
+          }}}
+        \def\ctwelve{\Tr{
+        \psframebox[linewidth=2pt]{
+          \begin{tabular}{c}
+            $C_{12}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{1,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v1}{v3}
+          \end{tabular}
+          }}}
+        \def\cthirteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{13}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{0,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$ & &[name=v3]$b^3$\\
+            [name=v2]$b^2$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v0}{v3}
+          \end{tabular}
+          }}}
+    \def\ceight{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_8$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$\\
+        [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+        \end{tabular}
+        }
+      }}
+    \def\cnine{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_9$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{1,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$ & [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+        \def\cfourteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{14}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{1,3,a,b}$\\
+            $\tup{3,0,b,a}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v1}{v3}
+            \ncarc[arcangle=-30]{-}{v3}{v0}
+          \end{tabular}
+          }}}
+    \def\cten{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{10}$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$ & [name=v3] $b^3$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csix{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_6$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ctwo{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_2$\\
+$\tup{0,1,a,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfifteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{15}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$a^2$\\
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+    \def\cnineteen{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{19}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,0,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+    \def\ctwenty{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{20}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+        \def\ctwentythree{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{23}$\\
+            $\tup{0,1,a,b}$\\
+            $\tup{1,2,b,a}$\\
+            $\tup{2,3,a,b}$\\
+            $\tup{3,1,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2in]
+            [name=v0]$a^0$\\
+            [name=v1]$b^1$\\
+            [name=v2]$a^2$\\
+            [name=v3]$b^3$\\
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v2}{v3}
+            \ncarc[arcangle=-45]{-}{v3}{v1}
+          \end{tabular}
+          }}}
+    \def\ctwentyone{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_{21}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{1,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ \\
+        [name=v2]$a^2$ & [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentytwo{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{22}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v3]$b^3$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csixteen{\Tr{
+\psframebox[linestyle=dotted]{
+  \begin{tabular}{c}
+    $C_{16}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+\def\cseventeen{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_{17}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$a^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ceighteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{18}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+    \def\ctwentyfour{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{24}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{2,3,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$\\
+        & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentyfive{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{25}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{0,3,a,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$ & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\cthree{\Tr{
+\psframebox[linestyle=dashed]{
+\begin{tabular}{c}
+$C_3$\\
+$\tup{0,1,b,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfour{\Tr{
+\psframebox[linestyle=dotted]{
+\begin{tabular}{c}
+$C_4$\\
+$\tup{0,1,b,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cempty{\Tr{~}}
+%
+\LARGE \centering \psset{unit=1in} \psset{arrows=->,arrowscale=2}
+\def\psedge{\ncdiag[angleA=-90,armA=0,armB=0,angleB=90,
+linewidth=2pt]}
+\def\psedgece{\ncdiag[angleA=-90,armA=0,armB=1,angleB=90,
+linewidth=2pt,arrows=-]}
+\def\psedgecee{\ncdiag[angleA=-90,armA=1.5,armB=0.25,angleB=90,
+linewidth=2pt]} \vspace{-0.2in}
+\scalebox{0.45}{%
+  \psmatrix[colsep=0.25,rowsep=0.3]
+%  && [name=c0]\czero\psspan{4}\\\empty
+%  & [name=c1]\cone\psspan{2} &&&& \\\empty% [name=c2]\ctwo
+    %& [name=c3]\cthree & [name=c4]\cfour\\\empty
+  & [name=c5]\cfive &&&&& \\ \empty
+  %[name=c6]\csix &&&& \\ \empty
+    %& [name=c15]\cfifteen &  [name=c16]\csixteen
+    %& [name=c17]\cseventeen & [name=c18]\ceighteen\\\empty
+  [name=c7]\cseven & [name=c8]\ceight & [name=c9]\cnine
+    & [name=c10]\cten & [name=ce]\cempty && \\\empty% [name=c24]\ctwentyfour
+%    & [name=c25]\ctwentyfive\\\empty
+%   &&[name=cee]\cempty&[name=c19]\cnineteen & [name=c20]\ctwenty
+%    & [name=c21]\ctwentyone & [name=c22]\ctwentytwo\\\empty
+%   [name=c11]\celeven & [name=c12]\ctwelve
+%    & [name=c13]\cthirteen & [name=c14]\cfourteen
+%    & [name=c23]\ctwentythree\\\empty
+  \endpsmatrix
+%\psedge{c0}{c1} \psedge{c0}{c2} \psedge{c0}{c3} \psedge{c0}{c4}
+%\psedge{c1}{c5} \psedge{c1}{c6} \psedge{c2}{c15} \psedge{c2}{c16}
+%\psedge{c2}{c17} \psedge{c2}{c18} 
+\psedge{c5}{c7} \psedge{c5}{c8}
+\psedge{c5}{c9} \psedge{c5}{c10} %\psedgece{c15}{ce}
+%\psedgecee{ce}{c19} \psedgecee{ce}{c20} \psedgecee{ce}{c21}
+%\psedgecee{ce}{c22} \psedge{c18}{c24} \psedge{c18}{c25}
+%\psedge{c7}{c11} \psedge{c7}{c12} \psedge{c7}{c13}
+%\psedgece{c9}{cee} \psedgecee{cee}{c14} \psedge{c20}{c23} 
+}
+\end{frame}
+
+\begin{frame}{Frequent Graph Mining: gSpan}
+\def\czero{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_0$\\
+$\emptyset$\\
+\end{tabular}
+} }}
+\def\cone{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_1$\\
+$\tup{0,1,a,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+} }}
+\def\cfive{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_5$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{1,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+  \def\cseven{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_7$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,0,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+        \def\celeven{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{11}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{2,3,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$\\
+            [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v2}{v3}
+          \end{tabular}
+          }}}
+        \def\ctwelve{\Tr{
+        \psframebox[linewidth=2pt]{
+          \begin{tabular}{c}
+            $C_{12}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{1,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v1}{v3}
+          \end{tabular}
+          }}}
+        \def\cthirteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{13}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{0,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$ & &[name=v3]$b^3$\\
+            [name=v2]$b^2$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v0}{v3}
+          \end{tabular}
+          }}}
+    \def\ceight{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_8$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$\\
+        [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+        \end{tabular}
+        }
+      }}
+    \def\cnine{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_9$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{1,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$ & [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+        \def\cfourteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{14}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{1,3,a,b}$\\
+            $\tup{3,0,b,a}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v1}{v3}
+            \ncarc[arcangle=-30]{-}{v3}{v0}
+          \end{tabular}
+          }}}
+    \def\cten{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{10}$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$ & [name=v3] $b^3$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csix{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_6$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ctwo{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_2$\\
+$\tup{0,1,a,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfifteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{15}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$a^2$\\
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+    \def\cnineteen{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{19}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,0,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+    \def\ctwenty{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{20}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+        \def\ctwentythree{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{23}$\\
+            $\tup{0,1,a,b}$\\
+            $\tup{1,2,b,a}$\\
+            $\tup{2,3,a,b}$\\
+            $\tup{3,1,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2in]
+            [name=v0]$a^0$\\
+            [name=v1]$b^1$\\
+            [name=v2]$a^2$\\
+            [name=v3]$b^3$\\
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v2}{v3}
+            \ncarc[arcangle=-45]{-}{v3}{v1}
+          \end{tabular}
+          }}}
+    \def\ctwentyone{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_{21}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{1,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ \\
+        [name=v2]$a^2$ & [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentytwo{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{22}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v3]$b^3$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csixteen{\Tr{
+\psframebox[linestyle=dotted]{
+  \begin{tabular}{c}
+    $C_{16}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+\def\cseventeen{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_{17}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$a^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ceighteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{18}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+    \def\ctwentyfour{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{24}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{2,3,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$\\
+        & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentyfive{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{25}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{0,3,a,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$ & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\cthree{\Tr{
+\psframebox[linestyle=dashed]{
+\begin{tabular}{c}
+$C_3$\\
+$\tup{0,1,b,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfour{\Tr{
+\psframebox[linestyle=dotted]{
+\begin{tabular}{c}
+$C_4$\\
+$\tup{0,1,b,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cempty{\Tr{~}}
+%
+\LARGE \centering \psset{unit=1in} \psset{arrows=->,arrowscale=2}
+\def\psedge{\ncdiag[angleA=-90,armA=0,armB=0,angleB=90,
+linewidth=2pt]}
+\def\psedgece{\ncdiag[angleA=-90,armA=0,armB=1,angleB=90,
+linewidth=2pt,arrows=-]}
+\def\psedgecee{\ncdiag[angleA=-90,armA=1.5,armB=0.25,angleB=90,
+linewidth=2pt]} \vspace{-0.2in}
+\vspace{0.2in}
+\scalebox{0.4}{%
+  \psmatrix[colsep=0.25,rowsep=0.3]
+%  && [name=c0]\czero\psspan{4}\\\empty
+%  & [name=c1]\cone\psspan{2} &&&& \\\empty% [name=c2]\ctwo
+    %& [name=c3]\cthree & [name=c4]\cfour\\\empty
+%  & [name=c5]\cfive &&&&& \\ \empty
+  %[name=c6]\csix &&&& \\ \empty
+    %& [name=c15]\cfifteen &  [name=c16]\csixteen
+    %& [name=c17]\cseventeen & [name=c18]\ceighteen\\\empty
+  [name=c7]\cseven & [name=c8]\ceight  &[name=c9]\cnine
+    & [name=c10]\cten & [name=ce]\cempty && \\\empty% [name=c24]\ctwentyfour
+%    & [name=c25]\ctwentyfive\\\empty
+%   &&[name=cee]\cempty&[name=c19]\cnineteen & [name=c20]\ctwenty
+%    & [name=c21]\ctwentyone & [name=c22]\ctwentytwo\\\empty
+   [name=c11]\celeven & [name=c12]\ctwelve
+    & [name=c13]\cthirteen & [name=c14]\cfourteen & \\ \empty
+%    & [name=c23]\ctwentythree\\\empty
+  \endpsmatrix
+%\psedge{c0}{c1} \psedge{c0}{c2} \psedge{c0}{c3} \psedge{c0}{c4}
+%\psedge{c1}{c5} \psedge{c1}{c6} \psedge{c2}{c15} \psedge{c2}{c16}
+%\psedge{c2}{c17} \psedge{c2}{c18} 
+%\psedge{c5}{c7} \psedge{c5}{c8}
+%\psedge{c5}{c9} \psedge{c5}{c10} %\psedgece{c15}{ce}
+%\psedgecee{ce}{c19} \psedgecee{ce}{c20} \psedgecee{ce}{c21}
+%\psedgecee{ce}{c22} \psedge{c18}{c24} \psedge{c18}{c25}
+\psedge{c7}{c11} \psedge{c7}{c12} \psedge{c7}{c13}
+\psedge{c9}{c14} %\psedgecee{cee}{c14} %\psedge{c20}{c23} 
+}
+\end{frame}
+
+
+\begin{frame}{Frequent Graph Mining: gSpan}
+\def\czero{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_0$\\
+$\emptyset$\\
+\end{tabular}
+} }}
+\def\cone{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_1$\\
+$\tup{0,1,a,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+} }}
+\def\cfive{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_5$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{1,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+  \def\cseven{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_7$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,0,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+        \def\celeven{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{11}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{2,3,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$\\
+            [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v2}{v3}
+          \end{tabular}
+          }}}
+        \def\ctwelve{\Tr{
+        \psframebox[linewidth=2pt]{
+          \begin{tabular}{c}
+            $C_{12}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{1,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v1}{v3}
+          \end{tabular}
+          }}}
+        \def\cthirteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{13}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{0,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$ & &[name=v3]$b^3$\\
+            [name=v2]$b^2$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v0}{v3}
+          \end{tabular}
+          }}}
+    \def\ceight{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_8$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$\\
+        [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+        \end{tabular}
+        }
+      }}
+    \def\cnine{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_9$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{1,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$ & [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+        \def\cfourteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{14}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{1,3,a,b}$\\
+            $\tup{3,0,b,a}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v1}{v3}
+            \ncarc[arcangle=-30]{-}{v3}{v0}
+          \end{tabular}
+          }}}
+    \def\cten{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{10}$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$ & [name=v3] $b^3$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csix{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_6$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ctwo{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_2$\\
+$\tup{0,1,a,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfifteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{15}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$a^2$\\
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+    \def\cnineteen{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{19}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,0,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+    \def\ctwenty{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{20}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+        \def\ctwentythree{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{23}$\\
+            $\tup{0,1,a,b}$\\
+            $\tup{1,2,b,a}$\\
+            $\tup{2,3,a,b}$\\
+            $\tup{3,1,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2in]
+            [name=v0]$a^0$\\
+            [name=v1]$b^1$\\
+            [name=v2]$a^2$\\
+            [name=v3]$b^3$\\
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v2}{v3}
+            \ncarc[arcangle=-45]{-}{v3}{v1}
+          \end{tabular}
+          }}}
+    \def\ctwentyone{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_{21}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{1,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ \\
+        [name=v2]$a^2$ & [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentytwo{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{22}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v3]$b^3$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csixteen{\Tr{
+\psframebox[linestyle=dotted]{
+  \begin{tabular}{c}
+    $C_{16}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+\def\cseventeen{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_{17}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$a^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ceighteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{18}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+    \def\ctwentyfour{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{24}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{2,3,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$\\
+        & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentyfive{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{25}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{0,3,a,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$ & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\cthree{\Tr{
+\psframebox[linestyle=dashed]{
+\begin{tabular}{c}
+$C_3$\\
+$\tup{0,1,b,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfour{\Tr{
+\psframebox[linestyle=dotted]{
+\begin{tabular}{c}
+$C_4$\\
+$\tup{0,1,b,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cempty{\Tr{~}}
+%
+\LARGE \centering \psset{unit=1in} \psset{arrows=->,arrowscale=2}
+\def\psedge{\ncdiag[angleA=-90,armA=0,armB=0,angleB=90,
+linewidth=2pt]}
+\def\psedgece{\ncdiag[angleA=-90,armA=0,armB=1,angleB=90,
+linewidth=2pt,arrows=-]}
+\def\psedgecee{\ncdiag[angleA=-90,armA=1.5,armB=0.25,angleB=90,
+linewidth=2pt]} \vspace{-0.2in}
+\vspace{0.2in}
+\scalebox{0.4}{%
+  \psmatrix[colsep=0.25,rowsep=0.3]
+%  && [name=c0]\czero\psspan{4}\\\empty
+%  & [name=c1]\cone\psspan{2} &&&& \\\empty% [name=c2]\ctwo
+    %& [name=c3]\cthree & [name=c4]\cfour\\\empty
+%  & [name=c5]\cfive &&&&& \\ \empty
+  %[name=c6]\csix &&&& \\ \empty
+ & [name=c15]\cfifteen &  [name=c16]\csixteen
+ & [name=c17]\cseventeen & [name=c18]\ceighteen\\\empty
+[name=c19]\cnineteen & [name=c20]\ctwenty
+& [name=c21]\ctwentyone & [name=c22]\ctwentytwo
+& [name=c24]\ctwentyfour  & [name=c25]\ctwentyfive\\\empty
+%  [name=c7]\cseven & [name=c8]\ceight  &[name=c9]\cnine
+%    & [name=c10]\cten & [name=ce]\cempty && \\\empty% 
+%   &&[name=cee]\cempty&
+%[name=c19]\cnineteen & [name=c20]\ctwenty
+%   & [name=c21]\ctwentyone & [name=c22]\ctwentytwo\\\empty
+%   [name=c11]\celeven & [name=c12]\ctwelve
+%    & [name=c13]\cthirteen & [name=c14]\cfourteen & \\ \empty
+%    & [name=c23]\ctwentythree\\\empty
+  \endpsmatrix
+%\psedge{c0}{c1} \psedge{c0}{c2} \psedge{c0}{c3} \psedge{c0}{c4}
+%\psedge{c1}{c5} \psedge{c1}{c6} \psedge{c2}{c15} \psedge{c2}{c16}
+%\psedge{c2}{c17} \psedge{c2}{c18} 
+%\psedge{c5}{c7} \psedge{c5}{c8}
+%\psedge{c5}{c9} \psedge{c5}{c10} %
+\psedge{c15}{c19}
+\psedge{c15}{c20}
+\psedge{c15}{c21}
+\psedge{c15}{c22}
+%\psedgecee{ce}{c19} \psedgecee{ce}{c20} \psedgecee{ce}{c21}
+%\psedgecee{ce}{c22} 
+\psedge{c18}{c24} \psedge{c18}{c25}
+%\psedge{c7}{c11} \psedge{c7}{c12} \psedge{c7}{c13}
+%\psedge{c9}{c14} %\psedgecee{cee}{c14} %\psedge{c20}{c23} 
+}
+\end{frame}
+
+
+\begin{frame}{Frequent Graph Mining: gSpan}
+\def\czero{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_0$\\
+$\emptyset$\\
+\end{tabular}
+} }}
+\def\cone{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_1$\\
+$\tup{0,1,a,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+} }}
+\def\cfive{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_5$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{1,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+  \def\cseven{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_7$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,0,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+        \def\celeven{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{11}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{2,3,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$\\
+            [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v2}{v3}
+          \end{tabular}
+          }}}
+        \def\ctwelve{\Tr{
+        \psframebox[linewidth=2pt]{
+          \begin{tabular}{c}
+            $C_{12}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{1,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v1}{v3}
+          \end{tabular}
+          }}}
+        \def\cthirteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{13}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{2,0,b,a}$\\
+            $\tup{0,3,a,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$ & &[name=v3]$b^3$\\
+            [name=v2]$b^2$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncarc[arcangle=-45]{-}{v2}{v0}
+            \ncline[arrows=-]{v0}{v3}
+          \end{tabular}
+          }}}
+    \def\ceight{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_8$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{2,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$\\
+        [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+        \end{tabular}
+        }
+      }}
+    \def\cnine{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_9$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{1,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$\\
+        [name=v2]$b^2$ & [name=v3]$b^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+        \def\cfourteen{\Tr{
+        \psframebox[linestyle=dashed]{
+          \begin{tabular}{c}
+            $C_{14}$\\
+            $\tup{0,1,a,a}$\\
+            $\tup{1,2,a,b}$\\
+            $\tup{1,3,a,b}$\\
+            $\tup{3,0,b,a}$\\
+            \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+            [name=v0]$a^0$\\
+            [name=v1]$a^1$\\
+            [name=v2]$b^2$ & [name=v3]$b^3$
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v1}{v3}
+            \ncarc[arcangle=-30]{-}{v3}{v0}
+          \end{tabular}
+          }}}
+    \def\cten{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{10}$\\
+        $\tup{0,1,a,a}$\\
+        $\tup{1,2,a,b}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$a^1$ & [name=v3] $b^3$\\
+        [name=v2]$b^2$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csix{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_6$\\
+    $\tup{0,1,a,a}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2,colsep=0.1]
+    [name=v0]$a^0$\\
+    [name=v1]$a^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ctwo{\Tr{
+\psframebox[linewidth=2pt]{
+\begin{tabular}{c}
+$C_2$\\
+$\tup{0,1,a,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$a^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfifteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{15}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$a^2$\\
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+    \def\cnineteen{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{19}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,0,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncarc[arcangle=-45]{-}{v2}{v0}
+      \end{tabular}
+      }}}
+    \def\ctwenty{\Tr{
+    \psframebox[linewidth=2pt]{
+      \begin{tabular}{c}
+        $C_{20}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{2,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$\\
+        [name=v2]$a^2$\\
+        [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+        \def\ctwentythree{\Tr{
+        \psframebox[linestyle=dotted]{
+          \begin{tabular}{c}
+            $C_{23}$\\
+            $\tup{0,1,a,b}$\\
+            $\tup{1,2,b,a}$\\
+            $\tup{2,3,a,b}$\\
+            $\tup{3,1,b,b}$\\
+            \psmatrix[mnode=circle,rowsep=0.2in]
+            [name=v0]$a^0$\\
+            [name=v1]$b^1$\\
+            [name=v2]$a^2$\\
+            [name=v3]$b^3$\\
+            \endpsmatrix
+            \ncline[arrows=-]{v0}{v1}
+            \ncline[arrows=-]{v1}{v2}
+            \ncline[arrows=-]{v2}{v3}
+            \ncarc[arcangle=-45]{-}{v3}{v1}
+          \end{tabular}
+          }}}
+    \def\ctwentyone{\Tr{
+    \psframebox[linestyle=dotted]{
+      \begin{tabular}{c}
+        $C_{21}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{1,3,b,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ \\
+        [name=v2]$a^2$ & [name=v3]$b^3$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v1}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentytwo{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{22}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{1,2,b,a}$\\
+        $\tup{0,3,a,b}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v3]$b^3$\\
+        [name=v2]$a^2$\\
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v1}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\csixteen{\Tr{
+\psframebox[linestyle=dotted]{
+  \begin{tabular}{c}
+    $C_{16}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{1,2,b,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$\\
+    [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v1}{v2}
+  \end{tabular}
+  }}}
+\def\cseventeen{\Tr{
+\psframebox[linestyle=dashed]{
+  \begin{tabular}{c}
+    $C_{17}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,a}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$a^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+\def\ceighteen{\Tr{
+\psframebox[linewidth=2pt]{
+  \begin{tabular}{c}
+    $C_{18}$\\
+    $\tup{0,1,a,b}$\\
+    $\tup{0,2,a,b}$\\
+    \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+    [name=v0]$a^0$\\
+    [name=v1]$b^1$ & [name=v2]$b^2$
+    \endpsmatrix
+    \ncline[arrows=-]{v0}{v1}
+    \ncline[arrows=-]{v0}{v2}
+  \end{tabular}
+  }}}
+    \def\ctwentyfour{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{24}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{2,3,b,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$\\
+        & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v2}{v3}
+      \end{tabular}
+      }}}
+    \def\ctwentyfive{\Tr{
+    \psframebox[linestyle=dashed]{
+      \begin{tabular}{c}
+        $C_{25}$\\
+        $\tup{0,1,a,b}$\\
+        $\tup{0,2,a,b}$\\
+        $\tup{0,3,a,a}$\\
+        \psmatrix[mnode=circle,rowsep=0.2in,colsep=0.1in]
+        [name=v0]$a^0$\\
+        [name=v1]$b^1$ & [name=v2]$b^2$ & [name=v3] $a^3$
+        \endpsmatrix
+        \ncline[arrows=-]{v0}{v1}
+        \ncline[arrows=-]{v0}{v2}
+        \ncline[arrows=-]{v0}{v3}
+      \end{tabular}
+      }}}
+\def\cthree{\Tr{
+\psframebox[linestyle=dashed]{
+\begin{tabular}{c}
+$C_3$\\
+$\tup{0,1,b,a}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$a^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cfour{\Tr{
+\psframebox[linestyle=dotted]{
+\begin{tabular}{c}
+$C_4$\\
+$\tup{0,1,b,b}$\\
+\psmatrix[mnode=circle,rowsep=0.2in]
+[name=v0]$b^0$\\
+[name=v1]$b^1$
+\endpsmatrix
+\ncline[arrows=-]{v0}{v1}
+\end{tabular}
+}}}
+\def\cempty{\Tr{~}}
+%
+\LARGE \centering \psset{unit=1in} \psset{arrows=->,arrowscale=2}
+\def\psedge{\ncdiag[angleA=-90,armA=0,armB=0,angleB=90,
+linewidth=2pt]}
+\def\psedgece{\ncdiag[angleA=-90,armA=0,armB=1,angleB=90,
+linewidth=2pt,arrows=-]}
+\def\psedgecee{\ncdiag[angleA=-90,armA=1.5,armB=0.25,angleB=90,
+linewidth=2pt]} \vspace{-0.2in}
+\vspace{0.2in}
+\scalebox{0.4}{%
+  \psmatrix[colsep=0.25,rowsep=0.3]
+%  && [name=c0]\czero\psspan{4}\\\empty
+%  & [name=c1]\cone\psspan{2} &&&& \\\empty% [name=c2]\ctwo
+    %& [name=c3]\cthree & [name=c4]\cfour\\\empty
+%  & [name=c5]\cfive &&&&& \\ \empty
+  %[name=c6]\csix &&&& \\ \empty
+% & [name=c15]\cfifteen &  [name=c16]\csixteen
+% & [name=c17]\cseventeen & [name=c18]\ceighteen\\\empty
+[name=c19]\cnineteen & [name=c20]\ctwenty
+& [name=c21]\ctwentyone & [name=c22]\ctwentytwo
+& [name=c24]\ctwentyfour  & [name=c25]\ctwentyfive\\\empty
+%  [name=c7]\cseven & [name=c8]\ceight  &[name=c9]\cnine
+%    & [name=c10]\cten & [name=ce]\cempty && \\\empty% 
+%   &&[name=cee]\cempty&
+%[name=c19]\cnineteen & [name=c20]\ctwenty
+%   & [name=c21]\ctwentyone & [name=c22]\ctwentytwo\\\empty
+%   [name=c11]\celeven & [name=c12]\ctwelve
+%    & [name=c13]\cthirteen & [name=c14]\cfourteen & \\ \empty
+   & [name=c23]\ctwentythree &&&& \\\empty
+  \endpsmatrix
+%\psedge{c0}{c1} \psedge{c0}{c2} \psedge{c0}{c3} \psedge{c0}{c4}
+%\psedge{c1}{c5} \psedge{c1}{c6} \psedge{c2}{c15} \psedge{c2}{c16}
+%\psedge{c2}{c17} \psedge{c2}{c18} 
+%\psedge{c5}{c7} \psedge{c5}{c8}
+%\psedge{c5}{c9} \psedge{c5}{c10} %
+%\psedge{c15}{c19}
+%\psedge{c15}{c20}
+%\psedge{c15}{c21}
+%\psedge{c15}{c22}
+%\psedgecee{ce}{c19} \psedgecee{ce}{c20} \psedgecee{ce}{c21}
+%\psedgecee{ce}{c22} 
+%\psedge{c18}{c24} \psedge{c18}{c25}
+%\psedge{c7}{c11} \psedge{c7}{c12} \psedge{c7}{c13}
+%\psedge{c9}{c14} %\psedgecee{cee}{c14} 
+\psedge{c20}{c23} 
+}
+\end{frame}
+
+
+\begin{frame}{Extension and Support Computation}
+The support computation task is
+to f\/{i}nd the number of graphs in the
+database $\bD$ that contain a candidate subgraph, which is very
+expensive because it involves subgraph isomorphism checks.
+gSpan combines the tasks of enumerating candidate extensions and support
+computation.
+
+\medskip
+Assume that $\bD = \{G_1, G_2, \ldots, G_n\}$ comprises $n$
+graphs.  Let $C=\{t_1,t_2,\ldots,t_k\}$ denote a frequent
+canonical DFS code comprising $k$ edges, and let $G(C)$ denote the
+graph corresponding to code $C$.  The task is to compute the set
+of possible rightmost path extensions from $C$, along with their
+support values.
+
+\medskip
+Given code $C$, gSpan f\/{i}rst records the nodes on the rightmost path
+($R$), and the rightmost child ($u_r$).  Next, gSpan considers each
+graph $G_i \in \bD$. If $C=\emptyset$, then each distinct label tuple of
+the form $\tup{L(x), L(y), L(x,y)}$ for adjacent nodes $x$ and $y$ in
+$G_i$ contributes a forward extension $\tup{0,1,L(x),L(y),L(x,y)}$
+On
+the other hand, if $C$ is not empty, then gSpan enumerates all possible
+subgraph isomorphisms $\Phi_i$ between the code $C$ and graph $G_i$. 
+Given
+subgraph
+isomorphism $\phi \in \Phi_i$, gSpan f\/{i}nds all possible forward and
+backward edge extensions, and stores them in the extension set $\cE$.
+\end{frame}
+
+\begin{frame}{Forward and Backward Extensions}
+  \small
+Backward extensions are
+allowed only from the rightmost
+child $u_r$ in $C$ to some other node on the rightmost path $R$.
+
+\medskip The method considers each neighbor $x$ of $\phi(u_r)$ in $G_i$
+and checks whether it is a mapping for some vertex $v = \phi^{-1}(x)$
+along the rightmost path $R$ in $C$. If the edge $(u_r,v)$ does not
+already exist in $C$, it is a new extension, and the extended tuple $b =
+\tup{u_r, v, L(u_r), L(v), L(u_r,v)}$ is added to the set of extensions
+$\cE$, along with the graph id $i$ that contributed to that extension.
+
+\bigskip Forward extensions are allowed only from nodes on the rightmost
+path $R$ to new nodes.  For each node $u$ in $R$, the algorithm
+f\/{i}nds a neighbor $x$ in $G_i$ that is not in a mapping from some
+node in $C$. For each such node $x$, the forward extension $f=\tup{u,
+u_r+1, L(\phi(u)), L(x), L(\phi(u),x)}$ is added to $\cE$, along with
+the graph id $i$.  Because a forward extension adds a new vertex to the
+graph $G(C)$, the id of the new node in $C$ must be $u_r+1$, that is,
+one more than the highest numbered node in $C$, which by def\/{i}nition
+is the rightmost child $u_r$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm \algRMPE}
+\begin{scriptsize}
+\begin{algorithm}[H]
+  \SetKwInOut{RMPE}{\algRMPE($C$, $\bD$)}
+  \RMPE{}
+  $R \gets$ nodes on the rightmost path in $C$\;
+  $u_r \gets$ rightmost child in $C$ \tcp{dfs number}
+  $\cE \gets \emptyset$ \tcp{set of extensions from $C$}
+  \ForEach{$G_i \in \bD$, $i=1,\ldots, n$}{
+    \eIf{$C = \emptyset$}{
+      \ForEach{distinct $\tup{L(x),L(y),L(x,y)} \in G_i$}{
+        \nllabel{alg:fpm:graphs:rmpe:ls}
+        $f = \ltup{\big}{0, 1, L(x), L(y), L(x,y)}$\;
+        Add tuple $f$ to $\cE$ along with graph id $i$
+        \nllabel{alg:fpm:graphs:rmpe:le}\;
+      }
+    }{
+    $\Phi_i = \algISO(C, G_i)$ \label{alg:fpm:graphs:rmpe:iso}\;
+    \ForEach{isomorphism $\phi \in \Phi_i$}{
+      \ForEach{$x \in N_{G_i}(\phi(u_r))$ such that $\exists v \gets \phi^{-1}(x)$}{
+        \nllabel{alg:fpm:graphs:rmpe:bs}
+        \If{$v \in R$ and $(u_r,v) \not\in G(C)$}{
+        $b = \ltup{\big}{u_r, v, L(u_r), L(v), L(u_r,v)}$\;
+          Add tuple $b$ to $\cE$ along with graph id $i$
+          \nllabel{alg:fpm:graphs:rmpe:be}\;
+        }
+      }
+      \ForEach{$u \in R$}{
+        \nllabel{alg:fpm:graphs:rmpe:fs}
+      \ForEach{$x \in N_{G_i}(\phi(u))$ and $\not\exists \phi^{-1}(x)$}{
+      $f = \ltup{\big}{u, u_r+1, L(\phi(u)), L(x), L(\phi(u),x)}$\;
+          Add tuple $f$ to $\cE$ along with graph id $i$
+          \nllabel{alg:fpm:graphs:rmpe:fe} \;
+        }
+      }
+    }
+    }
+  }
+  \ForEach{distinct extension $s \in \cE$}{
+    $\supp(s) = $ number of distinct graph ids that support tuple
+    $s$\;
+  }
+  \Return{set of pairs $\tup{s, sup(s)}$ for extensions $s \in \cE$, in
+  tuple sorted order}
+\end{algorithm}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Righmost Path Extensions}
+\setcounter{subfigure}{0}
+\begin{figure}
+  \centerline{
+  \subfloat[Code $C$ and graph $G(C)$]{
+  \label{fig:fpm:graphs:frmpe:C}
+    \begin{minipage}{2in}
+      \centering
+    \scalebox{0.6}{
+    \begin{tabular}{c}
+      $C$\\
+    \psframebox[]{
+    \begin{tabular}{c}
+      $t_1: \tup{0,1,a,a}$\\
+      $t_2: \tup{1,2,a,b}$
+    \end{tabular}
+    }\\[3ex]
+      $G(C)$\\
+      \psmatrix[mnode=circle,rowsep=0.2in]
+      [name=v0]$a^0$\\
+      [name=v1]$a^1$\\
+      [name=v2]$b^2$\\
+      \endpsmatrix
+      \ncline[arrows=-]{v0}{v1}
+      \ncline[arrows=-]{v1}{v2}
+    \end{tabular}
+    }
+    \end{minipage}
+    }
+   %\\
+    \subfloat[Subgraph isomorphisms]{
+  \label{fig:fpm:graphs:frmpe:iso}
+    \begin{minipage}{2in}
+      \centering
+    \scalebox{0.8}{
+    \begin{tabular}{c|c|ccc}
+      \hline
+      $\Phi$& $\phi$& $0$ & $1$ & $2$\\
+      \hline
+      \multirow{3}*{$\Phi_1$} & $\phi_1$ & $10$ & $30$& $20$\\
+      & $\phi_2$&$10$& $30$& $40$\\
+      & $\phi_3$&$30$& $10$& $20$\\
+      \hline
+      \multirow{3}*{$\Phi_2$} & $\phi_4$&$60$ & $80$& $70$\\
+      & $\phi_5$&$80$& $60$& $50$\\
+      & $\phi_6$&$80$& $60$& $70$\\
+    \end{tabular}
+    }
+    \end{minipage}
+    }
+    }
+    \vspace{0.25in}
+    \centerline{\hspace*{30pt}
+    \subfloat[Edge extensions]{
+  \label{fig:fpm:graphs:frmpe:ext}
+    \begin{minipage}{2.0in}
+      \centering
+    \scalebox{0.8}{
+    \begin{tabular}{c|c|l}
+      \hline
+      Id & $\phi$ & Extensions\\
+      \hline
+      \multirow{3}*{$G_1$} & $\phi_1$ &  $\{\tup{2,0,b,a}, \tup{1,3,a,b}\}$\\
+       & $\phi_2$&  $\{\tup{1,3,a,b}, \tup{0,3,a,b}\}$\\
+       & $\phi_3$&  $\{\tup{2,0,b,a}, \tup{0,3,a,b}\}$\\
+      \hline
+      \multirow{3}*{$G_2$} & $\phi_4$&  $\{\tup{2,0,b,a}, \tup{2,3,b,b}, \tup{0,3,a,b}\}$\\
+       & $\phi_5$&  $\{\tup{2,3,b,b}, \tup{1,3,a,b}\}$\\
+       & $\phi_6$&  $\{\tup{2,0,b,a},  \tup{2,3,b,b}, \tup{1,3,a,b}\}$
+    \end{tabular}
+    }
+  \end{minipage}
+  }
+  \subfloat[Extensions (sorted) and supports]{
+  \label{fig:fpm:graphs:frmpe:extsup}
+  \begin{minipage}{3in}
+    \centering
+    \scalebox{0.8}{
+    \begin{tabular}{c|c}
+      \hline
+      Extension & Support\\
+      \hline\hline
+      $\tup{2,0,b,a}$ & 2\\
+      $\tup{2,3,b,b}$ & 1\\
+      $\tup{1,3,a,b}$ & 2\\
+      $\tup{0,3,a,b}$ & 2\\
+    \end{tabular}
+    }
+  \end{minipage}
+  }
+  }
+\end{figure}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Algorithm \algISO}
+\small{
+\begin{algorithm}[H]
+  \SetKwInOut{ISO}{\algISO($C = \{t_1, t_2, \ldots, t_k\}$, $G$)}
+  \ISO{}
+  $\Phi \gets \{\phi(0) \to x \mid x \in G \text{ and } L(x)=L(0) \}$
+  \nllabel{alg:fpm:graphs:iso:init}\;
+  \ForEach{$t_i \in C$, $i=1,\ldots,k$}{
+  $\tup{u, v, L(u), L(v), L(u, v)} \gets t_i$
+    \tcp{expand extended edge $t_i$}
+    $\Phi' \gets \emptyset$ \tcp{partial isomorphisms including $t_i$}
+    \ForEach{partial isomorphism $\phi \in \Phi$}{
+      \nllabel{alg:fpm:graphs:iso:ifs}
+      \eIf{$v > u$}{
+        \tcp{forward edge}
+        \ForEach{$x \in  N_{G}(\phi(u))$}{
+          \If{$\not\exists \phi^{-1}(x)$ and $L(x) = L(v)$
+              and $L(\phi(u),x) = L(u,v)$}{
+              $\phi' \gets \phi \cup \{\phi(v) \to x\}$\;
+                Add $\phi'$ to $\Phi'$\;
+          }
+        }
+      }{
+      \tcp{backward edge}
+      \lIf{$\phi(v) \in N_{G_{j}}(\phi(u))$}{
+          Add $\phi$ to $\Phi'$ \tcp*[h]{valid isomorphism}
+        \nllabel{alg:fpm:graphs:iso:ife}
+        }
+      }
+    }
+    $\Phi \gets \Phi'$ \tcp{update partial isomorphisms}
+  }
+  \Return{$\Phi$}
+\end{algorithm}
+}
+\end{frame}
+
+
+\begin{frame}{Subgraph Isomorphisms}
+To
+enumerate all the possible isomorphisms from $C$ to each graph $G_i \in
+\bD$ the function \algISO,
+accepts a code $C$ and a graph $G$, and
+returns the set of all isomorphisms between $C$ and $G$.
+
+\medskip
+The set of isomorphisms $\Phi$ is initialized by mapping vertex $0$ in
+$C$ to each vertex $x$ in $G$ that shares the same label as $0$, that is, if
+$L(x) = L(0)$.
+
+\medskip
+The method considers each tuple $t_i$ in $C$ and extends the current set
+of partial isomorphisms. Let $t_i = \tup{u, v, L(u), L(v), L(u,v)}$.
+We have to check if each isomorphism $\phi \in \Phi$ can be extended in
+$G$ using the information from $t_i$
+
+\medskip
+If $t_i$ is a forward edge, then
+we seek a neighbor $x$ of $\phi(u)$ in $G$ such that $x$ has not already
+been mapped to some vertex in $C$, that is,
+$\phi^{-1}(x)$ should not exist, and
+the node and edge labels should match, that is, $L(x) = L(v)$, and
+$L(\phi(u),x) = L(u,v)$. If so, $\phi$ can be extended with the mapping
+$\phi(v) \to x$. The new extended isomorphism, denoted $\phi'$, is added
+to the initially empty set of isomorphisms $\Phi'$. 
+
+\medskip
+If $t_i$ is a
+backward edge, we have to check if $\phi(v)$ is a neighbor of $\phi(u)$
+in $G$. If so, we add the current isomorphism $\phi$ to $\Phi'$. 
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Subgraph Isomorphisms}
+\begin{figure}[!t]
+\small{
+  \centering
+  \scalebox{0.9}{%
+  \begin{tabular}{c||c|c|c}
+    \begin{tabular}{c}
+      $C$\\
+    \psframebox[]{
+    \begin{tabular}{c}
+      $t_1: \tup{0,1,a,a}$\\
+      $t_2: \tup{1,2,a,b}$
+    \end{tabular}
+    }\\[3ex]
+      $G(C)$\\
+      \psmatrix[mnode=circle,rowsep=0.2in]
+      [name=v0]$a^0$\\
+      [name=v1]$a^1$\\
+      [name=v2]$b^2$\\
+      \endpsmatrix
+      \ncline[arrows=-]{v0}{v1}
+      \ncline[arrows=-]{v1}{v2}
+    \end{tabular}
+  &
+    \begin{tabular}{c|c|c}
+      \multicolumn{2}{c}{Initial $\Phi$}\\
+      \hline\hline
+      id &$\phi$ & $0$\\
+      \hline
+      \multirow{2}*{$G_1$}& $\phi_1$ & $10$\\
+      & $\phi_2$& $30$\\
+      \hline\
+      \multirow{2}*{$G_2$}& $\phi_3$ & $60$\\
+      & $\phi_4$& $80$
+    \end{tabular}
+  &
+    \begin{tabular}{c|c|c}
+      \multicolumn{2}{c}{Add $t_1$}\\
+      \hline\hline
+      id &$\phi$ & $0,1$\\
+      \hline
+      \multirow{2}*{$G_1$}&$\phi_1$ &  $10,30$\\
+      & $\phi_2$& $30,10$\\
+      \hline
+      \multirow{2}*{$G_2$}& $\phi_3$ & $60,80$\\
+      & $\phi_4$& $80,60$\\
+    \end{tabular}
+  &
+    \begin{tabular}{c|c|c}
+      \multicolumn{2}{c}{Add $t_2$}\\
+      \hline\hline
+      id & $\phi$& $0,1,2$\\
+      \hline
+      \multirow{3}*{$G_1$} & $\phi_1'$& $10,30,20$\\
+      & $\phi_1''$ & $10,30,40$\\
+      & $\phi_2$& $30,10,20$\\
+      \hline
+      \multirow{3}*{$G_2$} & $\phi_3$ & $60,80,70$\\
+      & $\phi_4'$& $80,60,50$\\
+      & $\phi_4''$& $80,60,70$\\
+    \end{tabular}
+  \end{tabular}
+  }
+}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Canonicality Checking}
+Given a DFS code $C
+= \{t_1, t_2, \ldots, t_k\}$ comprising $k$ extended edge tuples
+and the corresponding graph $G(C)$, the task is to check whether
+the code $C$ is canonical. 
+
+\medskip
+This can be accomplished by trying to
+reconstruct the canonical code $C^*$ for $G(C)$ in an iterative
+manner starting from the empty code and selecting the least
+rightmost path extension at each step, where the least edge
+extension is based on the extended tuple comparison operator.
+
+\medskip
+If at any step the current
+(partial) canonical DFS code $C^*$ is smaller than $C$, then we
+know that $C$ cannot be canonical and can thus be pruned. On the
+other hand, if no smaller code is found after $k$ extensions then
+$C$ must be canonical. 
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Algorithm \algcanonical: Canonicality Checking}
+\begin{algorithm}[H]
+  \SetKwInOut{iscanonical}{\algcanonical ($C$)}
+  \iscanonical{}
+  $\bD_C \gets \{G(C)\}$ \tcp{graph corresponding to code $C$}
+  $C^* \gets \emptyset$ \tcp{initialize canonical DFScode}
+  \For{$i=1\cdots k$}{
+  $\cE = \algRMPE(C^*, \bD_C)$ \tcp{extensions of $C^*$}
+    $(s_i, sup(s_i)) \gets \min\{\cE\}$ \tcp{least rightmost edge
+    extension of $C^*$}
+    \If{$s_i < t_i$}{\Return{false} \tcp{$C^*$ is smaller, thus
+    $C$ is not canonical}}
+    $C^* \gets C^* \cup s_i$\;
+  }
+  \Return{true} \tcp{no
+  smaller code exists; $C$ is canonical}
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Canonicality Checking}
+\begin{figure}[!t]
+  \centering
+  \psset{unit=0.3in}
+  \psset{tnpos=l,rowsep=1,colsep=1,tnsep=0}
+  \scalebox{0.9}{%
+  \begin{tabular}{c|ccc}
+    $G$ & Step 1 & Step 2 & Step 3\\
+    \psmatrix
+    \Tcircle[name=a0]{$a^0$}\\
+    \Tcircle[name=a1]{$a^1$}\\
+    \Tcircle[name=b2]{$b^2$} &
+    \Tcircle[name=b3]{$b^3$}
+    \endpsmatrix
+    \ncline{a0}{a1}
+    \ncline{a1}{b2}
+    \ncline{a1}{b3}
+    \ncarc[arcangle=-30]{b3}{a0}
+      &
+    \psmatrix
+    \Tcircle[name=a0]{$a$}~[tnpos=a]{$G^*$}\\
+    \Tcircle[name=a1]{$a$}
+    \endpsmatrix
+    \ncline[linewidth=2pt]{a0}{a1}
+      &
+    \psmatrix
+    \Tcircle[name=v0]{$a$}~[tnpos=a]{$G^*$}\\
+    \Tcircle[name=v1]{$a$}\\
+    \Tcircle[name=v2]{$b$}\\
+    \endpsmatrix
+    \ncline[linewidth=2pt]{v0}{v1}
+    \ncline[linewidth=2pt]{v1}{v2}
+  &
+    \psmatrix
+    \Tcircle[name=v0]{$a$}~[tnpos=a]{$G^*$}\\
+    \Tcircle[name=v1]{$a$}\\
+    \Tcircle[name=v2]{$b$}
+    \endpsmatrix
+    \ncline[linewidth=2pt]{v0}{v1}
+    \ncline[linewidth=2pt]{v1}{v2}
+    \ncarc[arcangle=-45]{v2}{v0}
+  ~\\[3ex]
+    \psframebox[linewidth=1pt]{
+      \begin{tabular}{c}
+        $C$\\
+        $t_{1} = \tup{0,1,a,a}$\\
+        $t_{2} = \tup{1,2,a,b}$\\
+        $t_{3} = \tup{1,3,a,b}$\\
+        $t_{4} = \tup{3,0,b,a}$\\
+      \end{tabular}} &
+    \psframebox[]{
+      \begin{tabular}{c}
+        $C^*$\\
+        $s_{1} = \tup{0,1,a,a}$
+      \end{tabular}} &
+    \psframebox[]{
+      \begin{tabular}{c}
+        $C^*$\\
+        $s_{1} = \tup{0,1,a,a}$\\
+        $s_{2} = \tup{1,2,a,b}$
+      \end{tabular}} &
+    \psframebox[]{
+      \begin{tabular}{c}
+        $C^*$\\
+        $s_{1} = \tup{0,1,a,a}$\\
+        $s_{2} = \tup{1,2,a,b}$\\
+        $s_{3} = \tup{2,0,b,a}$\\
+      \end{tabular}}
+  \end{tabular}
+  }
+\end{figure}
+\end{frame}

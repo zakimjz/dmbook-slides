@@ -1,0 +1,522 @@
+Magnum Opus - The leader in association discovery technology.
+Command Line System Version 4.6.3
+Copyright (c) 1999-2010 G I Webb & Associates Pty Ltd.
+No part of this software may be distributed in any form without
+the prior written permission of the copyright holder.
+
+*******************************IMPORTANT NOTICE*******************************
+This version of Magnum Opus is distributed without charge under the license
+agreement in http://www.giwebb.com/demoeula.html.  Use of this software or of
+its documentation signifies your willingness to be bound by this agreement.
+
+Demonstration version
+To purchase Magnum Opus connect to http://www.giwebb.com/purchasemo.html
+
+When publishing results found with this software please cite
+  G.I. Webb & S. Zhang (2005). K-Optimal Rule Discovery.
+  Data Mining and Knowledge Discovery, 10(1): 39-79.
+
+Fri Jan 13 01:49:19 2012
+
+settings-file=iris.itemset.redundant.mos
+! This example demonstrates the use of holdout evaluation.
+! Note, you may need to specify the full path name for tutorial.itl.
+item-list-file=iris.scr.itl
+find-itemsets
+! The next option specifies that 50% of the data is used for rule discovery
+proportion=0.5
+! Use the remaining data for holdout evaluation.
+out-of-sample-holdout-evaluation
+! The following option specifies an addition holdout test.
+test-improvement=yes
+test-partialness=yes
+test-positive-correlation=yes
+test-self-sufficient=yes
+! The default holdout test is test-positive correlation.
+! Use the concise=2 output format and show RHScoverage.
+search-mode=support
+filter-mode=redundant
+show-RHScoverage=yes
+show-coverage=yes
+show-holdout-statistics=yes
+show-leverage=yes
+show-significance=yes
+show-lift=yes
+show-strength=yes
+show-support=yes
+
+Imported 75 cases/75 holdout cases/15 items
+
+
+Found 100 itemsets
+
+The following 35 itemsets passed holdout evaluation
+
+d1 & O1
+[Coverage=0.373 (28); Leverage=0.2340 (17.5)]
+Holdout coverage = 22
+
+c1 & O1
+[Coverage=0.373 (28); Leverage=0.2340 (17.5)]
+Holdout coverage = 22
+
+c1 & d1
+[Coverage=0.373 (28); Leverage=0.2340 (17.5)]
+Holdout coverage = 22
+
+O2 & c2
+[Coverage=0.333 (25); Leverage=0.2133 (16.0)]
+Holdout coverage = 19
+
+d2 & O2
+[Coverage=0.347 (26); Leverage=0.2123 (15.9)]
+Holdout coverage = 23
+
+d2 & c2
+[Coverage=0.333 (25); Leverage=0.2089 (15.7)]
+Holdout coverage = 20
+
+a1 & O1
+[Coverage=0.347 (26); Leverage=0.1973 (14.8)]
+Holdout coverage = 21
+
+a1 & d1
+[Coverage=0.347 (26); Leverage=0.1973 (14.8)]
+Holdout coverage = 21
+
+a1 & c1
+[Coverage=0.347 (26); Leverage=0.1973 (14.8)]
+Holdout coverage = 21
+
+c3 & O3
+[Coverage=0.267 (20); Leverage=0.1884 (14.1)]
+Holdout coverage = 29
+
+c3 & d3
+[Coverage=0.253 (19); Leverage=0.1790 (13.4)]
+Holdout coverage = 27
+
+a3 & c3
+[Coverage=0.253 (19); Leverage=0.1516 (11.4)]
+Holdout coverage = 24
+
+a3 & d3 & O3
+[Coverage=0.213 (16); Leverage=0.1301 (9.8)]
+Holdout coverage = 21
+
+b3 & a1 & O1
+[Coverage=0.173 (13); Leverage=0.0901 (6.8)]
+Holdout coverage = 14
+
+b3 & a1 & d1
+[Coverage=0.173 (13); Leverage=0.0901 (6.8)]
+Holdout coverage = 14
+
+b3 & a1 & c1
+[Coverage=0.173 (13); Leverage=0.0901 (6.8)]
+Holdout coverage = 14
+
+c2 & b1
+[Coverage=0.200 (15); Leverage=0.0800 (6.0)]
+Holdout coverage = 17
+
+d2 & O2 & b1
+[Coverage=0.200 (15); Leverage=0.0752 (5.6)]
+Holdout coverage = 19
+
+{}
+[Coverage=1.000 (75); Leverage=0.0000 (0.0)]
+Holdout coverage = 75
+
+a1
+[Coverage=0.400 (30); Leverage=0.0000 (0.0)]
+Holdout coverage = 29
+
+b2
+[Coverage=0.400 (30); Leverage=0.0000 (0.0)]
+Holdout coverage = 27
+
+c1
+[Coverage=0.373 (28); Leverage=0.0000 (0.0)]
+Holdout coverage = 22
+
+d1
+[Coverage=0.373 (28); Leverage=0.0000 (0.0)]
+Holdout coverage = 22
+
+O1
+[Coverage=0.373 (28); Leverage=0.0000 (0.0)]
+Holdout coverage = 22
+
+d2
+[Coverage=0.373 (28); Leverage=0.0000 (0.0)]
+Holdout coverage = 26
+
+O2
+[Coverage=0.360 (27); Leverage=0.0000 (0.0)]
+Holdout coverage = 23
+
+b1
+[Coverage=0.360 (27); Leverage=0.0000 (0.0)]
+Holdout coverage = 30
+
+a3
+[Coverage=0.347 (26); Leverage=0.0000 (0.0)]
+Holdout coverage = 29
+
+c2
+[Coverage=0.333 (25); Leverage=0.0000 (0.0)]
+Holdout coverage = 20
+
+c3
+[Coverage=0.293 (22); Leverage=0.0000 (0.0)]
+Holdout coverage = 33
+
+O3
+[Coverage=0.267 (20); Leverage=0.0000 (0.0)]
+Holdout coverage = 30
+
+d3
+[Coverage=0.253 (19); Leverage=0.0000 (0.0)]
+Holdout coverage = 27
+
+a2
+[Coverage=0.253 (19); Leverage=0.0000 (0.0)]
+Holdout coverage = 17
+
+b3
+[Coverage=0.240 (18); Leverage=0.0000 (0.0)]
+Holdout coverage = 18
+
+d3 & O3 & b2
+[Coverage=0.080 (6); Leverage=-0.0160 (-1.2)]
+Holdout coverage = 17
+
+
+The following 65 itemsets failed holdout evaluation, adjusted critical value = 0.000500
+
+d3 & O3
+[Coverage=0.240 (18); Leverage=0.1724 (12.9)]
+Holdout coverage = 27
+Fails test for self-sufficiency, p = 0.00280
+
+a3 & O3
+[Coverage=0.240 (18); Leverage=0.1476 (11.1)]
+Holdout coverage = 21
+Fails test for self-sufficiency, p = 1.00
+
+a3 & d3
+[Coverage=0.213 (16); Leverage=0.1255 (9.4)]
+Holdout coverage = 21
+Fails test for self-sufficiency, p = 1.00
+
+b3 & O1
+[Coverage=0.200 (15); Leverage=0.1104 (8.3)]
+Holdout coverage = 15
+Fails test for self-sufficiency, p = 0.0870
+
+b3 & d1
+[Coverage=0.200 (15); Leverage=0.1104 (8.3)]
+Holdout coverage = 15
+Fails test for self-sufficiency, p = 0.0870
+
+b3 & c1
+[Coverage=0.200 (15); Leverage=0.1104 (8.3)]
+Holdout coverage = 15
+Fails test for self-sufficiency, p = 0.0870
+
+O2 & a2
+[Coverage=0.200 (15); Leverage=0.1088 (8.2)]
+Holdout coverage = 8
+Fails significant improvement with respect to O2 and a2, p = 0.0877
+
+a2 & c2
+[Coverage=0.187 (14); Leverage=0.1022 (7.7)]
+Holdout coverage = 7
+Fails significant improvement with respect to a2 and c2, p = 0.112
+
+d2 & O2 & a2
+[Coverage=0.187 (14); Leverage=0.0988 (7.4)]
+Holdout coverage = 8
+Fails significant improvement with respect to d2 & O2 and a2, p = 0.0877
+
+d2 & a2
+[Coverage=0.187 (14); Leverage=0.0921 (6.9)]
+Holdout coverage = 10
+Fails significant improvement with respect to d2 and a2, p = 0.0197
+
+d2 & b1
+[Coverage=0.213 (16); Leverage=0.0789 (5.9)]
+Holdout coverage = 22
+Fails test for self-sufficiency, p = 0.00747
+
+b3 & a1
+[Coverage=0.173 (13); Leverage=0.0773 (5.8)]
+Holdout coverage = 14
+Fails test for self-sufficiency, p = 1.00
+
+O2 & b1
+[Coverage=0.200 (15); Leverage=0.0704 (5.3)]
+Holdout coverage = 19
+Fails test for self-sufficiency, p = 1.00
+
+O3 & b1
+[Coverage=0.147 (11); Leverage=0.0507 (3.8)]
+Holdout coverage = 10
+Fails significant improvement with respect to O3 and b1, p = 0.886
+
+d3 & O3 & b1
+[Coverage=0.133 (10); Leverage=0.0469 (3.5)]
+Holdout coverage = 7
+Fails significant improvement with respect to d3 & O3 and b1, p = 0.984
+
+a2 & b1
+[Coverage=0.133 (10); Leverage=0.0421 (3.2)]
+Holdout coverage = 13
+Fails significant improvement with respect to a2 and b1, p = 0.000676
+
+d3 & b1
+[Coverage=0.133 (10); Leverage=0.0421 (3.2)]
+Holdout coverage = 7
+Fails significant improvement with respect to d3 and b1, p = 0.984
+
+c3 & b1
+[Coverage=0.147 (11); Leverage=0.0411 (3.1)]
+Holdout coverage = 12
+Fails significant improvement with respect to c3 and b1, p = 0.790
+
+a2 & c2 & b1
+[Coverage=0.107 (8); Leverage=0.0395 (3.0)]
+Holdout coverage = 7
+Fails significant improvement with respect to a2 and c2 & b1, p = 0.0447
+
+d2 & a2 & b1
+[Coverage=0.107 (8); Leverage=0.0395 (3.0)]
+Holdout coverage = 10
+Fails significant improvement with respect to d2 & b1 and a2, p = 0.00397
+
+a3 & b1
+[Coverage=0.160 (12); Leverage=0.0352 (2.6)]
+Holdout coverage = 9
+Fails significant improvement with respect to a3 and b1, p = 0.934
+
+O2 & a2 & b1
+[Coverage=0.107 (8); Leverage=0.0347 (2.6)]
+Holdout coverage = 8
+Fails significant improvement with respect to O2 & b1 and a2, p = 0.0245
+
+a3 & O3 & b1
+[Coverage=0.120 (9); Leverage=0.0336 (2.5)]
+Holdout coverage = 4
+Fails significant improvement with respect to a3 & O3 and b1, p = 0.996
+
+a3 & d3 & b1
+[Coverage=0.107 (8); Leverage=0.0299 (2.2)]
+Holdout coverage = 4
+Fails significant improvement with respect to a3 & d3 and b1, p = 0.996
+
+a3 & c3 & b1
+[Coverage=0.120 (9); Leverage=0.0288 (2.2)]
+Holdout coverage = 6
+Fails significant improvement with respect to a3 & c3 and b1, p = 0.982
+
+a1 & O1 & b2
+[Coverage=0.160 (12); Leverage=0.0213 (1.6)]
+Holdout coverage = 6
+Fails significant improvement with respect to a1 & O1 and b2, p = 0.866
+
+a1 & d1 & b2
+[Coverage=0.160 (12); Leverage=0.0213 (1.6)]
+Holdout coverage = 6
+Fails significant improvement with respect to a1 & d1 and b2, p = 0.866
+
+a1 & c1 & b2
+[Coverage=0.160 (12); Leverage=0.0213 (1.6)]
+Holdout coverage = 6
+Fails significant improvement with respect to a1 & c1 and b2, p = 0.866
+
+a3 & b2
+[Coverage=0.160 (12); Leverage=0.0213 (1.6)]
+Holdout coverage = 17
+Fails significant improvement with respect to a3 and b2, p = 0.00139
+
+a3 & b2 & d2
+[Coverage=0.080 (6); Leverage=0.0203 (1.5)]
+Holdout coverage = 3
+Fails significant improvement with respect to a3 & b2 and d2, p = 0.980
+
+O1 & b2
+[Coverage=0.160 (12); Leverage=0.0107 (0.8)]
+Holdout coverage = 6
+Fails significant improvement with respect to O1 and b2, p = 0.901
+
+d1 & b2
+[Coverage=0.160 (12); Leverage=0.0107 (0.8)]
+Holdout coverage = 6
+Fails significant improvement with respect to d1 and b2, p = 0.901
+
+c1 & b2
+[Coverage=0.160 (12); Leverage=0.0107 (0.8)]
+Holdout coverage = 6
+Fails significant improvement with respect to c1 and b2, p = 0.901
+
+a3 & b2 & O2
+[Coverage=0.067 (5); Leverage=0.0091 (0.7)]
+Holdout coverage = 3
+Fails significant improvement with respect to a3 & b2 and O2, p = 0.953
+
+a3 & c3 & b2
+[Coverage=0.107 (8); Leverage=0.0053 (0.4)]
+Holdout coverage = 15
+Fails significant improvement with respect to a3 & c3 and b2, p = 0.00135
+
+a3 & d2
+[Coverage=0.133 (10); Leverage=0.0039 (0.3)]
+Holdout coverage = 8
+Fails significant improvement with respect to a3 and d2, p = 0.899
+
+c3 & b2
+[Coverage=0.120 (9); Leverage=0.0027 (0.2)]
+Holdout coverage = 18
+Fails significant improvement with respect to c3 and b2, p = 0.00314
+
+b2 & O2
+[Coverage=0.147 (11); Leverage=0.0027 (0.2)]
+Holdout coverage = 4
+Fails significant improvement with respect to b2 and O2, p = 0.995
+
+b2 & O2 & a2
+[Coverage=0.080 (6); Leverage=0.0000 (0.0)]
+Holdout coverage = 0
+Fails significant improvement with respect to b2 & a2 and O2, p = 1.00
+
+a3 & b2 & c2
+[Coverage=0.053 (4); Leverage=0.0000 (0.0)]
+Holdout coverage = 2
+Fails significant improvement with respect to a3 & b2 and c2, p = 0.978
+
+a1 & b2
+[Coverage=0.160 (12); Leverage=-0.0000 (-0.0)]
+Holdout coverage = 7
+Fails significant improvement with respect to a1 and b2, p = 0.976
+
+a3 & O3 & b2
+[Coverage=0.093 (7); Leverage=-0.0027 (-0.2)]
+Holdout coverage = 14
+Fails significant improvement with respect to a3 & O3 and b2, p = 0.000815
+
+b2 & d2
+[Coverage=0.147 (11); Leverage=-0.0027 (-0.2)]
+Holdout coverage = 4
+Fails significant improvement with respect to b2 and d2, p = 0.999
+
+a3 & d3 & b2
+[Coverage=0.080 (6); Leverage=-0.0053 (-0.4)]
+Holdout coverage = 14
+Fails significant improvement with respect to a3 & d3 and b2, p = 0.000815
+
+b2 & d2 & O2
+[Coverage=0.133 (10); Leverage=-0.0053 (-0.4)]
+Holdout coverage = 4
+Fails significant improvement with respect to b2 and d2 & O2, p = 0.995
+
+d3 & a2 & b1
+[Coverage=0.027 (2); Leverage=-0.0071 (-0.5)]
+Holdout coverage = 3
+Fails significant improvement with respect to d3 and a2 & b1, p = 0.921
+
+d3 & b2
+[Coverage=0.093 (7); Leverage=-0.0080 (-0.6)]
+Holdout coverage = 17
+Fails test for self-sufficiency, p = 1.00
+
+b2 & a2 & c2
+[Coverage=0.067 (5); Leverage=-0.0080 (-0.6)]
+Holdout coverage = 0
+Fails significant improvement with respect to b2 & c2 and a2, p = 1.00
+
+b2 & d2 & a2
+[Coverage=0.067 (5); Leverage=-0.0080 (-0.6)]
+Holdout coverage = 0
+Fails significant improvement with respect to b2 & a2 and d2, p = 1.00
+
+d3 & b2 & a2
+[Coverage=0.013 (1); Leverage=-0.0103 (-0.8)]
+Holdout coverage = 3
+Fails significant improvement with respect to d3 & b2 and a2, p = 0.811
+
+O3 & a2 & b1
+[Coverage=0.027 (2); Leverage=-0.0105 (-0.8)]
+Holdout coverage = 5
+Fails significant improvement with respect to O3 and a2 & b1, p = 0.664
+
+c3 & a2 & b1
+[Coverage=0.027 (2); Leverage=-0.0124 (-0.9)]
+Holdout coverage = 6
+Fails significant improvement with respect to c3 and a2 & b1, p = 0.550
+
+O3 & b2
+[Coverage=0.093 (7); Leverage=-0.0133 (-1.0)]
+Holdout coverage = 17
+Fails significant improvement with respect to O3 and b2, p = 0.00257
+
+b2 & c2
+[Coverage=0.120 (9); Leverage=-0.0133 (-1.0)]
+Holdout coverage = 3
+Fails significant improvement with respect to b2 and c2, p = 0.996
+
+a3 & d2 & O2
+[Coverage=0.107 (8); Leverage=-0.0135 (-1.0)]
+Holdout coverage = 8
+Fails significant improvement with respect to a3 and d2 & O2, p = 0.762
+
+c3 & b2 & O2
+[Coverage=0.027 (2); Leverage=-0.0165 (-1.2)]
+Holdout coverage = 1
+Fails significant improvement with respect to c3 & b2 and O2, p = 1.00
+
+c3 & b2 & a2
+[Coverage=0.013 (1); Leverage=-0.0171 (-1.3)]
+Holdout coverage = 3
+Fails significant improvement with respect to c3 & b2 and a2, p = 0.846
+
+a3 & O2
+[Coverage=0.107 (8); Leverage=-0.0181 (-1.4)]
+Holdout coverage = 8
+Fails significant improvement with respect to a3 and O2, p = 0.762
+
+c3 & b2 & d2
+[Coverage=0.027 (2); Leverage=-0.0181 (-1.4)]
+Holdout coverage = 1
+Fails significant improvement with respect to c3 & b2 and d2, p = 1.00
+
+a3 & d2 & b1
+[Coverage=0.053 (4); Leverage=-0.0206 (-1.5)]
+Holdout coverage = 5
+Fails significant improvement with respect to a3 and d2 & b1, p = 0.984
+
+b3 & a2
+[Coverage=0.040 (3); Leverage=-0.0208 (-1.6)]
+Holdout coverage = 1
+Fails significant improvement with respect to b3 and a2, p = 0.995
+
+b2 & a2
+[Coverage=0.080 (6); Leverage=-0.0213 (-1.6)]
+Holdout coverage = 3
+Fails significant improvement with respect to b2 and a2, p = 0.985
+
+a3 & c2
+[Coverage=0.093 (7); Leverage=-0.0222 (-1.7)]
+Holdout coverage = 5
+Fails significant improvement with respect to a3 and c2, p = 0.961
+
+d3 & b2 & O2
+[Coverage=0.013 (1); Leverage=-0.0238 (-1.8)]
+Holdout coverage = 0
+Fails significant improvement with respect to d3 & O2 and b2, p = 1.00
+
+b3 & c1 & a2
+[Coverage=0.027 (2); Leverage=-0.0240 (-1.8)]
+Holdout coverage = 1
+Fails significant improvement with respect to b3 & c1 and a2, p = 0.987
+

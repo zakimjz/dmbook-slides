@@ -1,0 +1,1075 @@
+%!PS-Adobe-3.0
+%%Title: iris.out
+%%For: Wagner Meira
+%%Creator: a2ps version 4.14
+%%CreationDate: Tue Jan 10 13:18:25 2012
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 5
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed strings
+% Version 1.2 1/31/1990
+% Original Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 20.000000 def
+/fnfs 15 def
+/bfs 9.436834 def
+/cw 5.662101 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 131.400000 mul
+def
+/ph
+   516.194838 th add
+def
+/pmw 0 def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+] def
+/y [
+  pmh ph add 0 mul ph add
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.963470 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(Magnum Opus - The leader in association discovery technology.) p n
+(Command Line System Version 4.6.3) N
+(Copyright \(c\) 1999-2010 G I Webb & Associates Pty Ltd.) N
+(No part of this software may be distributed in any form without) N
+(the prior written permission of the copyright holder.) N
+() N
+(*******************************IMPORTANT NOTICE*******************************) N
+(This version of Magnum Opus is distributed without charge under the license) N
+(agreement in http://www.giwebb.com/demoeula.html.  Use of this software or of) N
+(its documentation signifies your willingness to be bound by this agreement.) N
+() N
+(Demonstration version) N
+(To purchase Magnum Opus connect to http://www.giwebb.com/purchasemo.html) N
+() N
+(When publishing results found with this software please cite) N
+(  G.I. Webb & S. Zhang \(2005\). K-Optimal Rule Discovery.) N
+(  Data Mining and Knowledge Discovery, 10\(1\): 39-79.) N
+() N
+(Thu Sep 15 19:25:37 2011) N
+() N
+(settings-file=iris.mos) N
+(! This example demonstrates the use of holdout evaluation.) N
+(! Note, you may need to specify the full path name for tutorial.itl.) N
+(item-list-file=iris.scr.itl) N
+(! Use the concise=2 output format and show RHScoverage.) N
+(concise=2) N
+(show-RHScoverage=yes) N
+(! The next option specifies that 50% of the data is used for rule discovery) N
+(proportion=0.5) N
+(! Use the remaining data for holdout evaluation.) N
+(out-of-sample-holdout-evaluation) N
+(! The default holdout test is test-positive correlation.) N
+(! The following option specifies an addition holdout test.) N
+(test-improvement=yes) N
+(Using default filter mode for holdout evaluation runs: filter-mode=insigificant) N
+() N
+(Imported 75 cases/75 holdout cases/15 items) N
+() N
+() N
+(Only 52 rules satisfy specified constraints.) N
+() N
+(The following 44 rules passed holdout evaluation) N
+() N
+(O1 -> d1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.373 \(28\); Support=0.373 \(28\); Strength=1.000; Lift=2.68; Leverage=0.2340 \(17.5\); p=3.18E-21]) N
+() N
+(O1 -> c1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.373 \(28\); Support=0.373 \(28\); Strength=1.000; Lift=2.68; Leverage=0.2340 \(17.5\); p=3.18E-21]) N
+() N
+(d1 -> O1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.373 \(28\); Support=0.373 \(28\); Strength=1.000; Lift=2.68; Leverage=0.2340 \(17.5\); p=3.18E-21]) N
+() N
+(d1 -> c1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.373 \(28\); Support=0.373 \(28\); Strength=1.000; Lift=2.68; Leverage=0.2340 \(17.5\); p=3.18E-21]) N
+(iris.out) (Page 1/5) (Sep 15, 11 18:25) title
+border
+grestore
+(Printed by Wagner Meira) rhead
+(iris.out) (1/5) (Tuesday January 10, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (2) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.963470 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(c1 -> O1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.373 \(28\); Support=0.373 \(28\); Strength=1.000; Lift=2.68; Leverage=0.2340 \(17.5\); p=3.18E-21]) N
+() N
+(c1 -> d1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.373 \(28\); Support=0.373 \(28\); Strength=1.000; Lift=2.68; Leverage=0.2340 \(17.5\); p=3.18E-21]) N
+() N
+(O2 -> c2) N
+([Coverage=0.360 \(27\); RHS Coverage=0.333 \(25\); Support=0.333 \(25\); Strength=0.926; Lift=2.78; Leverage=0.2133 \(16.0\); p=6.67E-18]) N
+() N
+(c2 -> O2) N
+([Coverage=0.333 \(25\); RHS Coverage=0.360 \(27\); Support=0.333 \(25\); Strength=1.000; Lift=2.78; Leverage=0.2133 \(16.0\); p=6.67E-18]) N
+() N
+(f2 -> O2) N
+([Coverage=0.373 \(28\); RHS Coverage=0.360 \(27\); Support=0.347 \(26\); Strength=0.929; Lift=2.58; Leverage=0.2123 \(15.9\); p=9.70E-17]) N
+() N
+(O2 -> f2) N
+([Coverage=0.360 \(27\); RHS Coverage=0.373 \(28\); Support=0.347 \(26\); Strength=0.963; Lift=2.58; Leverage=0.2123 \(15.9\); p=9.70E-17]) N
+() N
+(f2 -> c2) N
+([Coverage=0.373 \(28\); RHS Coverage=0.333 \(25\); Support=0.333 \(25\); Strength=0.893; Lift=2.68; Leverage=0.2089 \(15.7\); p=6.23E-17]) N
+() N
+(c2 -> f2) N
+([Coverage=0.333 \(25\); RHS Coverage=0.373 \(28\); Support=0.333 \(25\); Strength=1.000; Lift=2.68; Leverage=0.2089 \(15.7\); p=6.23E-17]) N
+() N
+(a1 -> O1) N
+([Coverage=0.400 \(30\); RHS Coverage=0.373 \(28\); Support=0.347 \(26\); Strength=0.867; Lift=2.32; Leverage=0.1973 \(14.8\); p=8.68E-14]) N
+() N
+(a1 -> d1) N
+([Coverage=0.400 \(30\); RHS Coverage=0.373 \(28\); Support=0.347 \(26\); Strength=0.867; Lift=2.32; Leverage=0.1973 \(14.8\); p=8.68E-14]) N
+() N
+(a1 -> c1) N
+([Coverage=0.400 \(30\); RHS Coverage=0.373 \(28\); Support=0.347 \(26\); Strength=0.867; Lift=2.32; Leverage=0.1973 \(14.8\); p=8.68E-14]) N
+() N
+(O1 -> a1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.400 \(30\); Support=0.347 \(26\); Strength=0.929; Lift=2.32; Leverage=0.1973 \(14.8\); p=8.68E-14]) N
+() N
+(d1 -> a1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.400 \(30\); Support=0.347 \(26\); Strength=0.929; Lift=2.32; Leverage=0.1973 \(14.8\); p=8.68E-14]) N
+() N
+(c1 -> a1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.400 \(30\); Support=0.347 \(26\); Strength=0.929; Lift=2.32; Leverage=0.1973 \(14.8\); p=8.68E-14]) N
+() N
+(O3 -> c3) N
+([Coverage=0.267 \(20\); RHS Coverage=0.293 \(22\); Support=0.267 \(20\); Strength=1.000; Lift=3.41; Leverage=0.1884 \(14.1\); p=2.88E-16]) N
+() N
+(c3 -> O3) N
+([Coverage=0.293 \(22\); RHS Coverage=0.267 \(20\); Support=0.267 \(20\); Strength=0.909; Lift=3.41; Leverage=0.1884 \(14.1\); p=2.88E-16]) N
+() N
+(d3 -> c3) N
+([Coverage=0.253 \(19\); RHS Coverage=0.293 \(22\); Support=0.253 \(19\); Strength=1.000; Lift=3.41; Leverage=0.1790 \(13.4\); p=5.37E-15]) N
+() N
+(c3 -> d3) N
+([Coverage=0.293 \(22\); RHS Coverage=0.253 \(19\); Support=0.253 \(19\); Strength=0.864; Lift=3.41; Leverage=0.1790 \(13.4\); p=5.37E-15]) N
+(iris.out) (Page 2/5) (Sep 15, 11 18:25) title
+border
+grestore
+(Printed by Wagner Meira) rhead
+(iris.out) (2/5) (Tuesday January 10, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.963470 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(d3 -> O3) N
+([Coverage=0.253 \(19\); RHS Coverage=0.267 \(20\); Support=0.240 \(18\); Strength=0.947; Lift=3.55; Leverage=0.1724 \(12.9\); p=3.65E-14]) N
+() N
+(O3 -> d3) N
+([Coverage=0.267 \(20\); RHS Coverage=0.253 \(19\); Support=0.240 \(18\); Strength=0.900; Lift=3.55; Leverage=0.1724 \(12.9\); p=3.65E-14]) N
+() N
+(c3 -> a3) N
+([Coverage=0.293 \(22\); RHS Coverage=0.347 \(26\); Support=0.253 \(19\); Strength=0.864; Lift=2.49; Leverage=0.1516 \(11.4\); p=2.40E-09]) N
+() N
+(a3 -> c3) N
+([Coverage=0.347 \(26\); RHS Coverage=0.293 \(22\); Support=0.253 \(19\); Strength=0.731; Lift=2.49; Leverage=0.1516 \(11.4\); p=2.40E-09]) N
+() N
+(O3 -> a3) N
+([Coverage=0.267 \(20\); RHS Coverage=0.347 \(26\); Support=0.240 \(18\); Strength=0.900; Lift=2.60; Leverage=0.1476 \(11.1\); p=2.33E-09]) N
+() N
+(a3 -> O3) N
+([Coverage=0.347 \(26\); RHS Coverage=0.267 \(20\); Support=0.240 \(18\); Strength=0.692; Lift=2.60; Leverage=0.1476 \(11.1\); p=2.33E-09]) N
+() N
+(d3 -> a3) N
+([Coverage=0.253 \(19\); RHS Coverage=0.347 \(26\); Support=0.213 \(16\); Strength=0.842; Lift=2.43; Leverage=0.1255 \(9.4\); p=3.54E-07]) N
+() N
+(a3 -> d3) N
+([Coverage=0.347 \(26\); RHS Coverage=0.253 \(19\); Support=0.213 \(16\); Strength=0.615; Lift=2.43; Leverage=0.1255 \(9.4\); p=3.54E-07]) N
+() N
+(b3 -> O1) N
+([Coverage=0.240 \(18\); RHS Coverage=0.373 \(28\); Support=0.200 \(15\); Strength=0.833; Lift=2.23; Leverage=0.1104 \(8.3\); p=6.70E-06]) N
+() N
+(b3 -> d1) N
+([Coverage=0.240 \(18\); RHS Coverage=0.373 \(28\); Support=0.200 \(15\); Strength=0.833; Lift=2.23; Leverage=0.1104 \(8.3\); p=6.70E-06]) N
+() N
+(b3 -> c1) N
+([Coverage=0.240 \(18\); RHS Coverage=0.373 \(28\); Support=0.200 \(15\); Strength=0.833; Lift=2.23; Leverage=0.1104 \(8.3\); p=6.70E-06]) N
+() N
+(O1 -> b3) N
+([Coverage=0.373 \(28\); RHS Coverage=0.240 \(18\); Support=0.200 \(15\); Strength=0.536; Lift=2.23; Leverage=0.1104 \(8.3\); p=6.70E-06]) N
+() N
+(d1 -> b3) N
+([Coverage=0.373 \(28\); RHS Coverage=0.240 \(18\); Support=0.200 \(15\); Strength=0.536; Lift=2.23; Leverage=0.1104 \(8.3\); p=6.70E-06]) N
+() N
+(c1 -> b3) N
+([Coverage=0.373 \(28\); RHS Coverage=0.240 \(18\); Support=0.200 \(15\); Strength=0.536; Lift=2.23; Leverage=0.1104 \(8.3\); p=6.70E-06]) N
+() N
+(c2 -> b1) N
+([Coverage=0.333 \(25\); RHS Coverage=0.360 \(27\); Support=0.200 \(15\); Strength=0.600; Lift=1.67; Leverage=0.0800 \(6.0\); p=0.00265]) N
+() N
+(b1 -> c2) N
+([Coverage=0.360 \(27\); RHS Coverage=0.333 \(25\); Support=0.200 \(15\); Strength=0.556; Lift=1.67; Leverage=0.0800 \(6.0\); p=0.00265]) N
+() N
+(f2 -> b1) N
+([Coverage=0.373 \(28\); RHS Coverage=0.360 \(27\); Support=0.213 \(16\); Strength=0.571; Lift=1.59; Leverage=0.0789 \(5.9\); p=0.00360]) N
+() N
+(b1 -> f2) N
+([Coverage=0.360 \(27\); RHS Coverage=0.373 \(28\); Support=0.213 \(16\); Strength=0.593; Lift=1.59; Leverage=0.0789 \(5.9\); p=0.00360]) N
+(iris.out) (Page 3/5) (Sep 15, 11 18:25) title
+border
+grestore
+(Printed by Wagner Meira) rhead
+(iris.out) (3/5) (Tuesday January 10, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (4) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.963470 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(a1 -> b3) N
+([Coverage=0.400 \(30\); RHS Coverage=0.240 \(18\); Support=0.173 \(13\); Strength=0.433; Lift=1.81; Leverage=0.0773 \(5.8\); p=0.00178]) N
+() N
+(b3 -> a1) N
+([Coverage=0.240 \(18\); RHS Coverage=0.400 \(30\); Support=0.173 \(13\); Strength=0.722; Lift=1.81; Leverage=0.0773 \(5.8\); p=0.00178]) N
+() N
+(b1 -> O2) N
+([Coverage=0.360 \(27\); RHS Coverage=0.360 \(27\); Support=0.200 \(15\); Strength=0.556; Lift=1.54; Leverage=0.0704 \(5.3\); p=0.00855]) N
+() N
+(O2 -> b1) N
+([Coverage=0.360 \(27\); RHS Coverage=0.360 \(27\); Support=0.200 \(15\); Strength=0.556; Lift=1.54; Leverage=0.0704 \(5.3\); p=0.00855]) N
+() N
+() N
+(The following 8 rules failed holdout evaluation, adjusted critical value = 0.0125) N
+() N
+(a2 -> O2) N
+([Coverage=0.253 \(19\); RHS Coverage=0.360 \(27\); Support=0.200 \(15\); Strength=0.789; Lift=2.19; Leverage=0.1088 \(8.2\); p=1.26E-05]) N
+(Holdout coverage = 17, holdout support = 8, holdout strength = 0.471) N
+(Fails positive correlation, p = 0.0877) N
+(Fails significant improvement with respect to DEFAULT, p = 0.0877) N
+() N
+(O2 -> a2) N
+([Coverage=0.360 \(27\); RHS Coverage=0.253 \(19\); Support=0.200 \(15\); Strength=0.556; Lift=2.19; Leverage=0.1088 \(8.2\); p=1.26E-05]) N
+(Holdout coverage = 23, holdout support = 8, holdout strength = 0.348) N
+(Fails positive correlation, p = 0.0877) N
+(Fails significant improvement with respect to DEFAULT, p = 0.0877) N
+() N
+(a2 -> c2) N
+([Coverage=0.253 \(19\); RHS Coverage=0.333 \(25\); Support=0.187 \(14\); Strength=0.737; Lift=2.21; Leverage=0.1022 \(7.7\); p=3.57E-05]) N
+(Holdout coverage = 17, holdout support = 7, holdout strength = 0.412) N
+(Fails positive correlation, p = 0.112) N
+(Fails significant improvement with respect to DEFAULT, p = 0.112) N
+() N
+(c2 -> a2) N
+([Coverage=0.333 \(25\); RHS Coverage=0.253 \(19\); Support=0.187 \(14\); Strength=0.560; Lift=2.21; Leverage=0.1022 \(7.7\); p=3.57E-05]) N
+(Holdout coverage = 20, holdout support = 7, holdout strength = 0.350) N
+(Fails positive correlation, p = 0.112) N
+(Fails significant improvement with respect to DEFAULT, p = 0.112) N
+() N
+(f2 -> a2) N
+([Coverage=0.373 \(28\); RHS Coverage=0.253 \(19\); Support=0.187 \(14\); Strength=0.500; Lift=1.97; Leverage=0.0921 \(6.9\); p=0.000240]) N
+(Holdout coverage = 26, holdout support = 10, holdout strength = 0.385) N
+(Fails positive correlation, p = 0.0197) N
+(Fails significant improvement with respect to DEFAULT, p = 0.0197) N
+() N
+(a2 -> f2) N
+([Coverage=0.253 \(19\); RHS Coverage=0.373 \(28\); Support=0.187 \(14\); Strength=0.737; Lift=1.97; Leverage=0.0921 \(6.9\); p=0.000240]) N
+(Holdout coverage = 17, holdout support = 10, holdout strength = 0.588) N
+(Fails positive correlation, p = 0.0197) N
+(Fails significant improvement with respect to DEFAULT, p = 0.0197) N
+() N
+(O3 -> b1) N
+([Coverage=0.267 \(20\); RHS Coverage=0.360 \(27\); Support=0.147 \(11\); Strength=0.550; Lift=1.53; Leverage=0.0507 \(3.8\); p=0.0376]) N
+(iris.out) (Page 4/5) (Sep 15, 11 18:25) title
+border
+grestore
+(Printed by Wagner Meira) rhead
+(iris.out) (4/5) (Tuesday January 10, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.963470 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(Holdout coverage = 30, holdout support = 10, holdout strength = 0.333) p n
+(Fails positive correlation, p = 0.886) N
+(Fails significant improvement with respect to DEFAULT, p = 0.886) N
+() N
+(b1 -> O3) N
+([Coverage=0.360 \(27\); RHS Coverage=0.267 \(20\); Support=0.147 \(11\); Strength=0.407; Lift=1.53; Leverage=0.0507 \(3.8\); p=0.0376]) N
+(Holdout coverage = 30, holdout support = 10, holdout strength = 0.333) N
+(Fails positive correlation, p = 0.886) N
+(Fails significant improvement with respect to DEFAULT, p = 0.886) N
+() N
+(iris.out) (Page 5/5) (Sep 15, 11 18:25) title
+border
+grestore
+(Printed by Wagner Meira) rhead
+(iris.out) (5/5) (Tuesday January 10, 2012) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

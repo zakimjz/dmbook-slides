@@ -1,0 +1,92 @@
+graph "G" {
+      fontsize=24;
+      nodesep=1;
+      node [fontsize=24];
+
+      {node [label="{}"] empty;}
+      {node [label="{}"] empty1;}
+      {node [label="{}"] empty2;}
+      {node [label="{}"] empty3;}
+      {node [label="{}"] empty4;}
+      {node [label="{}"] empty5;}
+      {node [label="A(1)"] A1;}
+      {node [label="A(4)"] A2;}
+      {node [label="C(1)"] C1;}
+      {node [label="C(1)"] C2;}
+      {node [label="C(1)"] C3;}
+      {node [label="C(1)"] C4;}
+      {node [label="C(1)"] C5;}
+      {node [label="C(1)"] C6;}
+      {node [label="C(2)"] C7;}
+      {node [label="C(1)"] C8;}
+      {node [label="D(1)"] D1;}
+      {node [label="D(2)"] D2;}
+      {node [label="D(2)"] D3;}
+      {node [label="D(1)"] D4;}
+      {node [label="D(1)"] D5;}
+      {node [label="D(2)"] D6;}
+      {node [label="D(1)"] D7;}
+      {node [label="E(5)"] E2;}
+
+      subgraph cluster0 {	
+       		label = "add t1:\nBEAD";
+		empty--"B(1)"--"E(1)"--"A(1)"--"D(1)";
+      }
+
+      subgraph cluster1 {	
+       		label = "add t2:\nBEC";
+		{rank=same; C1; A1;}
+		empty1--"B(2)" -- "E(2)" -- A1 -- D1;
+		"E(2)" -- C1;
+		A1 -- C1 [style=invis];
+	
+      }
+
+      subgraph cluster2 {	
+       		label = "add t3:\nBEAD";
+		empty2--"B(3)" -- "E(3)" -- "A(2)" -- "D(2)";
+		"E(3)" -- C2;
+		{rank=same; "A(2)"; C2;}
+		"A(2)" -- C2 [style=invis];
+      }
+
+      subgraph cluster3 {	
+       		label = "add t4:\nBEAC";
+		empty3--"B(4)" -- "E(4)" -- "A(3)" -- D2;
+		"A(3)" -- C4;
+		"E(4)" -- C3;
+		{rank=same; "A(3)"; C3;}	
+		"A(3)" -- C3 [style=invis];
+		{rank=same; D2; C4;}	
+		D2 -- C4 [style=invis];
+		
+      }
+
+      subgraph cluster4 {	
+       		label = "add t5:\nBEACD";
+		empty4--"B(5)" -- "E(5)" -- "A(4)" -- D3;
+		"E(5)" -- C5;
+		"A(4)" -- "C(2)" -- D4;
+		{rank=same; "A(4)"; C5;}	 
+		"A(4)" -- C5 [style=invis];
+      }
+
+
+      subgraph cluster5 {	
+       		label = "add t6:\nBCD";
+		empty5--"B(6)"--E2--A2--D6;
+      		E2--C8;
+		A2--C7--D7;      		
+      		"B(6)"--C6--D5;
+		{rank=same; A2; C8;}	 
+		A2 -- C8 [style=invis];
+		{rank=same; E2; C6;}	 
+		E2 -- C6 [style=invis];
+		{rank=same; C7; D6;}	 
+		D6 -- C7 [style=invis];
+
+      }
+
+
+
+}

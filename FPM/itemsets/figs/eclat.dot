@@ -1,0 +1,57 @@
+digraph G {
+      ranksep=0.75;
+      /*nodesep=1.5;*/
+      fontsize=24;
+      node [shape=record;]
+      {node [shape=box,label = "{}"] empty;}
+      node1 [shape=record, label = "{ A|1345 }"];
+      node2 [shape=record, label = "{ B|123456 }"];
+      node3 [shape=record, label = "{ C|2456 }"];
+      node4 [shape=record, label = "{ D|1356 }"];
+      node5 [shape=record, label = "{ E|12345 }"];
+      node11 [shape=record, label = "{ AB|1345 }"];
+      node12 [shape=record, style=filled, fillcolor=lightgray, label = "{ AC|45 }"];
+      node13 [shape=record, label = "{ AD|135 }"];
+      node14 [shape=record, label = "{ AE|1345 }"];
+      node111 [shape=record, label = "{ ABD|135 }"];
+      node112 [shape=record, label = "{ ABE|1345 }"];      
+      node1111 [shape=record, label = "{ ABDE|135 }"];
+      node131 [shape=record, label = "{ ADE|135 }"];
+      node21 [shape=record, label = "{ BC|2456 }"];
+      node22 [shape=record, label = "{ BD|1356 }"];
+      node23 [shape=record, label = "{ BE|12345 }"];
+      node211 [shape=record, style=filled, fillcolor=lightgray, label = "{ BCD|56 }"];
+      node212 [shape=record, label = "{ BCE|245 }"];
+      node221 [shape=record, label = "{ BDE|135 }"];
+      node31 [shape=record, style=filled, fillcolor=lightgray, label = "{ CD|56 }"];
+      node32 [shape=record, label = "{ CE|245 }"];
+      node41 [shape=record, label = "{ DE|135 }"];
+
+
+      empty->node1;
+      empty->node2;
+      empty->node3;
+      empty->node4;
+      empty->node5;
+      node1->node11;
+      node1->node12;
+      node1->node13;
+      node1->node14;
+      node11->node111;
+      node11->node112;
+      node111->node1111;
+      node13->node131;
+      node2->node21;
+      node2->node22;
+      node2->node23;
+      node21->node211;
+      node21->node212;
+      node22->node221;
+      node3->node31;
+      node3->node32;
+      node4->node41;
+
+
+
+
+}

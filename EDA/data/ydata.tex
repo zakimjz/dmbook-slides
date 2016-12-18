@@ -1,0 +1,875 @@
+\lecture{data}{data}
+\date{Chapter 1: Data Mining and Analysis}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Data Matrix}
+Data can often be represented or abstracted as an $n
+\times d$ {\em data matrix}\index{data matrix},
+with $n$ rows and $d$ columns, given as
+\begin{align*}
+        \bD = &
+        \matr{%
+            & \vline & X_1 & X_2 & \cdots & X_d\\
+            \hline
+            \bx_1 & \vline & x_{11} & x_{12} & \cdots & x_{1d}\\
+            \bx_2 & \vline& x_{21} & x_{22} & \cdots & x_{2d}\\
+            \vdots & \vline& \vdots & \vdots & \ddots & \vdots\\
+            \bx_n & \vline& x_{n1} & x_{n2} & \cdots & x_{nd}
+        }
+\end{align*}
+\begin{itemize}
+  \item {\bf Rows}: Also called 
+{\em instances}, {\em examples}, {\em records}, {\em
+transactions}, {\em objects}, {\em points}, {\em feature-vectors}, etc.
+Given as a $d$-tuple 
+$$\bx_i = (x_{i1}, x_{i2}, \ldots, x_{id})$$
+\item {\bf Columns}: Also called 
+{\em attributes}, {\em properties}, {\em features}, {\em dimensions}, {\em
+variables}, {\em f\/{i}elds}, etc. Given as an $n$-tuple
+$$X_{j} = (x_{1j}, x_{2j}, \ldots, x_{nj})$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Iris Dataset Extract}
+
+\begin{center}
+\begin{tabular}{c}
+    $\matr{%
+    & \vline & \textbf{Sepal}  & \textbf{Sepal}
+    & \textbf{Petal} & \textbf{Petal}
+    & \multirow{2}{*}{\textbf{Class}}\\
+    & \vline & \textbf{length}  & \textbf{width}
+    & \textbf{length} & \textbf{width} & \\
+    & \vline & X_1 & X_2 & X_3 & X_4 & X_5\\
+        \hline
+        \bx_1 &\vline &  5.9 &3.0 &4.2 &1.5 &\text{Iris-versicolor}\\
+        \bx_2 &\vline &  6.9 &3.1 &4.9 &1.5 &\text{Iris-versicolor}\\
+        \bx_3 &\vline &  6.6 &2.9 &4.6 &1.3 &\text{Iris-versicolor}\\
+        \bx_4 &\vline &  4.6 &3.2 &1.4 &0.2 &\text{Iris-setosa} \\
+        \bx_5 &\vline &  6.0 &2.2 &4.0 &1.0 &\text{Iris-versicolor}\\
+        \bx_6 &\vline &  4.7 &3.2 &1.3 &0.2 &\text{Iris-setosa}  \\
+        \bx_7 &\vline &  6.5 &3.0 &5.8 &2.2 &\text{Iris-virginica} \\
+        \bx_8 &\vline &  5.8 &2.7 &5.1 &1.9 &\text{Iris-virginica} \\
+        \vdots & \vline & \vdots & \vdots & \vdots & \vdots &
+        \vdots\\
+        \bx_{149} & \vline&7.7 &3.8 &6.7 &2.2 & \text{Iris-virginica}\\
+        \bx_{150} & \vline&5.1 &3.4 &1.5 &0.2 & \text{Iris-setosa}\\
+    }%
+    $
+\end{tabular}
+\end{center}
+\end{frame}
+
+\section[]{Attributes}
+\begin{frame}{Attributes}
+Attributes may be classif\/{i}ed into two main types
+\begin{itemize}
+  \item {\bf Numeric Attributes}: real-valued or integer-valued domain
+	  \begin{itemize}
+		\item {\em Interval-scaled}: only differences are meaningful\\
+		  e.g., {\tt temperature}
+		\item {\em Ratio-scaled}: differences and ratios are
+		  meaningful\\
+		  e..g, {\tt Age}
+	  \end{itemize}
+	\item {\bf Categorical Attributes}: set-valued domain composed of a
+	  set of symbols
+	  \begin{itemize}
+		\item {\em Nominal}: only equality is meaningful\\
+		  e.g., domain({\tt Sex}) = \{ {\tt M, F}\}
+		\item {\em Ordinal}: both equality (are two values the same?) 
+		  and inequality (is one value less than another?) are
+		  meaningful\\
+		  e.g., domain({\tt Education}) 
+		  = \{ {\tt High School}, {\tt BS}, {\tt MS}, {\tt PhD}\}
+	  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Data: Algebraic and Geometric View}
+  \small
+For numeric data matrix $\bD$, 
+each row or point is a $d$-dimensional 
+column vector:
+$$\bx_i = \matr{%
+    x_{i1}\\
+    x_{i2}\\
+    \vdots\\
+    x_{id}
+} =
+\matr{x_{i1} & x_{i2} & \cdots & x_{id}}^T \in \setR^d$$
+whereas each column or attribute is a $n$-dimensional column vector:
+$$X_{j} = \matr{x_{1j} & x_{2j} & \cdots & x_{nj}}^T \in \setR^n$$
+  \begin{figure}
+	\vspace{-0.4in}
+  \centerline{
+  \subfloat[$\setR^2$]{
+    \scalebox{0.7}{
+    \psset{nameX={$X_1$}, nameY={$X_2$}}
+    \psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
+    \psset{xAxisLabel=$X_1$,yAxisLabel=$X_2$}
+    \pspicture(-1.5,-0.5)(2,4)
+    \psgraph[]{->}(0,0)(7,4.5){1.75in}{1.25in}%
+    \psdots[dotstyle=o](5.9,3.0)
+    \uput[u](5.9,3.0){$~\bx_1 = (5.9, 3.0)^T$}
+    \psline[linewidth=2pt,arrowscale=1.5]{->}(0,0)(5.9,3.0)
+    \psline[linestyle=dashed]{-}(5.9,0)(5.9,3.0)
+    \psline[linestyle=dashed]{-}(0,3.0)(5.9,3.0)
+    \endpsgraph
+    \endpspicture
+	}}
+	\subfloat[$\setR^3$]{
+    \scalebox{0.5}{
+    \psset{nameX={$X_1$}, nameY={$X_2$}, nameZ={$X_3$}}
+    \psset{unit=0.4in}
+    \begin{pspicture}(-1.5,-1.5)(4,6)
+   \psset{Alpha=75,Beta=15,IIIDticks,IIIDlabels,IIIDxTicksPlane=yx}
+    \pstThreeDCoor[xMin=0, xMax=7, yMin=0, yMax=4,
+        zMin=0, zMax=5, linecolor=black]
+    \psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
+    \pstThreeDDot[drawCoor=true](5.9,3.0,4.2)
+    \pstThreeDPut[origin=rt](5,4.5,4.5){$\bx_1 = (5.9,3.0,4.2)^T$}
+    \pstThreeDLine[linewidth=2pt,arrows=->,arrowscale=1.5](0,0,0)(5.9,3.0,4.2)
+    \psset{dotsep=2pt}
+    \pstThreeDLine[linewidth=1pt,linestyle=dotted](0,0,0)(5.9,3.0,0)
+    \pstThreeDLine[linewidth=1pt,linestyle=dotted](0,0,4.2)(5.9,3.0,4.2)
+    \end{pspicture}
+	}}
+	}
+	\caption{Projections of $\bx_1 = (5.9, 3.0, 4.2, 1.5)^T$ in 2D and 3D}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Scatterplot: 2D Iris Dataset\\
+  {\tt sepal length} versus {\tt sepal width}.} 
+\readdata{\dataSLW}{EDA/data/figs/iris-slw.dat}
+\readdata{\dataSLWPL}{EDA/data/figs/iris-slwpl.dat}
+    \centering
+  Visualizing Iris dataset as points/vectors in 2D\\
+	Solid circle shows the mean point
+    \scalebox{0.8}{
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$X_1$: sepal length,yAxisLabel= $X_2$: sepal width,
+        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.5in,c}}
+    \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,Ox=4,Oy=2,subticks=2]{->}(4.0,2.0)(8.5,5){4in}{2.5in}%
+    \dataplot[plotstyle=dots,showpoints=true]{\dataSLW}
+    \psdot[dotstyle=*,dotscale=2](5.84,3.05)
+    \psline[linestyle=dashed](5.84,2)(5.84,3.05)
+    \psline[linestyle=dashed](4,3.05)(5.84,3.05)
+    \endpsgraph
+    }
+\end{frame}
+
+
+\begin{frame}{Numeric Data Matrix}
+  \small
+  If all attributes are numeric, then the data matrix
+$\bD$ is an $n \times d$ matrix,
+ or equivalently a set of $n$ row vectors 
+$\bx_i^T
+\in \setR^d$ 
+or a set of $d$ column vectors 
+$X_{j} \in \setR^n$
+\begin{align*}
+        \bD = &
+        \matr{%
+            x_{11} & x_{12} & \cdots & x_{1d}\\
+            x_{21} & x_{22} & \cdots & x_{2d}\\
+            \vdots & \vdots & \ddots & \vdots\\
+            x_{n1} & x_{n2} & \cdots & x_{nd}
+        }
+        = \matr{\mbox{---} \; \bx_1^T \; \mbox{---}\\[0.3em]
+                \mbox{---} \; \bx_2^T \; \mbox{---}\\[0.3em]
+                \vdots\\
+                \mbox{---} \; \bx_n^T \; \mbox{---}}
+        = \matr{
+            | & | & & |\\
+            X_1 & X_2 & \cdots & X_d\\
+            | & | & & |
+            }
+\end{align*}
+
+The {\em mean} of the data matrix $\bD$ is the average of all the points:
+    $\displaystyle mean(\bD) = \bmu = {1 \over n} \sum_{i=1}^n \bx_i$
+
+The {\em centered
+data matrix} is obtained by
+subtracting the mean from all the points:
+\begin{align}
+\bZ = \bD - \bone \cdot \bmu^T
+= \matr{\bx_1^T\\[0.3em] \bx_2^T\\[0.3em] \vdots \\ \bx_n^T} -
+  \matr{\bmu^T\\[0.3em] \bmu^T \\[0.3em] \vdots \\\bmu^T}
+        = \matr{\bx_1^T - \bmu^T\\[0.3em] \bx_2^T - \bmu^T \\[0.3em] \vdots \\
+        \bx_n^T-\bmu^T}
+        = \matr{\bz_1^T \\[0.3em] \bz_2^T \\[0.3em] \vdots \\\bz_n^T}
+    \label{eq:eda:data:centered}
+\end{align}
+where $\bz_i = \bx_i - \bmu$ is a centered point, 
+and $\bone \in \setR^n$
+is the vector of ones.
+\end{frame}
+
+\begin{frame}{Norm, Distance and Angle}
+  \begin{columns}
+  \begin{column}[t]{.45\textwidth}
+	\small
+  Given two points $\ba, \bb \in \setR^m$, their {\em dot product} 
+  is def\/{i}ned as the scalar
+\begin{align*}
+    \ba^T\bb & = a_1b_1 + a_2b_2 + \cdots + a_mb_m\nonumber\\
+    & = \sum_{i=1}^m a_i b_i
+\end{align*}
+The {\em Euclidean norm} or {\em length}
+ of a vector $\ba$ is def\/{i}ned as
+\begin{align*}
+    \norm{\ba} = \sqrt{\ba^T\ba} = \sqrt{\sum_{i=1}^m a_i^2}
+\end{align*}
+The {\em unit vector} in the direction of $\ba$ is
+  $\bu = {\ba \over \norm{\ba}}$
+with $\norm{\ba} = 1$.
+  \end{column}
+
+  \begin{column}[t]{.5\textwidth}
+	\small
+	{\em Distance} between $\ba$ and $\bb$ is given as
+  \begin{align*}
+    \norm{\ba - \bb} = \sqrt{\sum_{i=1}^m (a_i-b_i)^2}
+\end{align*}
+
+{\em Angle} between $\ba$ and $\bb$ is given as
+\begin{align*}
+    \cos \theta = {\ba^T\bb \over \norm{\ba}\norm{\bb}}
+    = \lB({\ba\over \norm{\ba}}\rB)^T \lB({\bb\over \norm{\bb}}\rB)
+\end{align*}
+
+    \centerline{
+\scalebox{0.6}{%
+    \psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
+    \psset{xAxisLabel=$X_1$,yAxisLabel=$X_2$}
+    \psgraph[]{->}(0,0)(6,5){2.5in}{2.0in}%
+    \psdots[dotstyle=o](5,3)
+    \uput[ur](5,3){$(5, 3)$}
+    \psdots[dotstyle=o](1,4)
+    \uput[u](1,4){$(1, 4)$}
+    \pcline[arrowscale=1.5,linewidth=1pt]{->}(0,0)(5,3)
+    \naput[nrot=:U]{$\ba$}
+    \pcline[arrowscale=1.5,linewidth=2pt,linecolor=gray]{->}(0,0)(0.83,0.5)
+    \pcline[arrowscale=1.5,linewidth=1pt]{->}(0,0)(1,4)
+    \nbput[nrot=:U]{$\bb$}
+    \pcline[arrowscale=1.5,linewidth=2pt,linecolor=gray]{->}(0,0)(0.243,0.97)
+    \pcline[arrowscale=1.5,linewidth=2pt]{->}(1,4)(5,3)
+    \naput[nrot=:U]{$\ba-\bb$}
+    \psset{PointName=none,PointSymbol=none}
+    \pstGeonode(0,0){O}(1,4){A}(5,3){B}
+    \pstMarkAngle[MarkAngleRadius=0.75]{B}{O}{A}{$\theta$}
+    \endpsgraph
+    }
+  }
+  \end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Orthogonal Projection}
+  Two vectors $\ba$ and $\bb$ are {\em orthogonal} iff $\ba^T\bb = 0$,
+  i.e., the angle between them is $90^\circ$.
+  Orthogonal projection of $\bb$ on $\ba$ comprises the vector
+  $\bp=\bb_\parallel$ parallel to
+$\ba$, and $\br=\bb_\perp$ perpendicular or orthogonal
+to $\ba$, given as
+$$\bb = \bb_\parallel + \bb_\perp = \bp + \br$$ 
+where
+$$\bp = \bb_\parallel = \lB( {\ba^T\bb \over \ba^T\ba}
+    \rB) \ba$$
+
+    \centerline{
+	\scalebox{0.7}{
+    \psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray,unit=0.4in}
+    \psset{xAxisLabel=$X_1$,yAxisLabel=$X_2$}
+    \psgraph[]{->}(0,0)(6,5){2.5in}{2.0in}%
+    \uput[ur](5,3){$\ba$}
+    \uput[u](1,4){$\bb$}
+    \pcline[arrowscale=1.5,linewidth=1pt]{->}(0,0)(5,3)
+    \pcline[arrowscale=1.5,linewidth=1pt]{->}(0,0)(1,4)
+    \psset{PointName=none,PointSymbol=none}
+    \pstGeonode(0,0){O}(1,4){B}(5,3){A}
+    \pstProjection{O}{A}{B}[P]
+    \pstLineAB[arrows=->,arrowscale=1.5,linewidth=2pt,linecolor=gray]{P}{B}
+    \nbput[nrot=:R]{$\br = \bb_\perp$}
+    \pstLineAB[arrows=->,arrowscale=1.5,linewidth=2pt,linecolor=gray]{O}{P}
+    \naput[nrot=:U,labelsep=1pt]{$\bp = \bb_\parallel$}
+    \endpsgraph
+	}}
+\end{frame}
+
+
+\begin{frame}{Projection of Centered Iris Data Onto a Line $\ell$.}
+    \centering
+    \scalebox{0.8}{
+    \psset{dotscale=1.5,arrowscale=2,PointName=none,unit=1.0in}
+    \psset{dotsep=2pt}
+    \begin{pspicture}(-2,-1.1)(2,1.5)
+    \psaxes[Dx=0.5,Dy=0.5,labels=none]{->}(0,0)(-2,-1.2)(2.3,1.7)
+    \psaxes[Dx=0.5,Dy=0.5,labels=none,axesstyle=frame]{->}(0,0)(-2,-1.2)(2.1,1.5)
+\pstGeonode[PointSymbol=none](1.0738,-1.3766){na}
+\pstGeonode[PointSymbol=none](-1.0738,1.3766){nb}
+    \pstGeonode[PointSymbol=none](-2,1.5){t1}
+    \pstGeonode[PointSymbol=none](2,1.5){t2}
+    \pstGeonode[PointSymbol=none](-2,-1.2){b1}
+    \pstGeonode[PointSymbol=none](2,-1.2){b2}
+    \pstInterLL[PointSymbol=none]{t1}{t2}{na}{nb}{ta}
+    \pstInterLL[PointSymbol=none]{b1}{b2}{na}{nb}{tb}
+    \pstLineAB{ta}{tb}
+    \input{EDA/data/proj}
+    \rput(2.4,0){$X_1$}
+    \rput(0,1.8){$X_2$}
+    \nput{90}{ta}{$\ell$}
+    \multido{\nl=-2.0+0.5}{9}{%
+        \uput[d](\nl\space,-1.2){\small $\nl$}
+        }
+    \multido{\nl=-1.0+0.5}{6}{%
+        \uput[l](-2,\nl\space){\small $\nl$}
+        }
+    \end{pspicture}
+    }
+\end{frame}
+
+
+\begin{frame}{Data: Probabilistic View}
+
+A {\em random variable} $X$ is a function
+$X\!: \cO \to \setR$, where $\cO$
+is the set of all possible outcomes of the experiment, also called the
+{\em sample space}.
+
+\smallskip A {\em discrete random variable}
+takes on only a f\/{i}nite
+or countably inf\/{i}nite number of values, 
+whereas a {\em continuous
+random variable}
+if it can take on any value in $\setR$.
+
+\medskip
+By default, a numeric attribute $X_j$ 
+is considered as the identity random variable given as
+$$X(v) = v$$
+for all $v \in \cO$. Here $\cO = \setR$.
+
+\begin{block}{Discrete Variable: Long Sepal Length}
+Define random variable $A$, denoting long sepal length (7cm or more) 
+as follows:
+    \begin{align*}
+        A(v) =
+        \begin{cases}
+            0 & \text{if } v < 7\\
+            1 & \text{if } v \ge 7
+        \end{cases}
+    \end{align*}
+    The sample space of $A$ is $\cO = [4.3, 7.9]$, 
+	and its range is $\{0,1\}$. Thus, $A$ is discrete.
+\end{block}
+
+
+\end{frame}
+
+\begin{frame}{Probability Mass Function}
+If $X$ is
+discrete, the {\em probability mass function} of $X$ is
+def\/{i}ned as
+\begin{align*}
+    f(x) = P(X = x) \qquad \text{for all } x \in \setR
+\end{align*}
+$f$ must obey the basic rules of probability.
+That is, $f$ must be non-negative:
+$$f(x) \ge 0$$
+and the sum of all
+probabilities should add to $1$:
+$$\sum_{x} f(x) = 1$$
+Intuitively, for a discrete variable $X$, 
+the probability is
+concentrated or massed at only discrete values in the range of $X$,
+and is zero for all other values.
+\end{frame}
+
+
+
+
+\begin{frame}{Sepal Length: Bernoulli Distribution}
+\begin{center}
+Iris Dataset Extract: {\tt sepal length} (in centimeters)
+{\fbox{
+\tiny
+\begin{tabular}{ccccccccccccccc}
+    5.9 & 6.9 & 6.6 & 4.6 & 6.0 & 4.7 & 6.5 & 5.8 & 6.7 & 6.7 &     5.1 & 5.1 & 5.7 & 6.1 & 4.9\\
+    5.0 & 5.0 & 5.7 & 5.0 & 7.2 & 5.9 & 6.5 & 5.7 & 5.5 & 4.9 &
+    5.0 &
+    5.5 & 4.6 & 7.2 & 6.8\\
+    5.4 & 5.0 & 5.7 & 5.8 & 5.1 & 5.6 & 5.8 & 5.1 & 6.3 & 6.3 & 5.6 &
+    6.1 & 6.8 & 7.3 & 5.6\\
+    4.8 & 7.1 & 5.7 & 5.3 & 5.7 & 5.7 & 5.6 & 4.4 & 6.3 & 5.4 & 6.3 &
+    6.9 & 7.7 & 6.1 & 5.6\\
+    6.1 & 6.4 & 5.0 & 5.1 & 5.6 & 5.4 & 5.8 & 4.9 & 4.6 & 5.2 & 7.9 &
+    7.7 & 6.1 & 5.5 & 4.6\\
+    4.7 & 4.4 & 6.2 & 4.8 & 6.0 & 6.2 & 5.0 & 6.4 & 6.3 & 6.7 & 5.0 &
+    5.9 & 6.7 & 5.4 & 6.3\\
+    4.8 & 4.4 & 6.4 & 6.2 & 6.0 & 7.4 & 4.9 & 7.0 & 5.5 & 6.3 & 6.8 &
+    6.1 & 6.5 & 6.7 & 6.7\\
+    4.8 & 4.9 & 6.9 & 4.5 & 4.3 & 5.2 & 5.0 & 6.4 & 5.2 & 5.8 & 5.5 &
+    7.6 & 6.3 & 6.4 & 6.3\\
+    5.8 & 5.0 & 6.7 & 6.0 & 5.1 & 4.8 & 5.7 & 5.1 & 6.6 & 6.4 & 5.2 &
+    6.4 & 7.7 & 5.8 & 4.9\\
+    5.4 & 5.1 & 6.0 & 6.5 & 5.5 & 7.2 & 6.9 & 6.2 & 6.5 & 6.0 & 5.4 &
+    5.5 & 6.7 & 7.7 & 5.1\\
+\end{tabular}}}
+\end{center}
+\small
+Define random variable $A$ as follows:
+$A(v) =
+        \begin{cases}
+            0 & \text{if } v < 7\\
+            1 & \text{if } v \ge 7
+        \end{cases}$
+
+\medskip
+We f\/{i}nd that only 13 Irises have
+    sepal length of at least 7 cm. Thus,
+    the probability mass function of $A$ can be estimated as:
+    $$f(1) = P(A=1) = {13 \over 150} = 0.087 = p$$
+    and
+    $$f(0) = P(A=0) = {137 \over 150} = 0.913 = 1-p$$
+
+\medskip
+$A$ has a {\em Bernoulli
+    distribution} with parameter
+    $p \in [0,1]$, which denotes the
+    probability of a {\em success}, that is, the probability of
+    picking an Iris with
+    a long sepal length at random from the set of all points.
+\end{frame}
+
+
+\begin{frame}{Sepal Length: Binomial Distribution}
+Define discrete random variable $B$, denoting the
+    number of Irises with long sepal length in $m$ independent
+    Bernoulli trials with probability of success $p$.
+    In this case, $B$ takes on the discrete values $[0,m]$,
+    and its probability mass
+    function is given by the {\em Binomial
+    distribution}
+    \begin{align*}
+        f(k) = P(B=k) = {m \choose k} p^k (1-p)^{m-k}
+    \end{align*}
+ 
+	Binomial distribution for long sepal length ($p=0.087$) for $m=10$
+	trials
+
+	\bigskip
+    \centerline{
+	\scalebox{0.5}{
+    \psset{xAxisLabel=$k$,yAxisLabel=$P(B\text{=}k)$}%,xAxisLabelPos={c,-0.07}
+\begin{psgraph}[dy=0.1,Dy=0.1]{->}(0,0)(-0.5,0)(11,0.45){4in}{2.5in}
+\psBinomial[markZeros,fillstyle=solid,fillcolor=black,
+    barwidth=0.075]{10}{0.087}
+    \psset{radius=3pt}
+    \Cnode*(0,0.4039179){n0}
+    \Cnode*(1,0.3832797){n1}
+    \Cnode*(2,0.1636632){n2}
+    \Cnode*(3,0.04141357){n3}
+    \Cnode*(4,0.006877071){n4}
+    \Cnode*(5,0.0007830826){n5}
+    \Cnode*(6,0){n6}
+    \Cnode*(7,0){n7}
+    \Cnode*(8,0){n8}
+    \Cnode*(9,0){n9}
+    \Cnode*(10,0){n10}
+  \end{psgraph}
+  }}
+\end{frame}
+
+\begin{frame}{Probability Density Function}
+If $X$ is
+continuous, the {\em probability density function} of $X$ is
+def\/{i}ned as
+\begin{align*}
+    P\bigl(X \in [a,b]\bigr) = \int_a^b f(x)\ dx
+\end{align*}
+$f$ must obey the basic rules of probability.
+That is, $f$ must be non-negative:
+$$f(x) \ge 0$$
+and the sum of all
+probabilities should add to $1$:
+$$\int_{-\infty}^\infty f(x)\ dx = 1$$
+
+\bigskip Note that $P(X=v) = 0$ for all $v \in \setR$ since there are
+infinite possible values in the sample space. What it means is
+that the probability mass is spread so thinly over the range of
+values that it can be measured only over intervals $[a,b] \subset
+\setR$, rather than at specif\/{i}c points.
+\end{frame}
+
+
+\begin{frame}{Sepal Length: Normal Distribution}
+  We model sepal length via the {\em Gaussian} or {\em normal} 
+    density function, given as
+    \begin{align*}
+    f(x) = {1 \over \sqrt{2\pi\sigma^2}}
+    \exp\left\{ {-(x-\mu)^2 \over
+    2 \sigma^2}\right\}
+    \end{align*}
+	where $\mu = {1 \over n} \sum_{i=1}^n x_i$ is the mean value, and
+	$\sigma^2 = {1 \over n} \sum_{i=1}^n (x_i-\mu)^2$ is the variance.
+
+
+	\medskip
+	Normal distribution for sepal length: $\mu=5.84$, $\sigma^2=0.681$
+
+	\bigskip
+  \centering
+  \scalebox{0.6}{
+    \psset{xAxisLabel=$x$,yAxisLabel=$f(x)$}
+    \psgraph[Dy=0.1,Ox=2]{->}(2,0)(10,0.55){4in}{2.5in}%
+    \psset{linewidth=2pt}
+    %\mpsGauss{5.84}{0.825}{2.5}{9.5}
+    \psset{plotpoints=200}
+    \psplot[]{2.5}{9.5}{%
+        Euler x 5.84 sub dup mul 2 div 0.825 dup mul div neg exp
+        1.0 0.825 div TwoPi sqrt div mul%
+    }%
+    \psset{linewidth=1pt}
+    \listplot[plotstyle=bar,barwidth=0.2cm,fillcolor=lightgray,fillstyle=solid]{5.84 0.48}
+    \psline[](5.84,0)(5.84,0.48)
+    \uput{0pt}[u](5.84,0.5){$\mu \pm \epsilon$}
+    \endpsgraph
+	}
+\end{frame}
+
+
+\begin{frame}{Cumulative Distribution Function}
+  \small
+  \begin{columns}
+	\column{0.45\textwidth}
+For random variable $X$, its 
+{\em cumulative distribution function (CDF)}
+$F:\setR \to [0,1]$,
+gives the probability of observing a value at most
+some given value $x$:
+\begin{align*}
+    F(x) = P(X \le x) \qquad \text{for all } -\infty < x < \infty
+\end{align*}
+When $X$ is discrete, $F$ is given as
+\begin{align*}
+    F(x) = P(X \le x) = \sum_{u \le x} f(u)
+\end{align*}
+When $X$ is continuous, $F$ is given as
+\begin{align*}
+    F(x) = P(X \le x) = \int_{-\infty}^x f(u)\ du
+\end{align*}
+
+
+\column{0.5\textwidth}
+  CDF for binomial distribution ($p=0.087, m=10$)
+    \begin{center}
+	  \scalebox{0.45}{
+    \psset{xAxisLabel=$x$,yAxisLabel=$F(x)$, radius=3pt}
+    \psgraph[Dy=0.1,Ox=-1]{->}(-1,0)(12,1.1){4in}{2.25in}%
+    \pnode(-1,0){n00}
+    \Cnode[fillcolor=white,fillstyle=solid](0,0){n00b}
+    \Cnode*(0,0.404){n0}
+    \Cnode(1,0.404){n0b}
+    \Cnode*(1,0.787){n1}
+    \Cnode(2,0.787){n1b}
+    \Cnode*(2,0.951){n2}
+    \Cnode(3,0.951){n2b}
+    \Cnode*(3,0.992){n3}
+    \Cnode(4,0.992){n3b}
+    \Cnode*(4,0.999){n4}
+    \Cnode(5,0.999){n4b}
+    \Cnode*(5,0.9999){n5}
+    \Cnode(6,0.9999){n5b}
+    \Cnode*(6,0.99999){n6}
+    \Cnode(7,0.99999){n6b}
+    \Cnode*(7,1){n7}
+    \Cnode*(8,1){n8}
+    \Cnode*(9,1){n9}
+    \Cnode*(10,1){n10}
+    \pnode(11,1){n11}
+    \psset{linewidth=2pt}
+    \ncline{<-}{n00}{n00b}
+    \ncline[]{n0}{n0b}
+    \ncline[]{n1}{n1b}
+    \ncline[]{n2}{n2b}
+    \ncline[]{n3}{n3b}
+    \ncline[]{n4}{n4b}
+    \ncline[]{n5}{n5b}
+    \ncline[]{n6}{n6b}
+    \ncline[]{n7}{n8}
+    \ncline[]{n8}{n9}
+    \ncline[]{n9}{n10}
+    \ncline{->}{n10}{n11}
+    \endpsgraph
+	}
+    \end{center}
+
+
+CDF for the normal distribution ($\mu=5.84, \sigma^2=0.681$)
+    \begin{center}
+	  \scalebox{0.45}{
+    \psset{xAxisLabel=$x$,yAxisLabel=$F(x)$, radius=3pt}
+    \psgraph[Dy=0.1]{->}(0,0)(11,1.1){4in}{2.25in}%
+    \psset{linewidth=2pt}
+    \psCumIntegral[plotpoints=200,Simpson=10]{-0}{10}{5.84
+    0.825 GAUSS}
+    \psline{<-}(0,0)(1,0)
+    \psline{->}(9,1)(10,1)
+    \psline[linewidth=1pt,linestyle=dotted](0,0.5)(5.84,0.5)
+    \psline[linewidth=1pt,linestyle=dotted](5.84,0)(5.84,0.5)
+    \cnode*(5.84,0.5){3pt}{mu}
+    \uput[r](5.84,0.5){$(\mu, F(\mu)) = (5.84,0.5)$}
+    \endpsgraph
+	}
+    \end{center}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Bivariate Random Variable: Joint Probability Mass
+  Function}
+  \small
+  \begin{columns}
+	\column{0.45\textwidth}
+  Define discrete random variables 
+  \begin{align*}
+	\text{long sepal length:} X_1(v) = 
+  \begin{cases}
+	1 & \text{if} v \ge 7\\
+	0 & \text{otherwise}
+  \end{cases}\\ 
+  \text{long sepal width:} X_2(v) = 
+  \begin{cases}
+	1 & \text{if} v \ge 3.5\\
+	0 & \text{otherwise}
+  \end{cases}
+  \end{align*}
+  
+  \smallskip
+  The bivariate random variable
+  $$\bX = \matr{X_1\\ X_2}$$
+  has the joint probability mass function
+\begin{align*}
+    f(\bx) & = P(\bX = \bx)\\
+	\text{i.e., } f(x_1,x_2) & = P(X_1=x_1, X_2=x_2)
+\end{align*}
+  
+	\column{0.5\textwidth}
+    \centering
+	\small
+	Iris: joint PMF for long sepal length and sepal width
+	    \begin{align*}
+		  \tiny
+        f\lB(0, 0\rB) & = P(X_1=0, X_2=0) = {116/150} = 0.773\\
+        f\lB(0, 1\rB) & = P(X_1=0, X_2=1) = {21/150} = 0.140\\
+        f\lB(1, 0\rB) & = P(X_1=1, X_2=0) = {10/150} = 0.067\\
+        f\lB(1, 1\rB) & = P(X_1=1, X_2=1) = {3/150} = 0.020
+    \end{align*}
+	\scalebox{0.65}{
+    \psset{unit=0.75in}
+        \psset{viewpoint=50 40 20 rtp2xyz,Decran=50}
+        \psset{lightsrc=viewpoint}
+    \begin{pspicture}(-2,-1)(2,2.25)
+        \axesIIID[axisnames={X_1,X_2,f(\bx)}](0,0,0)(2.5,2.5,2.2)
+        \psSolid[object=grille, base=0 2 0 2, fillcolor=white,
+        action=draw]
+        \psPoint(0,0,2){x00}
+        \psPoint(0,1,1){x01}
+        \psPoint(1,0,0.5){x10}
+        \psPoint(1,1,0.1){x11}
+        \psPoint(-0.1,-0.1,0){O}
+        \psPoint(-0.1,0.9,0){A}
+        \psPoint(0.9,-0.1,0){B}
+        \psdots[dotstyle=*,dotsize=0.1](x00)(x01)(x10)(x11)
+        \uput[r](x00){0.773}
+        \uput[u](x01){0.14}
+        \uput[u](x10){0.067}
+        \uput[u](x11){0.02}
+        \uput[r](O){0}
+        \uput[r](A){1}
+        \uput[l](B){1}
+        \psset{linewidth=2pt}
+        \psSolid[object=line,args=0 0 0 0 0 2]
+        \psSolid[object=line,args=0 1 0 0 1 1]
+        \psSolid[object=line,args=1 0 0 1 0 0.5]
+        \psSolid[object=line,args=1 1 0 1 1 0.1]
+    \end{pspicture}
+	}
+  \end{columns}
+\end{frame}
+
+
+    \def\mye{2.7183}
+    \def\mypi{3.1416}
+    \def\msigma#1{(sqrt(#1))}%
+    \def\rho#1#2#3{((#3)/(\msigma{#1}*\msigma{#2}))}%sigma1, sigma2, sigma12
+    \def\ccA#1#2#3{((1.0)/(2*\mypi*\msigma{#1}*\msigma{#2}*sqrt(1-\rho{#1}{#2}{#3}^2)))} %sigma1, sigma2,rho
+    \def\ccB#1#2#3{((-1.0)/(2*(1-(\rho{#1}{#2}{#3})^2)))}%rho
+    \def\fA#1#2#3#4#5{(\ccA{#3}{#4}{#5})*\mye^(
+    (\ccB{#3}{#4}{#5})*(((x-(#1))/(\msigma{#3}))^2 +
+    ((y-(#2))/(\msigma{#4}))^2 -
+    (2*(\rho{#3}{#4}{#5})*(x-(#1))*(y-(#2)))/(
+    (\msigma{#3})*(\msigma{#4})) ))}%
+
+\begin{frame}{Bivariate Random Variable: Probability Density Function}
+  \small
+  \begin{columns}
+	\column{0.5\textwidth}
+  Bivariate Normal: modeling joint distribution for 
+  long sepal length ($X_1$) and sepal width ($X_2$)
+    \begin{align*}
+\tiny
+      f(\bx | \bmu, \cov) = \frac{1}{2\pi\sqrt{|\cov|}}
+      \;\;\exp\lB\{-\frac{(\bx-\bmu)^T\;\cov^{-1}\;(\bx-\bmu)}{2}\rB\}
+    \end{align*}
+where $\bmu$ and $\cov$ specify the 2D mean and covariance matrix:
+\begin{align*}
+\bmu & = (\mu_1, \mu_2)^T &
+\cov & = \matr{ \sigma^2_{1} & \sigma_{12}\\
+\sigma_{21} & \sigma^2_{2}}
+\end{align*}
+with mean $\mu_i = {1\over n} \sum_{k=1}^n x_{ki}$ 
+and covariance $\sigma_{ij} = {1\over n} \sum_{k=1} (x_{ki} - \mu_i)
+(x_{kj} - \mu_j)$. Also, $\sigma_i^2 = \sigma_{ii}$.
+
+\column{0.45\textwidth}
+\centering
+Bivariate Normal
+    $$\bmu = (5.843, 3.054)^T $$
+    $$\cov = \amatr{r}{0.681 & -0.039\\ -0.039 & 0.187}$$
+\scalebox{0.5}{
+\hspace{-0.7in}
+\psset{unit=0.35in}
+\psset{viewpoint=50 40 20 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,opacity=0.8,incolor=white}
+\hspace*{-6pt}\begin{pspicture}(-9,-5)(7,3)
+\axesIIID[axisnames={X_1,X_2,f(\bx)}](0,0,0)(11,7,2.5)
+\multido{\ix=0+1}{10}{%
+    \psPoint(\ix\space,6,0){X1}
+    \psPoint(\ix\space,6.2,0){X2}
+    \psline(X1)(X2)\uput[dr](X1){\ix}}
+\multido{\iy=0+1}{6}{%
+    \psPoint(10,\iy\space,0){Y1}
+    \psPoint(10.2,\iy\space,0){Y2}
+    \psline(Y1)(Y2)\uput[dl](Y1){\iy}}
+\multido{\nz=0+1,\nl=0+0.2}{3}{%
+    \psPoint(0,0,\nz\space){Z1}
+    \psPoint(0,-0.2,\nz\space){Z2}
+    \psline(Z1)(Z2)\uput[l](Z1){\nl}}
+\psSurface[ngrid=.25 .25, linewidth=0.1pt,
+transform={1 1 5 scaleOpoint3d},algebraic](0,0)(10,6){
+  \fA{5.843}{3.054}{0.681}{0.187}{-0.039}
+  }
+  \psPoint(5.843,6,0){X1}
+  \psPoint(10,3.054,0){Y1}
+  \psPoint(5.843,3.054,0){O1}
+  \psdot[dotsize=0.2](O1)
+  \psline[linestyle=dashed](X1)(O1)
+  \psline[linestyle=dashed](Y1)(O1)
+\end{pspicture}
+}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Random Sample and Statistics}
+  Given a random variable $X$, a {\em random sample} of size $n$
+from $X$ is def\/{i}ned as a set of $n$ {\em independent and
+identically distributed (IID)}
+random variables 
+$$S_1, S_2, \ldots, S_n$$
+The $S_i$'s have the same probability distribution as $X$, and are
+statistically independent.
+
+Two random variables $X_1$ and $X_2$ are
+(statistically) {\em independent}
+if, for every
+$W_1 \subset \setR$ and $W_2 \subset \setR$, we have
+\begin{align*}
+    P(X_1 \in W_1 \text{ and } X_2 \in W_2) = P(X_1 \in W_1) \cdot
+    P(X_2 \in W_2)
+\end{align*}
+which also implies that 
+\begin{align*}
+        F(\bx) & = F(x_1, x_2) = F_{1}(x_1) \cdot F_{2}(x_2)\\
+        f(\bx) & = f(x_1, x_2) = f_{1}(x_1) \cdot f_{2}(x_2)
+\end{align*}
+where $F_{i}$ is the cumulative distribution function,
+and $f_{i}$ is the probability mass or density function for random
+variable $X_i$.
+\end{frame}
+
+
+\begin{frame}{Multivariate Sample}
+Given dataset $\bD$, the $n$ data
+points $\bx_i$ (with $1 \le i \le n$)
+constitute a $d$-dimensional {\em multivariate random sample} drawn
+from the vector random variable $\bX = (X_1, X_2, \ldots, X_d)$.
+
+\smallskip
+Since the $\bx_i$ are assumed to be
+independent and
+identically distributed, their joint distribution is given as
+\begin{align*}
+f(\bx_1, \bx_2, \ldots, \bx_n) = \prod_{i=1}^n f_\bX(\bx_i)
+\end{align*}
+where $f_{\bX}$ is the probability mass or density function for $\bX$.
+
+\smallskip
+Assuming that the $d$
+attributes $X_1, X_2, \ldots, X_d$ are statistically independent, the 
+joint distribution for the entire dataset is given as:
+\begin{align*}
+f(\bx_1, \bx_2, \ldots, \bx_n) =
+\prod_{i=1}^n f(\bx_i) = \prod_{i=1}^n \prod_{j=1}^d
+f_{X_{j}}(x_{ij})
+\end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Sample Statistics}
+  \small
+Let
+$\{\bS_i\}_{i=1}^m$
+be a random sample of size $m$ drawn from a (multivariate) random
+variable $\bX$. A {\em statistic} $\htheta$ is a function 
+$$\htheta\!: (\bS_1, \bS_2, \ldots, \bS_m) \to \setR$$
+
+The statistic is an estimate of the corresponding population parameter
+$\theta$, where the {\em population} refers to the entire universe of
+entities under study. The statistic is itself a random variable.
+
+\bigskip
+The {\em sample mean} is a statistic, def\/{i}ned as the average
+    $$\hmu = {1 \over n} \sum_{i=1}^n x_i$$ 
+	For {\tt sepal length}, we have 
+	$\hmu = 5.84$,
+	which is an estimator for the (unknown) true population mean sepal
+	length.
+\end{frame}
+
+\begin{frame}{Sample Statistics: Variance}
+
+The {\em sample variance} is a statistic
+	$$\hsigma^2 = {1 \over n} \sum_{i=1}^n (x_i-\mu)^2$$
+For sepal length, we have $\hsigma^2 =0.681$.
+
+\medskip
+The {\em total variance} is a multivariate statistic
+$$var(\bD) = {1 \over n} \sum_{i=1}^n \norm{\bx_i-\bmu}^2$$
+For the Iris data (with 4 attributes: sepal length and width, petal
+length and width), we have $var(\bD) =0.868$.
+
+\end{frame}

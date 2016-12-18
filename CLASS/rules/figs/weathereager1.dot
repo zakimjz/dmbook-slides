@@ -1,0 +1,28 @@
+digraph weatherdt{
+  a [shape=box, label="yes"]
+  b [shape=box, label="no"]
+  c [shape=box, label="yes"]
+  d [shape=box, label="no"]
+  e [shape=box, label="yes"]
+  f [shape=box, label="yes"]
+  g [shape=box, label="yes"]
+  outlook [shape=ellipse,label="outlook"]
+  temperature [shape=ellipse,label="temperature"]
+  humidity [shape=ellipse,label="humidity"]
+  windy1 [shape=ellipse,label="windy"]
+  windy2 [shape=ellipse,label="windy"]
+  {rank=same; outlook}
+  {rank=same; temperature; humidity; windy1; windy2}
+  {rank=same; a;b;c;d;e;f;g}
+  outlook -> temperature [label="sunny"]
+  outlook -> humidity [label="sunny"]
+  outlook -> windy1 [label="rainy"]
+  outlook -> windy2 [label="sunny"]
+  outlook -> g [label="overcast"]
+  temperature -> a [label="cool"]
+  humidity -> b [label="high"]
+  humidity -> c [label="normal"]
+  windy1 -> d [label="true"]
+  windy1 -> e [label="false"]
+  windy2 -> f [label="true"]
+}

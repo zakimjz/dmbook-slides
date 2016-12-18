@@ -1,0 +1,24 @@
+! This example demonstrates the use of holdout evaluation.
+! Note, you may need to specify the full path name for tutorial.itl.
+item-list-file=iris.scr.itl
+find-rules
+! The next option specifies that 50% of the data is used for rule discovery
+proportion=0.5
+! Use the remaining data for holdout evaluation.
+out-of-sample-holdout-evaluation
+! The following option specifies an addition holdout test.
+test-improvement=yes
+test-partialness=yes
+test-positive-correlation=yes
+! The default holdout test is test-positive correlation.
+! Use the concise=2 output format and show RHScoverage.
+search-mode=support
+filter-mode=unproductive
+show-RHScoverage=yes
+show-coverage=yes
+show-holdout-statistics=yes
+show-leverage=yes
+show-significance=yes
+show-lift=yes
+show-strength=yes
+show-support=yes

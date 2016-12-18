@@ -1,0 +1,161 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<meta name="Author" content="Geoff Webb">
+<meta name="keywords"
+content="Rule Discovery, Association Rules, Magnum Opus, Data Mining, G. I. Webb &amp; Associates">
+<title>Filtering</title>
+<style>
+<!--
+span.Typewriter
+	{mso-style-parent:"";
+	font-family:"Courier New";
+	}
+-->
+</style>
+</head>
+
+<body>
+
+<h1><font
+color="#000080"> Filtering out unsound, insignificant, unproductive and 
+redundant rules and itemsets</font></h1>
+
+<p>During search <b>Magnum Opus</b> can automatically filter out rules and 
+itemsets that are likely to
+be of little interest.&nbsp; The filter mode controls which such rules and 
+itemsets are filtered
+out.&nbsp;&nbsp; The four options are <strong>Filter-out None</strong>, <strong>
+Filter-out Redundant</strong>, <strong>Filter-out Unproductive</strong>, <strong>Filter-out
+Insignificant </strong>and <strong>Filter-out Unsound</strong>. </p>
+
+<p class="MsoNormal"><span lang="EN-US">Each filter mode detects the respective 
+type of spurious rule or itemset and removes it from the list of rules or 
+itemsets that is returned to the user. </span></p>
+
+<p>In the interactive system the current filter mode is displayed in the Filter Mode ComboBox on the Search Settings
+Page. 
+
+  <p>In the command-line system the filter mode is specified with the <tt>
+  filter-mode</tt> command.<h3>Filtering Rules</h3>
+<p>A rule is <b>redundant</b> if there is another rule with the same Right-Hand-Side and a
+subset of the Left-Hand-Side that covers exactly the same cases from the data set.&nbsp;
+For example, the first of the two rules below is redundant because it has the same coverage
+as the second.&nbsp; Adding Tomatoes to the LHS of the second rule does not affect it. </p>
+
+<blockquote>
+  <tt>Lettuce &amp; Tomatoes -&gt; Cucumber [Coverage=0.250 (250); Support=0.239 (239);
+  Strength=0.956; Lift=2.91; Leverage=0.1568 (156)]</tt>
+  <p><tt>Lettuce -&gt; Cucumber [Coverage=0.250 (250); Support=0.239 (239); Strength=0.956;
+  Lift=2.91; Leverage=0.1568 (156)]</tt>
+</blockquote>
+
+<p>If a rule is redundant then it will have the same support, strength, lift, and leverage
+as the rule with respect to which it is redundant.</p>
+
+<p>Note, in <b>Magnum Opus</b> versions 1.0 to 3.0 redundant rules were called
+<i>trivial rules</i>.</p>
+
+<p>A rule is <b>unproductive</b> if there is another rule with the same Right-Hand-Side
+and a subset of the Left-Hand-Side that has equal or higher strength.&nbsp; For example,
+the first of the rules below is unproductive because it has lower strength than the
+second.&nbsp; Adding Promotion1=f to the LHS of the second rule decreases its performance.
+</p>
+
+<blockquote>
+  <tt>Profitability99 &lt; 419 &amp; Promotion1=f -&gt; Spend99 &lt; 2030 [Coverage=0.274
+  (274); Support=0.248 (248); Strength=0.905; Lift=2.72; Leverage=0.1568 (156)]</tt>
+  <p><tt>Profitability99 &lt; 419 -&gt; Spend99 &lt; 2030 [Coverage=0.333 (333);
+  Support=0.302 (302); Strength=0.907; Lift=2.72; Leverage=0.1911 (191)]</tt>
+</blockquote>
+
+<p>If a rule is unproductive then it will have the same or worse support, strength, lift,
+and leverage as the rule with respect to which it is unproductive. </p>
+
+<p>A rule is <b>insignificant</b> if its strength is not significantly greater
+than that of all of its immediate generalizations and a default rule.&nbsp;An
+immediate generalization is formed by deleting a single condition from the LHS
+of a rule.&nbsp; A default rule is formed by deleting all conditions from the
+LHS of a rule.&nbsp; A Fisher exact test is used to test for significance.&nbsp; The
+critical value for the significance test can be chosen by the user and defaults
+to 0.01.&nbsp;&nbsp; For example, the first of the rules below is insignificant
+using the default critical value of 0.01 because adding NoVisits99 &lt; 35 to
+the LHS of the second rule does not significantly increase its strength. </p>
+
+<blockquote>
+  <tt>Spend99 &lt; 2030 &amp; NoVisits99 &lt; 35 -&gt; Profitability99 &lt; 419
+  [Coverage=0.272 (272); Support=0.255 (255); Strength=0.938; Lift=2.82; Leverage=0.1644
+  (164)]</tt>
+  <p><tt>Spend99 &lt; 2030 -&gt; Profitability99 &lt; 419 [Coverage=0.333 (333); Support=0.302
+  (302); Strength=0.907; Lift=2.72; Leverage=0.1911 (191)] </tt>
+</blockquote>
+
+<p>Filtering out insignificant rules will remove many rules that result from adding
+another value to the Left-Hand-Side of another rule without substantially increasing its
+strength.&nbsp; </p>
+
+<p>If a rule is redundant then it will also be unproductive.&nbsp; Hence, Filter-out
+Unproductive Mode filters out all rules filtered out by Filter-out Redundant Mode. If a rule
+is unproductive then it will also be insignificant.&nbsp; Hence, Filter-out Insignificant
+Mode filters out all rules filtered out by Filter-out Redundant and Filter-out Unproductive
+Modes. </p>
+
+<h3><span lang="EN-US">Filtering Itemsets</span></h3>
+<p class="MsoNormal"><span lang="EN-US">An itemset is redundant if it contains 
+two or more items for a single attribute or if it has a generalization that has 
+identical coverage to one of its generalizations.</span></p>
+<p class="MsoNormal"><span lang="EN-US">An example of the first type of 
+redundant itemset is </span><tt>Spend99 &lt; 2030 &amp; Spend99 &gt; 4978</tt><span lang="EN-US">.</span></p>
+<p class="MsoNormal"><span lang="EN-US">For an example of the second type of 
+redundant itemset, consider the four following itemsets.&nbsp; Adding </span><tt>
+Spend99&lt;2030 to Profitability99&lt;419 &amp; SocioEconomicGroup=D2</tt><span lang="EN-US"> 
+does not change its coverage.&nbsp; It follows that for any item that is added to
+</span><tt>Profitability99&lt;419 &amp; Spend99&lt;2030 &amp; SocioEconomicGroup=D2</tt><span lang="EN-US"> 
+the resulting coverage will be identical to that obtained by adding the item to
+</span><tt>Profitability99&lt;419 &amp; SocioEconomicGroup=D2</tt><span lang="EN-US">.&nbsp; 
+In consequence, any specialization of </span><tt>Profitability99&lt;419 &amp; 
+Spend99&lt;2030 &amp; SocioEconomicGroup=D2</tt><span lang="EN-US"> is redundant.&nbsp; 
+Thus, the fourth rule below is redundant.</span></p>
+<blockquote>
+	<p><tt>Profitability99&lt;419 &amp; SocioEconomicGroup=D2<br>
+	[Coverage=0.033 (33); Leverage=0.0007 (0.7)]</tt></p>
+	<p><tt>Profitability99&lt;419 &amp; Spend99&lt;2030 &amp; SocioEconomicGroup=D2<br>
+	[Coverage=0.033 (33); Leverage=0.0037 (3.7)]</tt></p>
+	<p><tt>Profitability99&lt;419 &amp; Grocery&lt;873 &amp; SocioEconomicGroup=D2<br>
+	[Coverage=0.032 (32); Leverage=0.0051 (5.1)]</tt></p>
+	<p><tt>Profitability99&lt;419 &amp; Spend99&lt;2030 &amp; Grocery&lt;873 &amp; SocioEconomicGroup=D2<br>
+	[Coverage=0.032 (32); Leverage=0.0063 (6.3)]</tt></p>
+</blockquote>
+<p class="MsoNormal"><span lang="EN-US">The unproductive filter removes any 
+itemsets that are redundant or that have leverage </span>
+<span lang="EN-US" style="font-family: Symbol">£</span><span lang="EN-US"> 0.0.&nbsp;
+</span></p>
+<p class="MsoNormal"><span lang="EN-US">The insignificant filter removes any 
+itemsets that are redundant or that fail a Fisher exact test for the null 
+hypothesis that leverage </span><span lang="EN-US" style="font-family: Symbol">£</span><span lang="EN-US"> 
+0.0.&nbsp; </span></p>
+<h3>The <i>Unsound</i> Filter</h3>
+<p class="MsoNormal">The test for whether a rule or itemset is <b>unsound</b> 
+takes account of the number of rules or itemsets considered in a search and 
+adjusts the test for insignificance to take account thereof.&nbsp; It&nbsp;determines 
+the number of associations in the search space for each size of the LHS or itemset.&nbsp; 
+It then divides the critical 
+value used for each association size by the number of possible associations for that 
+size times the number of sizes allowed.&nbsp; This adjustment strictly controls the risk of any 
+association 
+being accepted falsely at the unadjusted significance level.&nbsp; Note that any 
+two rules X -&gt; Y and Y -&gt; X (that is, two rules in which the LHS and RHS are 
+swapped) are counted as a single association when determining the number of 
+associations.</p><p>&nbsp;</p>
+
+<table WIDTH="100%">
+  <tr>
+    <td ALIGN="LEFT"><b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></td>
+    <td ALIGN="RIGHT"></td>
+  </tr>
+</table>
+</body>
+</html>

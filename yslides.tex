@@ -1,0 +1,117 @@
+\documentclass[10pt,xcolor=pst]{beamer}
+%\usepackage[head=14pt,text={5.5in,8in},centering]{geometry}
+
+%From book.tex
+\usepackage{xNGmacro}
+
+\input{xpackages}
+
+\usepackage{xrlocal}
+%from book.tex
+
+\usepackage{standalone}
+\usepackage{etex} 
+
+\usepackage{pst-all,pst-func}
+\usepackage{pst-solides3d,pst-3dplot,pst-vue3d,pst-bar} 
+\usepackage{pst-eucl}
+
+%\usepackage{pstricks,auto-pst-pdf} % works
+\usepackage{auto-pst-pdf} % works
+
+%\usepackage[pdf]{pstricks}
+%\usepackage{pst-tree}
+
+\input{xsymboldefs}
+
+%%%%FOR TOP ALIGNED CELLS IN TABULAR%%%%%%%%
+\newsavebox\topalignbox
+\newcolumntype{T}{%
+  >{\begin{lrbox}\topalignbox
+    \rule{0pt}{\ht\strutbox}}
+  c
+  <{\end{lrbox}%
+    \raisebox{\dimexpr-\height+\ht\strutbox\relax}%
+      {\usebox\topalignbox}}}
+\newcolumntype{M}{>{$\vcenter\bgroup\hbox\bgroup}c<{\egroup\egroup$}}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\usefonttheme{default}
+
+%\definecolor{myorange}{HTML}{CA1B00}
+%\definecolor{myorange}{HTML}{D53212} %RGB 213,50,18
+\definecolor{myorange}{RGB}{223,72,20}
+\setbeamercolor*{palette primary}{use=structure,fg=white,bg=myorange}
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=myorange}
+\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=myorange}
+\setbeamercolor*{palette quaternary}{use=structure,fg=white,bg=myorange}
+\setbeamercolor{frametitle}{bg=myorange}
+\setbeamercolor{block title}{bg=myorange}
+
+\begin{document}
+
+\title[Data Mining and Analysis]{Data Mining and Analysis:\\Fundamental Concepts and Algorithms}
+\subtitle{dataminingbook.info}
+\author[Zaki \& Meira Jr.]{Mohammed J. Zaki\inst{1} \and 
+Wagner Meira Jr.\inst{2}}
+\institute[RPI and UFMG]{
+\inst{1}Department of Computer Science\\ Rensselaer Polytechnic
+Institute, Troy, NY, USA 
+\and 
+\inst{2}Department of Computer Science\\Universidade Federal de Minas
+Gerais, Belo Horizonte, Brazil\\
+}
+
+%\includeonlylecture{xnumeric}
+
+%introduction
+
+\ifdefined\doxdata \include{EDA/data/ydata} \fi
+
+%exploratory data analysis
+\graphicspath{{./}{./EDA/data}{./EDA/numeric/}{./EDA/categorical/}{./EDA/datareduction/}{./EDA/highdim/}{./EDA/dimreduction/}{./EDA/densityestimation/}}
+%\include{EDA/part}
+\ifdefined\doxnum \include{EDA/numeric/ynumeric} \fi
+\ifdefined\doxcat \include{EDA/categorical/ycategorical} \fi
+\ifdefined\doxgraph \include{EDA/graph/ygraph} \fi
+\ifdefined\doxkernel \include{EDA/kernel/ykernel} \fi
+\ifdefined\doxhighdim \include{EDA/highdim/yhighdim} \fi
+\ifdefined\doxdimred \include{EDA/dimreduction/ydimreduction} \fi
+
+%frequent pattern mining
+\graphicspath{{./FPM/fpmover/}{./FPM/itemsets/}{./FPM/sumrep/}{./FPM/sequences/}{./FPM/graphs/}{./FPM/fpmeval/}}
+%\include{FPM/part}
+\ifdefined\doxitemsets \include{FPM/itemsets/yitemsets} \fi
+\ifdefined\doxsumrep \include{FPM/sumrep/ysumrep} \fi
+\ifdefined\doxsequences \include{FPM/sequences/ysequences} \fi
+\ifdefined\doxgraphs \include{FPM/graphs/ygraphs} \fi
+\ifdefined\doxfpmeval \include{FPM/fpmeval/yfpmeval} \fi
+
+%clustering
+\graphicspath{{./CLUST/overview/}{./CLUST/density/}{./CLUST/representative/}{./CLUST/hierarchical/}{./CLUST/subspace/}{./CLUST/eval/}}
+%\include{CLUST/part}
+\ifdefined\doxrep \include{CLUST/representative/yrepresentative} \fi
+\ifdefined\doxhier \include{CLUST/hierarchical/yhierarchical} \fi
+\ifdefined\doxdens \include{CLUST/density/ydensity} \fi
+\ifdefined\doxspectral \include{CLUST/spectral/yspectral} \fi
+\ifdefined\doxclusteval \include{CLUST/eval/yeval} \fi
+
+
+%classification
+\graphicspath{{./CLASS/overview/}{./CLASS/instance/}{./CLASS/decisiontrees/}{./CLASS/rules/}{./CLASS/probabilistic/}{./CLASS/svm/}{./CLASS/eval/}{./CLASS/lda/}}
+%\include{CLASS/part}
+\ifdefined\doxprob \include{CLASS/probabilistic/yprobabilistic} \fi
+\ifdefined\doxdectrees \include{CLASS/decisiontrees/ydecisiontrees} \fi
+\ifdefined\doxlda \include{CLASS/lda/ylda} \fi
+\ifdefined\doxsvm \include{CLASS/svm/ysvm} \fi
+\ifdefined\doxclasseval \include{CLASS/eval/yeval} \fi
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\end{document}
+
+

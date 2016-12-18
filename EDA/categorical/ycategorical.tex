@@ -1,0 +1,1041 @@
+\lecture{categorical}{categorical}
+
+\date{Chapter 3: Categorical Attributes}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\newcommand{\algentdisc}{\textsc{EntropyDiscretization}}
+\newcommand{\algsetcut}{\textsc{SetCut}}
+
+
+\begin{frame}{Univariate Analysis: Bernoulli Variable}
+  Consider a single
+categorical attribute, $X$, with
+domain $dom(X) = \{a_1, a_2, \ldots, a_m\}$ comprising $m$ symbolic
+values.
+The data $\bD$ is an $n \times 1$ symbolic data matrix given as
+\begin{align*}
+    \bD = \matr{X\\
+        \hline x_1\\x_2\\\vdots\\ x_n}
+\end{align*}
+where each point $x_i \in dom(X)$.
+
+
+\bigskip
+{\bf Bernoulli Variable}: Special case when $m=2$
+\begin{align*}
+    X(v) =
+    \begin{cases}
+        1 & \text{if } v=a_1\\
+        0 & \text{if } v=a_2
+    \end{cases}
+\end{align*}
+i.e., $dom(X)=\{0,1\}$.
+
+\end{frame}
+
+
+\begin{frame}{Bernoulli Variable: Mean and Variance}
+
+  \begin{columns}
+	\column{0.5\textwidth}
+The probability mass function (PMF) of $X$ is given as
+\begin{align*}
+    P(X=x) = f(x) =
+    \begin{cases}
+        p & \text{if } x=1\\
+        1-p & \text{if } x=0
+    \end{cases}
+\end{align*}
+
+\smallskip
+The expected value of $X$ is
+given as 
+\begin{align*}
+    \mu = E[X] = 1\cdot p + 0 \cdot (1-p) = p
+\end{align*}
+and the variance of $X$ is given as
+\begin{align*}
+    \sigma^2 = var(X) = p(1-p)
+\end{align*}
+  
+\column{0.5\textwidth}
+Assume that each symbolic point has been mapped to its binary
+value. The set $\{x_1,x_2,\dots,x_n\}$ is a
+random sample drawn from $X$.
+
+\medskip
+The sample mean is given as
+\begin{align*}
+    \hmu = {1\over n}\sum_{i=1}^n x_i = {n_1 \over n} = \hp
+\end{align*}
+where $n_i$ is the number of points with $x_j=i$ in the random
+sample (equal to the number of occurrences of symbol $a_i$).
+
+\medskip
+The sample variance is given as
+\begin{align*}
+    \hsigma^2 & = \hp(1-\hp)
+\end{align*}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Binomial Distribution: Number of Occurrences}
+Given the Bernoulli variable $X$,
+let $\{x_1, x_2, \dots, x_n\}$ denote a random sample of size
+$n$ drawn from $X$.
+Let $N$ be the random variable
+denoting the number of occurrences of the symbol
+$a_1$ (value $X=1$) in the sample. $N$ has a binomial
+distribution, given as
+\begin{align*}
+    f(N = n_1|\;n, p) = {n \choose n_1} p^{n_1} (1-p)^{n-n_1}
+\end{align*}
+$N$ is the sum of the $n$ independent Bernoulli random variables
+$x_i$ IID with $X$, that is, $N = \sum_{i=1}^n x_i$.
+%By linearity of expectation,
+The mean or expected number of occurrences of symbol $a_1$ is 
+\begin{align*}
+    \mu_N = E[N] = E\lB[\sum_{i=1}^n x_i\rB] = \sum_{i=1}^n E[x_i] =
+    \sum_{i=1}^n p = np
+\end{align*}
+%Because $x_i$ are all independent,
+The variance of $N$ is 
+\begin{align*}
+    \sigma^2_N = var(N) = \sum_{i=1}^n var(x_i) = \sum_{i=1}^n
+    p(1-p) = np(1-p)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Multivariate Bernoulli Variable}
+
+  For the general case when $dom(X)=\{a_1,a_2,\dots,a_m\}$,
+we model $X$ as an
+$m$-dimensional or {\em multivariate Bernoulli random variable}
+ $\bX = (A_1, A_2,
+\dots, A_m)^T$, where each $A_i$ is a Bernoulli variable with
+parameter $p_i$ denoting the probability of observing symbol
+$a_i$. 
+
+\medskip
+However, $X$ can assume only one of the symbolic
+values at any one time. Thus,
+\begin{align*}
+    \bX(v) = \be_i \text{ if } v = a_i
+\end{align*}
+where $\be_i$ is the $i$-th standard basis vector in $m$ dimensions.
+The range of $\bX$ consists of $m$ distinct vector
+values $\{\be_1, \be_2, \dots, \be_m\}$.
+
+\medskip
+The PMF of $\bX$ is
+\begin{align*}
+    P(\bX=\be_i) = f(\be_i) = p_i = \prod_{j=1}^m p_{j}^{e_{ij}}
+\end{align*}
+with $\sum_{i=1}^m p_i = 1$.
+\end{frame}
+
+
+\begin{frame}{Multivariate Bernoulli: Mean}
+The mean or expected value of $\bX$ can be obtained as
+\begin{align*}
+    \bmu = E[\bX] & = \sum_{i=1}^m \be_i f(\be_i) =
+    \sum_{i=1}^m \be_i p_i
+     = \matr{1\\0 \\ \vdots \\ 0}p_1 + \cdots +
+        \matr{0\\0\\\vdots\\1} p_m
+    = \matr{p_1\\p_2\\ \vdots\\p_m} = \bp
+\end{align*}
+
+\medskip
+The sample mean is 
+\begin{align*}
+    \hbmu = {1\over n} \sum_{i=1}^n \bx_i =
+    \sum_{i=1}^m {n_i \over n} \be_i =
+    \matr{n_1/n\\n_2/n\\ \vdots\\n_m/n} =
+    \matr{\hp_1\\\hp_2\\\vdots\\\hp_m} = \hbp
+\end{align*}
+where $n_i$ is the number of occurrences
+of the vector value $\be_i$ in the sample,
+i.e., the number of occurrences
+of the symbol $a_i$. 
+Furthermore,
+$\sum_{i=1}^m n_i = n$.
+\end{frame}
+
+
+
+\begin{frame}{Multivariate Bernoulli Variable: {\tt sepal length}}
+  \small
+  \begin{columns}
+  
+	\column{0.5\textwidth}
+\begin{center}
+\begin{tabular}{|c|l|c|}
+        \hline
+        {\bf Bins} & \multicolumn{1}{c}{\bf Domain} & {\bf Counts}\\
+        \hline
+        $[4.3, 5.2]$ & Very Short ($a_1$) & $n_1 = 45$\\
+        $(5.2, 6.1]$ & Short ($a_2$) & $n_2 = 50$\\
+        $(6.1, 7.0]$ & Long ($a_3$)& $n_3 = 43$\\
+        $(7.0, 7.9]$ & Very Long ($a_4$)& $n_4 = 12$\\
+        \hline
+    \end{tabular}%}
+\end{center}
+ We model {\tt sepal length} as a multivariate
+    Bernoulli variable $\bX$
+    \begin{align*}
+        \bX(v) =
+        \begin{cases}
+            \be_1 = (1,0,0,0) & \text{if } v=a_1\\
+            \be_2 = (0,1,0,0) & \text{if } v=a_2\\
+            \be_3 = (0,0,1,0) & \text{if } v=a_3\\
+            \be_4 = (0,0,0,1) & \text{if } v=a_4\\
+        \end{cases}
+    \end{align*}
+    For example, the
+    symbolic point $x_1 = {\tt Short}= a_2$ is
+    represented as the vector $(0,1,0,0)^T = \be_2$.
+
+	\column{0.45\textwidth}
+	\centerline{\bf Probability Mass Function}
+
+	The total sample size is
+    $n=150$; the estimates $\hp_i$ are:
+    \begin{align*}
+    \hp_1 & = 45/150 = 0.3\\
+    \hp_2 & = 50/150 = 0.333\\
+    \hp_3 & = 43/150 = 0.287\\
+   \hp_4 & = 12/150 = 0.08
+    \end{align*}
+
+	\scalebox{0.5}{
+	\psset{xAxisLabel=$\bx$,yAxisLabel=$f(\bx)$}
+\begin{psgraph}[dy=0.1,Dy=0.1,labels=y]{->}(0,0)(5,0.4){4in}{2in}
+        \psdots[dotstyle=*,dotscale=2]
+            (1,0.3)(2,0.333)(3,0.287)(4,0.08)
+            \psset{linewidth=2.5pt}
+            \psline[](1,0)(1,0.3)
+            \psline[](2,0)(2,0.333)
+            \psline[](3,0)(3,0.287)
+            \psline[](4,0)(4,0.08)
+            \uput[u](1,0.3){$0.3$}
+            \uput[u](2,0.333){$0.333$}
+            \uput[u](3,0.287){$0.287$}
+            \uput[u](4,0.08){$0.08$}
+\multido{\ix=1+1}{4}{%
+    \uput[d](\ix\space,-0.01){$\be_\ix$}}
+    \uput[d](1,-0.035){ {\tt Very Short}}
+    \uput[d](2,-0.035){ {\tt Short}}
+    \uput[d](3,-0.035){ {\tt Long}}
+    \uput[d](4,-0.035){ {\tt Very Long}}
+\end{psgraph}
+}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Multivariate Bernoulli Variable: Covariance Matrix}
+  \small
+
+  We have
+$\bX = (A_1, A_2, \dots, A_m)^T$, where $A_i$ is the
+Bernoulli variable corresponding to symbol $a_i$. 
+The variance for 
+each Bernoulli variable $A_i$ is
+\begin{align*}
+    \sigma_i^2 = var(A_i) = p_i(1-p_i)
+\end{align*}
+
+The covariance between $A_i$ and $A_{j}$ is
+\begin{align*}
+    \sigma_{ij} = E[A_i A_{j}] - E[A_i]\cdot E[A_{j}] = 0 - p_i p_{j}
+    = -p_i p_{j}
+\end{align*}
+Negative relationship since
+$A_i$ and $A_{j}$ cannot both be $1$ at the same time.
+
+The covariance matrix for $\bX$ is given as
+\begin{align*}
+    \cov =
+    \matr{
+        \sigma_1^2 & \sigma_{12} & \dots & \sigma_{1m}\\
+        \sigma_{12} & \sigma_{2}^2 & \dots & \sigma_{2m}\\
+        \vdots & \vdots & \ddots & \vdots\\
+        \sigma_{1m} & \sigma_{2m} & \dots & \sigma_{m}^2\\
+    }
+    & =
+    \amatr{c}{p_1(1-p_1) & -p_1p_2 & \cdots & -p_1p_m\\
+    -p_1p_2 & p_2(1-p_2) & \cdots & -p_2p_m\\
+    \vdots & \vdots & \ddots & \vdots\\
+    -p_1p_m & -p_2p_m & \cdots & p_m(1-p_m)\\
+    }
+\end{align*}
+More compactly $\cov =diag(\bp) - \bp \cdot \bp^T$
+where $\bmu = \bp = (p_1, \cdots, p_m)^T$.
+\end{frame}
+
+
+\begin{frame}{Categorical, Mapped Binary and Centered Dataset}
+  \small
+Modeling as multivariate Bernoulli variable is equivalent to
+treating  $\bX(x_i)$ as a new $n \times m$ binary data matrix
+
+\centerline{
+\begin{tabular}{|l|l|}
+        \hline
+         & $X$\\
+        \hline
+        $x_1$ & {\tt Short}\\
+        $x_2$ & {\tt Short}\\
+        $x_3$ & {\tt Long}\\
+        $x_4$ & {\tt Short}\\
+        $x_5$ & {\tt Long}\\
+        \hline
+    \end{tabular}%}
+%    }
+    \hspace{0.3in}
+%    \subfloat[]{\label{tab:eda:cat:iris10b}
+%    {\renewcommand{\arraystretch}{1.1}\tabcolsep6pt
+\begin{tabular}{|l|c|c|}
+        \hline
+         & $A_1$ & $A_2$\\
+        \hline
+        $\bx_1$ & 0 & 1\\
+        $\bx_2$ & 0 & 1\\
+        $\bx_3$ & 1 & 0\\
+        $\bx_4$ & 0 & 1\\
+        $\bx_5$ & 1 & 0\\
+        \hline
+    \end{tabular}%}
+%    }
+    \hspace{0.3in}
+%    \subfloat[]{\label{tab:eda:cat:iris10c}
+%    {\renewcommand{\arraystretch}{1.1}\tabcolsep6pt
+\begin{tabular}{|l|c|c|}
+        \hline
+         & $Z_1$ & $Z_2$\\
+        \hline
+        $\bz_1$ & $-$0.4 & \phantom{$-$}0.4\\
+        $\bz_2$ & $-$0.4 & \phantom{$-$}0.4\\
+        $\bz_3$ & \phantom{$-$}0.6 & $-$0.6\\
+        $\bz_4$ & $-$0.4 & \phantom{$-$}0.4\\
+        $\bz_5$ & \phantom{$-$}0.6 & $-$0.6\\
+        \hline
+    \end{tabular}
+	}
+
+	\bigskip
+$X$ is the multivariate Bernoulli variable
+    \begin{align*}
+        \bX(v) =
+        \begin{cases}
+            \be_1 = (1,0)^T & \text{if } v = {\tt Long} (a_1)\\
+            \be_2 = (0,1)^T & \text{if } v = {\tt Short} (a_2)\\[6pt]
+        \end{cases}
+    \end{align*}
+    The sample mean and covariance matrix are
+    \begin{align*}
+        \hbmu & = \hbp = (2/5,3/5)^T = (0.4, 0.6)^T
+		&
+        \hcov & = diag(\hbp) - \hbp\hbp^T 
+        = \amatr{r}{0.24 & -0.24\\-0.24 & 0.24}
+    \end{align*}
+
+	From the centered data, we have $\bZ = (Z_1, Z_2)^T$ and
+    \begin{align*}
+	  \hcov = {1 \over 5}\bZ^T\bZ = \amatr{r}{0.24 & -0.24\\-0.24 & 0.24}
+    \end{align*}
+\end{frame}
+
+
+\begin{frame}{Multinomial Distribution: Number of Occurrences}
+  \small
+Let $\{\bx_1, \bx_2, \dots, \bx_n\}$ be a random sample from $\bX$.
+Let $N_i$ be the random variable denoting number of
+occurrences of symbol $a_i$ in the sample, and
+let $\bN = (N_1, N_2, \dots, N_m)^T$.
+
+$\bN$ has a
+multinomial distribution, given as
+\begin{align*}
+    f\bigl(\bN = (n_1,n_2,\dots,n_m)\;\; |\; \bp\bigr)  =
+    {n \choose n_1 n_2 \dots n_m} \prod_{i=1}^m p_i^{n_i}
+\end{align*}
+
+The mean and covariance matrix of $\bN$ are:
+\begin{align*}
+    \bmu_\bN & = E[\bN] = n E[\bX] = n \cdot \bmu = n \cdot \bp =
+    \matr{n p_1\\ \vdots\\n p_m}\\
+    \cov_\bN & = n \cdot (diag(\bp) - \bp\bp^T) =
+    \amatr{c}{n p_1(1-p_1) & -n p_1p_2 & \cdots & -n p_1p_m\\
+    -n p_1p_2 & n p_2(1-p_2) & \cdots & -n p_2p_m\\
+    \vdots & \vdots & \ddots & \vdots\\
+    -n p_1p_m & -n p_2p_m & \cdots & n p_m(1-p_m)\\
+    }
+\end{align*}
+
+The sample mean and covariance matrix for $\bN$ are
+\begin{align*}
+    \hbmu_\bN & = n \hbp & \hcov_\bN &= n \bigl(diag(\hbp) - \hbp \hbp^T\bigr)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Bivariate Analysis}
+
+  \small
+Assume the data comprises two categorical
+attributes, $X_1$ and $X_2$,
+\begin{align*}
+dom(X_1) &= \{a_{11}, a_{12}, \ldots, a_{1m_1}\}\\
+dom(X_2) &= \{a_{21}, a_{22}, \ldots, a_{2m_2}\}
+\end{align*}
+
+We model
+$X_1$ and $X_2$ as multivariate Bernoulli variables $\bX_1$ and
+$\bX_2$ with dimensions $m_1$ and $m_2$, respectively.
+The joint distribution of $\bX_1$ and $\bX_2$
+is modeled as the $m_1+m_2$ dimensional
+vector variable $\bX = \matr{\bX_1\\\bX_2}$
+\begin{align*}
+\bX\lB((v_1, v_2)^T\rB) = \matr{\bX_1(v_1)\\\bX_2(v_2)}
+= \matr{\be_{1i}\\ \be_{2j}}
+\end{align*}
+provided that  $v_1 = a_{1i}$ and $v_2 = a_{2j}$.
+
+The joint PMF for $\bX$ is given as the $m_1 \times
+m_2$ matrix
+\begin{align*}
+    \bP_{12} =
+    \matr{
+    p_{11} & p_{12} & \dots & p_{1m_2}\\
+    p_{21} & p_{22} & \dots & p_{2m_2}\\
+    \vdots & \vdots & \ddots & \vdots\\
+    p_{m_11} & p_{m_12} & \dots & p_{m_1m_2}\\
+    }
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Bivariate Empirical PMF: {\tt sepal length} and {\tt sepal width}}
+
+\begin{center}
+  \small
+  \begin{tabular}{cc}
+	$X_1$:{\tt sepal length} & $X_2$:{\tt sepal width}\\
+\begin{tabular}{|c|l|c|}
+        \hline
+        Bins & Domain & Counts\\
+        \hline
+        $[4.3, 5.2]$ & Very Short ($a_1$) & $n_1 = 45$\\
+        $(5.2, 6.1]$ & Short ($a_2$) & $n_2 = 50$\\
+        $(6.1, 7.0]$ & Long ($a_3$)& $n_3 = 43$\\
+        $(7.0, 7.9]$ & Very Long ($a_4$)& $n_4 = 12$\\
+        \hline
+    \end{tabular}%}
+  &
+	\begin{tabular}{|c|l|c|}
+        \hline
+        Bins & Domain & Counts\\
+        \hline
+        $[2.0, 2.8]$ & Short ($a_1$) & 47\\
+        $(2.8, 3.6]$ & Medium ($a_2$) & 88\\
+        $(3.6, 4.4]$ & Long ($a_3$) & 15\\
+        \hline
+    \end{tabular}
+  \end{tabular}
+\end{center}
+
+
+{\bf Observed Counts} ($\textit{n}_{\textit{ij}}$)
+
+\centering
+\begin{tabular}{|c|l||c|c|c|}
+\hline
+    & &\multicolumn{3}{c|}{$X_2$}\\
+    \cline{3-5}
+    & &{{\tt Short} ($\be_{21}$)} & {{\tt Medium} ($\be_{22}$)} &     {{\tt Long} ($\be_{23}$)}\\
+    \hline\hline
+    \multirow{4}{*}{$X_1$}
+    & {\tt Very Short ($\be_{11}$)} &  7  & 33  & 5\\
+    &{\tt Short ($\be_{22}$)} & 24  &18  & 8\\
+    &{\tt Long ($\be_{13}$)} & 13  & 30   & 0\\
+    &{\tt Very Long ($\be_{14}$)} & 3  & 7   & 2\\
+\hline
+\end{tabular}%}
+\end{frame}
+
+
+\begin{frame}{Bivariate Empirical PMF: {\tt sepal length} and {\tt sepal width}}
+\centering
+\scalebox{0.8}{%
+\psset{unit=0.75in}
+\psset{viewpoint=50 60 25 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint,arrowscale=1.5}
+\begin{pspicture}(-4,-2)(2,2.5)
+\axesIIID[axisnames={X_1,X_2,f(\bx)}](0,0,0)(4.5,3.5,2.5)
+\psSolid[object=grille, linestyle=dotted,
+    base=0 4 0 3, fillcolor=white,
+    action=draw]
+\psPoint(1,1,0.47){x11}
+\psPoint(1,2,2.2){x12}
+\psPoint(1,3,0.33){x13}
+\psPoint(2,1,1.6){x21}
+\psPoint(2,2,1.2){x22}
+\psPoint(2,3,0.53){x23}
+\psPoint(3,1,0.87){x31}
+\psPoint(3,2,2){x32}
+\psPoint(3,3,0){x33}
+\psPoint(4,1,0.2){x41}
+\psPoint(4,2,0.47){x42}
+\psPoint(4,3,0.13){x43}
+%
+\psPoint(1,1,0){x11o}
+\psPoint(1,2,0){x12o}
+\psPoint(1,3,0){x13o}
+\psPoint(2,1,0){x21o}
+\psPoint(2,2,0){x22o}
+\psPoint(2,3,0){x23o}
+\psPoint(3,1,0){x31o}
+\psPoint(3,2,0){x32o}
+\psPoint(3,3,0){x33o}
+\psPoint(4,1,0){x41o}
+\psPoint(4,2,0){x42o}
+\psPoint(4,3,0){x43o}
+%
+\psset{linewidth=2pt}
+\psline(x11o)(x11)
+\psline(x12o)(x12)
+\psline(x13o)(x13)
+\psline(x21o)(x21)
+\psline(x22o)(x22)
+\psline(x23o)(x23)
+\psline(x31o)(x31)
+\psline(x32o)(x32)
+\psline(x33o)(x33)
+\psline(x41o)(x41)
+\psline(x42o)(x42)
+\psline(x43o)(x43)
+%
+\psdots[dotstyle=*,dotsize=0.1] (x11)(x12)(x13)(x21)(x22)(x23)(x31)(x32)(x33)(x41)(x42)(x43)
+\uput[u](x11){0.047}
+\uput[u](x12){0.22}
+\uput[u](x13){0.033}
+\uput[u](x21){0.16}
+\uput[u](x22){0.12}
+\uput[u](x23){0.053}
+\uput[u](x31){0.087}
+\uput[u](x32){0.2}
+\uput[u](x33){0}
+\uput[u](x41){0.02}
+\uput[u](x42){0.047}
+\uput[u](x43){0.013}
+\psset{linewidth=1pt}
+\multido{\ix=1+1}{4}{%
+        \psPoint(\ix\space,0,0){X1}
+        \psPoint(\ix\space,-0.2,0){X2}
+        \psline(X1)(X2)\uput[ul](X1){$\be_{1\ix}$}}
+\multido{\iy=1+1}{3}{%
+        \psPoint(0,\iy\space,0){Y1}
+        \psPoint(-0.2,\iy\space,0){Y2}
+        \psline(Y1)(Y2)\uput[ur](Y1){$\be_{2\iy}$}}
+\multido{\nz=1+1,\nl=0.1+0.1}{2}{%
+        \psPoint(0,0,\nz\space){Z1}
+        \psPoint(0,-0.2,\nz\space){Z2}
+        \psline(Z1)(Z2)\uput[l](Z1){\nl}}
+
+\rput[ur](-2,2,0.27){Joint probabilities: $\hp_{ij} = n_{ij}/n$}
+\end{pspicture}
+}
+\end{frame}
+
+
+\begin{frame}{Attribute Dependence: Contingency Analysis}
+  \small
+
+The {\em contingency table} for $\bX_1$ and
+$\bX_2$ is the $m_1 \times m_2$ matrix of observed counts $n_{ij}$
+\begin{align*}
+    \bN_{12} = n \cdot \hbP_{12} = \matr{
+    n_{11} & n_{12} & \cdots & n_{1m_2}\\
+    n_{21} & n_{22} & \cdots & n_{2m_2}\\
+    \vdots & \vdots & \ddots & \vdots\\
+    n_{m_1 1} & n_{m_1 2} & \cdots & n_{m_1m_2}\\
+    }
+\end{align*}
+where $\hbP_{12}$ is the empirical joint PMF for $\bX_1$
+and $\bX_2$.
+The contingency table is augmented with
+row and column marginal counts, as follows:
+\begin{align*}
+    \bN_1 &= n \cdot \hbp_1 = \matr{n^1_1\\ \vdots \\ n^1_{m_1}} &
+    \bN_2 &= n \cdot \hbp_2 = \matr{n^2_1\\ \vdots \\ n^2_{m_2}} &
+\end{align*}
+
+$\bN_1$ and $\bN_2$ have a multinomial
+distribution with parameters $\bp_1 = (p^1_1, \dots, p^1_{m_1})$
+and $\bp_2 = (p^2_1, \dots, p^2_{m_2})$, respv.
+
+$\bN_{12}$ also has a multinomial distribution with
+parameters $\bP_{12} = \{ p_{ij} \}$, for $1 \le i \le m_1$ and
+$1\le j \le m_2$.
+\end{frame}
+
+
+
+\begin{frame}{Contingency Table: {\tt sepal length} vs.\ {\tt sepal  width}}
+\centering
+\begin{tabular}{|c|l||c|c|c||c|}
+    \hline
+    \multirow{7}{*}{\rotateleft{\raisebox{-10pt}{\hskip-14pt{\tt Sepal length} ($X_1$)}}}
+    & \multicolumn{5}{c|}{{\tt Sepal width} ($X_2$)}\\
+    \cline{2-6}
+    & & {\tt Short} & {\tt Medium} & {\tt Long} & \\
+    & & $a_{21}$ & $a_{22}$ &  $a_{23}$ & Row Counts\\
+    \cline{2-6}\cline{2-6}
+    & {\tt Very Short} ($a_{11}$) & 7  & 33  & 5 & $n^1_{1} = 45$\\
+    & {\tt Short} ($a_{12}$)   & 24  & 18  & 8 & $n^1_{2} = 50$ \\
+    & {\tt Long} ($a_{13}$)   & 13   & 30  & 0  & $n^1_{3} = 43$ \\
+    & {\tt Very Long} ($a_{14}$)   & 3   & 7  & 2  & $n^1_{4} = 12$\\
+    \cline{2-6}\cline{2-6}
+    & Column Counts & $n^2_1 = 47$  & $n^2_{2}=88$ &    $n^2_{3}=15$    & $n = 150$ \\
+    \hline
+  \end{tabular}%
+\end{frame}
+
+
+
+\begin{frame}{Chi-Squared Test for Independence}
+  \small
+Assume $\bX_1$ and $\bX_2$ are independent. Then, their joint
+PMF is
+\begin{align*}
+    \hp_{ij} = \hp^1_{i} \cdot \hp^2_{j}
+\end{align*}
+%Under this independence assumption,
+The expected frequency for each pair of values is
+\begin{align*}
+    e_{ij} = n \cdot \hp_{ij} = n \cdot \hp^1_{i} \cdot \hp^2_{j} =
+    n \cdot {n^1_{i} \over n}
+    \cdot {n^2_{j} \over n}
+    = {n^1_{i} n^2_{j} \over n}
+\end{align*}
+
+The $\chi^2$ statistic quantif\/{i}es
+the difference between observed and expected counts
+\begin{align*}
+  \chi^2 = \sum_{i=1}^{m_1}\sum_{j=1}^{m_2}
+    \frac{(n_{ij} - e_{ij})^{2}}{e_{ij}}
+\end{align*} 
+The sampling
+distribution for the $\chi^2$ statistic 
+follows the {\em chi-squared} density function:
+\begin{align*}
+  f(x|q) = \frac{1}{2^{q/2}\Gamma(q/2)}
+  x^{\frac{\raisebox{1.7pt}{\fontsize{6}{8}\selectfont $q$}}{\raisebox{-2.0pt}{\fontsize{6}{8}\selectfont 2}}-1}\mathrm{e}^{-\frac{x}{\raisebox{-2.0pt}{\fontsize{6}{8}\selectfont 2}}}
+  \label{eq:eda:cat:chisq}
+\end{align*}
+where $q$ is the degrees of freedom
+\begin{align*}
+    q & = \card{dom(X_1)} \times \card{dom(X_2)} -
+    (\card{dom(X_1)} + \card{dom(X_2)}) + 1\\
+    & = m_1m_2 -m_1 -m_2 + 1\\
+    & = (m_1 - 1)(m_2-1)
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Chi-Squared Test: {\tt sepal length} and {\tt sepal width}}
+\centerline{
+\begin{tabular}{|c|l||c|c|c|}
+    \hline
+	& {\bf Expected Counts} &\multicolumn{3}{c|}{$X_2$}\\
+    \cline{3-5}
+    & & {\tt Short} ($a_{21}$) & {\tt Medium} ($a_{22}$)& {\tt
+    Short} ($a_{23}$)\\
+    \hline\hline
+    \multirow{4}{*}{$X_1$}
+    & {\tt Very Short} ($a_{11}$) &  14.1  & 26.4  & 4.5\\
+    &{\tt Short} ($a_{12}$) & 15.67  & 29.33  & 5.0\\
+    &{\tt Long} ($a_{13}$) & 13.47  & 25.23   & 4.3\\
+    &{\tt Very Long} ($a_{14}$) & 3.76  & 7.04   & 1.2\\
+    \hline
+  \end{tabular}%}
+  }
+  
+  \smallskip
+  \centerline{
+  \begin{tabular}{|c|l||c|c|c|}
+    \hline
+	& {\bf Observed Counts} &\multicolumn{3}{c|}{$X_2$}\\
+    \cline{3-5}
+    & & {\tt Short} ($a_{21}$) & {\tt Medium} ($a_{22}$)& {\tt
+    Long} ($a_{23}$)\\
+    \hline\hline
+    & {\tt Very Short} ($a_{11}$) & 7  & 33  & 5 \\
+    & {\tt Short} ($a_{12}$)   & 24  & 18  & 8 \\
+    & {\tt Long} ($a_{13}$)   & 13   & 30  & 0 \\
+    & {\tt Very Long} ($a_{14}$)   & 3   & 7  & 2  \\
+    \hline
+  \end{tabular}%
+  }
+  
+  \smallskip
+  The chi-squared statistic value is $\chi^2 = 21.8$.
+
+  \smallskip
+  The number of degrees of freedom are
+  $$q = (m_1-1)\cdot (m_2-1) = 3 \cdot 2 = 6$$
+\end{frame}
+
+
+\begin{frame}{Chi-Squared Distribution ($\textit{q}=6$).}
+  \small
+  The {\em p-value} of a statistic $\theta$ is defined as
+the probability of
+obtaining a value at least as extreme as the observed value.
+
+The null hypothesis, that $X_1$ and $X_2$ are independent, is rejected
+if $p\hbox{-}\textrm{value}(z) \le \alpha$, say $\alpha=0.01$.
+We have $\pvalue(21.8) = 0.0013$. Thus, we reject the null hypothesis,
+and conclude that $X_1$ and $X_2$ are dependent.
+
+\bigskip\bigskip
+\centerline{
+\normalsize
+  %\vspace{0.1in}
+  \scalebox{0.7}{
+ \psset{plotpoints=200}
+ \psset{xAxisLabel=$x$,yAxisLabel=$f(x|6)$}
+ \psgraph[Dy=0.03,Dx=5]{->}(0,0)(27,0.16){4in}{2.5in}%
+ \psChiIIDist [linewidth=2pt,nue=6]{0.01}{25}
+ \pscustom[fillstyle=solid,fillcolor=lightgray]{%
+   \psChiIIDist [linewidth=1pt,nue=6]{16.8}{27} %
+   \psline(27,0)(16.8,0)}
+  \psdot[dotstyle=Bo,dotscale=1.5](21.8,0)
+  \psdot[dotstyle=*,dotscale=1.5](16.8,0)
+  \psline[]{->}(16.8,0.04)(16.8,0.005)
+  \uput[u](16.8,0.04){$\alpha=0.01$}
+  \uput[r](17,0.02){$H_0$ Rejection Region}
+  \uput[d](16.8,0){\scriptsize{$16.8$}}
+  \uput[d](21.8,0){\scriptsize{$21.8$}}
+  \endpsgraph
+  }}
+\end{frame}
+
+
+\begin{frame}{Multiway Contingency Analysis}
+  Given $\bX = (X_1, X_2, \cdots, X_d)^T$.
+The chi-squared statistic is given as
+\begin{align*}
+  \chi^2 = \sum_{\bi} \frac{(n_\bi - e_\bi)^2}{e_\bi} =
+  \sum_{i_1=1}^{m_1} \sum_{i_2=1}^{m_2} \cdots \sum_{i_d=1}^{m_d}
+  {(n_{i_1,i_2,\ldots, i_d} - e_{i_1,i_2,\ldots,i_d} )^2 \over
+  e_{i_1,i_2,\ldots,i_d}}
+\end{align*}
+Under the null hypothesis, that attributes are independent, 
+the expected number of occurrences
+of the symbol tuple $(a_{1i_1}, a_{2i_2}, \dots, a_{d i_d})$
+is given as
+\begin{align*}
+    e_{\bi} = n \cdot \hp_{\bi} =
+    n \cdot \prod_{j=1}^d \hp^j_{i_{j}} =
+    {n^1_{i_1} n^2_{i_2} \dots n^d_{i_d} \over n^{d-1}}
+\end{align*}
+
+The total number of degrees of freedom for the chi-squared distribution 
+is given as
+\begin{align*}
+    q & = \prod_{i=1}^d |dom(X_{i})| - \sum_{i=1}^d
+    |dom(X_{i})| + (d-1) \notag\\
+    & = \Bigl(\prod_{i=1}^d m_i\Bigr) -
+    \Bigl(\sum_{i=1}^d m_i\Bigr) + d-1
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{3-Way Contingency Table}
+  \framesubtitle{$X_1$: sepal length, $X_2$: sepal width and $X_3$: 
+  Iris type}
+    \scalebox{0.8}{%
+    \psset{unit=0.25in}
+    %\psset{viewpoint=2 1.5 1,subgriddiv=0,gridlabels=0}
+    %\psset{viewpoint=60 50 20 rtp2xyz,Decran=50}
+    \psset{Alpha=60,Beta=35}
+    \centering
+    \begin{pspicture}(-8,-6.5)(5,7)
+    %\pstThreeDCoor[linecolor=black]
+    %\ThreeDput[normal=1 0 0](0,0,0)
+    \pstPlanePut[plane=yz](0,0,0){
+    \begin{tabular}{|c|c|c|}
+        \hline
+        5& 0& \bf 0\\
+        \hline
+        17& 12& 0\\
+        \hline
+        5& 11& 0\\
+        \hline
+        0& 0& 0\\
+        \hline
+    \end{tabular}
+    }
+    \pstPlanePut[plane=yz](-5,0,0){
+    %\ThreeDput[normal=1 0 0](-5,0,0)
+    \begin{tabular}{|c|c|c|}
+        \hline
+        1&  33& \bf 5\\
+        \hline
+        0& 3& 8\\
+        \hline
+        0& 0& 0\\
+        \hline
+        0&  0& 0\\
+        \hline
+    \end{tabular}
+    }
+    \pstPlanePut[plane=yz](-10,0,0){
+    %\ThreeDput[normal=1 0 0](-10,0,0)
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \bf 1& \bf 0 & \bf 0\\
+        \hline
+        7& 3& \bf 0\\
+        \hline
+        8& 19& \bf 0\\
+        \hline
+        3& 7 & \bf 2\\
+        \hline
+    \end{tabular}
+    }
+    \pstThreeDLine[arrows=->](2,6,0)(-10,6,0)%X3
+    \pstThreeDLine[arrows=->](3,1.25,0)(3,1.25,5)%X1
+    \pstThreeDLine[arrows=->](3,1.25,0)(3,6,0)%X2
+    \pstPlanePut[plane=xy,planecorr=normal](-10,6.25,0){$X_3$}
+    \pstPlanePut[plane=yz,planecorr=normal](3,1,5.25){$X_1$}
+    \pstPlanePut[plane=xy,planecorr=normal](3.5,6.5,0){$X_2$}
+    \pstPlanePut[plane=xy,planecorr=normal](1,8,0){
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \multicolumn{3}{|c|}{$X_3$}\\
+        \hline
+        $a_{31}$ &  $a_{32}$ &  $a_{33}$\\
+        \hline
+        50& 50& 50\\
+        \hline
+    \end{tabular}
+    }
+    \pstPlanePut[plane=yz,planecorr=normal](0,-6,0){
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \multirow{4}{*}{$X_1$} &
+        $a_{14}$ & 45\\\cline{2-3}
+        & $a_{13}$ & 50\\\cline{2-3}
+        & $a_{12}$ & 43\\\cline{2-3}
+            & $a_{11}$ & 12\\
+        \hline
+    \end{tabular}
+    }
+    \pstPlanePut[plane=xy,planecorr=normal](10.25,3.5,0){
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \multirow{3}{*}{$X_2$} & $a_{21}$ & 47\\\cline{2-3}
+        & $a_{22}$ & 88\\\cline{2-3}
+            & $a_{23}$ & 15\\
+        \hline
+    \end{tabular}
+    }
+    \end{pspicture}
+    }
+\end{frame}
+
+
+\begin{frame}{3-Way Contingency Analysis}
+\small
+\begin{center}
+\begin{tabular}{|c|c||c|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{~}
+        & \multicolumn{3}{c|}{$X_3 (a_{31}/a_{32}/a_{33})$}\\
+        \cline{3-5}
+\multicolumn{2}{|c|}{~} & \multicolumn{3}{c|}{$X_2$}\\
+\cline{3-5}
+\multicolumn{2}{|c|}{~} & $a_{21}$ & $a_{22}$ & $a_{23}$\\
+\hline\hline
+\multirow{4}{*}{$X_1$}
+        & $a_{11}$ & 1.25 & 2.35 & 0.40\\
+        & $a_{12}$ & 4.49 & 8.41 & 1.43\\
+        & $a_{13}$ & 5.22 & 9.78 & 1.67\\
+        & $a_{14}$ & 4.70 & 8.80 & 1.50\\
+        \hline
+    \end{tabular}%}
+\end{center}
+
+\smallskip
+The value of the $\chi^2$ statistic is 
+$\chi^2 = 231.06$, and 
+the number of
+degrees of freedom is
+$q = 4\cdot3\cdot3 - (4+3+3) + 2 = 36 - 10 + 2 = 28$.
+
+\smallskip
+For a signif\/{i}cance level of $\alpha=0.01$, the critical value of
+the chi-square distribution is $z=48.28$. 
+
+\smallskip
+The observed value
+of $\chi^2 = 231.06$ is much greater than $z$, and it is thus
+extremely unlikely to happen under the null
+hypothesis. We conclude that the three attributes are not 3-way
+independent, but rather there is some dependence between them.
+%
+\end{frame}
+
+
+\begin{frame}{Distance and Angle}
+With the modeling of categorical attributes as multivariate
+Bernoulli
+variables, it is possible to compute the distance or the angle
+between any two points $\bx_i$ and $\bx_{j}$:
+\begin{align*}
+    \bx_i & = \matr{\be_{1i_1}\\\vdots\\ \be_{d\;i_d}} &
+    \bx_{j} & = \matr{\be_{1j_1}\\\vdots\\ \be_{d\;j_d}}
+\end{align*}
+
+The different measures of distance and similarity rely on the
+number of matching and mismatching values (or symbols) across the
+$d$ attributes $\bX_k$. 
+
+The number
+of matching values $s$ is given as:
+\begin{align*}
+    s = \bx_i^T\bx_{j} = \sum_{k=1}^d (\be_{ki_k})^T\be_{kj_k}
+\end{align*}
+The number of mismatches is simply $d-s$.
+Also useful is the norm of each point:
+\begin{align*}
+\norm{\bx_i}^2 = \bx_i^T\bx_i = d
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Distance and Angle}
+The {\em Euclidean distance} between $\bx_i$ and $\bx_{j}$ is given as
+\begin{align*}
+    \dist(\bx_i, \bx_{j}) = \norm{\bx_i-\bx_{j}} =
+    \sqrt{\bx_i^T\bx_i - 2\bx_i\bx_{j} + \bx_{j}^T\bx_{j}} =
+    \sqrt{2(d-s)}
+\end{align*}
+
+
+The {\em Hamming distance} is given as
+\begin{align*}
+    \dist_H(\bx_i, \bx_{j}) = d-s
+\end{align*}
+
+{\em Cosine Similarity}:
+The cosine of the angle is given as
+\begin{align*}
+    \cos \theta = {\bx_i^T \bx_{j} \over \norm{\vphantom{\norm{\bx_{j}}}\bx_i} \cdot
+    \norm{\bx_{j}}} = {s \over d}
+\end{align*}
+
+The {\em Jaccard Coeff\/{i}cient} is given as
+\begin{align*}
+    J(\bx_i, \bx_{j}) = {s \over 2(d-s) + s} = {s \over 2d-s}
+\end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Discretization}
+\small
+{\em Discretization}, also called {\em binning},
+converts numeric attributes into categorical ones.
+
+\medskip
+{\em Equal-Width Intervals}:
+Partition
+the range of $X$
+into $k$ {\em equal-width} intervals.
+The interval width is simply the range of $X$ divided by $k$:
+\begin{align*}
+  w = \frac{x_{\max} - x_{\min}}{k}
+\end{align*}
+Thus, the $i$th interval boundary is given as
+\begin{align*}
+  v_i & = x_{\min} + iw, \text{ for } i=1,\ldots,k-1
+\end{align*}
+%
+
+\medskip
+{\em Equal-Frequency Intervals}:
+%\index{discretization!equal-frequency intervals}
+We divide the range of $X$ into
+intervals that contain (approximately) equal number of points.
+The intervals are computed from the empirical
+quantile or inverse cumulative
+distribution function
+$$\hF^{-1}(q) = \min\{x\;|\; P(X \le x) \ge q\}$$
+
+We require that each interval contain $1/k$ of the
+probability mass; therefore, the interval boundaries are given
+as follows:
+\begin{align*}
+  v_i & = \hF^{-1}( i/k ) \text{ for } i=1,\ldots,k-1
+\end{align*}
+\end{frame}
+
+
+
+\readdata{\diCDF}{EDA/numeric/figs/sl-iCDF.dat}
+\begin{frame}{Equal-Frequency Discretization: {\tt sepal length} (4
+  bins)}
+  \begin{columns}
+	\column{0.6\textwidth}
+	\centerline{Empirical Inverse CDF}
+  \centerline{
+	\scalebox{0.6}{
+    \psset{xAxisLabel=$q$,yAxisLabel=$\hF^{-1}(q)$}
+    \psset{xAxisLabelPos={c,-0.75},yAxisLabelPos={-0.125,c}}
+    \psgraph[tickstyle=bottom,axesstyle=frame,%
+      Dx=0.25,dx=0.25,Oy=4,Dy=0.5,dy=0.5]{->}(0,4)(1,8){3.5in}{2in}%
+    \dataplot[linewidth=1.5pt]{\diCDF}
+    \psline[linestyle=dotted](0.25,4)(0.25,5.1)
+    \psline[linestyle=dotted](0.25,5.1)(0,5.1)
+    \psline[linestyle=dotted](0.5,4)(0.5,5.8)
+    \psline[linestyle=dotted](0.5,5.8)(0,5.8)
+    \psline[linestyle=dotted](0.75,4)(0.75,6.4)
+    \psline[linestyle=dotted](0.75,6.4)(0,6.4)
+    \endpsgraph
+	}}
+
+	\column{0.4\textwidth}
+	\centerline{Quartile values:}
+	\begin{align*}
+	  \hF^-1(0.25) & = 5.1\\
+	  \hF^-1(0.5) & = 5.8 \\
+	  \hF^-1(0.75) & = 6.4\\ 
+	\end{align*}
+	\centerline{Range: $[4.3, 7.9]$}
+	\bigskip
+	\begin{center}
+\begin{tabular}{|c|c|c|}
+        \hline
+        {\bf Bin} & {\bf Width} & {\bf Count}\\
+        \hline
+        $[4.3, 5.1]$ & 0.8 & $n_1 = 41$\\
+        $(5.1, 5.8]$ & 0.7 & $n_2 = 39$\\
+        $(5.8, 6.4]$ & 0.6 & $n_3 = 35$\\
+        $(6.4, 7.9]$ & 1.5 & $n_4 = 35$\\
+        \hline
+    \end{tabular}
+\end{center}
+\end{columns}
+\end{frame}

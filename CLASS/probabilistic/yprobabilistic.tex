@@ -1,0 +1,1063 @@
+\lecture{probabilistic}{probabilistic}
+
+\date{Chapter 18: Probabilistic Classification}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Bayes Classif\/{i}er}
+Let the training dataset $\bD$ consist of $n$ points $\bx_i$ in a
+$d$-dimensional space, and let $y_i$ denote the class for each
+point, with $y_i \in \{c_1,c_2,\ldots,c_k\}$. 
+
+\bigskip
+The Bayes classif\/{i}er
+ estimates the posterior probability
+$P(c_i | \bx)$ for each class $c_i$, and chooses the class that
+has the largest probability. The predicted class for $\bx$ is
+given as
+\begin{align*}
+    \hy = \arg\max_{c_i} \{ P(c_i|\bx) \}
+\end{align*}
+
+According to the Bayes theorem, we have
+\begin{align*}
+    P(c_i|\bx) = \frac{P(\bx|c_i) \cdot P(c_i)}{P(\bx)}
+\end{align*}
+Because $P(\bx)$ is f\/{i}xed for a given point, Bayes rule 
+can be rewritten as
+\begin{align*}
+    \hy & = \arg\max_{c_i} \{ P(c_i|\bx) \} 
+    = \arg\max_{c_i} \lB\{ {P(\bx|c_i)P(c_i) \over P(\bx)}
+    \rB\}
+     = \arg\max_{c_i} \bigr\{ P(\bx|c_i)P(c_i) \bigl\}
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Estimating the Prior Probability: $P(c_i)$}
+ Let
+$\bD_i$ denote the subset of points in $\bD$ that are labeled with
+class $c_i$:
+\begin{align*}
+    \bD_i = \{\bx_{j} \in \bD \mid \bx_{j} \mbox{ has
+    class } y_{j}=c_i \}
+\end{align*}
+
+\bigskip
+Let the size of the dataset $\bD$ be given as $|\bD| = n$, and let
+the size of each class-specif\/{i}c subset $\bD_i$ be given as
+$|\bD_i| = n_i$. 
+
+\bigskip
+The prior probability for class $c_i$ can be
+estimated as follows:
+\begin{align*}
+  \hP(c_i) = \frac{n_i}{n}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Estimating the Likelihood: Numeric Attributes, Parametric
+  Approach}
+To estimate the likelihood $P(\bx|c_i)$, we have to estimate the
+joint probability of $\bx$ across all the $d$ dimensions, i.e.,
+we have to estimate $P\bigl(\bx=(x_1,x_2,\ldots,x_d) | c_i\bigr)$.
+
+\medskip
+In the parametric approach we assume that each class $c_i$ is
+normally distributed, and we use the estimated mean $\hbmu_i$ 
+and covariance matrix $\hcov_i$ to compute the probability density 
+at $\bx$
+\begin{align*}
+  \hf_i(\bx) = \hf(\bx | \hbmu_i, \hcov_i) =
+  \frac{1}{(\sqrt{2\pi})^{d}
+    \sqrt{|\hcov_i|}} \exp \lB\{-\frac{(\bx - \hbmu_i)^T
+    \hcov_i^{-1} (\bx -\hbmu_i)}{2} \rB \}
+\end{align*}
+
+\medskip
+The posterior probability is then given as
+\begin{align*}
+    P(c_i|\bx) 
+    = \frac{\hf_i(\bx) P(c_i)}{\sum_{j=1}^k \hf_{j}(\bx) P(c_{j})}
+\end{align*}
+
+The predicted class for $\bx$ is:
+\begin{align*}
+    \hy = \arg\max_{c_i} \Bigl\{ \hf_i(\bx) P(c_i) \Bigr\}
+\end{align*}
+\end{frame}
+
+
+
+\newcommand{\BC}{\textsc{BayesClassif\/{i}er}\xspace}
+\newcommand{\BCT}{\textsc{Testing}\xspace}
+\begin{frame}[fragile]{Bayes Classifier Algorithm}
+\begin{algorithm}[H]
+\SetKwInOut{Algorithm}{\BC($\bD = \{(\bx_{j}, y_{j})\}_{j=1}^n$)}
+\Algorithm{} \For{$i=1,\ldots,k$}{
+  $\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}$
+\tcp{class-specif\/{i}c subsets}
+$n_i \assign \card{\bD_i}$ \tcp{cardinality}
+$\hP(c_i) \assign n_i/n$ \tcp{prior probability}
+$\hbmu_i \assign {1\over n_i} \sum_{\bx_{j} \in
+\bD_i} \bx_{j}$ \tcp{mean} 
+$\bZ_i \assign \bD_i - \bone_{n_i} \hbmu_i^T$ \tcp{centered data}
+$\hcov_i  \assign {1\over n_i}\bZ_i^T\bZ_i$ \tcp{covariance matrix} 
+} 
+\Return{$\hP(c_i), \hbmu_i, \hcov_i$ for all $i=1,\ldots,k$} 
+\BlankLine 
+\SetKwInOut{AlgorithmT}{
+    \BCT($\bx$ \text{and} $\hP(c_i)$, $\hbmu_i$, $\hcov_i$, for all $i\in[1,k]$)} \AlgorithmT{} 
+    $\hy \assign \displaystyle \arg\max_{c_i} \bigl\{ f(\bx | \hbmu_i, \hcov_i)
+\cdot P(c_i) \bigr\}$\;
+\Return{$\hy$} 
+\end{algorithm}
+\end{frame}
+
+
+\readdata{\dataSLW}{CLASS/probabilistic/figs/iris-slwc.txt}
+\begin{frame}{Bayes Classifier: Iris Data}
+  \framesubtitle{${\it X}_1$:{\tt sepal} {\tt length} versus ${\it X}_2$:{\tt sepal width}} 
+\begin{figure}[!t]
+   \scalebox{0.85}{
+    \centering
+    \psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+    \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+    Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+    \psline[linecolor=gray](5.2,2)(5.2,4.5)
+    \psline[linecolor=gray](6.1,2)(6.1,4.5)
+    \psline[linecolor=gray](7.0,2)(7.0,4.5)
+    \psline[linecolor=gray](4,2.8)(8.5,2.8)
+    \psline[linecolor=gray](4,3.6)(8.5,3.6)
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+        nEnd=50,plotNo=1,plotNoMax=2]{\dataSLW}
+    \psdot[dotstyle=Bo,dotscale=2,fillcolor=black](5.01,3.42)
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+        nStart=51,plotNo=1,plotNoMax=2]{\dataSLW}
+    \psdot[dotstyle=Btriangle,dotscale=2,fillcolor=black](6.26,2.87)
+    \psdot[dotstyle=Bsquare,dotscale=2,fillcolor=white](6.75,4.25)
+    \uput[45](6.75,4.25){$\bx=(6.75,4.25)^T$}
+    \begin{psclip}{%
+        \psline[](4,2)(4,4.5)(8.5,4.5)(8.5,2.0)(4,2)}
+    %> ginv(S1)
+    %      [,1]      [,2]
+    %[1,]  18.56716 -12.82720
+    %[2,] -12.82720  15.89032
+        \psplotImp[linewidth=1pt,algebraic](3,1)(9,5){%
+        18.57*(x-5.01)^2-2*12.83*(x-5.01)*(y-3.42)+15.89*(y-3.42)^2
+        + ln(0.01)}
+    %> ginv(S2)
+    %      [,1]      [,2]
+    %[1,]  3.316409 -3.658893
+    %[2,] -3.658893 13.159501
+        \psplotImp[linewidth=1pt,algebraic](3,1)(9,5){%
+        3.32*(x-6.26)^2-2*3.66*(x-6.26)*(y-2.87)+13.16*(y-2.87)^2
+        + ln(0.01)}
+    \end{psclip}
+    \endpsgraph
+  }
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Bayes Classifier: Categorical Attributes}
+Let $X_{j}$ be a
+categorical attribute over the domain $dom(X_{j}) = \{a_{j1},
+a_{j2}, \ldots, a_{jm_{j}}\}$. Each categorical attribute
+$X_{j}$ is modeled as an $m_{j}$-dimensional multivariate Bernoulli
+random variable $\bX_{j}$ that takes on $m_{j}$ distinct vector values
+$\be_{j1}, \be_{j2}, \dots, \be_{jm_{j}}$, where $\be_{jr}$ is the
+$r$th standard basis vector in $\setR^{m_{j}}$ and corresponds to
+the $r$th value or symbol $a_{jr} \in dom(X_{j})$. 
+
+\bigskip
+The entire
+$d$-dimensional dataset is modeled as the vector random variable $\bX = (\bX_1, \bX_2, \ldots,
+\bX_d)^T$. Let $d' = \sum_{j=1}^d m_{j}$; a categorical point $\bx = (x_1,x_2,\dots,x_d)^T$ is
+therefore represented as the $d'$-dimensional binary vector
+\begin{align*}
+  \bv = \matr{\bv_1\\\vdots\\\bv_d}
+  = \matr{\be_{1r_1}\\\vdots\\\be_{dr_d}}
+\end{align*}
+where $\bv_{j} = \be_{jr_{j}}$ provided $x_{j} = a_{jr_{j}}$ is the
+$r_{j}$th value in the domain of $X_{j}$. 
+\end{frame}
+
+
+
+\begin{frame}{Bayes Classifier: Categorical Attributes}
+The probability of the
+categorical point $\bx$ is obtained from the joint probability
+mass function (PMF) for the vector random variable $\bX$:
+\begin{align*}
+  P(\bx | c_i) = f(\bv|c_i)  =
+    f\bigl(\bX_1=\be_{1r_1}, \dots, \bX_d=\be_{dr_d} | \;c_i\bigr)
+\end{align*}
+The joint PMF can be estimated directly from the data
+$\bD_i$ for each class $c_i$ as follows:
+\begin{align*}
+    \hf(\bv|c_i) = {n_i(\bv) \over n_i}
+    %\label{eq:class:prob:hfcat}
+\end{align*}
+where $n_i(\bv)$ is the number of times the value $\bv$ occurs in
+class $c_i$.
+
+However, to avoid zero probabilities we add a 
+{\em pseudo-count} of 1 for each value 
+\begin{align*}
+    \hf(\bv|c_i) = {n_i(\bv)+1 \over n_i + \prod_{j=1}^d m_{j}}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Discretized Iris Data: \texttt{sepal} {\tt length} and
+  \texttt{sepal} {\tt width}}
+
+  {\begin{tabular}{c}
+%\centerline
+{
+%\subfloat[Discretized {\tt sepal length}]
+{
+    \label{tab:class:prob:slbin}
+\tabcolsep12pt\renewcommand{\arraystretch}{1.1} 
+\begin{tabular}{|c|l|}
+\hline
+Bins & \multicolumn{1}{c|}{Domain} \\ \hline
+$[4.3, 5.2]$ & Very Short ($a_{11}$) \\
+$(5.2, 6.1]$ & Short ($a_{12}$) \\
+$(6.1, 7.0]$ & Long ($a_{13}$)\\
+$(7.0, 7.9]$ & Very Long ($a_{14}$)\\ \hline
+\multicolumn{2}{c}{\fontsize{8}{8}\selectfont(a) Discretized {\tt sepal length}}\\
+\end{tabular}
+}
+%\hspace{0.2in}
+%\subfloat[Discretized {\tt sepal width}]
+{
+\label{tab:class:prob:swbin}
+\tabcolsep12pt
+\renewcommand{\arraystretch}{1.1}  
+\begin{tabular}{|c|l|}
+  \hline
+  Bins & \multicolumn{1}{c|}{Domain} \\ \hline
+  $[2.0, 2.8]$ & Short ($a_{21}$) \\
+  $(2.8, 3.6]$ & Medium ($a_{22}$)\\
+  $(3.6, 4.4]$ & Long ($a_{23}$)\\ \hline
+  \multicolumn{2}{c}{\fontsize{8}{8}\selectfont(b) Discretized {\tt sepal width}}\\
+\end{tabular}
+    }}
+\end{tabular}}
+\end{frame}
+
+
+
+\begin{frame}{Class-specif\/{i}c Empirical Joint Probability Mass Function}
+\label{tab:class:prob:jepmf}%}
+\footnotesize{
+{\begin{tabular}{c}
+  \tabcolsep6pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|l||c|c|c||c|}
+    \hline
+    & \multirow{2}{*}{Class: $c_1$}&\multicolumn{3}{c||}{$X_2$} &
+    \multirow{2}{*}{$\hf_{\!X_1}$}\\
+    \cline{3-5}
+        & & {\tt Short} ($\be_{21}$) & {\tt Medium} ($\be_{22}$) &
+        {\tt Long} ($\be_{23}$) & \\
+        \hline\hline
+        \multirow{4}{*}{$X_1$}
+        & {\tt Very Short ($\be_{11}$)} &  ${1/50}$  &
+        ${33/50}$  & ${5/50}$ & 39/50\\
+        &{\tt Short ($\be_{12}$)} & $0$
+        &${3/50}$  & ${8/50}$ & 13/50\\
+        &{\tt Long ($\be_{13}$)} & $0$  &
+        $0$   & $0$ & 0\\
+        &{\tt Very Long ($\be_{14}$)} & $0$  &
+        $0$ & $0$ & 0\\
+    \hline
+    \multicolumn{2}{|r||}{$\hf_{\!X_2}$} & 1/50 & 36/50 & 13/50 & \\
+    \hline
+  \end{tabular}\\[12pt]\\
+ \tabcolsep6pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|l||c|c|c||c|}
+    \hline
+    & \multirow{2}{*}{Class: $c_2$}&\multicolumn{3}{c||}{$X_2$} &
+    \multirow{2}{*}{$\hf_{\!X_1}$}\\
+    \cline{3-5}
+        & & {\tt Short} ($\be_{21}$) & {\tt Medium} ($\be_{22}$) &
+        {\tt Long} ($\be_{23}$) & \\
+        \hline\hline
+        \multirow{4}{*}{$X_1$}
+        & {\tt Very Short ($\be_{11}$)} &  ${6/100}$  &
+        ${0}$  & $0$ & 6/100\\
+        &{\tt Short ($\be_{12}$)} & ${24/100}$
+        &${15/100}$  &      ${0}$ & 39/100\\
+        &{\tt Long ($\be_{13}$)} & ${13/100}$  &
+        ${30/100}$   &      ${0}$ & 43/100\\
+        &{\tt Very Long ($\be_{14}$)} & ${3/100}$  &
+        ${7/100}$       & ${2/100}$ & 12/100\\
+    \hline
+    \multicolumn{2}{|r||}{$\hf_{\!X_2}$} & 46/100 & 52/100 & 2/100 &\\
+    \hline
+  \end{tabular}\\
+\end{tabular}}{}
+}
+\end{frame}
+
+
+
+
+\begin{frame}{Iris Data: Test Case}
+ Consider a test point $\bx=(5.3,3.0)^T$ corresponding to
+    the categorical
+    point $(\texttt{Short, Medium})$, which is represented as
+    $\bv = \matr{\be_{12}^T & \be_{22}^T}^T$.
+
+	\medskip
+The prior probabilities of the classes are $\hP(c_1) = 0.33$ and $\hP(c_2) = 0.67$.
+
+ The likelihood
+    and posterior probability for each class is given as
+    \begin{align*}
+        \hP(\bx|c_1) & = \hf(\bv|c_1) = 3/50 = 0.06\\[-2pt]
+        \hP(\bx|c_2) & = \hf(\bv|c_2) = 15/100 = 0.15\\[-2pt]
+        \hP(c_1|\bx) & \propto 0.06 \times 0.33 = 0.0198\\[-2pt]
+        \hP(c_2|\bx) & \propto 0.15 \times 0.67 = 0.1005
+    \end{align*}
+    In this case the predicted class is $\hy = c_2$.
+\end{frame}
+
+
+\begin{frame}{Iris Data: Test Case with Pseudo-counts}
+    The test point $\bx=(6.75,4.25)^T$
+    corresponds to the categorical
+    point $(\texttt{Long, Long})$, and it is represented as
+    $\bv = \matr{\be_{13}^T & \be_{23}^T}^T$. 
+	
+\medskip
+	Unfortunately the
+    probability mass at $\bv$ is zero for both classes.
+    We adjust the PMF via pseudo-counts noting that the number 
+	of possible
+    values are $m_1 \times m_2 = 4 \times 3 = 12$.
+
+	\medskip
+    The likelihood and prior probability
+    can then be computed as
+    \begin{align*}
+        \hP(\bx|c_1) & = \hf(\bv|c_1) = {0+1\over 50+12} = 1.61
+        \times 10^{-2}\\
+        \hP(\bx|c_2) & = \hf(\bv|c_2) = {0+1 \over 100+12} =
+        8.93 \times 10^{-3}\\
+        \hP(c_1|\bx) & \propto (1.61 \times 10^{-2}) \times 0.33 =
+        5.32 \times 10^{-3}\\
+        \hP(c_2|\bx) & \propto (8.93 \times 10^{-3}) \times 0.67 =
+        5.98 \times 10^{-3}
+    \end{align*}
+    Thus, the predicted class is $\hy = c_2$.
+  \end{frame}
+
+
+  \begin{frame}{Bayes Classifier: Challenges}
+The main problem with the Bayes classif\/{i}er is the lack of enough
+data to reliably estimate the joint probability density or mass
+function, especially for high-dimensional data. 
+
+\bigskip
+For
+numeric attributes we have to estimate $O(d^2)$ covariances, and
+as the dimensionality increases, this requires us to estimate too
+many parameters. 
+
+\medskip
+For categorical attributes we have to estimate
+the joint probability for all the possible values of $\bv$, given
+as $\prod_{j} |\text{dom}\bigl(X_{j}\bigr)|$. Even if each categorical attribute
+has only two values, we would need to estimate the probability for
+$2^d$ values. However, because there can be at most $n$ distinct
+values for $\bv$, most of the counts will be zero. 
+
+\medskip
+Naive Bayes classifier addresses these concerns.
+\end{frame}
+
+
+\begin{frame}{Naive Bayes Classif\/{i}er: Numeric Attributes}
+The naive Bayes approach makes the simple assumption
+that all the attributes are independent, which
+implies that the likelihood
+can be decomposed into a product of dimension-wise probabilities:
+\begin{align*}
+P(\bx | c_i) = P(x_1,x_2,\ldots,x_d | c_i) = \prod_{j=1}^d P(x_{j} |
+c_i) 
+\end{align*}
+
+ The
+likelihood for class $c_i$, for dimension $X_{j}$, is given as
+\begin{align*}
+    P(x_{j}|c_i) \propto f(x_{j} | \hmu_{ij}, \hsigma_{ij}^2)  = {1\over
+    \sqrt{2\pi}\hsigma_{ij}}\exp\lB\{ -{(x_{j} - \hmu_{ij})^2 \over
+    2\hsigma_{ij}^2}\rB\}
+\end{align*}
+where $\hmu_{ij}$ and
+$\hsigma_{ij}^2$ denote the estimated
+mean and variance for attribute $X_{j}$,
+for class $c_i$.
+\end{frame}
+
+
+\begin{frame}{Naive Bayes Classif\/{i}er: Numeric Attributes}
+The naive assumption corresponds to setting all the
+covariances to zero in $\hcov_i$, that is,
+\begin{align*}
+  \cov_i = \matr{
+      \sigma_{i1}^2 & 0 & \ldots & 0\\
+      0 & \sigma_{i2}^2 & \ldots & 0\\
+      \vdots & \vdots & \ddots\\
+      0 &  0 & \ldots & \sigma_{id}^2}
+\end{align*}
+
+The naive Bayes classif\/{i}er thus 
+uses the sample mean $\hbmu_i =
+(\hmu_{i1}, \dots, \hmu_{id})^T$
+and a {\em diagonal} sample covariance matrix $\hcov_i =
+\mathit{diag}(\sigma_{i1}^2, \dots, \sigma_{id}^2)$
+for each class $c_i$.
+In total $2d$ parameters have to be estimated,
+corresponding
+to the sample mean and sample variance for each
+dimension $X_{j}$.
+\end{frame}
+
+
+
+
+\newcommand{\NB}{\textsc{NaiveBayes}\xspace}
+\newcommand{\NBT}{\textsc{Testing}\xspace}
+\begin{frame}[fragile]{Naive Bayes Algorithm}
+\begin{algorithm}[H]
+  \small
+\SetKwInOut{Algorithm}{\NB($\bD = \{(\bx_{j}, y_{j})\}_{j=1}^n$)}
+\Algorithm{} 
+\For{$i=1,\ldots,k$}{
+  $\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}$
+  \tcp{class-specif\/{i}c subsets}
+  $n_i \assign \card{\bD_i}$ \tcp{cardinality}
+  $\hP(c_i) \assign n_i/n$ \tcp{prior probability}
+  $\hbmu_i \assign {1\over n_i} \sum_{\bx_{j} \in \bD_i} \bx_{j}$ \tcp{mean}
+  $\bZ_i = \bD_i - \bone \cdot \hbmu_i^T$\tcp{centered data for class
+  $c_i$}
+  \For(\tcp*[h]{class-specif\/{i}c variance for $X_{j}$}){$j=1,..,d$}{
+    %$Z_{j} = X_{j}  - \bone_n \cdot \hmu_{ij}$ \tcp{centered attribute}\;
+    %$\hsigma_{ij}^2 \assign {1\over n_i} Z_{j}^TZ_{j}$ \tcp{variance}\;
+    %$\hsigma_{ij}^2 \assign {1\over n_i}
+    %  \sum_{\bx_{j} \in \bD_i} (\bx_{j} - \hbmu_i)^2$ \tcp{variance}\;
+    $\hsigma_{ij}^2 \assign {1\over n_i} Z_{ij}^TZ_{ij}$
+    \tcp{variance}
+  }
+  $\hbsigma_i = \matr{\hsigma_{i1}^2, \ldots, \hsigma_{id}^2}^T$
+  \tcp*[h]{class-specif\/{i}c attribute variances}
+} \Return\ {$\hP(c_i), \hbmu_i, \hbsigma_i$ for all $i=1,\ldots,k$}
+\BlankLine \BlankLine 
+\SetKwInOut{AlgorithmT}{\NBT($\bx$ \text{and}\ $\hP(c_i)$, $\hbmu_i$, $\hbsigma_i$, for all $i\in[1,k]$)} 
+\AlgorithmT{} $\hy \assign \displaystyle \arg\max_{c_i}
+\biggl\{ \hP(c_i) \prod_{j=1}^d f(x_{j} | \hmu_{ij}, \hsigma^2_{ij})
+\biggr\}$\; \Return{$\hy$} 
+\end{algorithm}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Naive Bayes versus Full Bayes Classifier: Iris 2D Data}
+\framesubtitle{${\it X}_1$:{\tt sepal} {\tt length} versus ${\it X}_2$:{\tt sepal} {\tt width}}
+\setcounter{subfigure}{0}
+\begin{figure}[!t]
+\captionsetup[subfloat]{captionskip=0.25in}
+  \centerline{
+  \subfloat[Naive Bayes]{
+\scalebox{0.5}{
+    \vspace{0.2in}
+    \psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+    \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+    Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+    \psline[linecolor=gray](5.2,2)(5.2,4.5)
+    \psline[linecolor=gray](6.1,2)(6.1,4.5)
+    \psline[linecolor=gray](7.0,2)(7.0,4.5)
+    \psline[linecolor=gray](4,2.8)(8.5,2.8)
+    \psline[linecolor=gray](4,3.6)(8.5,3.6)
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+        nEnd=50,plotNo=1,plotNoMax=2]{\dataSLW}
+    \psdot[dotstyle=Bo,dotscale=2,fillcolor=black](5.01,3.42)
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+        nStart=51,plotNo=1,plotNoMax=2]{\dataSLW}
+    \psdot[dotstyle=Btriangle,dotscale=2,fillcolor=black](6.26,2.87)
+    \psdot[dotstyle=Bsquare,dotscale=2,fillcolor=white](6.75,4.25)
+    \uput[45](6.75,4.25){$\bx=(6.75,4.25)^T$}
+    \begin{psclip}{%
+        \psline[](4,2)(4,4.5)(8.5,4.5)(8.5,2.0)(4,2)}
+    %> ginv(S1)
+    %      [,1]      [,2]
+    %[1,]  18.56716 -12.82720
+    %[2,] -12.82720  15.89032
+        \psplotImp[linewidth=1pt,algebraic](3,1)(9,5){%
+        18.57*(x-5.01)^2+15.89*(y-3.42)^2
+        + ln(0.01)}
+    %> ginv(S2)
+    %      [,1]      [,2]
+    %[1,]  3.316409 -3.658893
+    %[2,] -3.658893 13.159501
+        \psplotImp[linewidth=1pt,algebraic](3,1)(9,5){%
+        3.32*(x-6.26)^2+13.16*(y-2.87)^2
+        + ln(0.01)}
+    \end{psclip}
+    \endpsgraph
+	}}
+	\hspace{0.25in}
+  \subfloat[Full Bayes]{
+   \scalebox{0.5}{
+    \psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+    \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+    Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+    \psline[linecolor=gray](5.2,2)(5.2,4.5)
+    \psline[linecolor=gray](6.1,2)(6.1,4.5)
+    \psline[linecolor=gray](7.0,2)(7.0,4.5)
+    \psline[linecolor=gray](4,2.8)(8.5,2.8)
+    \psline[linecolor=gray](4,3.6)(8.5,3.6)
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+        nEnd=50,plotNo=1,plotNoMax=2]{\dataSLW}
+    \psdot[dotstyle=Bo,dotscale=2,fillcolor=black](5.01,3.42)
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+        nStart=51,plotNo=1,plotNoMax=2]{\dataSLW}
+    \psdot[dotstyle=Btriangle,dotscale=2,fillcolor=black](6.26,2.87)
+    \psdot[dotstyle=Bsquare,dotscale=2,fillcolor=white](6.75,4.25)
+    \uput[45](6.75,4.25){$\bx=(6.75,4.25)^T$}
+    \begin{psclip}{%
+        \psline[](4,2)(4,4.5)(8.5,4.5)(8.5,2.0)(4,2)}
+    %> ginv(S1)
+    %      [,1]      [,2]
+    %[1,]  18.56716 -12.82720
+    %[2,] -12.82720  15.89032
+        \psplotImp[linewidth=1pt,algebraic](3,1)(9,5){%
+        18.57*(x-5.01)^2-2*12.83*(x-5.01)*(y-3.42)+15.89*(y-3.42)^2
+        + ln(0.01)}
+    %> ginv(S2)
+    %      [,1]      [,2]
+    %[1,]  3.316409 -3.658893
+    %[2,] -3.658893 13.159501
+        \psplotImp[linewidth=1pt,algebraic](3,1)(9,5){%
+        3.32*(x-6.26)^2-2*3.66*(x-6.26)*(y-2.87)+13.16*(y-2.87)^2
+        + ln(0.01)}
+    \end{psclip}
+    \endpsgraph
+	}}
+	}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Naive Bayes: Categorical Attributes}
+The
+independence assumption leads to a simplif\/{i}cation of the joint
+probability mass function 
+\begin{align*}
+    P(\bx|c_i) = \prod_{j=1}^d P(x_{j} | c_i) =
+  \prod_{j=1}^d   f\bigl(\bX_{j}=\be_{jr_{j}} | \;c_i\bigr)
+\end{align*}
+where $f(\bX_{j}=\be_{jr_{j}} | c_i)$ is the probability mass function
+for $\bX_{j}$, which can be estimated from $\bD_i$ as follows:
+\begin{align*}
+    \hf(\bv_{j} | c_i) = {n_i(\bv_{j}) \over n_i}
+\end{align*}
+where $n_i(\bv_{j})$ is the observed frequency of the value
+$\bv_{j}=\be_{j}r_{j}$ corresponding to the $r_{j}$th categorical value
+$a_{jr_{j}}$ for the attribute $X_{j}$ for class $c_i$. 
+
+\bigskip
+If the count is zero, we can use the pseudo-count
+method to obtain a prior probability. The adjusted estimates with
+pseudo-counts are given as
+\begin{align*}
+    \hf(\bv_{j} | c_i) = {n_i(\bv_{j})+1 \over n_i + m_{j}}
+\end{align*}
+where $m_{j} = |dom(X_{j})|$.
+\end{frame}
+
+
+
+\begin{frame}{Nonparametric Approach: $K$ Nearest Neighbors Classif\/{i}er}
+
+We consider a
+non-parametric approach for likelihood estimation 
+using the nearest neighbors density estimation.
+
+\medskip
+Let $\bD$ be a training dataset comprising $n$ points $\bx_i \in
+\setR^d$, and let $\bD_i$ denote the subset of points in $\bD$ that are
+labeled with class $c_i$, with $n_i = |\bD_i|$.  
+
+\medskip
+Given a test point $\bx
+\in \setR^d$, and $K$, the number of neighbors to consider, let $r$
+denote the distance from $\bx$ to its $K$th nearest neighbor in $\bD$.
+
+\medskip
+Consider the $d$-dimensional hyperball of radius $r$ around the test
+point $\bx$, def\/{i}ned~as
+\begin{align*}
+  B_d(\bx,r) = \bigl\{\bx_i \in \bD \mid
+  \;\dist(\bx,\bx_i) \leq r\bigr\}
+\end{align*}
+Here $\dist(\bx, \bx_i)$ is the distance between $\bx$ and $\bx_i$,
+which is usually assumed to be the Euclidean distance, i.e., $\dist(\bx,
+\bx_i) = \|\bx - \bx_i \|_2$.  We assume that $|B_d(\bx,r)| = K$.
+\end{frame}
+
+
+\begin{frame}{Nonparametric Approach: $K$ Nearest Neighbors Classif\/{i}er}
+Let $K_i$ denote the number of points among the $K$ nearest neighbors of
+$\bx$ that are labeled with class $c_i$, that is
+\begin{align*}
+  K_i = \bigl\{\bx_{j} \in B_d(\bx,r) \mid y_{j} = c_i\bigr\}
+\end{align*}
+
+The class conditional probability density at $\bx$ can be estimated as
+the fraction of points from class $c_i$ that lie within the hyperball
+divided by its volume, that is
+\begin{align*}
+  \hf(\bx|c_i) = \frac{K_i\text{/}n_i}{V}  = \frac{K_i}{n_i V}
+\end{align*}
+where $V = \vol(B_d(\bx,r))$ is the volume of the $d$-dimensional
+hyperball.
+
+The posterior probability $P(c_i|\bx)$
+can be estimated as
+\begin{align*}
+    P(c_i|\bx) &
+    = \frac{\hf(\bx|c_i) \hP(c_i)}{\sum_{j=1}^k \hf(\bx|c_{j}) \hP(c_{j})}
+\end{align*}
+However, because $\hP(c_i) = \tfrac{n_i}{n}$, we have
+\begin{align*}
+  \hf(\bx|c_i) \hP(c_i) = \frac{K_i}{n_i V} \cdot \frac{n_i}{n} =
+  \frac{K_i}{nV}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Nonparametric Approach: $K$ Nearest Neighbors Classif\/{i}er}
+The posterior probability is given as
+\begin{align*}
+  P(c_i|\bx) =
+  \frac{\frac{K_i}{n V}}{\sum_{j=1}^k \frac{K_{j}}{n V}}
+  = \frac{K_i}{K}
+\end{align*}
+F{i}nally, the predicted class for $\bx$ is
+\begin{align*}
+  \hy = \arg\max_{c_i} \lB\{ P(c_i | \bx) \rB\} =
+  \arg\max_{c_i} \lB\{ \frac{K_i}{K} \rB\} =
+  \arg\max_{c_i}  \lB\{ K_i \rB\}
+\end{align*}
+Because $K$ is f\/{i}xed, the KNN classif\/{i}er predicts the class of $\bx$ as
+the majority class among its $K$ nearest neighbors.
+\end{frame}
+
+
+\begin{frame}{Iris Data: $K$ Nearest Neighbors Classif\/{i}er }
+\begin{figure}[!b]
+    \centering
+  \scalebox{0.7}{
+    \psset{dotscale=1.5,fillcolor=lightgray,
+        arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+    \pspicture[](-2,-1)(2,10)
+    \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+    Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){5.4in}{3in}%
+    \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+        nEnd=50,plotNo=1,plotNoMax=2]{\dataSLW}
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+        nStart=51,plotNo=1,plotNoMax=2]{\dataSLW}
+    \psdot[dotstyle=Bsquare,dotscale=2,fillcolor=white](6.75,4.25)
+    \uput[45](6.75,4.25){$\bx=(6.75,4.25)^T$}
+    \psplotImp[linewidth=2pt,algebraic](4,2)(8.5,7){%
+    (x-6.75)^2+(y-4.25)^2-1.025 }
+    \pnode(6.75,4.25){center}
+    \pnode(6.2,3.4){fifth}
+    %\psline[](6.75,4.25)(6.2,3.4)
+    %\uput[0](6.5,3.8){$r$}
+    \ncline{center}{fifth}
+    \nbput{$r$}
+    \endpsgraph
+    \endpspicture
+    }
+\end{figure}
+\end{frame}
+%\caption{Iris Data: $K$ Nearest Neighbors Classif\/{i}er }
+%\label{fig:class:prob:KNN}
+%\end{figure}
+%
+%\begin{example}
+%  Consider the 2D Iris dataset shown in F{i}gure~\ref{fig:class:prob:KNN}.
+%  The two classes are: $c_1$ (circles) with $n_1=50$ points
+%  and $c_2$ (triangles) with $n_2 = 100$ points.
+%
+%  Let us classify the test point $\bx = (6.75, 4.25)^T$ using its
+%  $K=5$ nearest neighbors. The distance from $\bx$ to its 5th
+%  nearest neighbor, namely $(6.2,3.4)^T$, is given as
+%  $r = \sqrt{1.025} = 1.012$. The enclosing ball or circle of radius $r$
+%  is shown in the f\/{i}gure. It encompasses $K_1 = 1$ point from class
+%  $c_1$ and $K_2 = 4$ points from class $c_2$. Therefore, the predicted
+%  class for $\bx$ is $\hy = c_2$.
+%\end{example}
+%
+%%%%%%%%%%%%NEW
+%
+%\vspace*{-6pt}
+%\section[Exercises]{Further Reading}
+%\label{sec:class:probabilistic:ref}
+%\begin{refsection}
+%
+%The naive Bayes classif\/{i}er is surprisingly effective even though the
+%independence assumption is usually violated in real datasets.
+%Comparison of the naive Bayes classif\/{i}er against other classif\/{i}cation
+%approaches and reasons for why is works well have appeared in
+% \citet{langley1992analysis, domingos1997optimality,
+% zhang2005exploring, hand2001idiot} and \citet{rish2001empirical}.
+% For the long history of naive Bayes in
+% information retrieval see \citet{lewis1998naive}. The $K$ nearest neighbor classif\/{i}cation approach was f\/{i}rst proposed in F{i}x and Hodges, Jr. (1951).\vspace*{-6pt}
+%
+%\printbibliography[heading=emptyheading]
+%\end{refsection}
+%
+%
+%\section{Exercises}
+%\label{sec:class:prob:exercise}
+%
+%\begin{exercises}[Q1.]
+%\item \label{ex:class:prob:agecarQ}
+%Consider the dataset in Table~\ref{tab:class:prob:agecardata}.
+%Classify the new point: (Age=23, Car=truck)
+%via the full and naive Bayes approach. You may assume that the domain of
+%Car is given as $\{$sports, vintage, suv, truck$\}$.
+%
+%\begin{table}[!h]
+%\processtable{Data for Q\ref{ex:class:prob:agecarQ}
+%\label{tab:class:prob:agecardata}}
+%{\tabcolsep12pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|cc|c|}
+%    \hline
+%    $\bx_i$ & Age&Car&Class\\
+%    \hline
+%    $\bx_1$ & 25&sports&$\textit{L}$\\
+%    $\bx_2$ &20&vintage&$\textit{H}$\\
+%    $\bx_3$& 25&sports&$\textit{L}$\\
+%    $\bx_4$ & 45&suv&$\textit{H}$\\
+%    $\bx_5$ & 20&sports&$\textit{H}$\\
+%    $\bx_6$ & 25&suv&$\textit{H}$\\
+%    \hline
+%  \end{tabular}}{}
+%\end{table}
+%
+%
+%\comment{
+%{\bf Answer:}
+%  Since each attribute is independent of the other, we
+%consider them separately.
+%That is
+%$$P((23, truck)|H) = P(23|H) \times P(truck|H)$$
+%and likewise,
+%$$P((23, truck)|L) = P(23|L) \times P(truck|L)$$
+%
+%For {\tt Age}, we have $\cD_L = \{1,3\}$ and $\cD_H = \{2,4,5,6\}$. We
+%can estimate the mean and variance from these labeled subsets, as
+%shown in the table below
+%\begin{center}
+%  \begin{tabular}{l|l}
+%    H&L\\
+%    \hline
+%    $\mu_H = \frac{20+45+20+25}{4} = \frac{110}{4} = 27.5$ &
+%    $\mu_L = \frac{25+25}{2} = 25$\\
+%    $\sigma_H = \sqrt{\frac{425}{4}} = 10.31 $ & $\sigma_L =
+%    \sqrt{\frac{0}{2}}= 0$\\
+%  \end{tabular}
+%\end{center}
+%Using the univariate normal distribution, we obtain
+%$P(23|H) = N(23 | \mu_H=27.5, \sigma_H=10.31) = 0.035$, and
+%$P(23|L) = N(23 | \mu_L=25, \sigma_L=0) = 0$. Note that due to limited
+%data we obtain $\sigma_L=0$, which leads to a zero likelihood for 23
+%to come from class $L$.
+%%A zero probability is too strict, and in such
+%%cases it is better to assume that the standard deviation is some small
+%%value instead of zero. For example, if we assume that $\sigma_L =
+%%0.1$, then we obtain $P(23|L) = 5.52 \times 10^{-87}$, which is of
+%%course almost zero, but not quite!
+%
+%For {\tt Car}, which is categorical, we immediately run into a
+%problem, since the value {\tt truck} does not appear in the training
+%set. We could assume that $P(truck|H)$ and $P(truck|L)$ are both
+%zero. However, we desire to have some small probability of
+%observing each values in the domain of the attribute. One simple way
+%of obtaining non-zero probabilities is to do the {\em laplace
+%  correction}, i.e., to add a count of one to the
+%observed counts of each value for each class, as shown in the table
+%below.
+%\begin{center}
+%  \begin{tabular}{l|l}
+%    H&L\\
+%    \hline
+%    $P(sports|H) = \frac{1 (+1)}{4 (+4)} = 2/8$ &
+%    $P(sports|L) = \frac{2 (+1)}{2 (+4)} = 3/6$\\
+%    $P(vintage|H) = \frac{1 (+1)}{4 (+4)} = 2/8$ &
+%    $P(vintage|L) = \frac{0 (+1)}{2 (+4)}  = 1/6$\\
+%    $P(suv|H) = \frac{2 (+1)}{4 (+4)} = 3/8$ &
+%    $P(suv|L) =  \frac{0 (+1)}{2 (+4)}  = 1/6$\\
+%    $P(truck|H) = \frac{0 (+1)}{4 (+4)} = 1/8$ &
+%    $P(truck|L) =  \frac{0 (+1)}{2 (+4)} = 1/6$\\
+%  \end{tabular}
+%\end{center}
+%Note that all counts are adjusted by (+1) to obtain a non-zero
+%probability in every case. Also, assuming that the domain of {\tt Car}
+%consists of only the four values $\{sports, vintage, suv, truck\}$,
+%this means we also need to increment the denominator by $|domain({\tt
+%  Car})| = 4$. In other words, the probability of a given value is
+%computed as
+%\begin{align}
+%  P(v|c_i) = \frac{n_v + 1}{|\cD_i| + |domain(c_i)|}
+%\end{align}
+%where $n_v$ is the observed count of value $v$ among the points in $\cD_i$.
+%Note that instead of the laplace correction, if we have some
+%prior probability estimate for each value, we can use that too
+%\begin{align}
+%P(v|c_i) = \frac{n_v + P_v}{|\cD_i| + \sum_{v}{P_v}}
+%\end{align}
+%
+%Using the above probabilities, we f\/{i}nally obtain
+%$$P((23,truck) | H) = P(23|H) \times P(truck|H) = 0.035 \times 1/8 = 0.0044$$
+%$$P((23,truck) | L) = P(23|L) \times P(truck|L) = 0 \times 1/6 = 0$$
+%We next compute
+%\begin{align*}
+%P(23,truck) & = P((23,truck)|H)\times P(H)+P((23,truck)|L) \times
+%P(L)\\
+% & =  0.0044 \times \frac{4}{6}+0 \times \frac{2}{6}  = 0.003
+%\end{align*}
+%We then obtain the posterior probabilities as follows
+%$$P(H|(23,truck)) = \frac{P((23,truck)|H) \times P(H)}{P(23,truck)} =
+%\frac{0.004\times \frac{4}{6}}{0.003} = 1$$
+%and
+%$$P(L|(23,truck)) = \frac{P((23,truck)|L) \times P(L)}{P(23,truck)} =
+%\frac{0\times \frac{2}{6}}{0.003} = 0$$
+%Thus we classify $(23, truck)$ as high risk (H).
+%}
+%
+%\begin{table}[!t]
+%\processtable{Data for Q\ref{ex:class:prob:F04HW4_2}
+%\label{tab:class:prob:F04HW4_2}}
+%{\tabcolsep12pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|ccc|c|}
+%\hline
+%$\bx_i$ & $a_1$ & $a_2$ & $a_3$ & Class\\
+%\hline
+%$\bx_1$ & $\textit{T}$ & $\textit{T}$ & 5.0 & $\textit{Y}$\\
+%$\bx_2$ & $\textit{T}$ & $\textit{T}$ & 7.0 & $\textit{Y}$\\
+%$\bx_3$ & $\textit{T}$ & $\textit{F}$ & 8.0 & $\textit{N}$\\
+%$\bx_4$ & $\textit{F}$ & $\textit{F}$ & 3.0 & $\textit{Y}$\\
+%$\bx_5$ & $\textit{F}$ & $\textit{T}$ & 7.0 & $\textit{N}$\\
+%$\bx_6$ & $\textit{F}$ & $\textit{T}$ & 4.0 & $\textit{N}$\\
+%$\bx_7$ & $\textit{F}$ & $\textit{F}$ & 5.0 & $\textit{N}$\\
+%$\bx_8$ & $\textit{T}$ & $\textit{F}$ & 6.0 & $\textit{Y}$\\
+%$\bx_9$ & $\textit{F}$ & $\textit{T}$ & 1.0 & $\textit{N}$\\
+%\hline
+%\end{tabular}}{}
+%\end{table}
+%
+%\item \label{ex:class:prob:F04HW4_2}
+%  Given the dataset in Table~\ref{tab:class:prob:F04HW4_2},
+% use the naive Bayes classif\/{i}er to classify the new point $(T, F, 1.0)$.
+%
+%
+%\item Consider the class means and covariance matrices for
+%  classes $c_1$ and $c_2$:
+%  \begin{align*}
+%\bmu_1 & = (1,3) & \bmu_2 & = (5,5)\\
+%\cov_1 & = \left(
+%\begin{array}{cc}
+%5 & 3\\
+%3 & 2\\
+%\end{array}
+%\right) &
+%\cov_2 & = \left(
+%\begin{array}{cc}
+%2 & 0\\
+%0 & 1\\
+%\end{array}
+%\right)
+%  \end{align*}
+%Classify the point $(3,4)^T$ via the (full) Bayesian approach, assuming
+%normally distributed classes, and $P(c_1)=P(c_2)=0.5$. Show all steps.
+%Recall that the inverse of a $2 \times 2$ matrix
+%$ A = \left(\begin{array}{cc}
+%a & b\\
+%c & d\\
+%\end{array} \right)$
+%is given as
+%$A^{-1} = {1 \over \det(A)} \left(
+%\begin{array}{cc}
+%d & -b\\
+%-c & a\\
+%\end{array}
+%\right)$.
+%
+%\comment{
+%{\bf Answer:} F{i}rst, compute
+%$\cov_1^{-1} = \left(
+%\begin{array}{cc}
+%2 & -3\\
+%-3 & 5\\
+%\end{array}
+%\right)$
+%and $\cov_2^{-1} = \left(
+%\begin{array}{cc}
+%{1 \over 2} & 0\\
+%0 & 1\\
+%\end{array}
+%\right)$.
+%
+%Now $\bx - \bmu_1 = (3,4)-(1,3) = (2,1)$ and $\bx - \bmu_2 =
+%(3,4)-(5,5) = (-2,-1)$. Computing the mahalanobis distance we get for
+%$c_1$,
+%$(\bx-\bmu_i)^T\;\cov_i^{-1}\;(\bx-\bmu_i) =
+%(2 \; 1) \left(
+%\begin{array}{cc}
+%2 & -3\\
+%-3 & 5\\
+%\end{array}
+%\right)
+%\left(
+%\begin{array}{c}
+%2 \\ 1
+%\end{array}
+%\right) = 1 $
+%and for $c_2$ we get
+%$(-2 \; -1) \left(
+%\begin{array}{cc}
+%1/2 & 0\\
+%0 & 1\\
+%\end{array}
+%\right)
+%\left(
+%\begin{array}{c}
+%-2 \\ -1
+%\end{array}
+%\right) = 3$.
+%Also, ${1 \over \sqrt{det(\cov_1)}} = 1$, and ${1 \over \sqrt{det(\cov_2)}} = {1
+%  \over \sqrt{2}} = 0.71$
+%
+%Thus $P(c_1|\bx) = \frac{e^{-1/2}}{e^{-1/2} + 0.71 e^{-3/2}} =
+%{0.607 \over {0.607+0.223}} = {0.607 \over 0.83} = 0.73$, and
+%$P(c_2|\bx) = 0.27$. We thus classify $\bx$ as $c_1$.
+%}
+%
+%
+%
+%\end{exercises}
+%
+%\comment{
+%%F12exam2_3
+%
+%\item \label{ex:class:prob:F12exam2_3}
+%
+%Consider the class means and covariance matrices for
+%  class $c_1$ and $c_2$ given below:
+%  \begin{align*}
+%\bmu_1 & = (1,3) &
+%\cov_1 & = \left(
+%\begin{array}{cc}
+%5 & 3\\
+%3 & 2\\
+%\end{array}
+%\right) &
+%\bmu_2 & = (5,5) &
+%\cov_2 & = \left(
+%\begin{array}{cc}
+%2 & 0\\
+%0 & 1\\
+%\end{array}
+%\right)
+%  \end{align*}
+%Classify the point $(3,4)$ via the (full) Bayesian approach, assuming
+%normally distributed classes, and $P(c_1)=P(c_2)=0.5$. Show all steps
+%for full credit. Recall that the inverse of a $2 \times 2$ matrix
+%$ A = \left(
+%\begin{array}{cc}
+%a & b\\
+%c & d\\
+%\end{array}
+%\right)$
+%is given as
+%$A^{-1} =  {1 \over det(A)} \left(
+%\begin{array}{cc}
+%d & -b\\
+%-c & a\\
+%\end{array}
+%\right)$
+%and the bivariate normal distribution is given as:
+%$f(\bx\;|\;\bmu_i, \cov_i) =
+%\frac{1}{2\pi\;\sqrt{det(\cov_i)}}
+%  \;\;e^{-\frac{(\bx-\bmu_i)^T\;\cov_i^{-1}\;(\bx-\bmu_i)}{2}}
+%$
+%
+%\comment{
+%{\bf Answer:} F{i}rst, compute
+%$\cov_1^{-1} = \left(
+%\begin{array}{cc}
+%2 & -3\\
+%-3 & 5\\
+%\end{array}
+%\right)$
+%and $\cov_2^{-1} = \left(
+%\begin{array}{cc}
+%{1 \over 2} & 0\\
+%0 & 1\\
+%\end{array}
+%\right)$.
+%
+%Now $\bx - \bmu_1 = (3,4)-(1,3) = (2,1)$ and $\bx - \bmu_2 =
+%(3,4)-(5,5) = (-2,-1)$. Computing the mahalanobis distance we get for
+%$c_1$,
+%$(\bx-\bmu_i)^T\;\cov_i^{-1}\;(\bx-\bmu_i) =
+%(2 \; 1) \left(
+%\begin{array}{cc}
+%2 & -3\\
+%-3 & 5\\
+%\end{array}
+%\right)
+%\left(
+%\begin{array}{c}
+%2 \\ 1
+%\end{array}
+%\right) = 1 $
+%and for $c_2$ we get
+%$(-2 \; -1) \left(
+%\begin{array}{cc}
+%1/2 & 0\\
+%0 & 1\\
+%\end{array}
+%\right)
+%\left(
+%\begin{array}{c}
+%-2 \\ -1
+%\end{array}
+%\right) = 3$.
+%Also, ${1 \over \sqrt{det(\cov_1)}} = 1$, and ${1 \over \sqrt{det(\cov_2)}} = {1
+%  \over \sqrt{2}} = 0.71$
+%
+%Thus $P(\bx|c_1) = \frac{e^{-1/2}}{e^{-1/2} + 0.71 e^{-3/2}} =
+%{0.607 \over {0.607+0.223}} = {0.607 \over 0.83} = 0.73$, and
+%$P(\bx|c_2) = 0.27$. We thus classify $\bx$ as $c_1$.
+%}
+%}

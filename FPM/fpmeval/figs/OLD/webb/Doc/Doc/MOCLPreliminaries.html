@@ -1,0 +1,50 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<meta name="Author" content="Geoff Webb">
+<title>Preliminaries</title>
+</head>
+
+<body>
+
+<h1><font color="#000080">Preliminaries</font></h1>
+
+<p><b>Magnum Opus </b>analyses data to detect patterns (either <a href="MOassociation_rule.html">rules</a>
+or <a href="MOitemset.html">itemsets</a>)
+that capture potentially interesting regularities within those data.</p>
+
+<p>The data is imported from a text file in one of several supported formats (see <a
+href="MOCLDataTypes.html">transaction data and attribute-value data</a>).&nbsp;&nbsp; Users
+typically extract data from a database into a text file in a suitable format.&nbsp; The
+data import process supports considerable flexibility in the formats that may be employed.
+</p>
+
+<p>Once the data are imported into <b>Magnum Opus</b>, the system performs
+a search for patterns.&nbsp; The user can choose between five measures of the importance 
+for
+a rule and two measures of importance for an itemset (see <a
+href="MOsearch_mode.html">search mode</a>).&nbsp; The user also specifies the maximum
+number of patterns to be found, and can place further restrictions on patterns to be considered
+(see <a href="MOCLcommands.html">commands</a>). </p>
+
+<p>Within the restrictions specified by the user, <b>Magnum
+Opus</b> finds the patterns with the highest values on the specified measure of
+importance.&nbsp; <strong>Magnum Opus</strong> will only find fewer than the specified
+number of patterns if the search is terminated by the user or there are fewer than the
+specified number of patterns that satisfy the user specified constraints. </p>
+<p><a href="MOCLholdout.html">Holdout evaluation</a> enables potentially spurious 
+patterns to be detected and discarded.</p>
+
+<p>The patterns found are recorded&nbsp;to standard output and may optionally be exported to
+a comma separated value file suitable for input into a spreadsheet for further analysis.</p>
+
+<p>The <a target="_blank" href="../Tutorial.pdf">tutorial</a> provides an introduction to the system's use.</p>
+
+<p>&nbsp;</p>
+
+<p><b>© <font size="-1">G I WEBB &amp; ASSOCIATES 1999-2009</font></b></p>
+</body>
+</html>

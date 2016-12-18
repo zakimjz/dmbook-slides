@@ -1,0 +1,4 @@
+  awk '($1>2.99)' result.case > result.case.lift3
+  awk '($7>=15&&$1>2.5&&$0~"cl")' result.case > result.case.supp15.lift2.5.cl
+  a2ps -1 -l 95 -o tt.ps result.case.supp15.lift2.5.cl
+

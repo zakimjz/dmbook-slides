@@ -1,0 +1,1090 @@
+\lecture{numeric}{numeric}
+
+\date{Chapter 2: Numeric Attributes}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Univariate Analysis}
+Univariate analysis focuses on a single attribute at a time.
+The data matrix $\bD$ is an $n \times 1$ matrix,
+\begin{align*}
+    \bD = \matr{X\\
+        \hline x_1\\x_2\\\vdots\\ x_n}
+\end{align*}
+where $X$ is the numeric attribute of interest,
+with $x_i \in \setR$.
+
+\bigskip
+$X$ is assumed to be a random variable, and 
+the observed data a random
+sample drawn from $X$, i.e., $x_i$'s  are
+independent and identically distributed as $X$.
+
+\bigskip
+In the vector view, we treat the sample
+as an $n$-dimensional vector, and write $X \in \setR^n$.
+\end{frame}
+
+
+\begin{frame}{Empirical Probability Mass Function}
+The {\em empirical probability mass
+function (PMF)} of $X$
+is given as
+\begin{align*}
+    \hf(x) = P(X=x) = \frac{1}{n}\;\sum_{i=1}^n I(x_i=x)
+\end{align*}
+where the indicator variable $I$ takes on the value $1$ when its
+argument is true, and $0$ otherwise.
+The empirical PMF puts a probability mass of $\tfrac{1}{n}$
+at each point $x_i$.
+
+\bigskip
+The {\em empirical cumulative distribution
+function (CDF)}
+of $X$ is given as
+\begin{align*}
+    \hF(x) = \frac{1}{n}\;\sum_{i=1}^n I(x_i \le x)
+\end{align*}
+
+\bigskip
+The {\em inverse cumulative distribution function}
+or
+{\em quantile function}
+for $X$ is defined as follows:
+\begin{align*}
+    F^{-1}(q) = \min\{x\;|\; \hF(x) \ge q\} \qquad \text{for } q \in
+    [0,1]
+\end{align*}
+The inverse CDF gives the least value of $X$,
+for which $q$ fraction of the values are higher, and $1-q$
+fraction of the values are lower.
+\end{frame}
+
+
+\begin{frame}{Mean}
+The {\em mean} or {\em expected value}
+of a random variable
+$X$ is the arithmetic average of the values of $X$. It
+provides a one-number summary of the {\em location}
+or {\em central tendency} for the distribution of $X$.
+
+\bigskip
+If $X$ is discrete, 
+it is def\/{i}ned as
+\begin{align*}
+    \mu = E[X] = \sum_x xf(x)
+\end{align*}
+where $f(x)$ is the probability mass function of $X$.
+
+\bigskip
+If $X$ is continuous it is 
+def\/{i}ned as
+\begin{align*}
+    \mu = E[X] = \int_{-\infty}^{\infty} x f(x)\; dx
+\end{align*}
+where $f(x)$ is the probability density function of $X$.
+\end{frame}
+
+
+\begin{frame}{Sample Mean}
+The {\em sample mean}
+ is a statistic, that is, a function $\hmu: \{x_1, x_2, \ldots,
+ x_n\} \to \setR$, def\/{i}ned as the average value of $x_i$'s:
+\begin{align*}
+    \hmu = \frac{1}{n}\;\sum_{i=1}^n x_i
+\end{align*}
+It serves as an
+estimator for the unknown mean value $\mu$ of $X$.
+
+
+\bigskip
+An estimator $\htheta$ is called an {\em unbiased
+estimator} for
+parameter $\theta$ if $E[\htheta] = \theta$ for every possible
+value of $\theta$.
+The sample mean $\hmu$ is an unbiased estimator for the population
+mean $\mu$, as
+\begin{align*}
+    E[\hmu] = E\lB[ \frac{1}{n}\;\sum_{i=1}^n x_i \rB] = {1 \over n}
+    \sum_{i=1}^n E[x_i] = {1\over n}\sum_{i=1}^n \mu = \mu
+\end{align*}
+
+\bigskip
+We say that a statistic is {\em
+robust} if it is not affected by
+extreme values (such as outliers) in the data. The sample mean is
+not robust because a single large value
+can skew the average. 
+\end{frame}
+
+\readdata{\dataSL}{EDA/numeric/figs/iris-sl.dat}
+\begin{frame}{Sample Mean: Iris {\tt sepal length}}
+    \centering
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$X_1$,yAxisLabel=Frequency}
+    \psgraph[tickstyle=bottom,Ox=4,Dx=0.5,dx=0.5]{->}(4.0,0)(8.5,0.5){4in}{1in}%
+    \dataplot[plotstyle=dots,showpoints=true]{\dataSL}
+    \psdots[dotstyle=*,dotscale=2](5.843,0)
+    \pcline[arrowscale=1.5]{->}(5.843,-0.2)(5.843,-0.02)
+    \uput[d](5.843,-0.2){$\hmu=5.843$}
+    \endpsgraph
+\end{frame}
+
+
+\begin{frame}{Median}
+The {\em median}
+of a random variable is def\/{i}ned as the value $m$ such that
+\begin{align*}
+    P(X \le m) \ge \frac{1}{2} \mbox{  and  } P(X \ge m) \ge \frac{1}{2}
+\end{align*}
+The median $m$ is the ``middle-most'' value; half
+of the values of $X$ are less and half of the values of $X$
+are more than $m$. 
+
+\bigskip
+In terms of the (inverse) cumulative
+distribution function, the median is the
+value $m$ for which
+\begin{align*}
+    F(m) = 0.5 \text{  or  } m = F^{-1}(0.5)
+\end{align*}
+
+\bigskip
+The {\em sample median} is given as
+\begin{align*}
+    \hF(m) = 0.5 \text{ or } m = \hF^{-1}(0.5)
+\end{align*}
+Median is robust, as it is not affected very
+much by extreme values. 
+\end{frame}
+
+\begin{frame}{Mode}
+The {\em mode} of a
+random variable $X$ is the value at which the probability mass
+function or the probability density function attains its maximum
+value, depending on whether $X$ is discrete or continuous,
+respectively.
+
+\bigskip
+The {\em sample mode} is a
+value for
+which the empirical probability mass function
+attains its maximum, given as
+\begin{align*}
+    \mbox{mode}(X) = \arg \max_x\,\hf(x)
+\end{align*}
+\end{frame}
+
+
+\readdata{\dCDF}{EDA/numeric/figs/sl-CDF.dat}
+\readdata{\diCDF}{EDA/numeric/figs/sl-iCDF.dat}
+\begin{frame}{Empirical CDF: {\tt sepal length}}
+\centering
+    \psset{xAxisLabel=$x$,yAxisLabel=$\hF(x)$}
+    \psset{xAxisLabelPos={c,-0.2},yAxisLabelPos={-0.55,c}}
+    \psgraph[tickstyle=bottom,axesstyle=frame,%
+    Dy=0.25,dy=0.25,Ox=4,Dx=0.5,dx=0.5]{->}(4,0)(8,1){3.5in}{2in}%
+    \dataplot[linewidth=1.5pt]{\dCDF}
+    \endpsgraph
+\end{frame}
+
+
+\begin{frame}{Empirical Inverse CDF: {\tt sepal length}}
+    \centerline{
+    \psset{xAxisLabel=$q$,yAxisLabel=$\hF^{-1}(q)$}
+    \psset{xAxisLabelPos={c,-0.75},yAxisLabelPos={-0.125,c}}
+    \psgraph[tickstyle=bottom,axesstyle=frame,%
+    Dx=0.25,dx=0.25,Oy=4,Dy=0.5,dy=0.5]{->}(0,4)(1,8){3.5in}{2in}%
+    \dataplot[linewidth=1.5pt]{\diCDF}
+    \psline[linestyle=dotted](0.25,4)(0.25,5.1)
+    \psline[linestyle=dotted](0.25,5.1)(0,5.1)
+    \psline[linestyle=dotted](0.5,4)(0.5,5.8)
+    \psline[linestyle=dotted](0.5,5.8)(0,5.8)
+    \psline[linestyle=dotted](0.75,4)(0.75,6.4)
+    \psline[linestyle=dotted](0.75,6.4)(0,6.4)
+    \endpsgraph
+	}
+
+	~\\~\\~\\
+	The median is $5.8$, since
+	$$\hF(5.8)
+    = 0.5 \text{ or } 5.8 = \hF^{-1}(0.5)$$
+\end{frame}
+
+
+\begin{frame}{Range}
+The {\em value range} or simply {\em range}  
+of a random variable $X$ is the difference
+between the maximum and minimum values of $X$, given as
+\begin{align*}
+    r = \max\{X\} - \min\{X\}
+\end{align*}
+
+\smallskip
+The {\em sample range} is a
+statistic, given as
+\begin{align*}
+    \hat{r} = \max_{i=1}^n \{x_i\} - \min_{i=1}^n \{x_i\}
+\end{align*}
+Range is sensitive to extreme values,
+and thus is not robust.
+
+\bigskip
+A more robust measure of the dispersion of $X$ is the {\em
+interquartile range (IQR)},
+def\/{i}ned as
+\begin{align*}
+    \hbox{\textit{IQR}} = F^{-1}(0.75) - F^{-1}(0.25)
+\end{align*}
+
+\smallskip
+The {\em sample IQR} is given as
+\begin{align*}
+    \widehat{\hbox{\textit{IQR}}} &
+    = \hF^{-1}(0.75) - \hF^{-1}(0.25)
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}{Variance and Standard Deviation}
+The {\em variance}
+of a random variable $X$ provides a measure of how
+much the values of $X$ deviate from the mean or expected value of
+$X$
+\begin{align*}
+      \sigma^2 = var(X) = E\bigl[(X-\mu)^2\bigr] =
+    \begin{cases}
+     \displaystyle \sum_{x} (x - \mu)^2 \; f(x) & \text{if $X$
+     is discrete} \\[2em]
+    \displaystyle \int_{-\infty}^{\infty} (x - \mu)^2 \;
+    f(x)\; dx & \text{if $X$ is continuous}
+\end{cases}
+\end{align*}
+The {\em standard deviation} $\sigma$,
+is the positive square root of the variance, $\sigma^2$.
+
+\bigskip
+The {\em sample variance}  is
+def\/{i}ned as
+\begin{align*}
+    \hsigma^2 & = \frac{1}{n}\;\sum_{i=1}^n (x_i - \hmu)^2
+\end{align*}
+and the {\em sample standard deviation} is
+\begin{align*}
+    \hsigma = \sqrt{\frac{1}{n}\;\sum_{i=1}^n
+  (x_i - \hmu)^2}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Geometric Interpretation of Sample Variance}
+The sample values for $X$ comprise a vector in
+$n$-dimensional space, where $n$ is the sample size. 
+Let $Z$ denote the centered sample 
+$$Z = X- \bone \cdot \hmu = \matr{x_1 -\hmu\\x_2-\hmu\\ \vdots \\ x_n-\hmu}$$
+where 
+$\bone \in \setR^n$ is the vector of ones.
+
+Sample variance is 
+squared
+magnitude of the centered attribute vector, normalized by the sample
+size:
+\begin{align*}
+    \hsigma^2 = \frac{1}{n}\;\norm{Z}^2 =
+    \frac{1}{n}\;Z^T Z = \frac{1}{n}\;\sum_{i=1}^n
+    (x_i-\hmu)^2
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Variance of the Sample Mean and Bias}
+Sample mean $\hmu$ is itself a statistic. We can 
+compute its mean value and
+variance
+\begin{align*}
+  E[\hmu] & = \mu\\
+  var(\hmu) & = E[(\hmu -\mu)^2] =  {\sigma^2 \over n}
+\end{align*}
+The sample mean $\hmu$ varies or deviates from the
+ mean $\mu$ in proportion to the population
+variance $\sigma^2$. However, the deviation can be made smaller by
+considering larger sample size $n$.
+
+\bigskip
+The sample variance
+is a {\em biased estimator}
+for the true population variance, since
+\begin{align*}
+    E[\hsigma^2]    & = \lB({n-1\over n} \rB) \sigma^2
+\end{align*}
+But it is asymptotically unbiased, since
+$$E[\hsigma^2] \to \sigma^2 \qquad \text{as } n \to \infty$$
+
+\end{frame}
+
+
+\begin{frame}{Bivariate Analysis}
+In bivariate analysis\index{bivariate analysis!numeric}, we consider two attributes at the same
+time. 
+The data $\bD$ comprises an $n \times 2$ matrix:
+\begin{align*}
+    \bD = &
+    \matr{%
+        X_1 & X_2\\
+        \hline
+        x_{11} & x_{12}\\
+        x_{21} & x_{22}\\
+        \vdots & \vdots\\
+        x_{n1} & x_{n2}%
+        }
+\end{align*}
+
+Geometrically, $\bD$ comprises
+$n$ points or vectors in 2-dimensional space
+$$\bx_i = (x_{i1}, x_{i2})^T \in \setR^2$$ 
+$\bD$ can also be viewed as two points or vectors in an
+$n$-dimensional space:
+\begin{align*}
+X_1 & = (x_{11}, x_{21}, \ldots, x_{n1})^T\\
+X_2 & = (x_{12}, x_{22}, \ldots, x_{n2})^T
+\end{align*}
+
+\bigskip
+In the probabilistic view,
+$\bX = (X_1,X_2)^T$ is a bivariate
+vector random variable, and the points $\bx_i$ ($1
+\le i \le n$) are a random sample drawn from $\bX$,
+that is, $\bx_i$'s IID with $\bX$.
+\end{frame}
+
+
+\begin{frame}{Bivariate Mean and Variance}
+The bivariate mean is def\/{i}ned as the expected value of the vector
+random variable $\bX$:
+\begin{align*}
+    \bmu = E[\bX] = E\lB[ \matr{X_1\\X_2} \rB] =
+    \matr{E[X_1] \\[0.2em] E[X_2]} = \matr{\mu_{1}\\ \mu_{2}}
+\end{align*}
+%
+The sample mean vector is given as
+\begin{align*}
+    \hbmu =
+    \sum_\bx \bx \hf(\bx) =
+    \sum_\bx \bx \lB(
+    \frac{1}{n}\;\sum_{i=1}^n I(\bx_i=\bx)\rB)
+        = {1 \over n} \sum_{i=1}^n \bx_i
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Covariance}
+The {\em covariance}\index{covariance}\index{random
+variable!covariance} between two attributes $X_1$ and $X_2$ provides a
+measure of the association or linear dependence between them, and
+is def\/{i}ned as
+\begin{align*}
+    \sigma_{12} & = E[(X_1-\mu_{1})(X_2-\mu_{2})]\\
+     & = E[X_1X_2] - E[X_1] E[X_2]
+\end{align*}
+
+If $X_1$ and $X_2$ are independent, then
+$$E[X_1X_2] = E[X_1] \cdot E[X_2]$$
+which implies that $\sigma_{12} = 0$.
+
+\bigskip
+The {\em sample covariance} between $X_1$ and $X_2$ is given as
+\begin{align*}
+    \hsigma_{12} =
+    \frac{1}{n}\;\sum_{i=1}^n (x_{i1} - \hmu_{1})(x_{i2} - \hmu_{2})
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Correlation} 
+The {\em correlation}
+between variables $X_1$
+and $X_2$ is the {\em standardized covariance}, obtained by normalizing the
+covariance with the standard deviation of each
+variable, given as
+\begin{align*}
+  \rho_{12} =
+  \frac{\sigma_{12}}{\sigma_{1}\sigma_{2}} =
+  \frac{\sigma_{12}}{\sqrt{\sigma^2_{1}\sigma^2_{2}}}
+\end{align*}
+
+\bigskip
+The {\em sample correlation}
+for attributes $X_1$ and $X_2$ is given as
+\begin{align*}
+  \hrho_{12} =
+  \frac{\hsigma_{12}}{\hsigma_{1}\hsigma_{2}} =
+  \frac{\sum_{i=1}^n (x_{i1} - \hmu_{1})(x_{i2} - \hmu_{2})}
+  {\sqrt{\sum_{i=1}^n (x_{i1} - \hmu_{1})^2
+  \sum_{i=1}^n (x_{i2} - \hmu_{2})^2}}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Geometric Interpretation of Sample Covariance and
+Correlation} 
+Let $Z_1$ and $Z_2$ denote the centered
+attribute vectors in $\setR^n$:
+\begin{align*}
+  Z_1 & = X_1-\bone \cdot \hmu_{1} = \matr{
+  x_{11} - \hmu_{1}\\
+  x_{21} - \hmu_{1}\\
+      \vdots\\
+      x_{n1} - \hmu_{1}\\
+    } &
+  Z_2 & = X_2-\bone \cdot \hmu_{2} = \matr{
+  x_{12} - \hmu_{2}\\
+  x_{22} - \hmu_{2}\\
+      \vdots\\
+      x_{n2} - \hmu_{2}\\
+  }
+\end{align*}
+
+The sample covariance is given as
+\begin{align*}
+    \hsigma_{12} = {Z_1^TZ_2 \over n}
+\end{align*}
+and the sample correlation is
+\begin{align*}
+  \hrho_{12} = \frac{Z_1^T Z_2}{\sqrt{Z_1^T Z_1} \sqrt{Z_2^T Z_2}}
+  = \frac{Z_1^T Z_2}{\norm{Z_1} \; \norm{Z_2}}
+  = \lB(\frac{Z_1}{\norm{Z_1}}\rB)^T
+  \lB(\frac{Z_2}{\norm{Z_2}}\rB) = \cos \theta
+\end{align*}
+The correlation coeff\/{i}cient is simply the cosine  of the
+angle between the two centered
+attribute vectors.
+\end{frame}
+
+\begin{frame}{Geometric Interpretation of Covariance and Correlation}
+\begin{center}
+\begin{pspicture}(-1,-1)(4.5,4.5)
+    \psset{nameX=$\bx_n$,nameY=$\bx_2$,nameZ=$\bx_1$,
+        Alpha=70,Beta=15,arrowscale=1.5}
+    \pstThreeDCoor[linecolor=black,xMin=0,xMax=5,
+        yMin=0,yMax=4,zMin=0,zMax=4]
+    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(1,3,4)
+    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(3,0.5,3)
+    \pstThreeDDot[drawCoor=true,linestyle=dotted,linecolor=gray](1,3,4)
+    \pstThreeDDot[drawCoor=true,linestyle=dotted,linecolor=gray](3,0.5,3)
+\psPoint(0,0,0){O}
+\psPoint(1,3,4.4){B}
+\psPoint(1.5,0.5,3.4){A}
+\pstMarkAngle[MarkAngleRadius=0.6,LabelSep=0.85]{B}{O}{A}{$\theta$}
+    \pstThreeDPut[](1,3,4.4){$Z_2$}
+    \pstThreeDPut[](3,0.5,3.4){$Z_1$}
+\end{pspicture}
+\end{center}
+\end{frame}
+
+
+
+
+\begin{frame}{Covariance Matrix}
+The variance--covariance information for the two attributes $X_1$
+and $X_2$ can be summarized in the
+square $2 \times 2$ {\em covariance matrix}
+\begin{align*}
+    \cov & = E[(\bX-\bmu)(\bX-\bmu)^T] \notag\\
+  & = \matr{ \sigma^2_{1} & \sigma_{12}\\
+      \sigma_{21} & \sigma^2_{2}\\
+  }
+\end{align*}
+Because $\sigma_{12} = \sigma_{21}$, $\cov$ is {\em symmetric}.
+
+The {\em total variance}
+ is given as 
+ \begin{align*}
+    var(\bD) = tr(\cov) = \sigma_1^2 + \sigma_2^2
+\end{align*}
+We immediately have $tr(\cov) \ge 0$.
+
+The {\em generalized variance} is
+\begin{align*}
+    |\cov| = \det(\cov) = \sigma^2_{1}\sigma^2_2 - \sigma_{12}^2 =
+\sigma^2_{1}\sigma^2_2 - \rho^2_{12}\sigma^2_{1}\sigma^2_2
+= (1-\rho^2_{12}) \sigma^2_{1}\sigma^2_2
+\end{align*}
+Note that $|\rho_{12}| \le 1$ implies that $\det(\cov) \ge 0$.
+\end{frame}
+
+
+\readdata{\dataSLW}{EDA/numeric/figs/iris-slw.dat}
+\begin{frame}{Correlation: {\tt sepal length} and {\tt sepal width}}
+  \begin{columns}
+	\column{0.6\textwidth}
+        \centering
+        \scalebox{0.55}{
+        \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,
+                arrowscale=2,PointName=none}
+        \psset{xAxisLabel=$X_1$: sepal length,
+                yAxisLabel= $X_2$: sepal width,
+                xAxisLabelPos={c,-0.4in},
+                yAxisLabelPos={-0.5in,c}}
+        \psgraph[tickstyle=bottom,Dx=0.5,Dy=0.5,
+                Ox=4,Oy=2,subticks=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
+        \dataplot[plotstyle=dots,showpoints=true]{\dataSLW}
+        \psline[linestyle=dashed](4,3.15)(8.5,2.9)
+        \endpsgraph
+        }
+	\column{0.4\textwidth}
+	\small
+The sample mean is
+$$\hbmu = \matr{5.843\\3.054}$$
+
+The sample covariance matrix is
+$$\hcov = \amatr{r}{0.681 & -0.039\\ -0.039 & 0.187}$$
+
+The sample correlation is
+$$\hrho_{12} = {-0.039 \over \sqrt{0.681 \cdot 0.187}} = -0.109$$
+
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Multivariate Analysis}
+In multivariate analysis we consider all the
+$d$ numeric attributes $X_1, X_2,
+\ldots, X_d$.
+\begin{align*}
+    \bD = &
+    \matr{%
+        X_1 & X_2 & \cdots & X_d\\
+        \hline
+        x_{11} & x_{12} & \cdots & x_{1d}\\
+        x_{21} & x_{22} & \cdots & x_{2d}\\
+        \vdots & \vdots & \ddots & \vdots\\
+        x_{n1} & x_{n2} & \cdots & x_{nd}
+        }
+\end{align*}
+
+In the row view, the data is a set of
+$n$ points or vectors in the \hbox{$d$-dimensional} attribute space
+$${\bx_i} = (x_{i1}, x_{i2}, \ldots, x_{id})^T \in \setR^d$$
+
+In the column view, the data is a set of
+$d$ points or vectors in the $n$-dimensional space spanned by the
+data points
+$$X_{j} = (x_{1j}, x_{2j}, \ldots, x_{nj})^T \in \setR^n$$
+
+\end{frame}
+
+
+\begin{frame}{Mean and Covariance}
+In the probabilistic view, the $d$ attributes are modeled as a
+vector random variable, $\bX = (X_1, X_2,\ldots, X_d)^T$, and
+the points $\bx_i$ are considered to be a random sample drawn
+from $\bX$, i.e., IID with $\bX$.
+
+The {\em multivariate mean vector}
+is 
+\begin{align*}
+    \bmu & = E[\bX] =
+  \matr{\mu_{1} & \mu_{2} & \cdots & \mu_{d}}^T
+\end{align*}
+
+The {\em sample mean} is
+\begin{align*}
+    \hbmu = {1 \over n} \sum_{i=1}^n \bx_i
+\end{align*}
+
+
+The (sample) covariance matrix is a $d\times d$ (square) symmetric matrix
+\begin{align*}
+  \cov &  =
+  \matr{
+      \sigma^2_{1} & \sigma_{12} & \cdots & \sigma_{1d}\\[0.2em]
+      \sigma_{21} & \sigma^2_{2} & \cdots & \sigma_{2d}\\[0.2em]
+      \cdots & \cdots & \cdots & \cdots\\
+      \sigma_{d1} & \sigma_{d2} & \cdots & \sigma^2_{d}\\
+  }
+  &
+  \hcov & =
+  \matr{
+      \hsigma^2_{1} & \hsigma_{12} & \cdots & \hsigma_{1d}\\[0.2em]
+      \hsigma_{21} & \hsigma^2_{2} & \cdots & \hsigma_{2d}\\[0.2em]
+      \cdots & \cdots & \cdots & \cdots\\
+      \hsigma_{d1} & \hsigma_{d2} & \cdots & \hsigma^2_{d}\\
+  }
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Covariance Matrix is Positive Semidef\/{i}nite}
+$\cov$ is a {\em positive semidef\/{i}nite}
+matrix\index{covariance matrix!positive semi-definite}, that is,
+\begin{align*}
+    \ba^T \cov \ba \ge 0
+    \text{ for any $d$-dimensional vector } \ba
+\end{align*}
+To see this, observe that
+\begin{align*}
+  \ba^T \cov \ba & = \ba^T E\bigl[(\bX-\bmu) (\bX-\bmu)^T\bigr] \ba\\
+    & = E\bigl[\ba^T (\bX-\bmu) (\bX-\bmu)^T \ba\bigr]\\
+    & = E\bigl[Y^2\bigr]\\
+    & \ge 0
+  \end{align*}
+
+\medskip
+Because
+$\cov$ is also symmetric, this implies that
+all the eigenvalues of $\cov$ are real and non-negative,
+and they can be arranged from the
+largest to the smallest as follows: 
+$\lambda_1 \ge \lambda_2 \ge \cdots
+\ge \lambda_d \ge 0$.
+
+\medskip
+The total variance is given as: $var(\bD) = \prod_{i=1}^d \sigma^2_i$
+
+The generalized variance is
+$\det(\cov) = \prod_{i=1}^d \lambda_i \ge 0$
+
+\end{frame}
+
+
+\begin{frame}{Sample Covariance Matrix: Inner and Outer Product}
+  \small
+Let $\bZ$ represent the centered data matrix
+\begin{align*}
+    \bZ  = \bD - \bone \cdot \hbmu^T
+	    = \matr{\mbox{---} & \bz_1^T & \mbox{---} \\[0.2em]
+    \mbox{---} & \bz_2^T& \mbox{---} \\[0.2em]
+    & \vdots & \\
+    \mbox{---} & \bz_n^T & \mbox{---}}
+    = \matr{| & | &  & |\\
+    Z_1 & Z_2 & \cdots & Z_d\\
+    | & | &  & |}
+\end{align*}
+where $\bz_i = \bx_i - \hbmu$ is a centered point, and $Z_i = X_i -
+\bone \cdot \hmu_i$ is a centered attribute.
+
+\medskip
+Inner product and outer product 
+form for sample covariance matrix:
+\begin{align*}
+    \hcov & = {1\over n} \lB(\bZ^T \bZ\rB)
+   = {1 \over n} \matr{Z_1^T Z_1 & Z_1^T Z_2 & \cdots & Z_1^T
+    Z_d\\[0.5em]
+        Z_2^T Z_1 & Z_2^T Z_2 & \cdots & Z_2^T Z_d\\[0.5em]
+        \vdots & \vdots & \ddots & \vdots\\[0.5em]
+        Z_d^T Z_1 & Z_d^T Z_2 & \cdots & Z_d^T Z_d
+    }
+	& 
+    \hcov & = {1\over n} \sum_{i=1}^n \bz_i \cdot \bz_i^T
+\end{align*}
+i.e., $\hcov$ is given as
+the pairwise {\em inner or dot products} 
+of the centered attribute vectors,
+normalized by the sample size, or as a 
+sum of rank-one matrices obtained a 
+{\em outer product} of each centered point.
+\begin{align*}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Data Normalization}
+  If the attribute values are in vastly different scales, then it is
+necessary to
+normalize them.
+
+\medskip
+{\bf Range Normalization:}
+Let $X$ be an attribute and let $x_1, x_2, \dots, x_n$ be a random
+sample drawn from $X$.
+In {\em range normalization} each value is scaled by the sample range
+$\hat{r}$ of $X$:
+\begin{align*}
+    x_i' = \frac{x_i - \min_i\{x_i\}}{\hat{r}} =
+    \frac{x_i - \min_i \{x_i\}}{\max_i\{x_i\} - \min_i\{x_i\}}
+\end{align*}
+After transformation the new attribute takes on values in the
+range $[0,1]$.
+
+\medskip
+{\bf Standard Score Normalization: }
+Also called $z$-normalization;
+each value is replaced by its $z$-score:
+\begin{equation*}
+x_i' = \frac{x_i-\hmu}{\hsigma}
+\end{equation*}
+where $\hmu$ is the sample mean and $\hsigma^2$ is the sample
+variance of $X$.
+After transformation, the new attribute has mean $\hmu' = 0$,
+and standard deviation $\hsigma' = 1$.
+\end{frame}
+
+
+\begin{frame}{Normalization Example}
+  \begin{columns}
+	\column{0.4\textwidth}
+	\small
+\begin{center}
+\begin{tabular}{|l||c|c|}
+\hline
+$\bx_i$ & Age ($X_1$) & Income ($X_2$) \\
+\hline
+$\bx_1$ & 12 & 300 \\
+\hline
+$\bx_2$ & 14 & 500 \\
+\hline
+$\bx_3$ & 18 & 1000 \\
+\hline
+$\bx_4$ & 23 & 2000 \\
+\hline
+$\bx_5$ & 27 & 3500 \\
+\hline
+$\bx_6$ & 28 & 4000 \\
+\hline
+$\bx_7$ & 34 & 4300 \\
+\hline
+$\bx_8$ & 37 & 6000 \\
+\hline
+$\bx_9$ & 39 & 2500 \\
+\hline
+$\bx_{10}$ & 40 & 2700 \\
+\hline
+\end{tabular}
+\end{center}
+
+\column{0.55\textwidth}
+\small
+Since {\tt Income} is much larger, it dominates {\tt Age}.
+
+The sample range for {\tt Age} is $\hat{r} = 40-12 = 28$, whereas for
+{\tt Income} it is $2700-300=2400$. For range normalization,
+the point $\bx_2 = (14,500)$ is scaled to 
+$$\bx'_2 = \lB( {14-12 \over 28}, {500-300 \over 2400}\rB) = (0.071,0.035)$$
+
+For $z$-normalization, we have 
+\begin{center}
+{\renewcommand{\arraystretch}{1.1}\begin{tabular}{|r|c|c|}
+\hline
+ & Age & Income \\
+\hline
+$\hmu$ & 27.2 & 2680 \\
+$\hsigma$ & 9.77 & 1726.15 \\
+\hline
+\end{tabular}}
+\end{center}
+Thus, $\bx_2 = (14,500)$ is scaled to 
+$$\bx'_2 = \lB( {14-27.2 \over 9.77}, {500-2680 \over 1726.15}\rB) =
+(-1.35,-1.26)$$
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Univariate Normal Distribution}
+The normal distribution plays
+an important role as the parametric distribution of choice
+in clustering, density estimation, and classif\/{i}cation.
+
+\bigskip
+A random variable $X$ has a normal
+distribution, with
+the parameters mean $\mu$ and variance $\sigma^2$, if the
+probability density function of $X$ is given as follows:
+\begin{align*}
+    f(x|\mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}
+  \;\;\exp\lB\{-\frac{(x-\mu)^2}{2\sigma^2}\rB\}
+\end{align*}
+The term $(x-\mu)^2$ measures the distance of a value $x$ from
+the mean $\mu$ of the distribution, and thus the probability
+density decreases exponentially as a function of the distance
+from the mean. 
+
+\medskip
+The maximum value of the density occurs at the
+mean value $x =
+\mu$, given as $f(\mu) = \tfrac{1}{\sqrt{2\pi\sigma^2}}$, which
+is inversely proportional to the standard deviation $\sigma$ of the distribution.
+\end{frame}
+
+
+
+
+\def\mpsGauss#1#2#3#4{
+    \psset{plotpoints=200}
+    \psplot[]{#3}{#4}{%
+    Euler x #1 sub dup mul 2 div #2 dup mul div neg exp
+    1.0 #2 div TwoPi sqrt div mul%
+    }%
+}
+\begin{frame}{Normal Distribution: $\mu=0$, and Different Variances}
+    \centering
+    \psset{xAxisLabel=$x$,yAxisLabel=$f(x)$}
+    \psgraph[Dy=0.1,Ox=-6]{->}(-6,0)(6,0.85){4in}{2.5in}%
+    \psline[linestyle=dotted](0,0)(0,0.798)
+    \psset{linewidth=2pt}
+    \mpsGauss{0}{1}{-6}{6}
+    \psset{linewidth=1pt,linestyle=dashed}
+    \mpsGauss{0}{2}{-6}{6}
+    \psset{linewidth=1pt,linestyle=solid}
+    \mpsGauss{0}{0.5}{-6}{6}
+    \uput[ur](1.2,0.25){$\sigma=1$}
+    \uput[ur](3.5,0.07){$\sigma=2$}
+    \uput[ur](0.5,0.6){$\sigma=0.5$}
+    \endpsgraph
+\end{frame}
+
+
+\begin{frame}{Multivariate Normal Distribution}
+Given the $d$-dimensional vector random
+variable $\bX = (X_1, X_2, \ldots,
+X_d)^T$, it has
+a multivariate
+normal distribution, with the parameters
+mean $\bmu$ and covariance matrix $\cov$,
+if its joint multivariate probability density function
+is given as follows:
+\begin{align*}
+  f(\bx | \bmu, \cov) = \frac{1}{(\sqrt{2\pi})^d\;\sqrt{|\cov|}}
+  \;\;\exp\lB\{-\frac{(\bx-\bmu)^T\;\cov^{-1}\;(\bx-\bmu)}{2}\rB\}
+\end{align*}
+where $|\cov|$ is the determinant of the covariance matrix.
+
+\medskip
+The term
+\begin{align*}
+(\bx_i-\bmu)^T\;\cov^{-1}\;(\bx_i-\bmu)
+\end{align*}
+measures the distance, called the {\em Mahalanobis
+distance}
+of the point $\bx$
+from the mean $\bmu$ of the distribution, taking into account all of the
+variance--covariance information between the attributes.
+\end{frame}
+
+
+\def\mye{2.7183}
+        \def\mypi{3.1416}
+        \def\msigma#1{(sqrt(#1))}%
+        \def\rho#1#2#3{((#3)/(\msigma{#1}*\msigma{#2}))}%sigma1, sigma2, sigma12
+        \def\ccA#1#2#3{((1.0)/(2*\mypi*\msigma{#1}*\msigma{#2}*sqrt(1-\rho{#1}{#2
+}{#3}^2)))} %sigma1, sigma2,rho
+        \def\ccB#1#2#3{((-1.0)/(2*(1-(\rho{#1}{#2}{#3})^2)))}%rho
+        \def\fA#1#2#3#4#5{(\ccA{#3}{#4}{#5})*\mye^(
+        (\ccB{#3}{#4}{#5})*(((x-(#1))/(\msigma{#3}))^2 +
+        ((y-(#2))/(\msigma{#4}))^2 -
+        (2*(\rho{#3}{#4}{#5})*(x-(#1))*(y-(#2)))/(
+        (\msigma{#3})*(\msigma{#4})) ))}%
+\begin{frame}{Standard Bivariate Normal Density}
+\psset{unit=0.35in}
+\psset{viewpoint=50 30 40 rtp2xyz,Decran=60}
+\psset{lightsrc=viewpoint,opacity=0.8,incolor=white}
+\begin{pspicture}(-5,-14)(4,6)
+\scalebox{0.5}{%
+\psSurface[ngrid=0.25 0.25, linewidth=0.1pt,
+linecolor=lightgray,
+intersectionplan ={[0 0 1 -0.01] [0 0 1 -0.1] [0 0 1 -0.75] [0 0 1 -2]},
+intersectionlinewidth =1 1 1 1,
+intersectioncolor=(Black) (Black) (Black) (Black),
+intersectiontype=0,
+transform={1 1 15 scaleOpoint3d},algebraic](-4,-4)(4,4){
+  \fA{0}{0}{1}{1}{0}
+  }
+\axesIIID[axisnames={X_1,X_2,f(\bx)}](-4.1,-4.1,0)(5,5,4)
+\multido{\ix=-4+1}{9}{%
+        \psPoint(\ix\space,4,0){X1}
+        \psPoint(\ix\space,4.2,0){X2}
+        \psline(X1)(X2)\uput[dr](X1){$\ix$}}
+\multido{\iy=-4+1}{9}{%
+        \psPoint(4,\iy\space,0){Y1}
+        \psPoint(4.2,\iy\space,0){Y2}
+        \psline(Y1)(Y2)\uput[dl](Y1){$\iy$}}
+\multido{\nz=0+1,\nl=0+0.07}{4}{%
+        \psPoint(0,0,\nz\space){Z1}
+        \psPoint(0,-0.2,\nz\space){Z2}
+        \psline(Z1)(Z2)\uput[l](Z1){\nl}}
+  \psdot[dotsize=0.2](0,0,0)
+  }%
+
+\rput[tr](1.0,4.5){
+Parameters: $\bmu = \matr{0\\0}$, $\cov=\matr{1 & 0\\0& 1}$
+}
+
+\rput[tr](5.0,3.5){%
+\scalebox{0.4}{%
+\psset{unit=0.3in}
+\psset{viewpoint=50 30 90 rtp2xyz,Decran=60}
+\psset{lightsrc=viewpoint,opacity=0.9,incolor=white}
+%%\begin{pspicture}(-9,-5)(7,6)
+\psSolid[object=plan,definition=equation, args={[0 0 1 0]},
+  base = -4 4 -4 4]
+\psSurface[ngrid=0.2 0.2, linewidth=0.0pt,
+linecolor=lightgray,
+intersectionplan ={[0 0 1 -0.01] [0 0 1 -0.1] [0 0 1 -0.75] [0 0 1 -2]},
+intersectionlinewidth =1 1 1 1,
+intersectioncolor=(Black) (Black) (Black) (Black),
+intersectiontype=0,
+transform={1 1 15 scaleOpoint3d},algebraic](-4,-4)(4,4){
+  \fA{0}{0}{1}{1}{0}
+  }
+\axesIIID[arrows=-,axisnames={X_1,X_2}](-4,-4,0)(4,4,0)
+\multido{\ix=-4+1}{9}{%
+        \psPoint(\ix\space,-4,0){X1}
+        \psPoint(\ix\space,-4.1,0){X2}
+        \psline(X1)(X2)\uput[l](X1){$\ix$}
+        }
+\multido{\iy=-4+1}{9}{%
+        \psPoint(-4,\iy\space,0){Y1}
+        \psPoint(-4.1,\iy\space,0){Y2}
+        \psline(Y1)(Y2)\uput[u](Y1){$\iy$}
+        }
+  \psdot[dotsize=0.2](0,0,0)
+  \rput[tr]{-45}(1.25,0.5){$0.13$}
+  \rput[tr]{-45}(2,1.25){$0.05$}
+  \rput[tr]{-45}(3,2){$0.007$}
+  \rput[tr]{-45}(3.75,2.5){$0.0007$}
+}}
+\end{pspicture}
+\end{frame}
+
+
+
+\begin{frame}{Geometry of the Multivariate Normal}
+  \small
+  Compared to the standard multivariate normal,
+  the mean $\bmu$ translates the center of the distribution, whereas
+  the covariance matrix $\cov$ scales and rotates the distribution.
+The 
+eigen-decomposition of $\cov$ is given as
+\begin{align*}
+    \cov \bu_i = \lambda_i \bu_i
+\end{align*}
+where $\lambda_1 \ge \lambda_2 \ge \dots \lambda_d \ge 0$ are the
+eigenvalues and $\bu_i$ the corresponding eigenvectors.
+This can be expressed compactly
+as follows:
+\begin{align*}
+    \cov = \bU \bLambda \bU^T
+\end{align*}
+where 
+\begin{align*}
+    \bLambda & =
+\matr{
+      \lambda_1 & 0 & \cdots & 0 \\
+      0 & \lambda_2 & \cdots & 0\\
+      \vdots & \vdots & \ddots & \vdots\\
+      0 & 0 & \cdots & \lambda_d \\
+  } &
+\bU & = \matr{
+    | & | &  & | \\
+    \bu_1 & \bu_2 & \cdots & \bu_d\\
+    | & | &  & | \\
+}
+\end{align*}
+The eigenvectors represent the new basis vectors, with the covariance
+matrix given by $\bLambda$ (all covariances
+become zero).
+Since the trace of a square matrix is invariant to
+similarity transformation, such as a change of basis, we have
+\begin{align*}
+  var(\bD) = tr(\cov) =
+  \sum_{i=1}^d \sigma^2_i = \sum_{i=1}^d
+  \lambda_i = tr(\bLambda)
+\end{align*}
+
+\end{frame}
+
+
+\def\mye{2.7183}
+        \def\mypi{3.1416}
+        \def\msigma#1{(sqrt(#1))}%
+        \def\rho#1#2#3{((#3)/(\msigma{#1}*\msigma{#2}))}%sigma1, sigma2, sigma12
+        \def\ccA#1#2#3{((1.0)/(2*\mypi*\msigma{#1}*\msigma{#2}*sqrt(1-\rho{#1}{#2
+}{#3}^2)))} %sigma1, sigma2,rho
+        \def\ccB#1#2#3{((-1.0)/(2*(1-(\rho{#1}{#2}{#3})^2)))}%rho
+        \def\fA#1#2#3#4#5{(\ccA{#3}{#4}{#5})*\mye^(
+        (\ccB{#3}{#4}{#5})*(((x-(#1))/(\msigma{#3}))^2 +
+        ((y-(#2))/(\msigma{#4}))^2 -
+        (2*(\rho{#3}{#4}{#5})*(x-(#1))*(y-(#2)))/(
+        (\msigma{#3})*(\msigma{#4})) ))}%
+
+\begin{frame}{Bivariate Normal for Iris: {\tt sepal length} and {\tt sepal width}}
+  \small
+  \begin{columns}
+	\column{0.3\textwidth}
+    \begin{align*}
+	  \hbmu & = \matr{5.843\\3.054}\\ 
+	  \hcov & = \amatr{r}{0.681 & -0.039\\ -0.039 & 0.187}
+    \end{align*}
+
+We have
+	\begin{align*}
+    \hcov & = \bU\bLambda\bU^T\\
+\bU & = 
+	\matr{-0.997 & -0.078\\
+		  0.078 & -0.997}\\
+  \bLambda & = 
+	\matr{0.684 & 0\\0 & 0.184}
+\end{align*}
+Angle of rotation is:\\
+    $\cos \theta = \be_1^T\bu_1 = -0.997$\\
+or $\theta = 175.5^\circ$
+
+\column{0.65\textwidth}
+\centerline{
+\scalebox{0.9}{%
+\psset{unit=0.5in}
+%%\psset{viewpoint=5.843 3.054 50,Decran=50}
+\psset{viewpoint=50 -50 50,Decran=70}
+\psset{lightsrc=viewpoint}
+\begin{pspicture}(2,-3.25)(7,1.75)
+\psPoint(2,1,0){O2}
+\psPoint(2,5.5,0){X2}
+\psPoint(9.5,1,0){Y2}
+\psPoint(2,1,2){Z2}
+\psline[arrows=->,arrowscale=2](O2)(X2)
+\psline[arrows=->,arrowscale=2](O2)(Y2)
+\psline[arrows=->,arrowscale=2](O2)(Z2)
+\uput[dr](Y2){$X_1$}
+\uput[ur](X2){$X_2$}
+\uput[u](Z2){$f(\bx)$}
+\psset{dotsize=0.1,dotstyle=Bo,fillcolor=gray}
+\input{./EDA/numeric/figs/iris-slw3d}
+\psset{fillcolor=white, incolor=white, opacity=0.5}
+\psSurface[ngrid=.25 .25, linewidth=0.01pt,
+linecolor=lightgray,
+intersectionplan ={[0 0 1 -0.01] [0 0 1 -0.1] [0 0 1 -0.75] [0 0 1 -1.5]},
+intersectionlinewidth =1 1 1 1,
+intersectioncolor=(Black) (Black) (Black) (Black),
+intersectiontype=0,QZ=4,
+transform={1 1 5 scaleOpoint3d},algebraic](2,1)(9,5){
+  \fA{5.843}{3.054}{0.681}{0.187}{-0.039}
+  }
+%%\axesIIID[arrows=->,axisnames={X_1,X_2,f(\bx)}](2,1,0)(10,6,2)
+\multido{\ix=2+1}{8}{%
+        \psPoint(\ix\space,0.8,0){X1}
+        \psPoint(\ix\space,1.0,0){X2}
+        \psline(X1)(X2)\uput[dl](X1){\small \ix}}
+\multido{\iy=1+1}{5}{%
+        \psPoint(1.8,\iy\space,0){Y1}
+        \psPoint(2,\iy\space,0){Y2}
+        \psline(Y1)(Y2)\uput[ul](Y1){\small \iy}}
+  \psPoint(5.843,3.054,0){O1}
+  \psdot[dotsize=0.2,dotstyle=Bo,fillcolor=gray](O1)
+  \psPoint(2,3.355,0){u1a}
+  \psPoint(9,2.806,0){u1b}
+  \psset{arrowscale=1.5}
+  \psline[linewidth=1.5pt,arrows=->](u1a)(u1b)
+  \psPoint(5.68,1,0){u2a}
+  \psPoint(6,5,0){u2b}
+  \psline[linewidth=1.5pt,arrows=->](u2a)(u2b)
+  \uput[dr](u1b){$\bu_1$}
+  \uput[ur](u2b){$\bu_2$}
+\end{pspicture}
+}}
+\end{columns}
+\end{frame}
