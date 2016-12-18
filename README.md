@@ -13,13 +13,11 @@ will fail for chapters 15, 16, and 17.
   main_memory=12000000  
   extra_mem_bot=6000000  
   font_mem_size=3000000  
-
 The specific set of instructions to increase tex memory depend on your tex installation. 
  - For MikTex, you can do the following:  
   initexmf --edit-config-file latex  
   type in the above parameter values  
   initexmf --dump=latex  
-
  - For texlive, you can try the following:  
   locate and edit your texmf.cnf file to include the above parameters  
   run: sudo fmtutil-sys --all  
