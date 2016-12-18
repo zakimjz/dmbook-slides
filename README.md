@@ -13,7 +13,7 @@ will fail for chapters 15, 16, and 17.
   main_memory=12000000  
   extra_mem_bot=6000000  
   font_mem_size=3000000  
-The specific set of instructions to increase tex memory depend on your tex installation. 
+  The specific set of instructions to increase tex memory depend on your tex installation. 
  - For MikTex, you can do the following:  
   initexmf --edit-config-file latex  
   type in the above parameter values  
@@ -23,7 +23,7 @@ The specific set of instructions to increase tex memory depend on your tex insta
   run: sudo fmtutil-sys --all  
 
 4. Finally, you will have to install the fonts in texmk-local.tar.gz to get the fonts right. This also depends on your tex installation.  
-For MikTex, you can try the following steps:  
+  For MikTex, you can try the following steps:
   - Extract texmf-local.tar.gz and add it to the "Roots" in "MikTeX Settings (Admin)". After that "Refresh FNDB" and "Update Formats".  
   - Next, via command line  
    execute: initexmf --admin --edit-config-file=updmap.cfg and then add the following lines:  
@@ -32,7 +32,8 @@ For MikTex, you can try the following steps:
     Map Optimademi.map  
     Map ptt.map  
   - execute initexmf -u, followed by initexmf --mkmaps  
-For texlive, expand/extract the texmf-local.tar.gz file into your texmf-local directory. After that you should run the following commands:  
+
+  For texlive, expand/extract the texmf-local.tar.gz file into your texmf-local directory. After that you should run the following commands:  
   sudo texhash  
   sudo updmap-sys --enable Map LaTeX_fonts.map  
   sudo updmap-sys --enable Map pop.map  
