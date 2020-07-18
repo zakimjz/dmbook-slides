@@ -198,7 +198,7 @@ points are members of the same cluster.
 Given a set of clusters $\cC = \{C_{1}, C_{2},..,C_{m}\}$,
 we f\/{i}nd the \emph{closest} pair of
 clusters $C_{i}$ and $C_{j}$ and merge them into a new cluster
-$C_{ij}=C_{i} \cup C_{}$. 
+$C_{ij}=C_{i} \cup C_{j}$. 
 
 \medskip
 Next, we update the set
@@ -217,7 +217,7 @@ remaining.
 
 \newcommand{\agglomerative}{\textsc{AgglomerativeClustering}}
 \begin{frame}[fragile]{Agglomerative Hierarchical Clustering Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\agglomerative ($\bD, k$)}
 \Algorithm{}
 $\cC \assign \{ C_i = \{\bx_i\} \mid \bx_i \in \bD \}$ \tcp{Each point in
@@ -231,27 +231,31 @@ ${\bm \Delta} \assign \{\dist(\bx_i, \bx_{j})\!: \; \bx_i, \bx_{j} \in
   clustering}
   Update distance matrix $\bm \Delta$ to reflect new clustering\;
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
-\begin{frame}{Distance between Clusters: Single, Complete and Average}
+\begin{frame}{Distance between Clusters}
+\framesubtitle{Single, Complete and Average}
 
-The distance between two points is 
-typically computed using the Euclidean distance or $L_2\text{-}norm$
+A typical distance between two points is 
+%typically computed using 
+the Euclidean distance or $L_2\text{-}norm$
 \begin{align*}
   \dist(\bx, \by) = \norm{\bx - \by}_2 = \Bigl(\sum_{i=1}^d (x_i -
 y_i)^2\Bigr)^{1/2}
 \end{align*}
-The between-cluster distances are obtained as follows.
+%The between-cluster distances are obtained as follows.
 
 \medskip
 {\bf Single Link:}
 The minimum distance between a point in
 $C_i$ and a point in $C_{j}$
 \begin{align*}
+\tcbhighmath{
   \dist(C_{i},C_{j}) = \min \{\dist(\bx,\by) \mid \bx \in C_{i},
   \by \in C_{j}\}
+}
 \end{align*}
 
 \medskip
@@ -259,17 +263,21 @@ $C_i$ and a point in $C_{j}$
 The maximum distance between points
 in the two clusters:
 \begin{align*}
+\tcbhighmath{
   \dist(C_{i},C_{j}) = \max \{\dist(\bx,\by) \mid \bx \in C_{i},
   \by \in C_{j} \}
+}
 \end{align*}
 
 {\bf Group Average:}
 The average pairwise distance between points in
 $C_i$ and $C_{j}$:
 \begin{align*}
+\tcbhighmath{
   \dist(C_{i},C_{j}) = \frac{\sum_{\bx \in C_{i}} \sum_{\by \in
   C_{j}}
   \dist(\bx,\by)}{n_i \cdot n_{j}}
+}
 \end{align*}
 \end{frame}
 
@@ -281,7 +289,9 @@ The distance between two clusters
 is def\/{i}ned as the distance between the means or
 centroids of the two clusters:
 \begin{align*}
+\tcbhighmath{
 \dist(C_{i},C_{j}) = \dist(\bmu_i,\bmu_{j})
+}
 \end{align*}
 
 \medskip
@@ -295,11 +305,13 @@ clusters are merged, where the SSE for a given cluster $C_i$ is given~as
 \end{align*}
 where $SSE_i = \sum_{\bx \in C_i} \norm{\bx - \bmu_i}^2$. After
 simplification, we get:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \dist(C_{i},C_{j}) 
     & = \lB(n_i n_{j} \over n_i + n_{j}\rB)
     \norm{\bmu_i-\bmu_{j}}^2
-\end{align*}
+\end{split}
+\end{empheq}
 Ward's measure is therefore a weighted version of
 the mean distance measure.
 \end{frame}

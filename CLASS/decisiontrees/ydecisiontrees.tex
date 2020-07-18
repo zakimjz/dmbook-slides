@@ -196,9 +196,11 @@ class as the label of the leaf.
 
 A hyperplane $h(\bx)$ is def\/{i}ned as the set of all points $\bx$ that
 satisfy the following equation
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     h(\bx)\!: & \;\bw^T \bx + b = 0
-\end{align*}
+\end{split}
+\end{empheq}
 where $\bw \in \setR^d$ is a {\em weight vector} that is normal to
 the hyperplane, and $b$ is the offset of the hyperplane from the
 origin. 
@@ -261,7 +263,9 @@ the form $X_{j} \le v$ induces the data partition
 The purity of a region $\cR_{j}$ is the
 fraction of points with the majority label in $\bD_{j}$, that is,
 \begin{align*}
+\tcbhighmath{
   \mathit{purity}(\bD_{j}) = \max_i \lB\{ {n_{ji} \over n_{j}} \rB \}
+}
 \end{align*}
 where $n_{j}=\card{\bD_{j}}$ is the total number of data points in the
 region $\cR_{j}$, and $n_{ji}$ is the number of points in $\bD_{j}$
@@ -410,7 +414,7 @@ is at least $\pi$.
 
 \begin{frame}[fragile]{Decision Tree Algorithm}
 \footnotesize{
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
     \SetKwInOut{Algorithm}{{\textsc{DecisionTree}} ($\bD, \eta, \pi$)}
     \Algorithm{}
     $n \assign \card{\bD}$ \tcp{partition size}
@@ -452,7 +456,7 @@ is at least $\pi$.
     create internal node $\mathit{split\text{ }point}^*$, with
     two child nodes, $\bD_Y$ and $\bD_N$\;
     \textsc{DecisionTree}($\bD_Y$); \textsc{DecisionTree}($\bD_N$)\;
-\end{algorithm}
+\end{tightalgo}
 }
 \end{frame}
 
@@ -476,7 +480,9 @@ as such.
 The entropy of a set of labeled points $\bD$ is def\/{i}ned as
 follows:
 \begin{align*}
+\tcbhighmath{
   H(\bD) = -\sum_{i=1}^k \;P(c_i|\bD) \;\log_2 P(c_i|\bD)
+}
 \end{align*}
 where $P(c_i|\bD)$ is the probability of class $c_i$ in $\bD$, and
 $k$ is the number of classes. 
@@ -496,8 +502,10 @@ highest value, $H(\bD) = \log_2 k$.
 Def\/{i}ne the {\em split entropy} as the
 weighted entropy of each of the resulting partitions
 \begin{align*}
+\tcbhighmath{
   H(\bD_Y,\bD_N) =
   \frac{n_Y}{n}H(\bD_Y)+\frac{n_N}{n}H(\bD_N)
+}
 \end{align*}
 where $n = |\bD|$ is the number of points in $\bD$, and $n_Y = |\bD_Y|$
 and $n_N = |\bD_N|$ are the number of points in $\bD_Y$ and
@@ -507,7 +515,9 @@ $\bD_N$.
 Def\/{i}ne the {\em information gain}
 for a split point as
 \begin{align*}
+\tcbhighmath{
   \mathit{Gain}(\bD,\bD_Y,\bD_N) = H(\bD) - H(\bD_Y,\bD_N)
+}
 \end{align*}
 The higher the information gain, the more the reduction in
 entropy, and the better the split point.  
@@ -518,18 +528,18 @@ and choose the one that gives the highest information gain.
 \end{frame}
 
 
-\begin{frame}{Split Point Evaluation Measures: Gini Index and CART
-  Measure}
+\begin{frame}{Split Point Evaluation Measures}
+\framesubtitle{Gini Index and CART Measure}
 
 {\bf Gini Index:}
 The Gini index is def\/{i}ned as follows:
 \begin{align*}
+\tcbhighmath{
   G(\bD) = 1 - \sum_{i=1}^{k}{P(c_i|\bD)^2}
+}
 \end{align*}
 If the partition is pure, then Gini index is $0$. 
-
-\medskip
-The weighted Gini index of a split point is as follows:
+The weighted Gini index is:
 \begin{align*}
   G(\bD_Y,\bD_N) = \frac{n_Y}{n}G(\bD_Y)+\frac{n_N}{n}G(\bD_N)
 \end{align*}
@@ -540,12 +550,14 @@ value, the better the split point.
 {\bf CART: }
 The CART measure is
 \begin{align*}
+\tcbhighmath{
   \mathit{CART}(\bD_Y,\bD_N) =
   2 \frac{n_Y}{n} \frac{n_N}{n}
   \sum_{i=1}^{k}{\Bigl|P(c_i|\bD_Y)-P(c_i|\bD_N)\Bigr|}
+}
 \end{align*}
-This measure thus prefers a split point that maximizes the
-difference between the class probability mass function for the two partitions; the higher the CART measure, the better the
+CART maximizes the
+difference between the class PMF for the two partitions; the higher the CART measure, the better the
 split point.
 \end{frame}
 
@@ -618,13 +630,15 @@ We can estimate  $\hP(X \le v|c_i)$ and $\hP(X > v | c_i)$ as follows:
 
 \medskip
 Finally, we have
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   \hP(c_i | \bD_Y) & = \hP(c_i | X \le v) = {N_{vi} \over \sum_{j=1}^k
   N_{vj}}\\
     \hP(c_i | \bD_N)  & =
     \hP(c_i | X > v) = 
     {n_i - N_{vi} \over \sum_{j=1}^k (n_{j} - N_{vj})}
-\end{align*}
+\end{split}
+\end{empheq}
 
 The total cost of evaluating a
 numeric attribute is $O(n \log n + nk)$, where $k$ is the number of
@@ -634,13 +648,13 @@ classes, and $n$ is the number of points.
 
 \begin{frame}[fragile]{Algorithm \textsc{Evaluate-Numeric-Attribute}}
 \footnotesize{
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
     \SetKwInOut{Algorithm}{{\textsc{Evaluate-Numeric-Attribute}} ($\bD, X$)}
     \Algorithm{}
     sort $\bD$ on attribute $X$, so that $x_{j} \le x_{j+1},
     \forall j=1,\dots,n-1$ \nllabel{alg:class:dt:ENA:sort}\;
     $\cM \assign \emptyset$ \tcp{set of midpoints}
-    \lFor{$i=1,\dots,k$}{$n_i \assign 0$}
+    \lFor{$i=1,\dots,k$}{$n_i \assign 0$} 
     \For{$j=1,\dots,n-1$}{ \nllabel{alg:class:dt:ENA:For1}
         \lIf{$y_{j} = c_i$}{$n_i \assign n_i + 1$} \tcp{running
         count for class $c_i$}
@@ -669,7 +683,7 @@ classes, and $n$ is the number of points.
         }
     }
     \Return{$(v^*, \mathit{score}^*)$}
-\end{algorithm}
+\end{tightalgo}
 }
 \end{frame}
 
@@ -775,19 +789,16 @@ The class conditional empirical PMF for $X$ is then given as
 
 \medskip
 We then have
-\begin{align*}
-    \hP(c_i|\bD_Y) &
-    = \frac{\sum_{v \in V} n_{vi}}
-    {\sum_{j=1}^k \sum_{v \in V} n_{vj}} &
-    \hP(c_i|\bD_N) &
-    = \frac{\sum_{v \not\in V} n_{vi}}
-    {\sum_{j=1}^k \sum_{v \not\in V} n_{vj}}
-\end{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
+\hP(c_i | \bD_Y) = \frac{\sum_{v \in V} n_{vi}} {\sum_{j=1}^k \sum_{v \in V} n_{vj}} \hspace*{1cm}  \hP(c_i | \bD_N)  = \frac{\sum_{v \not\in V} n_{vi}} {\sum_{j=1}^k \sum_{v \not\in V} n_{vj}} \\
+\end{split}
+\end{empheq}
 \end{frame}
 
 
 \begin{frame}[fragile]{Algorithm \textsc{Evaluate-Categorical-Attribute}}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \small
 %\begin{tightalgo}[!t]{\textwidth-18pt}
     \SetKwInOut{Algorithm}{{\textsc{Evaluate-Categorical-Attribute}}
@@ -799,7 +810,7 @@ We then have
     }
     \For{$j=1,\dots,n$}{\label{alg:class:dt:ECA:For1}
         \lIf{$x_{j} = v \text{ and } y_{j}=c_i$}{
-            $n_{vi} \assign n_{vi} + 1$ \tcp*[h]{frequency statistics}
+        $n_{vi} \assign n_{vi} + 1$ \tcp{frequency statistics}
         }
     }
     \tcp{evaluate split points of the form $X \in V$}
@@ -819,7 +830,7 @@ We then have
         }
     }
     \Return{$(V^*, \mathit{score}^*)$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 

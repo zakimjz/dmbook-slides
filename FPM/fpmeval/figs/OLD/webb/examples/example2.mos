@@ -1,7 +1,0 @@
-! Analyse tutorial.itl finding rules with highest strength with tomatoes 
-! on the RHS within the constraint that support be at least 0.01.
-! Note, you may need to specify the full path name for tutorial.itl.
-item-list-file=tutorial.itl
-search-mode=strength
-min-support=0.01
-rhs-avail=tomatoes

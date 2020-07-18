@@ -43,22 +43,24 @@ i.e., $dom(X)=\{0,1\}$.
 	\column{0.5\textwidth}
 The probability mass function (PMF) of $X$ is given as
 \begin{align*}
-    P(X=x) = f(x) =
-    \begin{cases}
-        p & \text{if } x=1\\
-        1-p & \text{if } x=0
-    \end{cases}
+\tcbhighmath{
+    P(X=x) = f(x) = p^x (1-p)^{1-x}
+}
 \end{align*}
 
 \smallskip
 The expected value of $X$ is
 given as 
 \begin{align*}
+\tcbhighmath{
     \mu = E[X] = 1\cdot p + 0 \cdot (1-p) = p
+}
 \end{align*}
 and the variance of $X$ is given as
 \begin{align*}
+\tcbhighmath{
     \sigma^2 = var(X) = p(1-p)
+}
 \end{align*}
   
 \column{0.5\textwidth}
@@ -85,28 +87,34 @@ The sample variance is given as
 
 \begin{frame}{Binomial Distribution: Number of Occurrences}
 Given the Bernoulli variable $X$,
-let $\{x_1, x_2, \dots, x_n\}$ denote a random sample of size
-$n$ drawn from $X$.
+let $\{x_1, x_2, \dots, x_n\}$ be a random sample of size
+$n$.
 Let $N$ be the random variable
 denoting the number of occurrences of the symbol
-$a_1$ (value $X=1$) in the sample. $N$ has a binomial
+$a_1$ (value $X=1$). $N$ has a binomial
 distribution, given as
 \begin{align*}
+\tcbhighmath{
     f(N = n_1|\;n, p) = {n \choose n_1} p^{n_1} (1-p)^{n-n_1}
+}
 \end{align*}
 $N$ is the sum of the $n$ independent Bernoulli random variables
 $x_i$ IID with $X$, that is, $N = \sum_{i=1}^n x_i$.
 %By linearity of expectation,
-The mean or expected number of occurrences of symbol $a_1$ is 
+The mean or expected number of occurrences of $a_1$ is 
 \begin{align*}
+\tcbhighmath{
     \mu_N = E[N] = E\lB[\sum_{i=1}^n x_i\rB] = \sum_{i=1}^n E[x_i] =
     \sum_{i=1}^n p = np
+}
 \end{align*}
 %Because $x_i$ are all independent,
 The variance of $N$ is 
 \begin{align*}
+\tcbhighmath{
     \sigma^2_N = var(N) = \sum_{i=1}^n var(x_i) = \sum_{i=1}^n
     p(1-p) = np(1-p)
+}
 \end{align*}
 \end{frame}
 
@@ -134,7 +142,9 @@ values $\{\be_1, \be_2, \dots, \be_m\}$.
 \medskip
 The PMF of $\bX$ is
 \begin{align*}
+\tcbhighmath{
     P(\bX=\be_i) = f(\be_i) = p_i = \prod_{j=1}^m p_{j}^{e_{ij}}
+}
 \end{align*}
 with $\sum_{i=1}^m p_i = 1$.
 \end{frame}
@@ -247,13 +257,17 @@ Bernoulli variable corresponding to symbol $a_i$.
 The variance for 
 each Bernoulli variable $A_i$ is
 \begin{align*}
+\tcbhighmath{
     \sigma_i^2 = var(A_i) = p_i(1-p_i)
+}
 \end{align*}
 
 The covariance between $A_i$ and $A_{j}$ is
 \begin{align*}
+\tcbhighmath{
     \sigma_{ij} = E[A_i A_{j}] - E[A_i]\cdot E[A_{j}] = 0 - p_i p_{j}
     = -p_i p_{j}
+}
 \end{align*}
 Negative relationship since
 $A_i$ and $A_{j}$ cannot both be $1$ at the same time.
@@ -362,8 +376,10 @@ let $\bN = (N_1, N_2, \dots, N_m)^T$.
 $\bN$ has a
 multinomial distribution, given as
 \begin{align*}
+\tcbhighmath{
     f\bigl(\bN = (n_1,n_2,\dots,n_m)\;\; |\; \bp\bigr)  =
     {n \choose n_1 n_2 \dots n_m} \prod_{i=1}^m p_i^{n_i}
+}
 \end{align*}
 
 The mean and covariance matrix of $\bN$ are:
@@ -733,7 +749,9 @@ and conclude that $X_1$ and $X_2$ are dependent.
   Given $\bX = (X_1, X_2, \cdots, X_d)^T$.
 The chi-squared statistic is given as
 \begin{align*}
+\tcbhighmath{
   \chi^2 = \sum_{\bi} \frac{(n_\bi - e_\bi)^2}{e_\bi} =
+}
   \sum_{i_1=1}^{m_1} \sum_{i_2=1}^{m_2} \cdots \sum_{i_d=1}^{m_d}
   {(n_{i_1,i_2,\ldots, i_d} - e_{i_1,i_2,\ldots,i_d} )^2 \over
   e_{i_1,i_2,\ldots,i_d}}

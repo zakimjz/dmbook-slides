@@ -1,6 +1,0 @@
-! Find itemsets from tutorial.itl
-! Use the concise=2 output format.
-! Note, you may need to specify the full path name for tutorial.itl.
-item-list-file=tutorial.itl
-find-itemsets
-concise=2

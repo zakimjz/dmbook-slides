@@ -52,7 +52,9 @@ The error rate is the fraction
 of incorrect predictions for the classif\/{i}er over the testing set,
 def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   \textit{Error\ Rate} = {1 \over n} \sum_{i=1}^n I(y_i \ne \hy_i)
+}
 \end{align*}
 where $I$ is an indicator function.
 Error rate is an estimate of the probability of misclassif\/{i}cation.
@@ -60,9 +62,11 @@ The lower the error rate the better the classif\/{i}er.
 
 \medskip{\bf Accuracy:} 
 The accuracy of a classif\/{i}er is
-the fraction of correct predictions over the testing set:
+the fraction of correct predictions:
 \begin{align*}
+\tcbhighmath{
   \textit{Accuracy} ={1\over n} \sum_{i=1}^n I(y_i = \hy_i)  = 1 - \textit{Error\ Rate}
+}
 \end{align*}
 Accuracy gives an estimate of the probability of a correct
 prediction; thus, the higher the accuracy, the better the
@@ -179,21 +183,23 @@ labels disagree.
 
 
 \begin{frame}{Accuracy/Precision and Coverage/Recall}
+\small
 The class-specif\/{i}c {\em accuracy} or {\em precision} of the
 classif\/{i}er $M$ for class $c_i$ is given as the fraction of correct
 predictions over all points predicted to be in class $c_i$
 \begin{align*}
+\tcbhighmath{
   \textit{acc}_i = \textit{prec}_i = \frac{n_{ii}}{m_{i}}
+}
 \end{align*}
 where $m_i$ is the number of examples predicted as $c_i$ by classif\/{i}er $M$.
 The higher the accuracy on class $c_i$ the better the classif\/{i}er.
-
-\medskip
 The overall precision or accuracy of the classif\/{i}er is the
 weighted average of class-specif\/{i}c accuracies:
 \begin{align*}
-  \textit{Accuracy} = \textit{Precision} = \sum_{i=1}^k \lB(\frac{m_i}{n}\rB) \textit{acc}_i =
-  \frac{1}{n} \sum_{i=1}^k n_{ii}
+\tcbhighmath{
+  \textit{Accuracy} = \textit{Precision} = \sum_{i=1}^k \lB(\frac{m_i}{n}\rB) \textit{acc}_i = \frac{1}{n} \sum_{i=1}^k n_{ii}
+}
 \end{align*}
 
 \medskip
@@ -202,8 +208,10 @@ class-specif\/{i}c {\em coverage} or {\em recall}  of $M$ for class
 $c_i$ is the fraction of correct predictions over all points in
 class $c_i$:
 \begin{align*}
+\tcbhighmath{
   \textit{coverage}_i = \textit{recall}_i = \frac{n_{ii}}{n_{i}}
- \end{align*}
+}
+\end{align*}
 The higher the coverage the better the classif\/{i}er.
 \end{frame}
 
@@ -213,9 +221,11 @@ The {\em class-specif\/{i}c
 F-measure} tries to balance the precision and recall values, by
 computing their harmonic mean for class $c_i$:
 \begin{align*}
+\tcbhighmath{
   F_i = \frac{2}{\frac{1}{\textit{prec}_i} + \frac{1}{\textit{recall}_i}} =
   \frac{2 \cdot \textit{prec}_i \cdot \textit{recall}_i}{\textit{prec}_i + \textit{recall}_i} =
   \frac{2 \; n_{ii}}{n_{i} + m_{i}}
+}
 \end{align*}
 The higher the $F_i$ value the better the classif\/{i}er.
 
@@ -223,7 +233,9 @@ The higher the $F_i$ value the better the classif\/{i}er.
 The overall {\em F-measure} for the classif\/{i}er $M$ is the mean of
 the class-specif\/{i}c values:
 \begin{align*}
+\tcbhighmath{
   F = \frac{1}{k} \sum_{i=1}^r F_i
+}
   %\label{eq:clust:eval:F}
 \end{align*}
 For a perfect classif\/{i}er, the maximum value of the F-measure is 1.
@@ -334,23 +346,29 @@ The error rate for the
 binary classif\/{i}cation case is given as the fraction of mistakes
 (or false predictions):
 \begin{align*}
+\tcbhighmath{
 \textit{Error\ Rate} = \frac{\mathit{FP}+\mathit{FN}}{n}
+}
 \end{align*}
 
 \medskip{\bf Accuracy:} 
 The accuracy is the fraction
 of correct predictions:
 \begin{align*}
+\tcbhighmath{
 \textit{Accuracy} = \frac{\mathit{TP}+\mathit{TN}}{n}
+}
 \end{align*}
 
 \subsubsection{Class-specif\/{i}c Precision}
 The precision for the positive
 and negative class is given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   \textit{prec}_P &= \frac{\mathit{TP}}{\mathit{TP}+\mathit{FP}} = \frac{\mathit{TP}}{m_1}\\
   \textit{prec}_N & = \frac{\mathit{TN}}{\mathit{TN}+\mathit{FN}} = \frac{\mathit{TN}}{m_2}
-\end{align*}
+\end{split}
+\end{empheq}
 where $m_i = \card{\bR_i}$ is the number of points predicted by $M$ as
 having class $c_i$.
 \end{frame}
@@ -362,30 +380,39 @@ The fraction of correct predictions with respect
 to all points in the positive class, i.e., the
 recall for the positive class
 \begin{align*}
+\tcbhighmath{
   \mathit{TPR} = \textit{recall}_P = \frac{\mathit{TP}}{\mathit{TP}+\mathit{FN}} = \frac{\mathit{TP}}{n_1}
+}
 \end{align*}
 where $n_1$ is the size of the positive class.
 
 \medskip{\bf Specif\/{i}city or True Negative Rate:}
 The recall for the negative class:
 \begin{align*}
+\tcbhighmath{
   \mathit{TNR} = \specificity = \textit{recall}_N = \frac{\mathit{TN}}{\mathit{FP}+\mathit{TN}} = \frac{\mathit{TN}}{n_2}
+}
 \end{align*}
 where $n_2$ is the size of the negative class.
 
+\end{frame}
+
+\begin{frame}{Binary Classif\/{i}cation: Assessment Measures}
+
 \medskip{\bf False Negative Rate:} Def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   \mathit{FNR} = \frac{\mathit{FN}}{\mathit{TP}+\mathit{FN}} = \frac{\mathit{FN}}{n_1}  = 1 - \textit{sensitivity}
+}
 \end{align*}
 
 \medskip{\bf False Positive Rate:} Def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   \mathit{FPR} = \frac{\mathit{FP}}{\mathit{FP}+\mathit{TN}} = \frac{\mathit{FP}}{n_2}= 1 - \specificity
+}
 \end{align*}
 \end{frame}
-
-
-
 
 \readdata{\dataPC}{CLASS/eval/figs/iris-PC.txt}
 \readdata{\dataPCte}{CLASS/eval/figs/iris-PC-te.txt}
@@ -775,64 +802,54 @@ $b=|x_2-x_1|$ is the length of the base of the trapezoid and $h =
 \newcommand{\algtraparea}{\textsc{Trapezoid-Area}}
 \begin{frame}[fragile]{Algorithm \algroccurve}
 \begin{footnotesize}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 %\begin{tightalgo}[!t]{\textwidth-18pt}
   \SetKwInOut{Algorithm}{\algroccurve ($\bD$, $M$)}
 \Algorithm{}
-$n_1 \gets \bigl|\{\bx_i \in \bD \;| y_i = c_1\}\bigr|$
-\tcp{size of positive class}
-$n_2 \gets \bigl|\{\bx_i \in \bD\;| y_i = c_2\}\bigr|$
-\tcp{size of negative class}
+$n_1 \gets \bigl|\{\bx_i \in \bD| y_i = c_1\}\bigr|$ \tcp{size of positive class}
+$n_2 \gets \bigl|\{\bx_i \in \bD| y_i = c_2\}\bigr|$ \tcp{size of negative class}
 \tcp{classify, score, and sort all test points}
 $L \gets \text{sort the set } \{(S(\bx_i), y_i)\!: \bx_i \in \bD\} \text{ by
-decreasing scores}$\nllabel{alg:class:eval:roc:sortscores}
+decreasing scores}$\label{alg:class:eval:roc:sortscores}\;
 $\mathit{FP} \gets \mathit{TP} \gets 0$ \;
 $\mathit{FP}_{prev} \gets \mathit{TP}_{prev} \gets 0$
-\nllabel{alg:class:eval:roc:previnit}\;
+\label{alg:class:eval:roc:previnit}\;
 $AUC \gets 0$\;
-$\rho \gets \infty$ \nllabel{alg:class:eval:roc:thetamax}\;
-\ForEach{$(S(\bx_i), y_i) \in L$ \nllabel{alg:class:eval:roc:for}} {
+$\rho \gets \infty$ \label{alg:class:eval:roc:thetamax}\;
+\ForEach{$(S(\bx_i), y_i) \in L$ \label{alg:class:eval:roc:for}} {
   \If {$\rho > S(\bx_i)$}{
-  plot point $\lB(\frac{\mathit{FP}}{n_2},\frac{\mathit{TP}}{n_1}\rB)$
-  \nllabel{alg:class:eval:roc:plot}\;
-  $AUC \gets AUC + \textsc{Trapezoid-Area}\lB(
-  \lB(\frac{\mathit{FP}_{prev}}{n_2},
-  \frac{\mathit{TP}_{prev}}{n_1}\rB), \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB)
-  \rB)$
-  \nllabel{alg:class:eval:roc:area}\;
+  plot point $\lB(\frac{\mathit{FP}}{n_2},\frac{\mathit{TP}}{n_1}\rB)$ \label{alg:class:eval:roc:plot}\;
+  $AUC \gets AUC + \textsc{Trapezoid-Area}\lB( \lB(\frac{\mathit{FP}_{prev}}{n_2}, \frac{\mathit{TP}_{prev}}{n_1}\rB), \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB)
+  \rB)$ \label{alg:class:eval:roc:area}\;
     $\rho \assign S(\bx_i)$ \;
     $\mathit{FP}_{prev} \gets \mathit{FP}$\;
     $\mathit{TP}_{prev} \gets \mathit{TP}$\;
   }
   \lIf {$y_i = c_1$}{
-  $\mathit{TP} \gets \mathit{TP}+1$ \nllabel{alg:class:eval:roc:tp}
+  $\mathit{TP} \gets \mathit{TP}+1$ \label{alg:class:eval:roc:tp}
   }
   \lElse{
-  $\mathit{FP} \gets \mathit{FP}+1$ \nllabel{alg:class:eval:roc:fp}
+  $\mathit{FP} \gets \mathit{FP}+1$ \label{alg:class:eval:roc:fp}
   }
 }
-plot point $\lB(\frac{\mathit{FP}}{n_2},\frac{\mathit{TP}}{n_1}\rB)$
-\nllabel{alg:class:eval:roc:plotfinal}\;
+plot point $\lB(\frac{\mathit{FP}}{n_2},\frac{\mathit{TP}}{n_1}\rB)$ \label{alg:class:eval:roc:plotfinal}\;
 $AUC \gets AUC + \textsc{Trapezoid-Area}
-\lB( \lB(\frac{\mathit{FP}_{prev}}{n_2},
-  \frac{\mathit{TP}_{prev}}{n_1}\rB), \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB)
-  \rB)$
-  \nllabel{alg:class:eval:roc:areafinal}\;
-\end{algorithm}
+\lB( \lB(\frac{\mathit{FP}_{prev}}{n_2}, \frac{\mathit{TP}_{prev}}{n_1}\rB), \lB(\frac{\mathit{FP}}{n_2}, \frac{\mathit{TP}}{n_1}\rB) \rB)$ \label{alg:class:eval:roc:areafinal}\;
+\end{tightalgo}
 \end{footnotesize}
 \end{frame}
 
 
 \begin{frame}{Algorithm  \algtraparea}
 \begin{small}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 %\BlankLine
 \SetKwInOut{AlgorithmTA}{\algtraparea ($(x_1, y_1), (x_2, y_2)$)}
 \AlgorithmTA{}
 $b \gets |x_2 - x_1|$ \tcp{base of trapezoid}
 $h \gets \frac{1}{2}(y_2 + y_1)$ \tcp{average height of trapezoid}
 \Return{$(b\cdot h)$}
-\end{algorithm}
+\end{tightalgo}
 \end{small}
 \end{frame}
 
@@ -954,6 +971,31 @@ AUC for naive Bayes is 0.775, whereas the AUC for the random classifier
 \end{frame}
 
 
+\begin{frame}{ROC Plot and AUC: Trapezoid Region}
+
+  Consider the following sorted scores, along with the true class, for
+  some testing
+  dataset with $n = 5$, $n_1 = 3$ and $n_2 = 2$.
+  \begin{align*}
+    (0.9, c_1), (0.8, c_2), (0.8, c_1), (0.8, c_1), (0.1, c_2)
+  \end{align*}
+
+Algorithm yields the following points that
+  are added to the ROC plot, along with the running AUC:
+
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+  $\rho$ & $\mathit{FP}$ & $\mathit{TP}$ & $(\mathit{FPR}, \mathit{TPR})$ & AUC\\
+  \hline
+  $\infty$ & 0 & 0 & $(0,0)$ & 0\\[-2pt]
+  0.9 & 0 & 1 & $(0, 0.333)$ & 0\\[-2pt]
+  0.8 & 1 & 3 & $(0.5, 1)$ & 0.333\\[-2pt]
+  0.1 & 2 & 3 & $(1, 1)$ & 0.833\\
+  \hline
+  \end{tabular}
+
+\end{frame}
+
 
 \begin{frame}{ROC Plot and AUC: Trapezoid Region}
 \begin{figure}[!t]\vspace*{-15pt}
@@ -1046,8 +1088,8 @@ cross-validation.
 
 \newcommand{\algcrossvalidation}{\textsc{Cross-Validation}}
 \begin{frame}[fragile]{$K$-fold Cross-Validation Algorithm}
-\begin{algorithm}[H]
-%\begin{tightalgo}[!t]{\textwidth-18pt}
+%\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\algcrossvalidation ($K$, $\bD$)}
 \Algorithm{}
 $\bD \gets $ randomly shuffle $\bD$\;
@@ -1059,7 +1101,33 @@ $\{\bD_1, \bD_2, \ldots, \bD_K\} \gets$ partition $\bD$ in $K$ equal parts\;
 $\hmu_\theta = {1\over K} \sum_{i=1}^K \theta_i$\;
 $\hsigma^2_\theta  = {1\over K} \sum_{i=1}^K (\theta_i - \hmu_\theta)^2$\;
 \Return{$\hmu_\theta, \hsigma^2_\theta$}
-\end{algorithm}
+\end{tightalgo}
+\end{frame}
+
+\begin{frame}[fragile]{$K$-fold Cross-Validation}
+
+Consider the 2-dimensional Iris dataset 
+with $k=3$ classes. We assess
+the error rate of the full Bayes classif\/{i}er via 5-fold
+cross-validation, obtaining the following error rates when testing
+on each fold:
+\begin{align*}
+  \theta_1 & = 0.267 & \theta_2 & = 0.133 &
+  \theta_3 & = 0.233 & \theta_4 & = 0.367 & \theta_5 = 0.167
+\end{align*}
+
+The mean and variance for the error
+rate are as follows:
+\begin{align*}
+  \hmu_\theta &= {1.167\over 5} = 0.233 & \hsigma^2_\theta & = 0.00833
+\end{align*}
+
+Performing ten
+5-fold cross-validation runs for the Iris dataset results in the mean of the
+expected error rate as $0.232$, and the mean of the variance as
+$0.00521$, with the variance in both these estimates being
+less than~$10^{-3}$.
+
 \end{frame}
 
 
@@ -1097,8 +1165,8 @@ training and testing datasets (63.2\%).
 
 \newcommand{\algbootstrap}{\textsc{Bootstrap-Resampling}}
 \begin{frame}{Bootstrap Resampling Algorithm}
-%\begin{tightalgo}[!t]{\textwidth-18pt}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
+%\begin{algorithm}[H]
 \SetKwInOut{Algorithm}{\algbootstrap ($K$, $\bD$)}
 \Algorithm{}
 \For{$i \in [1, K]$}{
@@ -1109,7 +1177,7 @@ training and testing datasets (63.2\%).
 $\hmu_\theta = {1\over K} \sum_{i=1}^K \theta_i$\;
 $\hsigma^2_\theta  = {1\over K} \sum_{i=1}^K (\theta_i - \hmu_\theta)^2$\;
 \Return{$\hmu_\theta, \hsigma^2_\theta$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1266,7 +1334,7 @@ We obtain bounds on the value of the true mean $\mu$ in terms of the
 estimated value $\hmu$:
 \begin{align*}
   \lim_{K\to\infty} P\lB(\hmu - z_{\alpha/2}{\sigma \over \sqrt{K}} \le \mu \le
-  \hmu + z_{\alpha/2}{\sigma \over \sqrt{K}} \rB) = \alpha
+  \hmu + z_{\alpha/2}{\sigma \over \sqrt{K}} \rB) = 1-\alpha
 \end{align*}
 
 \medskip
@@ -1301,14 +1369,16 @@ standard normal distribution:
 \end{align*}
 and thus, we have
 \begin{align*}
+\tcbhighmath{
   \lim_{K\to\infty} P\lB(\hmu - z_{\alpha/2}{\hsigma \over \sqrt{K}} \le \mu \le
-  \hmu + z_{\alpha/2}{\hsigma \over \sqrt{K}} \rB) = \alpha
+  \hmu + z_{\alpha/2}{\hsigma \over \sqrt{K}} \rB) = 1-\alpha
+}
 \end{align*}
 
 \medskip
-The interval
+%The interval
 $\lB(\hmu - z_{\alpha/2}{\hsigma \over \sqrt{K}},\;
-  \hmu + z_{\alpha/2}{\hsigma \over \sqrt{K}} \rB)$ is the $\alpha\%$
+  \hmu + z_{\alpha/2}{\hsigma \over \sqrt{K}} \rB)$ is the 100(1-$\alpha)\%$
   conf\/{i}dence interval for~$\mu$.
 \end{frame}
 
@@ -1381,9 +1451,13 @@ where $T_{K-1}$ is the cumulative distribution function for the
 Student's $t$ distribution with $K-1$ degrees of freedom. 
 
 \medskip
-The $\alpha\%$ conf\/{i}dence interval for the true mean $\mu$ is thus
-$$\lB(\hmu - t_{\alpha/2,K-1}{\hsigma \over \sqrt{K}} \le \mu \le
- \hmu + t_{\alpha/2,K-1}{\hsigma \over \sqrt{K}} \rB)$$
+The 100(1-$\alpha\%)$ conf\/{i}dence interval for the true mean $\mu$ is thus
+$$
+\tcbhighmath{
+\lB(\hmu - t_{\alpha/2,K-1}{\hsigma \over \sqrt{K}} \le \mu \le
+ \hmu + t_{\alpha/2,K-1}{\hsigma \over \sqrt{K}} \rB)
+}
+$$
 Note the dependence of the interval on both $\alpha$ and the sample size
 $K$.
 \end{frame}
@@ -1512,7 +1586,9 @@ $Z^*_\delta$ follows a $t$
 distribution with $K-1$ degrees of freedom. However, under the
 null hypothesis we have $\mu_\delta = 0$, and thus
 \begin{align*}
+\tcbhighmath{
   Z^*_\delta = {\sqrt{K} \hmu_\delta \over \hsigma_\delta} \sim t_{K-1}
+}
 \end{align*}
 i.e., $Z^*_\delta$
 follows the $t$ distribution with $K-1$ degrees of freedom.
@@ -1532,8 +1608,8 @@ with $\alpha\%$ conf\/{i}dence.
 
 \newcommand{\algpairedTtest}{\textsc{Paired $t$-Test}}
 \begin{frame}[fragile]{Paired ${\it t}$-Test via Cross-Validation}
-%\begin{tightalgo}[!t]{\textwidth-18pt}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
+%\begin{algorithm}[H]
 \SetKwInOut{Algorithm}{\algpairedTtest ($\alpha$, $K$, $\bD$)}
 \Algorithm{}
 $\bD \gets $ randomly shuffle $\bD$\;
@@ -1552,7 +1628,45 @@ $Z^*_\delta = {\sqrt{K} \hmu_\delta \over \hsigma_\delta}$\;
 }{
   Reject $H_0$; classif\/{i}ers have signif\/{i}cantly different performance\;
 } 
-\end{algorithm}
+\end{tightalgo}
+\end{frame}
+
+
+\begin{frame}[fragile]{Paired $t$-Test}
+Consider the 2-dimensional Iris dataset 
+  with $k=3$ classes. We compare
+  the naive Bayes ($M^A$) with the full Bayes ($M^B$) classif\/{i}er via
+  cross-validation using $K=5$ folds. Using error rate as the performance
+  measure:
+  \begin{align*}
+    \matr{
+     i  & \vline & 1 & 2 & 3 & 4 & 5\\
+     \hline
+    \theta_i^A & \vline & 0.233 & 0.267 & 0.1 & 0.4 & 0.3\\
+    \theta_i^B & \vline & 0.2 & 0.2 & 0.167 & 0.333 & 0.233\\
+    \delta_i & \vline & 0.033 & 0.067 & -0.067 & 0.067 & 0.067\\
+    }
+  \end{align*}
+The estimated expected difference and variance of the differences are
+  \begin{align*}
+    \hmu_\delta & = {0.167 \over 5} = 0.033 &
+    \hsigma^2_\delta & = 0.00333 &
+    \hsigma_\delta & = \sqrt{0.00333} = 0.0577
+  \end{align*}
+  The $\zscore$ value is given as
+  $ Z^*_\delta = {\sqrt{K} \hmu_\delta \over \hsigma_\delta} =
+    {\sqrt{5} \times 0.033 \over 0.0577 } = 1.28 $
+
+  For $1-\alpha=0.95$ (or
+  $\alpha=0.05$) and
+  $K-1=4$ degrees of freedom, we have
+  $t_{\alpha/2} = 2.776$.
+  Because $Z^*_\delta = 1.28 \in (-2.776, 2.776) =
+  \bigl(-t_{\alpha/2}, t_{\alpha/2}\bigr)$ we cannot reject the null
+  hypothesis, that  is,
+there is no signif\/{i}cant difference
+  between the naive and full Bayes classif\/{i}er for this dataset.
+
 \end{frame}
 
 
@@ -1674,7 +1788,8 @@ point $\bx$ over all training sets is then given as
 The
 expected squared loss over all test points $\bx$ and over all
 training sets $\bD$ of size $n$ yields the following decomposition:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
 E_{\bx,\bD,y}\Bigl[ \bigl(y - M(\bx, \bD)\bigr)^2\Bigr]
   & = \underbrace{E_{\bx,y}\Bigl[\bigl(y - E_y[y|\bx]\bigr)^2 \Bigr]}_{\rm noise} +
 \underbrace{E_{\bx,\bD}\Bigl[ \bigl(M(\bx, \bD) -
@@ -1682,7 +1797,8 @@ E_{\bD}[M(\bx, \bD)]\bigr)^2\Bigr]}_{{\it average\ variance}}\\
     &\qquad \quad \qquad \qquad +
     \underbrace{E_\bx\Bigl[\bigl(E_{\bD}[M(\bx, \bD)] -
     E_y[y|\bx]\bigr)^2\Bigr]}_{{\it average\ bias}}
-\end{align*}
+\end{split}
+\end{empheq}
 
 The expected square loss over all test points and training
 sets can be decomposed into three terms: noise, average bias, and
@@ -1941,12 +2057,28 @@ classif\/{i}ers are unstable, due to the averaging effect of majority
 voting. It does not, in general, have much effect on the bias.
 \end{frame}
 
+\begin{frame}[fragile]{Bagging: Combined SVM Classif\/{i}ers}
+
+  SVM classifiers are trained on $K=10$ bootstrap samples using $C=1$. 
+
+\medskip
+
+    \begin{tabular}{|c|c|c|}
+          \hline
+      $K$ & \text{Zero--one loss} & \text{Squared loss}\\
+    \hline
+      3 & 0.047 & 0.187\\
+      5 & 0.04 & 0.16\\
+     8 & 0.02 & 0.10\\
+     10 & 0.027 & 0.113\\
+     15 & 0.027 & 0.107\\ \hline
+    \end{tabular}
+\end{frame}
 
 
 \begin{frame}[fragile]{Bagging: Combined SVM Classif\/{i}ers}
 \setcounter{subfigure}{0}
 \small
-SVM classif\/{i}ers are trained on $K=10$ bootstrap samples using $C=1$.
 The combined (average) classif\/{i}er is shown in bold.\\
 
 \normalsize
@@ -2022,6 +2154,181 @@ The worst training
 
 
 
+\begin{frame}[fragile]{Random Forest}
+
+A {\em random forest} is an ensemble of $K$ classifiers, $M_1$, \ldots $M_K$, where
+each classifier is a decision tree created from a different bootstrap
+sample, and 
+by sampling a random subset
+of the attributes at each internal node in the decision tree. 
+
+Bagging only would generate similar decision trees.
+The random sampling of the
+attributes results in reducing the correlation between the trees in the
+ensemble.
+
+The random forest algorithm uses the $t$th bootstrap sample to learn a
+decision tree model $M_t$, but it evaluates just $p$ random attributes 
+per split point. 
+A typical value $p$ is $\sqrt{d}$.
+
+The $K$ decision trees $M_1, M_2, \cdots, M_K$ 
+predict the class of a
+test point $\bx$ by majority voting:
+
+\begin{align*}
+  \bM^K(\bx) = \mathop{\arg\max}_{c_{\!j}} \Bigl\{ v_{\!j}(\bx) \;\bigl| j=1,\ldots,k \Bigr\}
+\end{align*}
+
+where $v_{\!j}$ is the
+number of trees that predict the class of $\bx$ as $c_{\!j}$. 
+
+Notice that if $p=d$ then the random forest approach is equivalent to
+bagging over decision tree models.
+\end{frame}
+
+\begin{frame}[fragile]{Random Forest Algorithm}
+
+\newcommand{\algRandomForest}{\textsc{RandomForest}}
+\begin{tightalgo}[H]{\textwidth-24pt}
+    \SetKwInOut{Algorithm}{\algRandomForest ($\bD, K, p, \eta, \pi$)}
+\SetKw{KwBreak}{break}
+\Algorithm{}
+\ForEach{$\bx_i \in \bD$}{
+    $v_{\!j}(\bx_i) \assign 0, \text{ for all } j=1,2,\ldots, k$}
+    \For{$t \in [1,K]$}{
+$\bD_t \assign$ sample of size $n$ with replacement from $\bD$ \;
+$M_t \assign $ \textsc{DecisionTree} $(\bD_t, \eta, \pi, p)$ \;
+\ForEach(\tcp*[h]{out-of-bag votes}){$(\bx_i, y_i) \in \bD \setminus \bD_t$}{
+      $\hy_i \assign M_t(\bx_i)$\; 
+  \lIf{$\hy_i = c_{\!j}$}{$v_{\!j}(\bx_i) = v_{\!j}(\bx_i) + 1$}
+  }
+}
+$\epsilon_{oob} = \frac{1}{n} \cdot \sum_{i=1}^n I\Bigl(y_i \ne
+    \arg\max_{c_{\!j}}
+    \bigl\{v_{\!j}(\bx_i) |
+(\bx_i, y_i) \in \bD\bigr\}\Bigr)$ \tcp*[l]{OOB error}
+\Return{$\{M_1, M_2, \ldots, M_K\}$}
+\end{tightalgo}
+\end{frame}
+
+\begin{frame}{Random Forest - Out of bag estimation}
+
+Given $\bD_t$, any point in $\bD\setminus \bD_t$ is
+called an {\em out-of-bag} point for $M_t$.
+
+The {\em out-of-bag} error rate for each $M_t$ may be calculated 
+by considering the prediction over its out-of-bag
+points.
+
+The out-of-bag (OOB) error for the random forest is given as:
+\begin{align*}
+\epsilon_{oob} = \displaystyle \frac{1}{n} \cdot \sum_{i=1}^n I\Bigl(y_i \ne
+    max_{c_{\!j}}  \bigl\{v_{\!j}(\bx_i) |
+(\bx_i, y_i) \in \bD\bigr\}\Bigr)
+\end{align*}
+
+Here $I$ is an indicator function that takes on value $1$ if is arument
+is true, and $0$ otherwise. 
+We compute the majority out-of-bag class for each point $\bx_i \in
+\bD$ and check whether it matches the true class $y_i$. 
+The out-of-bag error rate is simply the fraction of points where the
+out-of-bag majority class does not match the true class $y_i$.
+
+The out-of-bag error rate approximates the cross-validation error rate
+quite well.
+\end{frame}
+
+\begin{frame}{Random Forest}
+    Consider the Iris principal
+    components dataset comprising $n=150$ points in 2-dimensional space.
+    The task is to separate {\tt Iris-versicolor} (class $c_1$; in circles) from the other two
+  Irises (class $c_2$; in triangles). 
+
+\medskip
+  
+  Since there are only two attributes in this dataset, we pick $p=1$
+  attribute at random for each split-point evaluation in a decision
+  tree. 
+
+\medskip
+  
+
+Each decision tree is grown using $\eta=3$, that is the
+  maximum leaf size is 3 (with default minimum purity $\pi=1.0$).
+
+\medskip
+  
+
+  We grow $K=5$ decision trees on different bootstrap samples. The
+  decision boundary of the random forest is shown in bold in the
+  figure. The error rate on the training data is 2.0\%. However, the
+  out-of-bag error rate is 49.33\%, which is overly pessimistic in this
+  case, since the dataset has only two attributes, and we use only one
+  attribute to evaluate each split point. 
+\end{frame}
+
+\begin{frame}[fragile]{Random Forest}
+
+\readdata{\dataPC}{CLASS/eval/figs/iris-PC.txt}
+\readdata{\dataB}{CLASS/eval/figs/rf_boundary_irisPC_K5.txt}
+\psset{dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+ \centerline{
+     \psgraph[tickstyle=bottom,Ox=-4,Oy=-1.4,Dx=1,Dy=1]{->}(-4.0,-1.4)(4.0,1.4){3.5in}{2in}%
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
+\psset{dotscale=0.5,fillcolor=black}
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true]{\dataB}
+\endpsgraph
+}
+\end{frame}
+
+\bgroup{
+\makeatletter
+\long\def\@tablecaption#1#2{%
+\fontsize{8}{11}\selectfont\raggedright%\sans%
+\setbox\@tempboxa=\hbox{{#1}\ignorespaces{\hskip4\p@}\ignorespaces{#2}}%
+\ifdim\wd\@tempboxa>\tempdime%
+\centering{#1}\ignorespaces{\hskip4\p@}\ignorespaces{#2}%
+\else%
+\hbox to \tempdime{\hss{#1}\ignorespaces{\hskip4\p@}\ignorespaces#2\hss}\fi%
+\vskip\belowcaptionskipa}
+\makeatother
+
+\begin{frame}[fragile]{Random Forest: Varying $K$}
+
+
+We used the full Iris dataset
+ which has four attributes ($d=4$), and has three classes ($k=3$), 
+ $p=\sqrt{d} = 2$, $\eta=3$ and $\pi=1.0$.
+
+\begin{center}
+\begin{footnotesize}
+  \begin{tabular}{|l|c|c|}
+      \hline
+      $K$ & $\epsilon_{oob}$ & $\epsilon$\\
+      \hline
+1 & 0.4333 &0.0267\\
+2 & 0.2933 &0.0267\\
+3 & 0.1867 &0.0267\\
+4 & 0.1200 &0.0400\\
+5 & 0.1133 &0.0333\\
+6 & 0.1067 &0.0400\\
+7 & 0.0733 &0.0333\\
+8 & 0.0600 &0.0267\\
+9 & 0.0467 &0.0267\\
+10& 0.0467 &0.0267\\
+\hline
+  \end{tabular}
+\end{footnotesize}
+\end{center}
+
+We can see that the
+ out-of-bag error decreases rapidly as we increase the number of trees.
+\end{frame}
 
 \begin{frame}{Boosting}
 
@@ -2192,7 +2499,7 @@ the class for $\bx$ as follows:
 \begin{frame}[fragile]{AdaBoost Algorithm}
 %\begin{tightalgo}[!t]{\textwidth-18pt}
 \begin{small}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\algAdaBoost ($K$, $\bD$)}
 \SetKw{KwBreak}{break}
 \Algorithm{}
@@ -2203,12 +2510,10 @@ $t \gets 1$\;
 $\bD_t \assign$ weighted resampling with replacement from $\bD$ using $\bw^{t-1}$\;
   $M_t \assign $ train classif\/{i}er on $\bD_t$\;
   $\epsilon_t \gets \sum_{i=1}^n w^{t-1}_i \cdot I\bigl(M_t(\bx_i) \ne
-  y_i\bigr)$
-  \tcp{weighted error rate on $\bD$}
+  y_i\bigr)$ \tcp{weighted error rate on $\bD$}
   \lIf{$\epsilon_t = 0$}{\KwBreak}
   \ElseIf{$\epsilon_t < 0.5$}{
-  $\alpha_{t} =  \ln\lB( \frac{1-\epsilon_{t}}{\epsilon_{t}}\rB)$
-  \tcp{classif\/{i}er weight}
+  $\alpha_{t} =  \ln\lB( \frac{1-\epsilon_{t}}{\epsilon_{t}}\rB)$ \tcp{classif\/{i}er weight}
   \ForEach{$i \in [1,n]$ }{\tcp{update point weights}
       $w^{t}_i =
         \begin{cases}
@@ -2223,7 +2528,7 @@ $\bD_t \assign$ weighted resampling with replacement from $\bD$ using $\bw^{t-1}
   }
 }
 \Return{$\{M_1, M_2, \ldots, M_K\}$}
-\end{algorithm}
+\end{tightalgo}
 \end{small}
 \end{frame}
 
@@ -2304,3 +2609,124 @@ already capture the essential features of
   Further reduction in the training error is obtained by increasing the
   number of boosting steps $K$.
 \end{frame}
+
+
+
+\begin{frame}{Stacking}
+
+Stacking or stacked generalization is an ensemble technique where we employ two
+layers of classifiers. 
+
+\medskip
+
+The first layer is composed of $K$ base classifiers
+which are trained independently on the entire training data $\bD$.
+
+\medskip
+
+The second layer comprises a combiner classifier $C$ that is trained on the
+predicted classes from the base classifiers, so that it automatically 
+learns how to combine the outputs of the base classifiers to make the
+final prediction for a given input. 
+
+\medskip
+
+For example, the combiner classifier
+may learn to ignore the output of a base classifiers for an input that
+lies in a region of the input space where the base classifier has poor
+performance. 
+It can also learn to
+correct the prediction in cases where most base classifiers do not
+predict the outcome correctly. 
+
+\medskip
+
+Stacking is a strategy
+for estimating and correcting the biases of the set of base classifiers.
+\end{frame}
+
+\begin{frame}[fragile]{Stacking}
+
+ 
+\newcommand{\algStacking}{\textsc{Stacking}}
+\begin{tightalgo}[H]{\textwidth-18pt} 
+\SetKwInOut{Algorithm}{\algStacking ($K, \bM, C, \bD$)} 
+\SetKw{KwBreak}{break} 
+\Algorithm{} 
+\tcp{Train base classifiers}
+\For{$t \in [1,K]$ }{ 
+   \label{alg:class:ensemble:stacking:trainbasestart} 
+   $M_t \assign $ train $t$th base classifier on $\bD$\;
+   \label{alg:class:ensemble:stacking:trainbaseend} 
+} 
+\tcp{Train combiner model $C$ on $\bZ$}
+$\bZ \assign \emptyset$\; 
+\label{alg:class:ensemble:stacking:traincombstart} 
+\ForEach{$(\bx_i, y_i) \in \bD$ }{
+    $\bz_i \assign \bigl(M_1(\bx_i), M_2(\bx_i), \ldots, M_K(\bx_i) \bigr)^T$\;
+    $\bZ \assign \bZ \cup \{(\bz_i, y_i)\}$ \;
+}
+$C \assign $ train combiner classifier on $\bZ$\;
+\label{alg:class:ensemble:stacking:traincombend} 
+\Return($C, M_1, M_2, \ldots, M_K$)\; 
+\end{tightalgo}
+\end{frame}
+
+
+
+\begin{frame}{Stacking}
+    We apply stacking on the Iris principal components dataset.
+    We use three base classifiers, namely SVM with a linear kernel
+    (with regularization constant $C=1$), random forests (with number of
+    trees $K=5$ and number of random attributes $p=1$), and naive Bayes. 
+
+\medskip
+
+    The combiner classifier is an SVM with a Gaussian kernel (with
+        regularization constant $C=1$ and spread parameter
+    $\sigma^2=0.2$).
+
+\medskip
+
+    We trained the data on a random subset of 100 points, and tested
+    on the remaining 50 points. 
+
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+Classifier & Test Accuracy \\ \hline
+Linear SVM & 0.68 \\ \hline
+Random Forest &  0.82 \\ \hline
+Naive Bayes & 0.74 \\ \hline
+Stacking & 0.92 \\ \hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Stacking}
+\readdata{\dataN}{CLASS/eval/figs/stacking_svc_trained.txt}
+\readdata{\dataB}{CLASS/eval/figs/stacking_svc_boundary.txt}
+\readdata{\dataBo}{CLASS/eval/figs/linearSVC_C1_stacking_boundary.txt}
+\readdata{\dataBi}{CLASS/eval/figs/nb_s_stacking_boundary.txt}
+\readdata{\dataBii}{CLASS/eval/figs/rf_mf1_stacking_boundary.txt}
+
+\psset{dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\centerline{
+\psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
+\psgraph[tickstyle=bottom,Ox=-4,Oy=-1.4,Dx=1,Dy=1]{->}(-4.0,-1.4)(4.0,1.4){3.5in}{2in}%
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
+          nEnd=50,plotNo=1,plotNoMax=3]{\dataN}
+\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+          nStart=51,plotNo=1,plotNoMax=3]{\dataN}
+\psset{dotscale=0.5,fillcolor=lightgray}
+\listplot[plotstyle=line,linecolor=lightgray]{\dataBo}
+\listplot[plotstyle=dots,dotstyle=square,showpoints=true]{\dataBi}
+\psset{dotscale=0.5,fillcolor=lightgray}
+\listplot[plotstyle=dots,dotstyle=+,showpoints=true]{\dataBii}
+  \psset{dotscale=0.5,fillcolor=black}
+\listplot[plotstyle=dots,dotstyle=Bo,showpoints=true]{\dataB}
+\endpsgraph
+}
+\end{frame}
+
+

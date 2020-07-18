@@ -1,9 +1,0 @@
-! Analyse tutorial.idi with default settings.
-! Note, you may need to specify the full path name for tutorial.idi.
-! This analysis will produce the same rules as example1.mos because
-! tutorial.itl and tutorial.idi contain the same data in different formats.
-identifier-item-file=tutorial.idi
-! tutorial.idi is ordered by identifier (all entries for a single identifier
-! appear on consecutive lines of the file).  Processing is substantially faster
-! if the ordered command is included to alert the system to this.
-ordered

@@ -60,7 +60,7 @@ $d$-dimensional space to a 1-dimensional space (along $\bw$).
     \psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.5,5)
     \pstGeonode[PointSymbol=none](8.04,4.15){na}
     \pstGeonode[PointSymbol=none](3.94,2.1){nb}
-    \pstLineAB[linewidth=2pt]{<-}{na}{nb}
+    \pstLineAB[linewidth=2pt,arrows=<-]{na}{nb}
     \nput{90}{na}{$\bw$}
     \input{CLASS/lda/figs/proj}
         \psset{dotscale=2,fillcolor=black}
@@ -89,7 +89,7 @@ $d$-dimensional space to a 1-dimensional space (along $\bw$).
     %\psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.0,4.5)
     \pstGeonode[PointSymbol=none](4.88,4.51){na}
     \pstGeonode[PointSymbol=none](6.89,1.47){nb}
-    \pstLineAB[linewidth=2pt]{->}{na}{nb}
+    \pstLineAB[linewidth=2pt,arrows=->]{na}{nb}
     \uput[90](6.9,1.6){$\bw$}
     \input{CLASS/lda/figs/proj}
     \psset{dotscale=2,fillcolor=black}
@@ -138,7 +138,9 @@ distance between projected means and minimizing the sum of
 projected scatter, into a single maximization criterion called the
 {\em F{i}sher LDA objective}: 
 \begin{align*}
+\tcbhighmath{
     \max_{\bw} \;\; J(\bw) = \frac{(m_1 - m_2)^2}{s_1^2 + s_2^2}
+}
 \end{align*}
 
 \medskip
@@ -174,7 +176,9 @@ matrix} for the pooled data.
 
 The LDA objective function in matrix form is
 \begin{align*}
+\tcbhighmath{
     \max_{\bw} \;\; J(\bw) = \frac{\bw^T\bB\bw}{\bw^T\bS\bw}
+}
 \end{align*}
 
 \medskip
@@ -196,20 +200,17 @@ eigenvalue, and $\bw$ to be the corresponding eigenvector.
 
 \newcommand{\LDA}{\textsc{LinearDiscriminant}\xspace}
 \begin{frame}[fragile]{Linear Discriminant Algorithm}
-\begin{algorithm}[H]
-\SetKwInOut{Algorithm}{
-\LDA($\bD = \{(\bx_i, y_i)\}_{i=1}^n$)}
+\begin{tightalgo}[H]{\textwidth-18pt}
+\SetKwInOut{Algorithm}{\LDA($\bD = \{(\bx_i, y_i)\}_{i=1}^n$)}
 \Algorithm{} 
 $\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}, i=1,2$ \tcp{class-specif\/{i}c subsets} 
-$\bmu_i
-\assign \text{mean}(\bD_i), i=1,2$ \tcp{class means} 
-$\bB \assign (\bmu_1-\bmu_2)(\bmu_1-\bmu_2)^T$ \tcp{between-class
-scatter matrix} 
+$\bmu_i \assign \text{mean}(\bD_i), i=1,2$ \tcp{class means} 
+$\bB \assign (\bmu_1-\bmu_2)(\bmu_1-\bmu_2)^T$ \tcp{between-class scatter matrix} 
 $\bZ_i \assign \bD_i - \bone_{n_i} \bmu_i^T, i=1,2$ \tcp{center class matrices}
-$\bS_i  \assign \bZ_i^T\bZ_i, i=1,2$ \tcp{class scatter matrices}
-$\bS \assign \bS_1 + \bS_2$ \tcp{within-class scatter matrix}
+$\bS_i  \assign \bZ_i^T\bZ_i, i=1,2$ \tcp{class scatter matrices} 
+$\bS \assign \bS_1 + \bS_2$ \tcp{within-class scatter matrix} 
 $\lambda_1, \bw \assign \text{eigen}(\bS^{-1}\bB)$ \tcp{compute dominant eigenvector}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -227,7 +228,7 @@ $\lambda_1, \bw \assign \text{eigen}(\bS^{-1}\bB)$ \tcp{compute dominant eigenve
     %\psaxes[Dx=0.5,Dy=0.5,Ox=4.0,Oy=1.5]{->}(4.0,1.5)(8.0,4.5)
     \pstGeonode[PointSymbol=none](4.88,4.51){na}
     \pstGeonode[PointSymbol=none](6.89,1.47){nb}
-    \pstLineAB[linewidth=2pt]{->}{na}{nb}
+    \pstLineAB[linewidth=2pt,arrows=->]{na}{nb}
     \uput[90](6.9,1.6){$\bw$}
     \input{CLASS/lda/figs/proj}
     \psset{dotscale=2,fillcolor=black}
@@ -286,9 +287,11 @@ rewritten as
 \end{align*}
 Because ${b \over \lambda}$ is just a scalar, we can solve for the
 best linear discriminant as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   \bw = & \bS^{-1} (\bmu_1 - \bmu_2)
-\end{align*}
+\end{split}
+\end{empheq}
 We can finally normalize $\bw$ to be a unit vector.
 \end{frame}
 
@@ -339,7 +342,9 @@ The best linear
 discriminant vector $\bw$ in feature space is the dominant
 eigenvector, which satisf\/{i}es the expression
 \begin{align*}
+\tcbhighmath{
   \lB(\bS_\phi^{-1}\bB_\phi\rB) \bw = \lambda \bw
+}
  \label{eq:class:lda:eigeqF}
 \end{align*}
 where we assume that $\bS_\phi$ is non-singular. 
@@ -406,8 +411,10 @@ where $\bN$ is the $n\times n$ within-class scatter matrix.
 \begin{frame}{Kernel LDA}
 The kernel LDA maximization condition is
 \begin{align*}
+\tcbhighmath{
     \max_{\bw} J(\bw) = \max_{\ba} J(\ba) =
     {\ba^T\bM\ba \over \ba^T\bN\ba}
+}
 \end{align*}
 
 
@@ -435,8 +442,10 @@ scale $\ba$ by $1 \over \sqrt{\ba^T\bK\ba}$.
 We can project any point $\bx$ onto the discriminant
 direction as follows:
 \begin{align*}
+\tcbhighmath{
   \bw^T\phi(\bx) = \dsum_{j=1}^n a_{j}\phi(\bx_{j})^T\phi(\bx) =
   \dsum_{j=1}^n a_{j} K(\bx_{j},\bx)
+}
 \end{align*}
 \end{frame}
 
@@ -444,32 +453,18 @@ direction as follows:
 
 \newcommand{\KLDA}{\textsc{KernelDiscriminant}}
 \begin{frame}[fragile]{Kernel Discriminant Analysis Algorithm}
-\begin{algorithm}[H]
-\SetKwInOut{Algorithm}{
-    \KLDA\ ($\bD = \{(\bx_i, y_i)\}_{i=1}^n,
-K$)} 
+\begin{tightalgo}[H]{\textwidth-18pt}
+\SetKwInOut{Algorithm}{\KLDA\ ($\bD = \{(\bx_i, y_i)\}_{i=1}^n, K$)} 
 \Algorithm{} 
-$\bK \assign \bigl\{K(\bx_i, \bx_{j})
-\bigr\}_{i,j=1,\ldots,n}$ \tcp{compute $n \times n$ kernel
-matrix}
-$\bK^{c_i} \assign \bigl\{\bK(j,k) \mid y_k=c_i, 1\le
-j,k \le n\bigr\}, i=1,2$ \tcp{class kernel matrix}
-$\bmm_i
-\assign {1\over n_i}\bK^{c_i}  \bone_{n_i}, i=1,2$ \tcp{class
-means}
-$\bM \assign (\bmm_1-\bmm_2)(\bmm_1-\bmm_2)^T$
-\tcp{between-class scatter matrix}
-$\bN_i  \assign \bK^{c_i}
-(\bI_{n_i} - {1\over n_i}\bone_{n_i \times n_i}) (\bK^{c_i})^T$, $i = 1, 2$
-\tcp{class scatter matrices}
-$\bN \assign \bN_1 + \bN_2$
-\tcp{within-class scatter matrix}
-$\lambda_1, \ba \assign
-\text{eigen}(\bN^{-1}\bM)$ \tcp{compute weight vector}
-$\ba
-\assign {\ba \over \sqrt{\ba^T \bK \ba}}$ \tcp{normalize $\bw$ to
-be unit vector}
-\end{algorithm}
+$\bK \assign \bigl\{K(\bx_i, \bx_{j}) \bigr\}_{i,j=1,\ldots,n}$ \tcp{compute $n \times n$ kernel matrix} 
+$\bK^{c_i} \assign \bigl\{\bK(j,k) \mid y_k=c_i, 1\le j,k \le n\bigr\}, i=1,2$ \tcp{class kernel matrix} 
+$\bmm_i \assign {1\over n_i}\bK^{c_i}  \bone_{n_i}, i=1,2$ \tcp{class means} 
+$\bM \assign (\bmm_1-\bmm_2)(\bmm_1-\bmm_2)^T$ \tcp{between-class scatter matrix} 
+$\bN_i  \assign \bK^{c_i} (\bI_{n_i} - {1\over n_i}\bone_{n_i \times n_i}) (\bK^{c_i})^T$, $i = 1, 2$ \tcp{class scatter matrices} 
+$\bN \assign \bN_1 + \bN_2$ \tcp{within-class scatter matrix} 
+$\lambda_1, \ba \assign \text{eigen}(\bN^{-1}\bM)$ \tcp{compute weight vector} 
+$\ba \assign {\ba \over \sqrt{\ba^T \bK \ba}}$ \tcp{normalize $\bw$ to be unit vector} 
+\end{tightalgo}
 \end{frame}
 
 

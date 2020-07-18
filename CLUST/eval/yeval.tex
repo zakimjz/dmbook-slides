@@ -110,8 +110,10 @@ cluster $C_i$ contains entities from only one partition:
 The purity of clustering $\cC$ is def\/{i}ned as the weighted sum of the
 clusterwise purity values:
 \begin{align*}
+\tcbhighmath{
   \mathit{purity} = \sum_{i=1}^r \frac{n_{i}}{n} \mathit{purity}_i =
   \frac{1}{n}\sum_{i=1}^r \max_{j=1}^k \{n_{ij}\}
+}
 \end{align*}
 where the ratio $\tfrac{n_{i}}{n}$ denotes the fraction of points in
 cluster $C_i$.  
@@ -154,29 +156,38 @@ that is, $j_i = \max_{j=1}^k \{ n_{ij} \}$.
 The {\em precision} of a
 cluster $C_i$ is the same as its purity:
 \begin{align*}
+\tcbhighmath{
   \mathit{prec}_i = \frac{1}{n_{i}}\max_{j=1}^k \left\{ n_{ij} \right\} =
   \frac{n_{ij_i}}{n_i}
+}
 \end{align*}
 
 \medskip
 The {\em recall} of cluster $C_i$ is def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   \mathit{recall}_i = \frac{n_{ij_i}}{\card{T_{j_i}}} =\frac{n_{ij_i}}{m_{j_i}}
+}
  \end{align*}
  where $m_{j_i} = \card{T_{j_i}}$.
 
 \medskip
+\end{frame}
+
+\begin{frame}{Matching Based Measures: F-measure}
 The F-measure is the harmonic mean of the precision and recall values for
-each cluster $C_i$
+each $C_i$
 \begin{align*}
+\tcbhighmath{
   F_i = \frac{2}{\frac{1}{\mathit{prec}_i} + \frac{1}{\mathit{recall}_i}} =
   \frac{2 \cdot \mathit{prec}_i \cdot \mathit{recall}_i}{\mathit{prec}_i + \mathit{recall}_i} =
   \frac{2 \; n_{ij_i}}{n_{i} + m_{j_i}}
+}
 \end{align*}
 
 \medskip
 The F-measure for the clustering $\cC$ is the mean of clusterwise
-F-measure values:
+F-meaure values:
 \begin{align*}
   F = \frac{1}{r} \sum_{i=1}^r F_i
 \end{align*}
@@ -361,8 +372,12 @@ The conditional entropy of $\cT$ given clustering $\cC$ is def\/{i}ned
 as the weighted sum:
 \begin{align*}
   H(\cT|\cC) & = \sum_{i=1}^r \frac{n_{i}}{n} H(\cT|C_i)
-  = -\sum_{i=1}^r \sum_{j=1}^k p_{ij} \log \lB(
-  \frac{p_{ij}}{p_{C_i}}\rB)\\
+  = 
+\tcbhighmath{
+-\sum_{i=1}^r \sum_{j=1}^k p_{ij} \log \lB(
+  \frac{p_{ij}}{p_{C_i}}\rB)
+}
+\\
   & = H(\cC,\cT) - H(\cC)
 \end{align*}
 where $p_{ij}= \tfrac{n_{ij}}{n}$ is the probability that a point in
@@ -385,8 +400,10 @@ information} tries to quantify the amount of shared information
 between the clustering $\cC$ and partitioning $\cT$, and it is
 def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   I(\cC,\cT) = \sum_{i=1}^r \sum_{j=1}^k p_{ij} \log
   \lB(\frac{p_{ij}}{p_{C_i} \cdot p_{T_{j}}} \rB)
+}
 \end{align*}
 When $\cC$ and $\cT$
 are independent then $p_{ij} = p_{C_i} \cdot p_{T_{j}}$, and thus
@@ -398,8 +415,10 @@ information.
 The {\em normalized mutual information} (NMI) is def\/{i}ned as
 the geometric mean:
 \begin{align*}
+\tcbhighmath{
   \NMI(\cC,\cT) = \sqrt{\frac{I(\cC,\cT)}{H(\cC)} \cdot \frac{I(\cC,\cT)}{H(\cT)}} =
   \frac{I(\cC,\cT)}{\sqrt{H(\cC)\cdot H(\cT)}}
+}
 \end{align*}
 The NMI value lies in the range $[0,1]$. Values close to $1$ indicate a
 good clustering.
@@ -423,8 +442,13 @@ lower the VI value the better the clustering $\cC$.
 VI can also be expressed as:
 \begin{align*}
   \VI(\cC,\cT) & = H(\cT|\cC) + H(\cC|\cT)\\
-  \VI(\cC,\cT) & = 2H(\cT,\cC)-H(\cT)-H(\cC)
 \end{align*}
+\vspace*{-1.0cm}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
+  \VI(\cC,\cT) & = 2H(\cT,\cC)-H(\cT)-H(\cC)
+\end{split}
+\end{empheq}
 \end{frame}
 
 
@@ -567,8 +591,10 @@ partition labels, there are four possibilities to consider:
   partition in $\cT$, and they are also in the same cluster in $\cC$. The number of true
   positive pairs is given as
   \begin{align*}
+\tcbhighmath{
   \mathit{TP} = \bigl|\{(\bx_i, \bx_{j}):\; y_i = y_{j}
   \text{ and } \hy_i = \hy_{j} \}\bigr|
+}
   \end{align*}
 
 \item[\textit{False Negatives:}] 
@@ -577,8 +603,10 @@ partition labels, there are four possibilities to consider:
 The
   number of all false negative pairs is given as
   \begin{align*}
+\tcbhighmath{
   \mathit{FN} = \bigl|\{(\bx_i, \bx_{j}):\; y_i = y_{j}
   \text{ and } \hy_i \ne \hy_{j} \}\bigr|
+}
   \end{align*}
 \end{description}
 \end{frame}
@@ -591,16 +619,20 @@ The
   The
   number of false positive pairs is given as
   \begin{align*}
+\tcbhighmath{
   \mathit{FP} = \bigl|\{(\bx_i, \bx_{j}):\; y_i \ne y_{j}
   \text{ and } \hy_i = \hy_{j} \}\bigr|
+}
   \end{align*}
 
 \item[\textit{True Negatives:}] $\bx_i$ and $\bx_{j}$ neither belong to
   the same partition in $\cT$, nor do they belong to the same cluster in
   $\cC$.  The number of such true negative pairs is given as
     \begin{align*}
+\tcbhighmath{
   \mathit{TN} = \bigl|\{(\bx_i, \bx_{j}):\; y_i \ne y_{j}
   \text{ and } \hy_i \ne \hy_{j} \}\bigr|
+}
   \end{align*}
 \end{description}
 
@@ -644,13 +676,14 @@ F{i}nally, the number of true negatives can be obtained via
 
 
 
-\begin{frame}{Pairwise Measures: Jaccard Coeff\/{i}cient, Rand
-  Statistic, FM Measure}
+\begin{frame}{Pairwise Measures: Jaccard Coeff\/{i}cient, Rand Statistic}
 \small
 {\bf Jaccard Coeff\/{i}cient:} measures the fraction of true positive point pairs,
 but after ignoring the true negative:
 \begin{align*}
+\tcbhighmath{
 \mathit{Jaccard} = \frac{\mathit{TP}}{\mathit{TP} + \mathit{FN} + \mathit{FP}}
+}
 \end{align*}
 
 \medskip
@@ -658,9 +691,13 @@ but after ignoring the true negative:
 measures the fraction of true positives and true negatives over
 all point pairs:
 \begin{align*}
+\tcbhighmath{
 \mathit{Rand} = \frac{\mathit{TP} + \mathit{TN}}{N}
+}
 \end{align*}
+\end{frame}
 
+\begin{frame}{Pairwise Measures: FM Measure}
 
 \medskip {\bf Fowlkes-Mallows Measure:} 
 Def\/{i}ne the overall
@@ -674,7 +711,9 @@ precision} and
 The Fowlkes--Mallows (FM) measure is def\/{i}ned as the
 geometric mean of the pairwise precision and recall
 \begin{align*}
+\tcbhighmath{
 \mathit{FM} = \sqrt{\mathit{prec}\cdot \mathit{recall}} = \frac{\mathit{TP}}{\sqrt{ (\mathit{TP}+\mathit{FN})(\mathit{TP}+\mathit{FP}) }}
+}
 \end{align*}
 \end{frame}
 
@@ -792,24 +831,26 @@ given as
   \bX(i,j) = \frac{1}{N} \bx^T\bx
 \end{align*}
 and let $\bz_x$ denote the centered $\bx$ vector, def\/{i}ned as
-\begin{align*}
-  \bz_x = \bx - \bone \cdot \mu_X
-\end{align*}
+$ \bz_x = \bx - \bone \cdot \mu_X$
 
 \medskip
 The Hubert statistic is def\/{i}ned as 
 \begin{align*}
+\tcbhighmath{
   \Gamma =
   \frac{1}{N} \sum_{i=1}^{n-1} \sum_{j=i+1}^n
 \bX(i,j)\cdot \bY(i,j) = \frac{1}{N} \bx^T\by
+}
 \end{align*}
 
 \medskip
 The normalized Hubert statistic is def\/{i}ned as the
 element-wise correlation
 \begin{align*}
+\tcbhighmath{
   \Gamma_n =  \frac{\bz_x^T \bz_y}{\norm{\bz_x} \cdot \norm{\bz_y}} =
   \cos \theta
+}
 \end{align*}
 \end{frame}
 
@@ -1056,11 +1097,13 @@ Only intracluster edges shown.
 ratio of the mean intracluster distance to the mean intercluster
 distance:
 \begin{align*}
+\tcbhighmath{
   BetaCV = \frac{W_{in}/N_{in}}{W_{out}/N_{out}} =
   \frac{N_{out}}{N_{in}} \cdot \frac{W_{in}}{W_{out}}
   = \frac{N_{out}}{N_{in}}
   \frac{\sum_{i=1}^k W(C_i, C_i)}{\sum_{i=1}^k
   W(C_i, \ol{C_i})}
+}
 \end{align*}
 The smaller the BetaCV ratio, the better the clustering.
 
@@ -1077,8 +1120,10 @@ $N_{in}$
 points that are the closest across the $k$ clusters.
 It is def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   Cindex = \frac{W_{in} -
   W_{\min}(N_{in})}{W_{\max}(N_{in})-W_{\min}(N_{in})}
+}
 \end{align*}
 The C-index lies in the range $[0,1]$.
 The smaller the C-index, the better the clustering.
@@ -1091,8 +1136,10 @@ The smaller the C-index, the better the clustering.
 objective for graph clustering can
 also be used as an internal clustering evaluation measure:
 \begin{align*}
+\tcbhighmath{
 NC = \sum_{i=1}^k {W(C_i, \ol{C_i}) \over vol(C_i)} =
 \sum_{i=1}^k {W(C_i, \ol{C_i}) \over W(C_i, V)}
+}
 \end{align*}
 where $vol(C_i) = W(C_i,V)$ is the volume of cluster $C_i$.
 The higher the normalized cut value the better.
@@ -1101,10 +1148,12 @@ The higher the normalized cut value the better.
 {\bf Modularity:}
 The modularity objective is given as
 \begin{align*}
+\tcbhighmath{
 Q = \sum_{i=1}^k \Biggl(
     {W(C_i,C_i) \over W(V,V)} -
     \lB({W(C_i,V) \over W(V,V)}\rB)^2
     \Biggr)
+}
 \end{align*}
 The smaller the modularity measure the better the clustering.
 \end{frame}
@@ -1115,7 +1164,9 @@ The Dunn index is def\/{i}ned as the ratio between the
 minimum distance between point pairs from different clusters and
 the maximum distance between point pairs from the same cluster
 \begin{align*}
+\tcbhighmath{
   Dunn = \frac{\displaystyle W_{out}^{\min}}{\displaystyle W_{in}^{\max}}
+}
 \end{align*}
 where $W_{out}^{\min}$ is the minimum intercluster distance:
 \begin{align*}
@@ -1151,7 +1202,9 @@ mean
 The Davies--Bouldin measure for a pair of clusters $C_i$ and $C_{j}$ is
 def\/{i}ned as the ratio
 \begin{align*}
+\tcbhighmath{
 \mathit{DB}_{ij} = \frac{\sigma_{\mu_i}+\sigma_{\mu_{j}}}{\dist(\mu_i,\mu_{j})}
+}
 \end{align*}
 $\mathit{DB}_{ij}$ measures how compact the clusters are compared to the distance
 between the cluster means.
@@ -1168,9 +1221,11 @@ The smaller the DB value the better the clustering.
 Define the
 silhoutte coeff\/{i}cient of a point $\bx_i$ as
 \begin{align*}
+\tcbhighmath{
   s_i = \frac{\displaystyle \mu_{out}^{\min}(\bx_i)-\mu_{in}(\bx_i)}
   {\displaystyle \max
   \Bigl\{\mu_{out}^{\min}(\bx_i), \mu_{in}(\bx_i)\Bigr\} }
+}
 \end{align*}
 where
 $\mu_{in}(\bx_i)$ is the mean distance from $\bx_i$ to points in its own cluster $\hy_i$:
@@ -1431,8 +1486,10 @@ the mean for cluster $C_i$.
 The Calinski--Harabasz (CH) variance ratio criterion for a given value of $k$
 is def\/{i}ned as follows:
 \begin{align*}
+\tcbhighmath{
   \mathit{CH}(k) = \frac{tr(\bS_B)/(k-1)}{tr(\bS_W)/(n-k)} =
   \frac{n-k}{k-1} \cdot \frac{tr(\bS_B)}{tr(\bS_W)}
+}
 \end{align*}
 where $tr$ is the trace of the matrix.
 
@@ -1528,7 +1585,9 @@ mean and standard deviation of these intracluster weights for each
 value of $k$.
 The {\em gap statistic} for a given $k$ is then def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   gap(k) = \mu_W(k) - \log  W_{in}^k(\bD)
+}
 \end{align*}
 
 \medskip
@@ -1696,7 +1755,7 @@ exhibits the most stability.
 
 \newcommand{\StabClus}{{\textsc{ClusteringStability}}}
 \begin{frame}[fragile]{Clustering Stability Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\StabClus\ ($A, t, k^{\max}, \bD$)}
 \Algorithm{}
 $n \gets \card{\bD}$\;
@@ -1713,9 +1772,9 @@ $n \gets \card{\bD}$\;
 }
 %\tcp{Compute mean difference between clusterings for each $k$}
 \ForEach{pair $\bD_i, \bD_{j}$ with $j > i$ }{
-  $\bD_{ij} \gets \bD_i \cap \bD_{j}$ \tcp{create common dataset}%using Eq.\nosp\eqref{eq:clus:eval:Dij}}\; 
+  $\bD_{ij} \gets \bD_i \cap \bD_{j}$ \tcp{create common dataset}\;%using Eq.\nosp\eqref{eq:clus:eval:Dij}}\; 
 \For{$k = 2,3,\ldots,k^{\max}$}{
-  $d_{ij}(k) \gets d\bigl(\cC_k(\bD_i),\cC_k(\bD_{j}),\bD_{ij}\bigr)$ \tcp{distance between clusterings}
+  $d_{ij}(k) \gets d\bigl(\cC_k(\bD_i),\cC_k(\bD_{j}),\bD_{ij}\bigr)$ \tcp{distance between clusterings}\;
   }
 }
 \For{$k = 2,3,\ldots,k^{\max}$}{
@@ -1726,7 +1785,7 @@ $n \gets \card{\bD}$\;
 }
 %\tcp{Choose best $k$}
 $k^* \gets \arg\min_k \bigl\{ \mu_d(k) \bigr\}$
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 

@@ -75,17 +75,17 @@ or {\em central tendency} for the distribution of $X$.
 \bigskip
 If $X$ is discrete, 
 it is def\/{i}ned as
-\begin{align*}
-    \mu = E[X] = \sum_x xf(x)
-\end{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+    \mu = E[X] = \sum_x x \cdot f(x)
+\end{empheq}
 where $f(x)$ is the probability mass function of $X$.
 
 \bigskip
 If $X$ is continuous it is 
 def\/{i}ned as
-\begin{align*}
-    \mu = E[X] = \int_{-\infty}^{\infty} x f(x)\; dx
-\end{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+    \mu = E[X] = \int_{-\infty}^{\infty} x \cdot f(x)\; dx
+\end{empheq}
 where $f(x)$ is the probability density function of $X$.
 \end{frame}
 
@@ -94,9 +94,9 @@ where $f(x)$ is the probability density function of $X$.
 The {\em sample mean}
  is a statistic, that is, a function $\hmu: \{x_1, x_2, \ldots,
  x_n\} \to \setR$, def\/{i}ned as the average value of $x_i$'s:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \hmu = \frac{1}{n}\;\sum_{i=1}^n x_i
-\end{align*}
+\end{empheq}
 It serves as an
 estimator for the unknown mean value $\mu$ of $X$.
 
@@ -257,7 +257,7 @@ of a random variable $X$ provides a measure of how
 much the values of $X$ deviate from the mean or expected value of
 $X$
 \begin{align*}
-      \sigma^2 = var(X) = E\bigl[(X-\mu)^2\bigr] =
+\tcbhighmath{\sigma^2 = \var(X) = E\bigl[(X-\mu)^2\bigr]} =
     \begin{cases}
      \displaystyle \sum_{x} (x - \mu)^2 \; f(x) & \text{if $X$
      is discrete} \\[2em]
@@ -271,9 +271,9 @@ is the positive square root of the variance, $\sigma^2$.
 \bigskip
 The {\em sample variance}  is
 def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \hsigma^2 & = \frac{1}{n}\;\sum_{i=1}^n (x_i - \hmu)^2
-\end{align*}
+\end{empheq}
 and the {\em sample standard deviation} is
 \begin{align*}
     \hsigma = \sqrt{\frac{1}{n}\;\sum_{i=1}^n
@@ -372,13 +372,13 @@ random variable $\bX$:
 \end{align*}
 %
 The sample mean vector is given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \hbmu =
     \sum_\bx \bx \hf(\bx) =
     \sum_\bx \bx \lB(
     \frac{1}{n}\;\sum_{i=1}^n I(\bx_i=\bx)\rB)
         = {1 \over n} \sum_{i=1}^n \bx_i
-\end{align*}
+\end{empheq}
 \end{frame}
 
 
@@ -387,10 +387,10 @@ The {\em covariance}\index{covariance}\index{random
 variable!covariance} between two attributes $X_1$ and $X_2$ provides a
 measure of the association or linear dependence between them, and
 is def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \sigma_{12} & = E[(X_1-\mu_{1})(X_2-\mu_{2})]\\
      & = E[X_1X_2] - E[X_1] E[X_2]
-\end{align*}
+\end{empheq}
 
 If $X_1$ and $X_2$ are independent, then
 $$E[X_1X_2] = E[X_1] \cdot E[X_2]$$
@@ -398,10 +398,10 @@ which implies that $\sigma_{12} = 0$.
 
 \bigskip
 The {\em sample covariance} between $X_1$ and $X_2$ is given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \hsigma_{12} =
     \frac{1}{n}\;\sum_{i=1}^n (x_{i1} - \hmu_{1})(x_{i2} - \hmu_{2})
-\end{align*}
+\end{empheq}
 \end{frame}
 
 
@@ -420,28 +420,28 @@ variable, given as
 \bigskip
 The {\em sample correlation}
 for attributes $X_1$ and $X_2$ is given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
   \hrho_{12} =
   \frac{\hsigma_{12}}{\hsigma_{1}\hsigma_{2}} =
   \frac{\sum_{i=1}^n (x_{i1} - \hmu_{1})(x_{i2} - \hmu_{2})}
   {\sqrt{\sum_{i=1}^n (x_{i1} - \hmu_{1})^2
   \sum_{i=1}^n (x_{i2} - \hmu_{2})^2}}
-\end{align*}
+\end{empheq}
 \end{frame}
 
 
 \begin{frame}{Geometric Interpretation of Sample Covariance and
 Correlation} 
-Let $Z_1$ and $Z_2$ denote the centered
+Let $\mX_1$ and $\mX_2$ denote the centered
 attribute vectors in $\setR^n$:
 \begin{align*}
-  Z_1 & = X_1-\bone \cdot \hmu_{1} = \matr{
+  \mX_1 & = X_1-\bone \cdot \hmu_{1} = \matr{
   x_{11} - \hmu_{1}\\
   x_{21} - \hmu_{1}\\
       \vdots\\
       x_{n1} - \hmu_{1}\\
     } &
-  Z_2 & = X_2-\bone \cdot \hmu_{2} = \matr{
+  \mX_2 & = X_2-\bone \cdot \hmu_{2} = \matr{
   x_{12} - \hmu_{2}\\
   x_{22} - \hmu_{2}\\
       \vdots\\
@@ -449,17 +449,18 @@ attribute vectors in $\setR^n$:
   }
 \end{align*}
 
-The sample covariance is given as
-\begin{align*}
-    \hsigma_{12} = {Z_1^TZ_2 \over n}
-\end{align*}
-and the sample correlation is
-\begin{align*}
+The sample covariance 
+and the sample correlation 
+are given as
+\begin{empheq}[box=\tcbhighmath]{align*}
+    \hsigma_{12} = {\mX_1^T \mX_2 \over n}
+\end{empheq}
+\begin{empheq}[box=\tcbhighmath]{align*}
   \hrho_{12} = \frac{Z_1^T Z_2}{\sqrt{Z_1^T Z_1} \sqrt{Z_2^T Z_2}}
   = \frac{Z_1^T Z_2}{\norm{Z_1} \; \norm{Z_2}}
   = \lB(\frac{Z_1}{\norm{Z_1}}\rB)^T
   \lB(\frac{Z_2}{\norm{Z_2}}\rB) = \cos \theta
-\end{align*}
+\end{empheq}
 The correlation coeff\/{i}cient is simply the cosine  of the
 angle between the two centered
 attribute vectors.
@@ -503,9 +504,9 @@ Because $\sigma_{12} = \sigma_{21}$, $\cov$ is {\em symmetric}.
 
 The {\em total variance}
  is given as 
- \begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     var(\bD) = tr(\cov) = \sigma_1^2 + \sigma_2^2
-\end{align*}
+\end{empheq}
 We immediately have $tr(\cov) \ge 0$.
 
 The {\em generalized variance} is
@@ -593,9 +594,9 @@ is
 \end{align*}
 
 The {\em sample mean} is
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \hbmu = {1 \over n} \sum_{i=1}^n \bx_i
-\end{align*}
+\end{empheq}
 
 
 The (sample) covariance matrix is a $d\times d$ (square) symmetric matrix
@@ -654,34 +655,32 @@ $\det(\cov) = \prod_{i=1}^d \lambda_i \ge 0$
 
 \begin{frame}{Sample Covariance Matrix: Inner and Outer Product}
   \small
-Let $\bZ$ represent the centered data matrix
+Let $\mbD$ represent the centered data matrix
 \begin{align*}
-    \bZ  = \bD - \bone \cdot \hbmu^T
-	    = \matr{\mbox{---} & \bz_1^T & \mbox{---} \\[0.2em]
-    \mbox{---} & \bz_2^T& \mbox{---} \\[0.2em]
+    \mbD = \bD - \bone \cdot \hbmu^T
+    = \matr{\bx_1^T - \hbmu^T\\[0.2em] \bx_2^T - \hbmu^T \\[0.2em] \vdots \\
+    \bx_n^T-\hbmu^T}
+    = \matr{\mbox{---} & \mbx_1^T & \mbox{---} \\[0.2em]
+    \mbox{---} & \mbx_2^T& \mbox{---} \\[0.2em]
     & \vdots & \\
-    \mbox{---} & \bz_n^T & \mbox{---}}
-    = \matr{| & | &  & |\\
-    Z_1 & Z_2 & \cdots & Z_d\\
-    | & | &  & |}
+    \mbox{---} & \mbx_n^T & \mbox{---}}
 \end{align*}
-where $\bz_i = \bx_i - \hbmu$ is a centered point, and $Z_i = X_i -
-\bone \cdot \hmu_i$ is a centered attribute.
 
 \medskip
 Inner product and outer product 
 form for sample covariance matrix:
-\begin{align*}
-    \hcov & = {1\over n} \lB(\bZ^T \bZ\rB)
-   = {1 \over n} \matr{Z_1^T Z_1 & Z_1^T Z_2 & \cdots & Z_1^T
-    Z_d\\[0.5em]
-        Z_2^T Z_1 & Z_2^T Z_2 & \cdots & Z_2^T Z_d\\[0.5em]
+\begin{empheq}[box=\tcbhighmath]{align*}
+    \hcov = {1\over n} \lB(\mbD^T\; \mbD\rB)
+   = {1 \over n} \matr{\mX_1^T\; \mX_1 & \mX_1^T\; \mX_2 & \cdots &
+       \mX_1^T\;
+    \mX_d\\[0.5em]
+        \mX_2^T\; \mX_1 & \mX_2^T\; \mX_2 & \cdots & \mX_2^T\; \mX_d\\[0.5em]
         \vdots & \vdots & \ddots & \vdots\\[0.5em]
-        Z_d^T Z_1 & Z_d^T Z_2 & \cdots & Z_d^T Z_d
-    }
+        \mX_d^T\; \mX_1 & \mX_d^T\; \mX_2 & \cdots & \mX_d^T\; \mX_d\\
+}
 	& 
-    \hcov & = {1\over n} \sum_{i=1}^n \bz_i \cdot \bz_i^T
-\end{align*}
+    \hspace*{0.3cm} \hcov  = {1\over n} \sum_{i=1}^n \mbx_i \cdot \mbx_i^T
+\end{empheq}
 i.e., $\hcov$ is given as
 the pairwise {\em inner or dot products} 
 of the centered attribute vectors,
@@ -795,10 +794,10 @@ A random variable $X$ has a normal
 distribution, with
 the parameters mean $\mu$ and variance $\sigma^2$, if the
 probability density function of $X$ is given as follows:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     f(x|\mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}
   \;\;\exp\lB\{-\frac{(x-\mu)^2}{2\sigma^2}\rB\}
-\end{align*}
+\end{empheq}
 The term $(x-\mu)^2$ measures the distance of a value $x$ from
 the mean $\mu$ of the distribution, and thus the probability
 density decreases exponentially as a function of the distance
@@ -848,10 +847,10 @@ normal distribution, with the parameters
 mean $\bmu$ and covariance matrix $\cov$,
 if its joint multivariate probability density function
 is given as follows:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
   f(\bx | \bmu, \cov) = \frac{1}{(\sqrt{2\pi})^d\;\sqrt{|\cov|}}
   \;\;\exp\lB\{-\frac{(\bx-\bmu)^T\;\cov^{-1}\;(\bx-\bmu)}{2}\rB\}
-\end{align*}
+\end{empheq}
 where $|\cov|$ is the determinant of the covariance matrix.
 
 \medskip

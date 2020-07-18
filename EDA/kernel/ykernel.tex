@@ -116,7 +116,9 @@ is a {\em kernel function} on any two points in input space, which
 should satisfy the
 condition
 \begin{align*}
+\tcbhighmath{
 K(\bx_i, \bx_{j})  = \phi(\bx_i)^T \phi(\bx_{j})
+}
 \end{align*}
 
 \medskip
@@ -332,8 +334,10 @@ Let $\bx, \by \in \setR^d$.
 The (inhomogeneous) {\em polynomial
 kernel} is def\/{i}ned as
   \begin{align*}
+\tcbhighmath{
     K_q(\bx, \by)= \phi(\bx)^T \phi(\by) =
     (c+\bx^{T}\by)^q
+}
   \end{align*}
   where $q$ is the degree of the polynomial, and $c \ge 0$ is some
   constant. When $c=0$ we obtain the homogeneous kernel,
@@ -364,8 +368,10 @@ The Gaussian kernel, also called the Gaussian radial basis
 function (RBF) kernel,
 is def\/{i}ned as
   \begin{align*}
+\tcbhighmath{
       K(\bx, \by) =
     \exp\lB\{-\frac{\norm{\bx-\by}^2}{2\sigma^2} \rB\}
+}
   \end{align*}
 where $\sigma > 0$ is the spread parameter that plays the same
 role as the standard deviation in a normal density function.
@@ -390,7 +396,9 @@ kernel has inf\/{i}nite dimensionality.
 {\bf Norm of a Point:} We can compute the
 norm of a point $\phi(\bx)$ in feature space as follows:
 \begin{align*}
+\tcbhighmath{
   \norm{\phi(\bx)}^2 = \phi(\bx)^T\phi(\bx) = K(\bx, \bx)
+}
 \end{align*}
 which implies that $\norm{\phi(\bx)} = \sqrt{K(\bx, \bx)}$.
 
@@ -398,12 +406,14 @@ which implies that $\norm{\phi(\bx)} = \sqrt{K(\bx, \bx)}$.
 {\bf Distance between Points:}
 The distance between $\phi(\bx_i)$ and
 $\phi(\bx_{j})$ is
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   \norm{\phi(\bx_i) -\phi(\bx_{j})}^2 & = \norm{\phi(\bx_i)}^2 +
   \norm{\phi(\bx_{j})}^2 - 2
   \phi(\bx_i)^T\phi(\bx_{j})\\
     & = K(\bx_i,\bx_i) + K (\bx_{j}, \bx_{j}) - 2 K(\bx_i,\bx_{j})
-\end{align*}
+\end{split}
+\end{empheq}
 which implies that
 \begin{align*}
   \norm{\phi(\bx_i) -\phi(\bx_{j})} =
@@ -436,10 +446,12 @@ The mean of the points in
 feature space is given as $\bmu_\phi = 1/n \sum_{i=1}^n \phi(\bx_i)$.
 Thus, we cannot compute it explicitly. However, the 
 the squared norm of the mean is:
-\begin{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \|\bmu_\phi\|^2 & = \bmu_\phi^T\bmu_\phi = 
     {1\over n^2} \sum_{i=1}^n \sum_{j=1}^n K(\bx_i, \bx_{j})
-\end{align}
+\end{split}
+\end{empheq}
 The squared norm of the mean in
 feature space is simply the average of the values in the kernel
 matrix $\bK$.
@@ -453,12 +465,15 @@ matrix $\bK$.
 The total variance in feature space is
 obtained by taking the average squared
 deviation of points from the mean in feature space:
-\begin{align*}
+
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
         \sigma_\phi^2 & = {1 \over n} \sum_{i=1}^n \|\phi(\bx_i)
         - \bmu_\phi \|^2 = 
  {1 \over n} \sum_{i=1}^n K(\bx_i, \bx_i) - {1\over n^2}
  \sum_{i=1}^n \sum_{j=1}^n K(\bx_i, \bx_{j})
-\end{align*}
+\end{split}
+\end{empheq}
 
 \medskip
 {\bf Centering in Feature Space}

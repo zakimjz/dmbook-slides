@@ -82,8 +82,10 @@ sequences, and given some sequence $\br$, the {\em support} of $\br$ in
 the database $\bD$ is def\/{i}ned as the total number of sequences in $\bD$
 that contain $\br$
 \begin{align*}
+\tcbhighmath{
   \supp(\br) = \bcard{\Big}{\bigl\{\bs_i \in \bD | \br \subseteq
   \bs_i\bigr\}}
+}
 \end{align*}
 
 \medskip
@@ -186,7 +188,7 @@ prune it.
 
 
 \begin{frame}[fragile]{Algorithm \alggsp}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInput{AlgorithmA}{\alggsp ($\bD$, $\Sigma$, $\minsup$)}
 \AlgorithmA{}
 $\cF \assign \emptyset$\;
@@ -207,16 +209,16 @@ $k \assign 1$ \tcp{$k$ denotes the level}
     }
   }
  $\Ck{k+1} \assign$ \algSeqextprefix ($\Ck{k}$)
- \nllabel{alg:fpm:seq:gsp:ext}\;
-  $k \assign k+1$\;
+ \nllabel{alg:fpm:seq:gsp:ext}
+  $k \assign k+1$
 }
 \Return{$\Fk{k}$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
 \begin{frame}[fragile]{Algorithm \algSeqcomputesupport}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInput{AlgorithmB}{\algSeqcomputesupport ($\Ck{k}, \bD$)}
 \AlgorithmB{}
 \ForEach{$\bs_i \in \bD$}{
@@ -226,9 +228,9 @@ $k \assign 1$ \tcp{$k$ denotes the level}
     }
   }
 }
-\end{algorithm}
+\end{tightalgo}
 
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInput{AlgorithmC}{\algSeqextprefix ($\Ck{k}$)}
 \AlgorithmC{}
 \ForEach{$ \text{leaf } \br_a \in \Ck{k}$}{
@@ -247,7 +249,7 @@ $\br_b$} \nllabel{alg:fpm:seq:gsp:cand}
    and all ancestors of $\br_a$ with no extensions, from $\Ck{k}$}
 }
 \Return $\Ck{k}$\;
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -324,7 +326,6 @@ The set of poslists for each symbol $s \in \Sigma$ thus constitutes a
 vertical representation of the input database.
 
 \medskip
-Let $\cL(s)$ denote the set of such sequence-position tuples
 Given $k$-sequence
 $\br$, its poslist $\cL(\br)$
 maintains the list of positions for the occurrences
@@ -376,7 +377,7 @@ join as $\cL(\br_{ab}) = \cL(\br_a) \cap \cL(\br_b)$.
 
 
 \begin{frame}[fragile]{Spade Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmT}{\algspade ($P$, $\minsup$, $\cF$, $k$)}
 \tcp{Initial Call: $\cF \assign \emptyset$, $k \assign 0$,
 $P \assign \bigl\{\tup{s,\cL(s)} \mid
@@ -393,10 +394,10 @@ $P \assign \bigl\{\tup{s,\cL(s)} \mid
         }
     }
     \lIf{$P_a \ne \emptyset$}{
-      \algspade($\bP$, $\minsup$, $\cF$, $k+1$)
+      \algspade($P_a$, $\minsup$, $\cF$, $k+1$)
     }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -669,7 +670,7 @@ then made with $\br_s$ and $\bD_s$.
 
 
 \begin{frame}[fragile]{PrefixSpan Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmS}{\algprefixspan ($\bD_\br$, $\br$, $\minsup$,
 $\cF$)}
 \tcp{Initial Call: $\bD_\br \assign \bD$,
@@ -688,7 +689,7 @@ $\br \assign \emptyset$, $\cF \assign \emptyset$}
     \algprefixspan($\bD_s$, $\br_s$, $\minsup$, $\cF$)
   }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1195,12 +1196,10 @@ We will show that this time can be reduced to $O(n)$.
 
 
 \begin{frame}[fragile]{Algorithm \algUkkonenSimple}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmU}{\algUkkonenSimple ($\bs$)} \AlgorithmU{}
-$n \gets \card{\bs}$\; $\bs[n+1] \gets \$$ \tcp{ append terminal
-character}
-$\cT \assign \emptyset$ \tcp{ add empty string as
-root}
+$n \gets \card{\bs}$\; $\bs[n+1] \gets \$$ \tcp{ append terminal character} 
+$\cT \assign \emptyset$ \tcp{ add empty string as root} 
 \ForEach(\tcp*[h]{phase $i$ - construct
 $\cT_i$}){$i=1,\ldots,n+1$}{
   \ForEach(\tcp*[h]{extension $j$ for phase $i$}){$j=1,\ldots,i$}{
@@ -1210,7 +1209,7 @@ $\cT_i$}){$i=1,\ldots,n+1$}{
   }
 }
 \Return{$\cT$}\;
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 \begin{frame}{Ukkonen's Linear Time Algorithm: Implicit Suffixes}
@@ -1366,14 +1365,14 @@ different extensions, as opposed to searching from the root each time.
 \end{frame}
 
 \begin{frame}[fragile]{Linear Time Ukkonen Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKw{Break}{break} 
 \SetKwInOut{AlgorithmU}{\algUkkonen ($\bs$)}
 \AlgorithmU{} 
 $n \gets \card{\bs}$ \; 
-$\bs[n+1] \gets \$$ \tcp{ append terminal character} 
+$\bs[n+1] \gets \$$ \tcp{ append terminal character}  
 $\cT \assign \emptyset$ \tcp{ add empty string as root} 
-$l \assign 0$ \tcp{ last explicit suff\/{i}x}
+$l \assign 0$ \tcp{ last explicit suff\/{i}x} 
 \ForEach(\tcp*[h]{phase $i$ - construct $\cT_i$}){$i=1,\ldots,n+1$}{ 
 $e \assign i$ \tcp{ implicit extensions} \nllabel{alg:fpm:seq:UkkonenImpExt}
   \ForEach(\tcp*[h]{extension $j$ for phase $i$}){$j=l+1,\ldots,i$}{
@@ -1389,7 +1388,7 @@ $e \assign i$ \tcp{ implicit extensions} \nllabel{alg:fpm:seq:UkkonenImpExt}
   }
 }
 \Return{$\cT$}\;
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
   
 

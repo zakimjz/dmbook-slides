@@ -24,7 +24,9 @@ given as
 
 According to the Bayes theorem, we have
 \begin{align*}
+\tcbhighmath{
     P(c_i|\bx) = \frac{P(\bx|c_i) \cdot P(c_i)}{P(\bx)}
+}
 \end{align*}
 Because $P(\bx)$ is f\/{i}xed for a given point, Bayes rule 
 can be rewritten as
@@ -32,7 +34,10 @@ can be rewritten as
     \hy & = \arg\max_{c_i} \{ P(c_i|\bx) \} 
     = \arg\max_{c_i} \lB\{ {P(\bx|c_i)P(c_i) \over P(\bx)}
     \rB\}
-     = \arg\max_{c_i} \bigr\{ P(\bx|c_i)P(c_i) \bigl\}
+     = 
+\tcbhighmath{
+\arg\max_{c_i} \bigr\{ P(\bx|c_i)P(c_i) \bigl\}
+}
 \end{align*}
 \end{frame}
 
@@ -56,13 +61,15 @@ $|\bD_i| = n_i$.
 The prior probability for class $c_i$ can be
 estimated as follows:
 \begin{align*}
+\tcbhighmath{
   \hP(c_i) = \frac{n_i}{n}
+}
 \end{align*}
 \end{frame}
 
 
-\begin{frame}{Estimating the Likelihood: Numeric Attributes, Parametric
-  Approach}
+\begin{frame}{Estimating the Likelihood}
+\framesubtitle{Numeric Attributes, Parametric Approach}
 To estimate the likelihood $P(\bx|c_i)$, we have to estimate the
 joint probability of $\bx$ across all the $d$ dimensions, i.e.,
 we have to estimate $P\bigl(\bx=(x_1,x_2,\ldots,x_d) | c_i\bigr)$.
@@ -73,10 +80,12 @@ normally distributed, and we use the estimated mean $\hbmu_i$
 and covariance matrix $\hcov_i$ to compute the probability density 
 at $\bx$
 \begin{align*}
+\tcbhighmath{
   \hf_i(\bx) = \hf(\bx | \hbmu_i, \hcov_i) =
   \frac{1}{(\sqrt{2\pi})^{d}
     \sqrt{|\hcov_i|}} \exp \lB\{-\frac{(\bx - \hbmu_i)^T
     \hcov_i^{-1} (\bx -\hbmu_i)}{2} \rB \}
+}
 \end{align*}
 
 \medskip
@@ -97,26 +106,25 @@ The predicted class for $\bx$ is:
 \newcommand{\BC}{\textsc{BayesClassif\/{i}er}\xspace}
 \newcommand{\BCT}{\textsc{Testing}\xspace}
 \begin{frame}[fragile]{Bayes Classifier Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\BC($\bD = \{(\bx_{j}, y_{j})\}_{j=1}^n$)}
-\Algorithm{} \For{$i=1,\ldots,k$}{
-  $\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}$
-\tcp{class-specif\/{i}c subsets}
-$n_i \assign \card{\bD_i}$ \tcp{cardinality}
-$\hP(c_i) \assign n_i/n$ \tcp{prior probability}
-$\hbmu_i \assign {1\over n_i} \sum_{\bx_{j} \in
-\bD_i} \bx_{j}$ \tcp{mean} 
-$\bZ_i \assign \bD_i - \bone_{n_i} \hbmu_i^T$ \tcp{centered data}
+\Algorithm{} 
+\For{$i=1,\ldots,k$}{
+  $\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}$ \tcp{class-specif\/{i}c subsets} 
+$n_i \assign \card{\bD_i}$ \tcp{cardinality} 
+$\hP(c_i) \assign n_i/n$ \tcp{prior probability} 
+$\hbmu_i \assign {1\over n_i} \sum_{\bx_{j} \in \bD_i} \bx_{j}$ \tcp{mean} 
+$\bZ_i \assign \bD_i - \bone_{n_i} \hbmu_i^T$ \tcp{centered data} 
 $\hcov_i  \assign {1\over n_i}\bZ_i^T\bZ_i$ \tcp{covariance matrix} 
 } 
 \Return{$\hP(c_i), \hbmu_i, \hcov_i$ for all $i=1,\ldots,k$} 
 \BlankLine 
-\SetKwInOut{AlgorithmT}{
-    \BCT($\bx$ \text{and} $\hP(c_i)$, $\hbmu_i$, $\hcov_i$, for all $i\in[1,k]$)} \AlgorithmT{} 
-    $\hy \assign \displaystyle \arg\max_{c_i} \bigl\{ f(\bx | \hbmu_i, \hcov_i)
-\cdot P(c_i) \bigr\}$\;
+\BlankLine
+\SetKwInOut{AlgorithmT}{\BCT($\bx$ \text{and} $\hP(c_i)$, $\hbmu_i$, $\hcov_i$, for all $i\in[1,k]$)} 
+\AlgorithmT{} 
+$\hy \assign \displaystyle \arg\max_{c_i} \bigl\{ f(\bx | \hbmu_i, \hcov_i) \cdot P(c_i) \bigr\}$ 
 \Return{$\hy$} 
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -168,7 +176,8 @@ $\hcov_i  \assign {1\over n_i}\bZ_i^T\bZ_i$ \tcp{covariance matrix}
 
 
 
-\begin{frame}{Bayes Classifier: Categorical Attributes}
+\begin{frame}{Bayes Classifier}
+\framesubtitle{Categorical Attributes}
 Let $X_{j}$ be a
 categorical attribute over the domain $dom(X_{j}) = \{a_{j1},
 a_{j2}, \ldots, a_{jm_{j}}\}$. Each categorical attribute
@@ -193,13 +202,16 @@ $r_{j}$th value in the domain of $X_{j}$.
 
 
 
-\begin{frame}{Bayes Classifier: Categorical Attributes}
+\begin{frame}{Bayes Classifier}
+\framesubtitle{Categorical Attributes}
 The probability of the
 categorical point $\bx$ is obtained from the joint probability
 mass function (PMF) for the vector random variable $\bX$:
 \begin{align*}
+\tcbhighmath{
   P(\bx | c_i) = f(\bv|c_i)  =
     f\bigl(\bX_1=\be_{1r_1}, \dots, \bX_d=\be_{dr_d} | \;c_i\bigr)
+}
 \end{align*}
 The joint PMF can be estimated directly from the data
 $\bD_i$ for each class $c_i$ as follows:
@@ -213,13 +225,15 @@ class $c_i$.
 However, to avoid zero probabilities we add a 
 {\em pseudo-count} of 1 for each value 
 \begin{align*}
+\tcbhighmath{
     \hf(\bv|c_i) = {n_i(\bv)+1 \over n_i + \prod_{j=1}^d m_{j}}
+}
 \end{align*}
 \end{frame}
 
 
-\begin{frame}{Discretized Iris Data: \texttt{sepal} {\tt length} and
-  \texttt{sepal} {\tt width}}
+\begin{frame}{Discretized Iris Data}
+\framesubtitle{\texttt{sepal} {\tt length} and \texttt{sepal} {\tt width}}
 
   {\begin{tabular}{c}
 %\centerline
@@ -386,14 +400,17 @@ Naive Bayes classifier addresses these concerns.
 \end{frame}
 
 
-\begin{frame}{Naive Bayes Classif\/{i}er: Numeric Attributes}
+\begin{frame}{Naive Bayes Classif\/{i}er}
+\framesubtitle{Numeric Attributes}
 The naive Bayes approach makes the simple assumption
 that all the attributes are independent, which
 implies that the likelihood
 can be decomposed into a product of dimension-wise probabilities:
 \begin{align*}
+\tcbhighmath{
 P(\bx | c_i) = P(x_1,x_2,\ldots,x_d | c_i) = \prod_{j=1}^d P(x_{j} |
 c_i) 
+}
 \end{align*}
 
  The
@@ -410,7 +427,8 @@ for class $c_i$.
 \end{frame}
 
 
-\begin{frame}{Naive Bayes Classif\/{i}er: Numeric Attributes}
+\begin{frame}{Naive Bayes Classif\/{i}er}
+\framesubtitle{Numeric Attributes}
 The naive assumption corresponds to setting all the
 covariances to zero in $\hcov_i$, that is,
 \begin{align*}
@@ -439,40 +457,41 @@ dimension $X_{j}$.
 \newcommand{\NB}{\textsc{NaiveBayes}\xspace}
 \newcommand{\NBT}{\textsc{Testing}\xspace}
 \begin{frame}[fragile]{Naive Bayes Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \small
 \SetKwInOut{Algorithm}{\NB($\bD = \{(\bx_{j}, y_{j})\}_{j=1}^n$)}
 \Algorithm{} 
 \For{$i=1,\ldots,k$}{
   $\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}$
-  \tcp{class-specif\/{i}c subsets}
-  $n_i \assign \card{\bD_i}$ \tcp{cardinality}
-  $\hP(c_i) \assign n_i/n$ \tcp{prior probability}
-  $\hbmu_i \assign {1\over n_i} \sum_{\bx_{j} \in \bD_i} \bx_{j}$ \tcp{mean}
+  \tcp{class-specif\/{i}c subsets}\;
+  $n_i \assign \card{\bD_i}$ \tcp{cardinality}\;
+  $\hP(c_i) \assign n_i/n$ \tcp{prior probability}\;
+  $\hbmu_i \assign {1\over n_i} \sum_{\bx_{j} \in \bD_i} \bx_{j}$ \tcp{mean}\;
   $\bZ_i = \bD_i - \bone \cdot \hbmu_i^T$\tcp{centered data for class
-  $c_i$}
+  $c_i$}\;
   \For(\tcp*[h]{class-specif\/{i}c variance for $X_{j}$}){$j=1,..,d$}{
     %$Z_{j} = X_{j}  - \bone_n \cdot \hmu_{ij}$ \tcp{centered attribute}\;
     %$\hsigma_{ij}^2 \assign {1\over n_i} Z_{j}^TZ_{j}$ \tcp{variance}\;
     %$\hsigma_{ij}^2 \assign {1\over n_i}
     %  \sum_{\bx_{j} \in \bD_i} (\bx_{j} - \hbmu_i)^2$ \tcp{variance}\;
     $\hsigma_{ij}^2 \assign {1\over n_i} Z_{ij}^TZ_{ij}$
-    \tcp{variance}
+    \tcp{variance}\;
   }
   $\hbsigma_i = \matr{\hsigma_{i1}^2, \ldots, \hsigma_{id}^2}^T$
-  \tcp*[h]{class-specif\/{i}c attribute variances}
+  \tcp*[h]{class-specif\/{i}c attribute variances}\;
 } \Return\ {$\hP(c_i), \hbmu_i, \hbsigma_i$ for all $i=1,\ldots,k$}
 \BlankLine \BlankLine 
 \SetKwInOut{AlgorithmT}{\NBT($\bx$ \text{and}\ $\hP(c_i)$, $\hbmu_i$, $\hbsigma_i$, for all $i\in[1,k]$)} 
 \AlgorithmT{} $\hy \assign \displaystyle \arg\max_{c_i}
 \biggl\{ \hP(c_i) \prod_{j=1}^d f(x_{j} | \hmu_{ij}, \hsigma^2_{ij})
 \biggr\}$\; \Return{$\hy$} 
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
 
-\begin{frame}[fragile]{Naive Bayes versus Full Bayes Classifier: Iris 2D Data}
+\begin{frame}[fragile]{Naive Bayes versus Full Bayes Classifier}
+\framesubtitle{Iris 2D Data}
 \framesubtitle{${\it X}_1$:{\tt sepal} {\tt length} versus ${\it X}_2$:{\tt sepal} {\tt width}}
 \setcounter{subfigure}{0}
 \begin{figure}[!t]
@@ -564,16 +583,19 @@ dimension $X_{j}$.
 
 
 
-\begin{frame}{Naive Bayes: Categorical Attributes}
+\begin{frame}{Naive Bayes}
+\framesubtitle{Categorical Attributes}
 The
 independence assumption leads to a simplif\/{i}cation of the joint
 probability mass function 
 \begin{align*}
+\tcbhighmath{
     P(\bx|c_i) = \prod_{j=1}^d P(x_{j} | c_i) =
   \prod_{j=1}^d   f\bigl(\bX_{j}=\be_{jr_{j}} | \;c_i\bigr)
+}
 \end{align*}
 where $f(\bX_{j}=\be_{jr_{j}} | c_i)$ is the probability mass function
-for $\bX_{j}$, which can be estimated from $\bD_i$ as follows:
+for $\bX_{j}$, estimated as:
 \begin{align*}
     \hf(\bv_{j} | c_i) = {n_i(\bv_{j}) \over n_i}
 \end{align*}
@@ -586,14 +608,17 @@ If the count is zero, we can use the pseudo-count
 method to obtain a prior probability. The adjusted estimates with
 pseudo-counts are given as
 \begin{align*}
+\tcbhighmath{
     \hf(\bv_{j} | c_i) = {n_i(\bv_{j})+1 \over n_i + m_{j}}
+}
 \end{align*}
 where $m_{j} = |dom(X_{j})|$.
 \end{frame}
 
 
 
-\begin{frame}{Nonparametric Approach: $K$ Nearest Neighbors Classif\/{i}er}
+\begin{frame}{Nonparametric Approach}
+\framesubtitle{$K$ Nearest Neighbors Classif\/{i}er}
 
 We consider a
 non-parametric approach for likelihood estimation 
@@ -622,7 +647,8 @@ which is usually assumed to be the Euclidean distance, i.e., $\dist(\bx,
 \end{frame}
 
 
-\begin{frame}{Nonparametric Approach: $K$ Nearest Neighbors Classif\/{i}er}
+\begin{frame}{Nonparametric Approach}
+\framesubtitle{$K$ Nearest Neighbors Classif\/{i}er}
 Let $K_i$ denote the number of points among the $K$ nearest neighbors of
 $\bx$ that are labeled with class $c_i$, that is
 \begin{align*}
@@ -633,7 +659,9 @@ The class conditional probability density at $\bx$ can be estimated as
 the fraction of points from class $c_i$ that lie within the hyperball
 divided by its volume, that is
 \begin{align*}
+\tcbhighmath{
   \hf(\bx|c_i) = \frac{K_i\text{/}n_i}{V}  = \frac{K_i}{n_i V}
+}
 \end{align*}
 where $V = \vol(B_d(\bx,r))$ is the volume of the $d$-dimensional
 hyperball.
@@ -652,7 +680,8 @@ However, because $\hP(c_i) = \tfrac{n_i}{n}$, we have
 \end{frame}
 
 
-\begin{frame}{Nonparametric Approach: $K$ Nearest Neighbors Classif\/{i}er}
+\begin{frame}{Nonparametric Approach}
+\framesubtitle{$K$ Nearest Neighbors Classif\/{i}er}
 The posterior probability is given as
 \begin{align*}
   P(c_i|\bx) =
@@ -661,16 +690,19 @@ The posterior probability is given as
 \end{align*}
 F{i}nally, the predicted class for $\bx$ is
 \begin{align*}
+\tcbhighmath{
   \hy = \arg\max_{c_i} \lB\{ P(c_i | \bx) \rB\} =
   \arg\max_{c_i} \lB\{ \frac{K_i}{K} \rB\} =
   \arg\max_{c_i}  \lB\{ K_i \rB\}
+}
 \end{align*}
 Because $K$ is f\/{i}xed, the KNN classif\/{i}er predicts the class of $\bx$ as
 the majority class among its $K$ nearest neighbors.
 \end{frame}
 
 
-\begin{frame}{Iris Data: $K$ Nearest Neighbors Classif\/{i}er }
+\begin{frame}{Iris Data}
+\framesubtitle{$K$ Nearest Neighbors Classif\/{i}er }
 \begin{figure}[!b]
     \centering
   \scalebox{0.7}{

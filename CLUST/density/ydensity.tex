@@ -32,13 +32,15 @@ have difficulty.
 
 
 
-\begin{frame}{The DBSCAN Approach: Neighborhood and Core Points}
+\begin{frame}{The DBSCAN Approach}
+\framesubtitle{Neighborhood and Core Points}
 Def\/{i}ne a ball of radius $\epsilon$ around a point
-$\bx \in \setR^d$, called the $\epsilon$-{\em neighborhood} of $\bx$, as
-follows:
+$\bx \in \setR^d$, called the $\epsilon$-{\em neighborhood} of $\bx$:
 \begin{align*}
+\tcbhighmath{
   N_{\epsilon}(\bx) = B_d(\bx,\epsilon) = \{\by \mid
   \;\dist(\bx,\by) \leq \epsilon\}
+}
 \end{align*}
 Here $\dist(\bx, \by)$ represents the distance between points
 $\bx$ and $\by$.
@@ -62,8 +64,8 @@ is called a {\em noise point} or an outlier.
 \end{frame}
 
 
-\begin{frame}{The DBSCAN Approach: Reachability and Density-based
-  Cluster}
+\begin{frame}{The DBSCAN Approach}
+\framesubtitle{Reachability and Density-based Cluster}
 
   A point $\bx$ is {\em directly density reachable}
 from another point $\by$ if $\bx \in N_{\epsilon}(\by)$ and
@@ -164,7 +166,7 @@ overall complexity of DBSCAN is $O(n^2)$.
 \newcommand{\getcluster}{\textsc{DensityConnected}\xspace}
 \begin{frame}[fragile]{DBSCAN Algorithm}
   \scalebox{0.8}{
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInput{Algorithm}{\dbscan ($\bD$, $\epsilon$, $\minpts$)}
   \Algorithm{}
   $\mathit{Core} \assign \emptyset$\;
@@ -172,11 +174,10 @@ overall complexity of DBSCAN is $O(n^2)$.
       Compute $N_\epsilon(\bx_i)$\;
       $\mathit{id}(\bx_i) \assign \emptyset$ \tcp{cluster id for $\bx_i$}
       \lIf{$N_\epsilon(\bx_i) \ge \minpts$}{
-        $\mathit{Core} \assign \mathit{Core} \cup \{ \bx_i \}$
-        \nllabel{alg:clust:den:dbscan:coresB}
+        $\mathit{Core} \assign \mathit{Core} \cup \{ \bx_i \}$ \nllabel{alg:clust:den:dbscan:coresB}
       }
   }
-  $k \assign 0$ \tcp{cluster id}
+  $k \assign 0$ \tcp{cluster id}\;
   \ForEach{$\bx_i \in \mathit{Core}$, \textit{such that} $\mathit{id}(\bx_i) = \emptyset$}{
     $k \assign k + 1$\;
     $\mathit{id}(\bx_i) \assign k$ \tcp{assign $\bx_i$ to cluster id $k$}
@@ -193,12 +194,12 @@ overall complexity of DBSCAN is $O(n^2)$.
   \SetKwInput{AlgorithmB}{\getcluster ($\bx$, $k$)}
   \AlgorithmB{}
   \ForEach{$\by \in N_\epsilon(\bx)$}{
-    $\mathit{id}(\by) \assign k$ \tcp{assign $\by$ to cluster id $k$}
+    $\mathit{id}(\by) \assign k$ \tcp{assign $\by$ to cluster id $k$}\;
     \lIf{$\by \in Core$}{
-      \getcluster($\by, k$)
+      \getcluster($\by, k$)\;
     }
   }
-\end{algorithm}
+\end{tightalgo}
 }
 \end{frame}
 
@@ -263,7 +264,8 @@ overall complexity of DBSCAN is $O(n^2)$.
 \end{frame}
 
 
-\begin{frame}[fragile]{DBSCAN Clustering: Iris Dataset}
+\begin{frame}[fragile]{DBSCAN Clustering}
+\framesubtitle{Iris Dataset}
 \setcounter{subfigure}{0}
 \begin{figure}
 \psset{dotscale=1.5,fillcolor=lightgray,
@@ -359,7 +361,7 @@ fraction of the points in the window ($k/n$) to the volume of the window
 \end{frame}
 
 
-\begin{frame}subsubsection{Kernel Estimator}
+\begin{frame}{Kernel Estimator}
 Kernel density estimation relies on a {\em kernel
 function} $K$
 that is non-negative, symmetric, and integrates to $1$,
@@ -373,18 +375,22 @@ Define the {\bf discrete kernel} function $K$, that
 computes the number of points
 in a window of width $h$
 \begin{align*}
+\tcbhighmath{
   K(z) = \begin{cases}
     1 & \mbox{If $|z| \leq \frac{1}{2}$}\\
     0 & \mbox{Otherwise}\\
   \end{cases}
+}
 \end{align*}
 
 The density estimate $\hf(x)$ can
 be rewritten in terms
 of the kernel function as follows:
 \begin{align*}
+\tcbhighmath{
     \hf(x) =  \frac{1}{nh}\,\sum_{i=1}^n\,
     K \left(\frac{x-x_i}{h}\right)
+}
     %\label{eq:clust:den:denestK}
 \end{align*}
 \end{frame}
@@ -398,8 +404,8 @@ of the kernel function as follows:
 \readdata{\datahb}{CLUST/density/figs/iris1d-h0.50.dat}
 \readdata{\datahc}{CLUST/density/figs/iris1d-h1.00.dat}
 \readdata{\datahd}{CLUST/density/figs/iris1d-h2.00.dat}
-\begin{frame}[fragile]{Kernel Density Estimation: Discrete Kernel (Iris
-  1D)}
+\begin{frame}[fragile]{Kernel Density Estimation}
+\framesubtitle{Discrete Kernel (Iris 1D)}
 \setcounter{subfigure}{0}
 \begin{figure}
 \vspace*{-0.7cm}
@@ -464,7 +470,8 @@ The discrete
 \end{frame}
 
 
-\begin{frame}{kernel Density Estimation: Gaussian Kernel}
+\begin{frame}{Kernel Density Estimation}
+\framesubtitle{Gaussian Kernel}
 The width $h$ is a parameter that
 denotes the spread or smoothness of the density estimate.
 The discrete kernel function has
@@ -479,16 +486,18 @@ transition of influence via a Gaussian kernel:
 \end{align*}
 Thus, we have
 \begin{align*}
+\tcbhighmath{
   K\left(\frac{x-x_i}{h}\right) =
   \frac{1}{\sqrt{2\pi}}\,\exp\lB\{-\frac{(x-x_i)^2}{2h^2}\rB\}
+}
 \end{align*}
 Here $x$, which is at the center of the window, plays the role of
 the mean, and $h$ acts as the standard deviation.
 \end{frame}
 
 
-\begin{frame}[fragile]{Kernel Density Estimation: Gaussian Kernel (Iris
-  1D)}
+\begin{frame}[fragile]{Kernel Density Estimation}
+\framesubtitle{Gaussian Kernel (Iris 1D)}
 \setcounter{subfigure}{0}
 \vspace*{-0.7cm}
 \begin{figure}[!t]%fig15.6
@@ -496,7 +505,7 @@ the mean, and $h$ acts as the standard deviation.
 \psset{arrowscale=2, dotscale=1.5}
 \centerline{
 \subfloat[$h=0.1$]{
-\scalebox{0.60}{
+\scalebox{0.55}{
 \def\DyStep{0.27}
 \def\myh{0.1}
 \def\scaleF{3.7}
@@ -504,7 +513,7 @@ the mean, and $h$ acts as the standard deviation.
 }}
 \hspace{-0.3in}
 \subfloat[$h=0.15$]{
-\scalebox{0.60}{
+\scalebox{0.55}{
 \def\DyStep{0.23}
 \def\myh{0.15}
 \def\scaleF{4.3}
@@ -514,7 +523,7 @@ the mean, and $h$ acts as the standard deviation.
 \vspace*{-0.7cm}
 \centerline{
 \subfloat[$h=0.25$]{
-\scalebox{0.60}{
+\scalebox{0.55}{
 \def\DyStep{0.2}
 \def\myh{0.25}
 \def\scaleF{5}
@@ -522,7 +531,7 @@ the mean, and $h$ acts as the standard deviation.
 }}
 \hspace{-0.3in}
 \subfloat[$h=0.5$]{
-\scalebox{0.60}{
+\scalebox{0.55}{
 \def\DyStep{0.19}
 \def\myh{0.5}
 \def\scaleF{5}
@@ -562,18 +571,20 @@ $\int K(\bz) d\bz = 1$.
 \end{frame}
 
 
-\begin{frame}{Multivariate Density Estimation: Discrete and Gaussian
-  Kernel}
+\begin{frame}{Multivariate Density Estimation}
+\framesubtitle{Discrete and Gaussian Kernel}
 
 {\bf Discrete Kernel:}
 For any $d$-dimensional vector $\bz = (z_1,z_2, \ldots, z_d)^T$,
 the discrete kernel function in $d$-dimensions is given as
 \begin{align*}
+\tcbhighmath{
   K(\bz) = \begin{cases}
     1 & \mbox{If $|z_{j}| \leq \frac{1}{2}$, for all dimensions
     $j=1, \ldots, d$}\\
     0 & \mbox{Otherwise}
   \end{cases}
+}
 \end{align*}
 
 \medskip
@@ -587,8 +598,8 @@ given as
 \end{frame}
 
 
-\begin{frame}[fragile]{Density Estimation: Iris 2D Data (Gaussian
-  Kernel)}
+\begin{frame}[fragile]{Density Estimation}
+\framesubtitle{Iris 2D Data (Gaussian Kernel)}
 \setcounter{subfigure}{0}
 \begin{figure}
 \psset{unit=0.5in}
@@ -599,107 +610,87 @@ given as
 \centerline{
 \subfloat[$h=0.1$]{
 \label{fig:clust:den:kde2dGa}
-\ifdraft{
-\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-a}
-}{
     \def\scaleF{4}
     \def\myh{0.1}
     \scalebox{0.4}{%
     \input{CLUST/density/density-plot-2d}
     }
-    }}
+}
 \vspace{0.1in}
 \subfloat[$h=0.2$]{
 \label{fig:clust:den:kde2dGb}
-\ifdraft{
-\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-b}
-}{
     \def\scaleF{5}
     \def\myh{0.2}
     \scalebox{0.4}{%
     \input{CLUST/density/density-plot-2d}
     }
-    }}
+    }
     }
 \centerline{
 \subfloat[$h=0.35$]{
 \label{fig:clust:den:kde2dGc}
-\ifdraft{
-\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-c}
-}{
     \def\scaleF{6.5}
     \def\myh{0.35}
     \scalebox{0.4}{%
     \input{CLUST/density/density-plot-2d}
     }
-    }}
+    }
     \vspace{0.1in}
 \subfloat[$h=0.6$]{
 \label{fig:clust:den:kde2dGd}
-\ifdraft{
-\includegraphics[width=2.5in]{CLUST/density/figs/draftfigs/kde-2d-d}
-}{
     \def\scaleF{7.5}
     \def\myh{0.6}
     \scalebox{0.4}{%
     \input{CLUST/density/density-plot-2d}
     }
-    }}
+    }
     }
 \end{figure}
 \end{frame}
 
 
 
-\begin{frame}{Density Estimation: Density-based Dataset}
+\begin{frame}{Density Estimation}
+\framesubtitle{Density-based Dataset}
   \framesubtitle{Gaussian kernel, $h=20$}
 \begin{figure}
-%%  \label{fig:clust:den:kdeShape}
-%%\end{figure}
-%\begin{figure}[t!]%fig15.8
-%  \centering
-%  \ifdraft{%
-    \includegraphics[scale=0.6]{CLUST/density/figs/draftfigs/kdeShape.eps}
-%  }{
-%%\comment{%
-%\psset{unit=0.5in}
-%\psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
-%\psset{lightsrc=viewpoint}
-%\defFunction[algebraic]{myfunc}(u,v){u}{v}{((v^2)-(u^2))/4}
-%\begin{pspicture}(-1,-0.5)(7,6)
-%%\psSolid[object=surfaceparametree, action=writeobj,
-%%  file=CLUST/density/figs/mysurf,
-%%  ngrid=1.0 1.0,incolor=white, fillcolor=lightgray,
-%%  linewidth=0.5\pslinewidth,function=myfunc,base=0.0 7.0 0.0 5.0]
-%\psPoint(0,0,0){O2}
-%\psPoint(7.75,0,0){X2}
-%\psPoint(0,5.5,0){Y2}
-%\psline[arrows=->,arrowscale=2](O2)(X2)
-%\psline[arrows=->,arrowscale=2](O2)(Y2)
-%\uput[r](X2){$X_1$}
-%\uput[u](Y2){$X_2$}
-%%\psset{dotstyle=Bo,fillcolor=gray,linecolor=lightgray}
-%%\psset{dotsize=0.05}
-%%\input{CLUST/density/figs/t7-4k-pspoints3.0}
-%%\psset{fillcolor=white,linecolor=black}
-%\psset{incolor=white, opacity=0.2}
-%\psSolid[object=objfile, file=CLUST/density/figs/t7-4k-h20surf,
-%  transform={1 1 1.75 scaleOpoint3d}, RotY=-4,
-%  linewidth=0.01pt,base=0 7.0 0 5.0]
-%\multido{\ix=0+1}{8}{%
-%    %\pstdivide{200pt}{100pt}\myx
-%    \pstmymultiply{\ix}{100}\myx
-%        \psPoint(\ix\space,-0.2,0){X1}
-%        \psPoint(\ix\space,0.0,0){X2}
-%        \psline(X1)(X2)
-%    \uput[d](X1){\scriptsize \myx}}
-%\multido{\iy=0+1}{6}{%
-%    \pstmymultiply{\iy}{100}\myy
-%        \psPoint(-0.2,\iy\space,0){Y1}
-%        \psPoint(0,\iy\space,0){Y2}
-%        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
-%\end{pspicture}
-%}
+\psset{unit=0.5in}
+\psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
+\psset{lightsrc=viewpoint}
+\defFunction[algebraic]{myfunc}(u,v){u}{v}{((v^2)-(u^2))/4}
+\begin{pspicture}(-1,-0.5)(7,6)
+%\psSolid[object=surfaceparametree, action=writeobj,
+%  file=CLUST/density/figs/mysurf,
+%  ngrid=1.0 1.0,incolor=white, fillcolor=lightgray,
+%  linewidth=0.5\pslinewidth,function=myfunc,base=0.0 7.0 0.0 5.0]
+\psPoint(0,0,0){O2}
+\psPoint(7.75,0,0){X2}
+\psPoint(0,5.5,0){Y2}
+\psline[arrows=->,arrowscale=2](O2)(X2)
+\psline[arrows=->,arrowscale=2](O2)(Y2)
+\uput[r](X2){$X_1$}
+\uput[u](Y2){$X_2$}
+%\psset{dotstyle=Bo,fillcolor=gray,linecolor=lightgray}
+%\psset{dotsize=0.05}
+%\input{CLUST/density/figs/t7-4k-pspoints3.0}
+%\psset{fillcolor=white,linecolor=black}
+\psset{fillcolor=gray!10, incolor=white, opacity=0.3}
+\psSolid[object=objfile, file=CLUST/density/figs/t7-4k-h20surf,
+  transform={1 1 1.75 scaleOpoint3d}, RotY=-4,
+  linewidth=0.01pt,base=0 7.0 0 5.0]
+\multido{\ix=0+1}{8}{%
+    %\pstdivide{200pt}{100pt}\myx
+    \pstmymultiply{\ix}{100}\myx
+        \psPoint(\ix\space,-0.2,0){X1}
+        \psPoint(\ix\space,0.0,0){X2}
+        \psline(X1)(X2)
+    \uput[d](X1){\scriptsize \myx}}
+\multido{\iy=0+1}{6}{%
+    \pstmymultiply{\iy}{100}\myy
+        \psPoint(-0.2,\iy\space,0){Y1}
+        \psPoint(0,\iy\space,0){Y2}
+        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
+\end{pspicture}
 \end{figure}
 \end{frame}
 
@@ -736,7 +727,8 @@ with radius $h_\bx$.
 
 
 
-\begin{frame}{DENCLUE Density-based Clustering: Attractor and Gradient}
+\begin{frame}{DENCLUE Density-based Clustering}
+\framesubtitle{Attractor and Gradient}
 A point $\bx^*$ is called a {\em density attractor} if it is a
 local maxima of the probability density function $f$.  
 
@@ -753,8 +745,10 @@ derivative of the probability density estimate
 \medskip
 For the Gaussian kernel the gradient at a point $\bx$ is given as
  \begin{align*}
+\tcbhighmath{
      \grad \hf(\bx)  = {1 \over n h^{d+2}} \sum_{i=1}^n
         K\left(\frac{\bx-\bx_i}{h}\right)\cdot (\bx_i - \bx)
+}
 \end{align*}
 This equation can be thought of as having two parts for each point: a
 vector $(\bx_i-\bx)$ and a scalar {\em influence} value
@@ -809,11 +803,13 @@ that is, $\bx_m$ converges to the attractor $\bx^*$.
 \medskip
 Setting the gradient to the zero vector leads to the following {\em
 mean-shift} update rule:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   \bx_{t+1} & = \frac{\sum_{i=1}^n
         K\left(\frac{\bx_t-\bx_i}{h}\right) \bx_i}
         {\sum_{i=1}^n K\left(\frac{\bx_t-\bx_i}{h}\right)}
-\end{align*}
+\end{split}
+\end{empheq}
 where $t$ denotes the current iteration and $\bx_{t+1}$ is the updated value for the current vector $\bx_t$.  
 \end{frame}
 
@@ -844,7 +840,7 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
 \newcommand{\denclue}{\textsc{denclue}\xspace}
 \newcommand{\gradientascent}{\textsc{F{i}ndAttractor}\xspace}
 \begin{frame}[fragile]{The DENCLUE Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInput{Algorithm}{\denclue ($\bD, h, \xi, \epsilon$)}
   \Algorithm{}
   $\cA \assign \emptyset$\;
@@ -866,11 +862,11 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
     \lForEach{$\bx^* \in C$}{$C \assign C \cup R(\bx^*)$}
   }
   \Return{$\cC$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 \begin{frame}[fragile]{The DENCLUE Algorithm: Find Attractor}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
  \SetKwInput{AlgorithmGA}{\gradientascent ($\bx, \bD, h, \epsilon$)}
   \AlgorithmGA{}
   \lnl{alg:clust:den:denclue:FAs}$t \assign 0$\;
@@ -883,95 +879,83 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
       $t \assign t+1$\;
   }
   \lnl{alg:clust:den:denclue:FAe}\Return{$\bx_t$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
 \begin{frame}{DENCLUE: Iris 2D Data}
 \begin{figure}
-\centering
-%\ifdraft{%
-\includegraphics[scale=0.6]{CLUST/density/figs/draftfigs/irisSlice.eps}
-%}{
-%%\comment{%
-%\psset{viewpoint=40 -120 40 rtp2xyz,Decran=50}
-%\psset{lightsrc=viewpoint}
-%\psset{incolor=white}
-%\psset{opacity=0.2}
-%\psset{fillcolor=white}
-%\begin{pspicture}(-1,1)(7,7)
-%\psSolid[object=objfile, file=CLUST/density/figs/iris-h0.2surf,
-%  linewidth=0.01pt,base=3.5 8.5 1.0 5.0]
-%\psset{opacity=0.5}
-%\psSolid[object=objfile, file=CLUST/density/figs/iris-h0.2xi0.8surf,
-%  linewidth=0.01pt,base=3.5 8.5 1.0 5.0]
-%\psPoint(3.5,1.0,0){O2}
-%\psPoint(8.5,1,0){X2}
-%\psPoint(3.5,5.0,0){Y2}
-%\psPoint(3.5,1.0,1.5){Z2}
-%\psPoint(3.5,1.0,0.8){xi}
-%\psline[arrows=->,arrowscale=1.5](O2)(X2)
-%\psline[arrows=->,arrowscale=1.5](O2)(Y2)
-%\psline[arrows=->,arrowscale=1.5](O2)(Z2)
-%\uput[r](X2){$X_1$}
-%\uput[ul](Y2){$X_2$}
-%\uput[u](Z2){$f(\bx)$}
-%%\uput[r](xi){$\xi=0.08$}
-%\multido{\nx=3.5+1.0}{5}{%
-%        \psPoint(\nx\space,0.8,0){X1}
-%        \psPoint(\nx\space,1.0,0){X2}
-%        \psline(X1)(X2)
-%    \uput[d](X1){\scriptsize \nx}}
-%\multido{\ny=1+1}{4}{%
-%        \psPoint(3.3,\ny\space,0){Y1}
-%        \psPoint(3.5,\ny\space,0){Y2}
-%        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \ny}}
-%\end{pspicture}
-%}
+\psset{viewpoint=40 -120 40 rtp2xyz,Decran=50}
+\psset{lightsrc=viewpoint}
+\psset{incolor=white}
+\psset{opacity=0.2}
+\psset{fillcolor=white}
+\begin{pspicture}(-1,1)(7,7)
+\psSolid[object=objfile, file=CLUST/density/figs/iris-h0.2surf,
+  linewidth=0.01pt,base=3.5 8.5 1.0 5.0]
+\psset{opacity=0.5}
+\psSolid[object=objfile, file=CLUST/density/figs/iris-h0.2xi0.8surf,
+  linewidth=0.01pt,base=3.5 8.5 1.0 5.0]
+\psPoint(3.5,1.0,0){O2}
+\psPoint(8.5,1,0){X2}
+\psPoint(3.5,5.0,0){Y2}
+\psPoint(3.5,1.0,1.5){Z2}
+\psPoint(3.5,1.0,0.8){xi}
+\psline[arrows=->,arrowscale=1.5](O2)(X2)
+\psline[arrows=->,arrowscale=1.5](O2)(Y2)
+\psline[arrows=->,arrowscale=1.5](O2)(Z2)
+\uput[r](X2){$X_1$}
+\uput[ul](Y2){$X_2$}
+\uput[u](Z2){$f(\bx)$}
+%\uput[r](xi){$\xi=0.08$}
+\multido{\nx=3.5+1.0}{5}{%
+        \psPoint(\nx\space,0.8,0){X1}
+        \psPoint(\nx\space,1.0,0){X2}
+        \psline(X1)(X2)
+    \uput[d](X1){\scriptsize \nx}}
+\multido{\ny=1+1}{4}{%
+        \psPoint(3.3,\ny\space,0){Y1}
+        \psPoint(3.5,\ny\space,0){Y2}
+        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \ny}}
+\end{pspicture}
 \end{figure}
 \end{frame}
 
 
 \begin{frame}{DENCLUE: Density-based Dataset}
 \begin{figure}
-%%\begin{figure}[t!]%fig15.11
-%%  \centering
-%%  \ifdraft{
-  \includegraphics[scale=0.6]{CLUST/density/figs/draftfigs/denclueNCclusters.eps}
-%%  }{
-%%%\comment{%
-%\psset{unit=0.5in}
-%\psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
-%\psset{lightsrc=viewpoint}
-%\psset{incolor=white}
-%\psset{opacity=0.15}
-%\begin{pspicture}(-1,-0.5)(7,6)
-%\psset{fillcolor=white}
-%\psSolid[object=objfile, file=CLUST/density/figs/t7-4k-h10-xi1.9surf,
-%  transform={1 1 1.75 scaleOpoint3d},
-%  linewidth=0.01pt,base=0 7.0 0 5.0]
-%\psPoint(0,0,0){O2}
-%\psPoint(7.5,0,0){X2}
-%\psPoint(0,5.5,0){Y2}
-%\psline[arrows=->,arrowscale=2](O2)(X2)
-%\psline[arrows=->,arrowscale=2](O2)(Y2)
-%\uput[r](X2){$X_1$}
-%\uput[u](Y2){$X_2$}
-%\psset{dotstyle=Bo,fillcolor=gray,linecolor=lightgray}
-%\psset{dotsize=0.05}
-%\input{CLUST/density/figs/t7-4k-pspoints3.0}
-%\psset{fillcolor=white,linecolor=black}
-%\multido{\ix=0+1}{8}{%
-%    \pstmymultiply{\ix}{100}\myx
-%        \psPoint(\ix\space,-0.2,0){X1}
-%        \psPoint(\ix\space,0.0,0){X2}
-%        \psline(X1)(X2)
-%    \uput[d](X1){\scriptsize \myx}}
-%\multido{\iy=0+1}{6}{%
-%    \pstmymultiply{\iy}{100}\myy
-%        \psPoint(-0.2,\iy\space,0){Y1}
-%        \psPoint(0,\iy\space,0){Y2}
-%        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
-%\end{pspicture}
+\psset{unit=0.5in}
+\psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
+\psset{lightsrc=viewpoint}
+\psset{incolor=white}
+\psset{opacity=0.15}
+\begin{pspicture}(-1,-0.5)(7,6)
+\psset{fillcolor=white}
+\psSolid[object=objfile, file=CLUST/density/figs/t7-4k-h10-xi1.9surf,
+  transform={1 1 1.75 scaleOpoint3d},
+  linewidth=0.01pt,base=0 7.0 0 5.0]
+\psPoint(0,0,0){O2}
+\psPoint(7.5,0,0){X2}
+\psPoint(0,5.5,0){Y2}
+\psline[arrows=->,arrowscale=2](O2)(X2)
+\psline[arrows=->,arrowscale=2](O2)(Y2)
+\uput[r](X2){$X_1$}
+\uput[u](Y2){$X_2$}
+\psset{dotstyle=Bo,fillcolor=gray,linecolor=lightgray}
+\psset{dotsize=0.05}
+\input{CLUST/density/figs/t7-4k-pspoints3.0}
+\psset{fillcolor=white,linecolor=black}
+\multido{\ix=0+1}{8}{%
+    \pstmymultiply{\ix}{100}\myx
+        \psPoint(\ix\space,-0.2,0){X1}
+        \psPoint(\ix\space,0.0,0){X2}
+        \psline(X1)(X2)
+    \uput[d](X1){\scriptsize \myx}}
+\multido{\iy=0+1}{6}{%
+    \pstmymultiply{\iy}{100}\myy
+        \psPoint(-0.2,\iy\space,0){Y1}
+        \psPoint(0,\iy\space,0){Y2}
+        \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
+\end{pspicture}
 \end{figure}
 \end{frame}

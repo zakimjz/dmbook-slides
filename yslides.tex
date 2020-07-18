@@ -1,6 +1,8 @@
-\documentclass[10pt,xcolor=pst]{beamer}
-%\usepackage[head=14pt,text={5.5in,8in},centering]{geometry}
+\documentclass[10pt, xcolor=dvipsnames]{beamer}
+\usepackage[utf8]{inputenc}
+% \documentclass[10pt,xcolor=pst]{beamer}
 
+%\usepackage[head=14pt,text={5.5in,8in},centering]{geometry}
 %From book.tex
 \usepackage{xNGmacro}
 
@@ -9,15 +11,15 @@
 \usepackage{xrlocal}
 %from book.tex
 
-\usepackage{standalone}
-\usepackage{etex} 
+%\usepackage{standalone}
+%\usepackage{etex} 
 
-\usepackage{pst-all,pst-func}
-\usepackage{pst-solides3d,pst-3dplot,pst-vue3d,pst-bar} 
-\usepackage{pst-eucl}
+%\usepackage{pst-all,pst-func}
+%\usepackage{pst-solides3d,pst-3dplot,pst-vue3d,pst-bar} 
+%\usepackage{pst-eucl}
 
 %\usepackage{pstricks,auto-pst-pdf} % works
-\usepackage{auto-pst-pdf} % works
+%\usepackage{auto-pst-pdf} % works
 
 %\usepackage[pdf]{pstricks}
 %\usepackage{pst-tree}
@@ -41,17 +43,25 @@
 
 %\definecolor{myorange}{HTML}{CA1B00}
 %\definecolor{myorange}{HTML}{D53212} %RGB 213,50,18
-\definecolor{myorange}{RGB}{223,72,20}
-\setbeamercolor*{palette primary}{use=structure,fg=white,bg=myorange}
-\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=myorange}
-\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=myorange}
-\setbeamercolor*{palette quaternary}{use=structure,fg=white,bg=myorange}
-\setbeamercolor{frametitle}{bg=myorange}
-\setbeamercolor{block title}{bg=myorange}
+%\definecolor{myorange}{RGB}{223,72,20}
+%\setbeamercolor*{palette primary}{use=structure,fg=white,bg=myorange}
+%\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=myorange}
+%\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=myorange}
+%\setbeamercolor*{palette quaternary}{use=structure,fg=white,bg=myorange}
+%\setbeamercolor{frametitle}{bg=myorange}
+%\setbeamercolor{block title}{bg=myorange}
+%\definecolor{myblue}{RGB}{95,134,192}
+% \definecolor{myblue}{RGB}{63,187,228}
+\definecolor{myblue}{RGB}{31,148,207}
+\setbeamercolor*{palette primary}{use=structure,fg=white,bg=myblue}
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=myblue}
+\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=myblue}
+\setbeamercolor*{palette quaternary}{use=structure,fg=white,bg=myblue}
+\setbeamercolor{frametitle}{bg=myblue}
+\setbeamercolor{block title}{bg=myblue}
 
-\begin{document}
 
-\title[Data Mining and Analysis]{Data Mining and Analysis:\\Fundamental Concepts and Algorithms}
+\title[Data Mining and Machine Learning]{Data Mining and Machine Learning:\\Fundamental Concepts and Algorithms}
 \subtitle{dataminingbook.info}
 \author[Zaki \& Meira Jr.]{Mohammed J. Zaki\inst{1} \and 
 Wagner Meira Jr.\inst{2}}
@@ -63,15 +73,16 @@ Institute, Troy, NY, USA
 Gerais, Belo Horizonte, Brazil\\
 }
 
+\begin{document}
 %\includeonlylecture{xnumeric}
 
 %introduction
 
-\ifdefined\doxdata \include{EDA/data/ydata} \fi
 
 %exploratory data analysis
 \graphicspath{{./}{./EDA/data}{./EDA/numeric/}{./EDA/categorical/}{./EDA/datareduction/}{./EDA/highdim/}{./EDA/dimreduction/}{./EDA/densityestimation/}}
 %\include{EDA/part}
+\ifdefined\doxdata \include{EDA/data/ydata} \fi
 \ifdefined\doxnum \include{EDA/numeric/ynumeric} \fi
 \ifdefined\doxcat \include{EDA/categorical/ycategorical} \fi
 \ifdefined\doxgraph \include{EDA/graph/ygraph} \fi
@@ -107,10 +118,18 @@ Gerais, Belo Horizonte, Brazil\\
 \ifdefined\doxsvm \include{CLASS/svm/ysvm} \fi
 \ifdefined\doxclasseval \include{CLASS/eval/yeval} \fi
 
+%regression
+\graphicspath{{./REG/linear/}{./REG/logit/}{./REG/neural/}{./REG/deep/}{./REG/eval/}}
+
+\ifdefined\doxlinear \include{REG/linear/ylinear} \fi
+\ifdefined\doxlogit \include{REG/logit/ylogit} \fi
+\ifdefined\doxneural \include{REG/neural/yneural} \fi
+\ifdefined\doxdeep \include{REG/deep/ydeep} \fi
+\ifdefined\doxevalreg \include{REG/eval/yeval} \fi
+
 \begin{frame}
 \titlepage
 \end{frame}
-
 
 \end{document}
 

@@ -184,15 +184,18 @@ because when $h(\bx_i) < 0$, the class is $-1$, and when $h(\bx_i)
 The distance of a point $\bx$ from the
 hyperplane $h(\bx)=0$ is thus given as
 \begin{align*}
+\tcbhighmath{
   \dist = y\; r = {y\; h(\bx) \over \| \bw \|}
+}
 \end{align*}
 
 The {\em margin} is the minimum distance of a point from the 
 separating
 hyperplane:
 \begin{align*}
-  \dist^* = \min_{\bx_i} \; \lB\{ {y_i(\bw^T\bx_i + b) \over \|
-  \bw \|} \rB\}
+\tcbhighmath{
+  \dist^* = \min_{\bx_i} \; \lB\{ {y_i(\bw^T\bx_i + b) \over \| \bw \|} \rB\}
+}
 \end{align*}
 
 All the points (or vectors) that achieve the minimum
@@ -227,7 +230,9 @@ For the canonical hyperplane, for each support vector $\bx^*_i$
 point that is not a support vector we have \hbox{$y_i h(\bx_i) > 1$}.
 Over all points, we have
 \begin{align*}
+\tcbhighmath{
   y_i \; (\bw^T\bx_i + b) \ge 1, \mbox{ for all points } \bx_i \in \bD
+}
 \end{align*}
 \end{frame}
 
@@ -285,12 +290,14 @@ hyperplanes
 \end{align*}
 We can obtain an equivalent minimization
 formulation:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \mbox{\bf Objective Function: } &  \min_{\bw,b}
     \lB\{ \frac{\| \bw \|^2}{2} \rB\} \\
   \mbox{\bf Linear Constraints: }& y_i \; (\bw^T\bx_i + b) \ge 1,\;\;
   \forall \bx_i \in \bD
-\end{align*}
+\end{split}
+\end{empheq}
 \end{frame}
 
 
@@ -334,13 +341,15 @@ $\dsum_{i=1}^n \alpha_{i}y_{i}= 0$ into the Lagrangian we obtain the new
 {\em dual
   Lagrangian} objective function, 
   which is specified purely in terms of the Lagrange multipliers:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \mbox{\bf Objective Function: } &  \max_{\balpha}\;\;
      L_{dual} = \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
   \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} \bx_i^T\bx_{j}\\
   \mbox{\bf Linear Constraints: }& \alpha_i \ge 0, \;
   \forall i \in \bD, \text{ and } \sum_{i=1}^n \alpha_i y_i = 0
-\end{align*}
+\end{split}
+\end{empheq}
 where $\balpha = (\alpha_1, \alpha_2,\ldots, \alpha_n)^T$ is the vector comprising the Lagrange multipliers. 
 
 \medskip
@@ -382,7 +391,9 @@ Once we know $\alpha_i$ for all points, we can compute the weight
 vector $\bw$ by taking the
 summation only for the support vectors:
 \begin{align*}
+\tcbhighmath{
     \bw = \dsum_{\mathclap{i, \alpha_i > 0}} \alpha_i y_i \bx_i
+}
 \end{align*}
 Only the support vectors determine $\bw$, since 
 $\alpha_i=0$ for other points.
@@ -395,7 +406,9 @@ support vector, as follows:
 \end{align*}
 The bias $b$ is taken as the average value:
 \begin{align*}
+\tcbhighmath{
    b = \displaystyle \mbox{avg}_{\alpha_i > 0} \{ b_i\}
+}
 \end{align*}
 \end{frame}
 
@@ -405,7 +418,9 @@ The bias $b$ is taken as the average value:
 Given the optimal hyperplane function $h(\bx) = \bw^T\bx + b$,
 for any new point $\bz$, we predict its class as
 \begin{align*}
+\tcbhighmath{
   \hat{y}  =  \sign(h(\bz)) = \sign(\bw^T\bz + b)
+}
 \end{align*}
 where the $\sign(\cdot)$ function returns $+1$ if its argument is positive, and
 $-1$ if its argument is negative.
@@ -511,7 +526,9 @@ SVMs can handle non-separable
 points by introducing {\em slack variables} $\xi_i$ 
 as follows: 
 \begin{align*}
+\tcbhighmath{
 y_{i} (\bw^{T}\bx_{i}+b) \geq 1-\xi_{i}
+}
 \end{align*}
 where $\xi_i \ge 0$ is the slack variable for point $\bx_i$, which
 indicates how much the point violates the separability condition,
@@ -579,9 +596,9 @@ appears on the wrong side of the hyperplane.
     \pstGeonode[](2.4,4){p1}
     \vspace{0.2in}
     \pstProjection[]{na}{nb}{p1}[pp1]
-    \pstLineAB[]{<->}{p1}{pp1}
+    \pstLineAB[arrows=<->]{p1}{pp1}
     \pstProjection[]{ma}{mb}{p1}[pp2]
-    \pstLineAB[]{<->}{p1}{pp2}
+    \pstLineAB[arrows=<->]{p1}{pp2}
     %\psline[]{<->}(2,2.1)(3,2.5)
     %\psline[]{<->}(3,2.5)(4,2.9)
     \uput[90](1.7,3.8){${1 \over \|\bw\|}$}
@@ -596,13 +613,15 @@ appears on the wrong side of the hyperplane.
 \begin{frame}{SVM: Soft Margin or Linearly Non-separable Case}
 In the nonseparable case, also called the {\em soft margin}
 the SVM objective function is
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   \mbox{\bf Objective Function: } & \min_{\bw,b,\xi_i} \lB\{ {\| \bw \|^2 \over 2} + C
   \dsum_{i=1}^n (\xi_i)^k \rB \}\\
   \mbox{\bf Linear Constraints: } & y_i \; (\bw^T\bx_i + b) \ge 1 - \xi_i,\;\;
   \forall \bx_i \in \bD\\
   & \xi_i \ge 0 \; \; \forall \bx_i \in \bD
-\end{align*}
+\end{split}
+\end{empheq}
 where $C$
 and $k$ are constants that incorporate the cost of
 misclassif\/{i}cation.  
@@ -634,9 +653,11 @@ the squared slack variables.
 \medskip{\bf Hinge Loss:}
 Assuming $k=1$, the SVM dual Lagrangian is given as
 \begin{align*}
+\tcbhighmath{
      \max_{\balpha}\;\;
      L_{dual} = \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
   \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} \bx_i^T\bx_{j}
+}
 \end{align*}
 The only difference from the separable case is that
 $0 \le \alpha_i \le C$.
@@ -644,10 +665,12 @@ $0 \le \alpha_i \le C$.
 \medskip {\bf Quadratic Loss:} Assuming $k=2$,
 the dual objective is:
 \begin{align*}
+\tcbhighmath{
     \max_{\balpha}\;\;
      L_{dual} = \dsum_{i=1}^n\alpha_{i} - {1 \over 2} \dsum_{i=1}^n
      \dsum_{j=1}^n \alpha_i\alpha_{j} y_i y_{j} \lB(\bx_i^T\bx_{j} +
      {1\over 2C}\delta_{ij} \rB)
+}
 \end{align*}
 where $\delta$ is the {\em Kronecker delta} function, def\/{i}ned as
 $\delta_{ij} = 1$ if and only if $i=j$.
@@ -828,12 +851,14 @@ $\bD_\phi = \{ \phi(\bx_i), y_i \}_{i=1}^n$.
 \medskip
 The SVM objective function in
 feature space is given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
         \mbox{\bf Objective Function: } & \min_{\bw,b,\xi_i}
         \lB\{ {\| \bw \|^2 \over 2} + C \sum_{i=1}^n (\xi_i)^k\rB\}\\
   \mbox{\bf Linear Constraints: } & y_i \; (\bw^T\phi(\bx_i) + b) \ge
   1 - \xi_i, \text{and } \xi_i \ge 0,\;\; \forall \bx_i \in \bD
-\end{align*}
+\end{split}
+\end{empheq}
 where $\bw$ is the weight vector, $b$ is the bias, and $\xi_i$ are the slack
 variables, all in feature space.
 \end{frame}
@@ -891,8 +916,10 @@ Likewise, we can
 predict the class for a new point $\bz$ as follows:
 \begin{align*}
   \hat{y}  & =  \sign(\bw^T\phi(\bz) + b)
-         =  \sign\lB(\sum_{\alpha_i> 0}
-        \alpha_i y_i K(\bx_i,\bz) + b\rB)
+         =  
+\tcbhighmath{ 
+\sign\lB(\sum_{\alpha_i> 0} \alpha_i y_i K(\bx_i,\bz) + b\rB)
+}
 \end{align*}
 
 All SVM operations can be carried out in
@@ -1043,24 +1070,16 @@ is given as
 \begin{frame}[fragile]{Algorithm \textsc SVM-Dual}
 %\begin{tightalgo}[!b]{\textwidth-18pt}
 \begin{footnotesize}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\textsc{SVM-Dual} ($\bD, K, C, \epsilon$)}
 \Algorithm{} 
-\lForEach{$\bx_i \in \bD$}{ 
-    $\bx_i \assign \matr{\bx_i\\ 1}$ \tcp*[h]{map to $\setR^{d+1}$} } 
-\uIf{loss = {\tt hinge}}{ 
-    $\bK \assign \{K(\bx_i, \bx_{j})\}_{i,j=1,\ldots,n}$
-\tcp{kernel matrix, hinge loss} } 
-\ElseIf{
-    loss = {\tt quadratic}}{ $\bK \assign \{K(\bx_i, \bx_{j})+{1\over
-2C}\delta_{ij}\}_{i,j=1,\ldots,n}$ \tcp{kernel matrix, quadratic
-loss}} 
-\lFor{$k = 1, \ldots, n$}{$\eta_k \assign {1\over
-K(\bx_k,\bx_k)}$ \tcp*[h]{set step size}} 
+\lForEach{$\bx_i \in \bD$}{ $\bx_i \assign \matr{\bx_i\\ 1}$} %\tcp{map to $\setR^{d+1}$}  
+\uIf{loss = {\tt hinge}}{ $\bK \assign \{K(\bx_i, \bx_{j})\}_{i,j=1,\ldots,n}$ \tcp{kernel matrix, hinge loss} } 
+\ElseIf{loss = {\tt quadratic}}{ $\bK \assign \{K(\bx_i, \bx_{j})+{1\over 2C}\delta_{ij}\}_{i,j=1,\ldots,n}$ \tcp{kernel matrix, quadratic loss} } 
+\lFor{$k = 1, \ldots, n$}{$\eta_k \assign {1\over K(\bx_k,\bx_k)}$} %\tcp{set step size} 
 $t \assign 0$\; 
 $\balpha_0 \assign (0, \ldots, 0)^T$\;
-\Repeat{$\norm{\balpha_t-\balpha_{t-1}} \le \epsilon$}
-{%
+\Repeat{$\norm{\balpha_t-\balpha_{t-1}} \le \epsilon$} {%
 $\balpha \assign \balpha_t$\;
 \For{$k = 1 \text{ to } n$ }{%
 \tcp{update $k$th component of $\balpha$}
@@ -1073,7 +1092,7 @@ $\alpha_k \assign \alpha_{k} + \eta_{k}
 $\balpha_{t+1} = \balpha$\;
 $t \assign t+1$\;
 }%
-\end{algorithm}
+\end{tightalgo}
 \end{footnotesize}
 \end{frame}
 
@@ -1236,25 +1255,23 @@ iteration $t$.
 
 
 \begin{frame}[fragile]{Primal SVM Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\textsc{SVM-Primal} ($\bD, C, \epsilon$)}
-\Algorithm{} \ForEach{$\bx_i \in \bD$}{ $\bx_i \assign
-\matr{\bx_i\\ 1}$ \tcp{map to $\setR^{d+1}$} } 
-$t \assign 0$\;
-$\bw_0 \assign (0, \ldots, 0)^T$ \tcp{initialize $\bw_t \in
-\setR^{d+1}$} 
-\Repeat{$\norm{\bw_{t} - \bw_{t-1}} \le \epsilon$}
+\Algorithm{} 
+\ForEach{$\bx_i \in \bD$}{ 
+$\bx_i \assign \matr{\bx_i\\ 1}$ \tcp{map to $\setR^{d+1}$} } 
+$t \assign 0$\; 
+$\bw_0 \assign (0, \ldots, 0)^T$ \tcp{initialize $\bw_t \in \setR^{d+1}$} 
+\Repeat{
+$\norm{\bw_{t} - \bw_{t-1}} \le \epsilon$}
 { $\bv \assign \dsum_{\mathclap{y_i(\bw_t^T\bx_i)<1}} y_i \bx_i$\;
 \nllabel{alg:class:svm:LpNewton:GHbeg} $\bS \assign
-\dsum_{\mathclap{y_i(\bw_t^T\bx_i)<1}} \bx_i \bx_i^T$\; $\grad
-\assign (\bI+2C\bS) \bw_t - 2C\bv$ \tcp{gradient} 
-$\bH \assign
-\bI + 2C\bS$ \tcp{Hessian}
-\nllabel{alg:class:svm:LpNewton:GHend} $\bw_{t+1} \assign \bw_t -
-\eta_t \bH^{-1}\grad$ \tcp{Newton update rule}%[Eq.\nosp\eqref{eq:class:svm:newtonstep}]}
-\nllabel{alg:class:svm:LpNewton:update}
-$t \assign t+1$\; }
-\end{algorithm}
+\dsum_{\mathclap{y_i(\bw_t^T\bx_i)<1}} \bx_i \bx_i^T$\; 
+$\grad \assign (\bI+2C\bS) \bw_t - 2C\bv$ \tcp{gradient}\; 
+$\bH \assign \bI + 2C\bS$ \tcp{Hessian}\;
+\nllabel{alg:class:svm:LpNewton:GHend} $\bw_{t+1} \assign \bw_t - \eta_t \bH^{-1}\grad$ \tcp{Newton update rule}%[Eq.\nosp\eqref{eq:class:svm:newtonstep}]} \nllabel{alg:class:svm:LpNewton:update}\; $t \assign t+1$ 
+}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1295,20 +1312,17 @@ $t \assign t+1$\; }
   The linear soft margin primal algorithm, with quadratic loss, 
   can easily be extended to work
   on any kernel matrix $\bK$:
-\begin{algorithm}[H]
+
+\begin{tightalgo}[H]{\textwidth-18pt}
   \small
-%\begin{tightalgo}[!t]{\textwidth-18pt}
-\SetKwInOut{Algorithm}{\textsc{SVM-Primal-Kernel} ($\bD,
-K, C, \epsilon$)}
+\SetKwInOut{Algorithm}{\textsc{SVM-Primal-Kernel} ($\bD, K, C, \epsilon$)}
 \Algorithm{}
 \ForEach{$\bx_i \in \bD$}{
 $\bx_i \assign \matr{\bx_i\\ 1}$ \tcp{map to $\setR^{d+1}$}
 }
-$\bK \assign \{K(\bx_i, \bx_{j})\}_{i,j=1,\ldots,n}$
-\tcp{compute kernel matrix}
+$\bK \assign \{K(\bx_i, \bx_{j})\}_{i,j=1,\ldots,n}$ \tcp{compute kernel matrix}
 $t \assign 0$\;
-$\bbeta_0 \assign (0, \ldots, 0)^T$ \tcp{initialize $\bbeta_t \in
-\setR^{n}$}
+$\bbeta_0 \assign (0, \ldots, 0)^T$ \tcp{initialize $\bbeta_t \in \setR^{n}$}
 \Repeat{$\norm{\bbeta_{t} - \bbeta_{t-1}} \le \epsilon$}
 {
 $\bv \assign \dsum_{\mathclap{y_i(\bK_i^T\bbeta_t)<1}} y_i \bK_i$\;
@@ -1322,7 +1336,7 @@ $\bbeta_{t+1} \assign \bbeta_t - \eta_t \bH^{-1}\grad$
 \nllabel{alg:class:svm:LpKNewton:update}
 $t \assign t+1$\;
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 

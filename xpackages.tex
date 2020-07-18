@@ -14,6 +14,7 @@
 \usepackage{pst-all,pst-func}
 \usepackage{pst-solides3d,pst-3dplot,pst-vue3d,pst-bar}
 \usepackage{pst-eucl}
+\SpecialCoor
 \usepackage{xkeyval}
 \usepackage{xspace}
 \usepackage{xparse}
@@ -42,11 +43,11 @@
 %\usepackage{chapterbib}
 \usepackage{soul}
 %\usepackage{tikz}
-\usepackage{pgf,pgfplots}
+%\usepackage{pgf,pgfplots}
 %\usepackage{gnuplot-lua-tikz}
 %\usepackage{cmbright}
-\usepackage[T1]{fontenc}
-\usepackage{smcaps}
+% \usepackage[T1]{fontenc}
+%\usepackage{smcaps}
 %\usepackage[intlimits,cmex10]{amsmath}
 \usepackage{amsmath}
 
@@ -65,9 +66,40 @@
 \usepackage{fancybox}
 \allowdisplaybreaks[1]
 
+
 \usepackage[none]{hyphenat}
 \hyphenpenalty=2000
 \tolerance=2000
+
+
+%2nd edition
+
+\usepackage[ntheorem]{empheq}
+\usepackage[most]{tcolorbox}
+\usepackage[ntheorem]{empheq}
+\tcbset{%colback=gray!10, colframe=gray!90, 
+highlight math style= {colframe=gray!90,colback=gray!10,boxsep=0pt}}
+
+\usepackage{tikz}
+\usepackage{pgf,pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=newest}
+\usetikzlibrary{arrows.meta,3d,matrix,calc}
+\usetikzlibrary{automata,graphs,trees}
+\usetikzlibrary{shadows}
+
+\usepackage[customcolors]{hf-tikz}
+\tikzset{offset definition/.style={
+    above left offset={-0.5,1},
+    below right offset={0.5,-1},
+    },
+    tmark/.style={
+        set fill color=gray!10,
+        set border color=gray!90,
+    }
+}
+\usepackage{bigdelim}
+
 
 %dedication
 %\newenvironment{dedication}

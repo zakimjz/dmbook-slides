@@ -220,15 +220,16 @@ is the vector of ones.
 	\small
   Given two points $\ba, \bb \in \setR^m$, their {\em dot product} 
   is def\/{i}ned as the scalar
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \ba^T\bb & = a_1b_1 + a_2b_2 + \cdots + a_mb_m\nonumber\\
     & = \sum_{i=1}^m a_i b_i
-\end{align*}
+\end{empheq}
+
 The {\em Euclidean norm} or {\em length}
  of a vector $\ba$ is def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \norm{\ba} = \sqrt{\ba^T\ba} = \sqrt{\sum_{i=1}^m a_i^2}
-\end{align*}
+\end{empheq}
 The {\em unit vector} in the direction of $\ba$ is
   $\bu = {\ba \over \norm{\ba}}$
 with $\norm{\ba} = 1$.
@@ -237,18 +238,18 @@ with $\norm{\ba} = 1$.
   \begin{column}[t]{.5\textwidth}
 	\small
 	{\em Distance} between $\ba$ and $\bb$ is given as
-  \begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \norm{\ba - \bb} = \sqrt{\sum_{i=1}^m (a_i-b_i)^2}
-\end{align*}
+\end{empheq}
 
 {\em Angle} between $\ba$ and $\bb$ is given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \cos \theta = {\ba^T\bb \over \norm{\ba}\norm{\bb}}
     = \lB({\ba\over \norm{\ba}}\rB)^T \lB({\bb\over \norm{\bb}}\rB)
-\end{align*}
+\end{empheq}
 
     \centerline{
-\scalebox{0.6}{%
+\scalebox{0.4}{%
     \psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
     \psset{xAxisLabel=$X_1$,yAxisLabel=$X_2$}
     \psgraph[]{->}(0,0)(6,5){2.5in}{2.0in}%
@@ -284,11 +285,13 @@ $\ba$, and $\br=\bb_\perp$ perpendicular or orthogonal
 to $\ba$, given as
 $$\bb = \bb_\parallel + \bb_\perp = \bp + \br$$ 
 where
-$$\bp = \bb_\parallel = \lB( {\ba^T\bb \over \ba^T\ba}
-    \rB) \ba$$
+\begin{empheq}[box=\tcbhighmath]{align*}
+\bp = \bb_\parallel = \lB( {\ba^T\bb \over \ba^T\ba}
+    \rB) \ba
+\end{empheq}
 
     \centerline{
-	\scalebox{0.7}{
+	\scalebox{0.6}{
     \psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray,unit=0.4in}
     \psset{xAxisLabel=$X_1$,yAxisLabel=$X_2$}
     \psgraph[]{->}(0,0)(6,5){2.5in}{2.0in}%
@@ -381,9 +384,9 @@ as follows:
 If $X$ is
 discrete, the {\em probability mass function} of $X$ is
 def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     f(x) = P(X = x) \qquad \text{for all } x \in \setR
-\end{align*}
+\end{empheq}
 $f$ must obey the basic rules of probability.
 That is, $f$ must be non-negative:
 $$f(x) \ge 0$$
@@ -495,9 +498,9 @@ Define discrete random variable $B$, denoting the
 If $X$ is
 continuous, the {\em probability density function} of $X$ is
 def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     P\bigl(X \in [a,b]\bigr) = \int_a^b f(x)\ dx
-\end{align*}
+\end{empheq}
 $f$ must obey the basic rules of probability.
 That is, $f$ must be non-negative:
 $$f(x) \ge 0$$
@@ -558,9 +561,9 @@ For random variable $X$, its
 $F:\setR \to [0,1]$,
 gives the probability of observing a value at most
 some given value $x$:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
     F(x) = P(X \le x) \qquad \text{for all } -\infty < x < \infty
-\end{align*}
+\end{empheq}
 When $X$ is discrete, $F$ is given as
 \begin{align*}
     F(x) = P(X \le x) = \sum_{u \le x} f(u)
@@ -821,9 +824,9 @@ from the vector random variable $\bX = (X_1, X_2, \ldots, X_d)$.
 Since the $\bx_i$ are assumed to be
 independent and
 identically distributed, their joint distribution is given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
 f(\bx_1, \bx_2, \ldots, \bx_n) = \prod_{i=1}^n f_\bX(\bx_i)
-\end{align*}
+\end{empheq}
 where $f_{\bX}$ is the probability mass or density function for $\bX$.
 
 \smallskip

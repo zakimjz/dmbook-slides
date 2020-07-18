@@ -21,7 +21,9 @@
 The {\em support} of the rule \index{association rule! support} is def\/{i}ned as the
 number of transactions that contain both $X$ and $Y$, that is,
 \begin{align*}
+\tcbhighmath{
   \supp(X \arule Y) = \supp(\mathit{XY}) = \card{\vT(\mathit{XY})}
+}
 \end{align*}
 
 \medskip
@@ -30,7 +32,9 @@ the fraction of transactions that contain both $X$
 and $Y$, that is, the empirical
 joint probability of the items comprising the rule
 \begin{align*}
+\tcbhighmath{
   \rsupp(X\arule Y) = P(\mathit{XY}) = \rsupp(\mathit{XY}) = \frac{\supp(\mathit{XY})}{\card{\bD}}
+}
 \end{align*}
 
 \bigskip
@@ -40,9 +44,11 @@ is the conditional probability that
 a transaction contains the consequent $Y$ given that it contains the
 antecedent $X$:
 \begin{align*}
+\tcbhighmath{
 \conff(X \arule Y) = P(Y|X) = \frac{P(\mathit{XY})}{P(X)} =
 \frac{\rsupp(\mathit{XY})}{\rsupp (X)} =
 \frac{\supp(\mathit{XY})}{\supp (X)}
+}
 \end{align*}
 \end{frame}
 
@@ -109,9 +115,11 @@ is def\/{i}ned as the ratio of the observed joint
 probability of $X$ and $Y$ to the expected joint probability if they
 were statistically independent, that is,
 \begin{align*}
+\tcbhighmath{
    \lift (X \arule Y) = \frac{P(\mathit{XY})}{P(X) \cdot P(Y)} =
    \frac{\rsupp(\mathit{XY})}{\rsupp(X)\cdot\rsupp(Y)} = \frac{\conff(X\arule
    Y)}{\rsupp(Y)}
+}
 \end{align*}
 
 \medskip
@@ -121,8 +129,10 @@ measures the difference between the
 observed and expected joint probability of $XY$ assuming that $X$ and
 $Y$ are independent
 \begin{align*}
+\tcbhighmath{
   \leverage (X \arule Y) = P(\mathit{XY}) - P(X) \cdot P(Y) = \rsupp(\mathit{XY}) -
   \rsupp(X) \cdot \rsupp(Y)
+}
 \end{align*}
 
 {\bf Jaccard:}
@@ -132,9 +142,11 @@ between
 two sets. When applied as a rule assessment measure it computes the
 similarity between the tidsets of $X$ and $Y$:
 \begin{align*}
+%\tcbhighmath{
 \jaccard (X \arule Y) & =
 \frac{\card{\vT(X) \cap \vT(Y)}}{\card{\vT(X) \cup \vT(Y)}}\\
 & = \frac{P(\mathit{XY})}{P(X)+P(Y)-P(\mathit{XY})}
+%}
 \end{align*}
 
 
@@ -221,9 +233,11 @@ $X$ occurs in a transaction where $Y$ does not.
 It is thus a measure of the strength of a rule with respect to the
 complement of the consequent, def\/{i}ned as
 \begin{align*}
+%\tcbhighmath{
   \conviction(X \arule Y) &
   = \frac{P(X) \cdot P(\neg Y)}{P(X \neg Y)}
   = \frac{1}{\lift(X \arule \neg Y)}
+%}
 \end{align*}
 If the joint
 probability of $X\neg Y$ is less than that expected under independence
@@ -262,11 +276,13 @@ odds of $Y$ in these two groups as follows:
 
 The odds ratio is then def\/{i}ned as the ratio of these two odds:
 \begin{align*}
+%\tcbhighmath{
   \oddsratio(X \arule Y) &= \frac{odds(Y|X)}{odds(Y|\neg X)}
    =
    \frac{P(\mathit{XY}) \cdot P(\neg  X \neg Y)}{P(X \neg Y) \cdot P(\neg \mathit{XY})}\\
    & = \frac{\supp(\mathit{XY}) \cdot \supp(\neg X\neg Y)}
     {\supp(X\neg Y)\cdot \supp(\neg \mathit{XY})}
+%}
 \end{align*}
 
 If $X$ and $Y$ are
@@ -416,7 +432,7 @@ Attribute & Range or value & Label \\ \hline
   \multicolumn{5}{c}{Best Rules by Support and Confidence}\\
 \hline
 Rule & $\rsupp$ & $\conff$ & $\lift$ & $\conviction$ \\ \hline \hline
-$\{pl_1, pw_1\} \arule c_1$ & 0.333 & 1.00 & 3.00 & 33.33 \\ \hline
+$\{pl_1, pw_1\} \arule c_1$ & 0.333 & 1.00 & 3.00 & $\infty$ \\ \hline
 $pw_2 \arule c_2$           & 0.327 & 0.91 & 2.72 & 6.00 \\ \hline
 $pl_3 \arule c_3$           & 0.327 & 0.89 & 2.67 & 5.24 \\ \hline
 \end{tabular}%}{}
@@ -427,9 +443,9 @@ $pl_3 \arule c_3$           & 0.327 & 0.89 & 2.67 & 5.24 \\ \hline
   \multicolumn{5}{c}{Best Rules by Lift and Conviction}\\
 \hline
 Rule & $\rsupp$ & $\conff$ & $\lift$ & $\conviction$ \\ \hline \hline
-$\{pl_1, pw_1\} \arule c_1$ & 0.33 & 1.00 & 3.00 & 33.33 \\ \hline
+$\{pl_1, pw_1\} \arule c_1$ & 0.33 & 1.00 & 3.00 & $\infty$ \\ \hline
 $\{pl_2, pw_2\} \arule c_2$ & 0.29 & 0.98 & 2.93 & 15.00 \\ \hline
-$\{sl_3, pl_3, pw_3\} \arule c_3$ & 0.25 & 1.00 & 3.00 & 24.67 \\ \hline
+$\{sl_3, pl_3, pw_3\} \arule c_3$ & 0.25 & 1.00 & 3.00 & $\infty$ \\ \hline
 \end{tabular}%}{}
 \end{center}
 \end{frame}
@@ -449,8 +465,10 @@ $\{sl_3, pl_3, pw_3\} \arule c_3$ & 0.25 & 1.00 & 3.00 & 24.67 \\ \hline
 {\bf Lift:} The {\em lift} of a $k$-itemset
 $X=\{x_1,x_2,\ldots,x_k\}$ is def\/{i}ned as
 \begin{align*}
+%\tcbhighmath{
   \lift(X, \bD) &= \frac{P(X)}{\prod_{i=1}^k P(x_i)}
   = \frac{\rsupp(X)}{\prod_{i=1}^k \rsupp(x_i)}
+%}
 \end{align*}
 
 \medskip
@@ -462,8 +480,10 @@ Def\/{i}ne
 the generalized lift of $X$ over partitions of size $q$ as
 follows:
 \begin{align*}
+%\tcbhighmath{
   \lift_q(X)  & = \min_{X_1,\ldots,X_q}
   \biggl\{ \frac{P(X)}{\prod_{i=1}^q P(X_i)} \biggr\}
+%}
 \end{align*}
 This is, the least value of lift over all $q$-partitions
 $X$.
@@ -642,8 +662,10 @@ More formally, let $\card{X} \ge 2$, and let
 $\{X_1,X_2\}$ be a bipartition of $X$.
 We say that $X$ is productive provided
 \begin{align*}
+\tcbhighmath{
 \rsupp(X) > \rsupp(X_1) \times \rsupp(X_2),
 \text{ for all bipartitions } \{X_1, X_2\} \text{ of } X
+}
 \end{align*}
 
 \bigskip
@@ -683,8 +705,10 @@ Def\/{i}ne the {\em improvement}
 of
 a rule $X \arule Y$ as follows:
 \begin{align*}
+\tcbhighmath{
 \textit{imp}(X \arule Y) = \conff (X \arule Y)
 - \max_{W \subset X} \Bigl\{\conff (W \arule Y) \Bigr\}
+}
 \end{align*}
 
 \medskip
@@ -760,8 +784,10 @@ The $\pvalue$ for $a$ is given as
 \begin{align*}
   \pvalue(a) & = \sum_{i=0}^{\min(b,c)} P(a+i \mid (a+c),(a+b),n)\\[6pt]
   & =
+\tcbhighmath{
   \sum_{i=0}^{\min(b,c)}
   \frac{(a+b)!\;(c+d)!\;(a+c)!\;(b+d)!}{n!\;(a+i)!\;(b-i)!\;(c-i)!\;(d+i)!}
+}
 \end{align*}
 which follows from the fact that when we increase the count of $a$
 by $i$, then because the row and column marginals are f\/{i}xed, $b$
@@ -871,7 +897,7 @@ this operation as $Swap(t_a,i_a; t_b, i_b)$.
 
 \newcommand{\algswap}{\textsc{SwapRandomization}}
 \begin{frame}[fragile]{Algorithm \algswap}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\algswap ($t$, $\bD \subseteq \cT \times \cI$)}
 \Algorithm{}
 \While{$t > 0$}{
@@ -883,7 +909,7 @@ this operation as $Swap(t_a,i_a; t_b, i_b)$.
   $t = t-1$\;
 }
 \Return{$\bD$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1065,7 +1091,7 @@ the probability mass.
 
 \newcommand{\algbootstrapCI}{\textsc{Bootstrap-ConfidenceInterval}}
 \begin{frame}[fragile]{Bootstrap Confidence Interval Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\algbootstrapCI ($X$, $\alpha$, $k$, $\bD$)}
 \Algorithm{}
 \For{$i \in [1, k]$}{
@@ -1077,7 +1103,7 @@ $\hF(x) = P\lB(\Theta \le x\rB) = \frac{1}{k} \sum_{i=1}^k
   $v_{(1-\alpha)/2} = \hF^{-1}\bigl((1-\alpha)/2\bigr)$\;
   $v_{(1+\alpha)/2} = \hF^{-1}\bigl((1+\alpha)/2\bigr)$\;
 \Return{$[v_{(1-\alpha)/2}, v_{(1+\alpha)/2}\bigr]$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 

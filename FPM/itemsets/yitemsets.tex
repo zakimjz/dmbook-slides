@@ -175,8 +175,10 @@ of an itemset $X$ in a dataset $\bD$, denoted
 $\supp(X)$, is the number of transactions in $\bD$ that
 contain $X$:
 \begin{align*}
+\tcbhighmath{
 \supp(X) = \bigl|\{ t \mid \; \tup{t,\vI(t)} \in \bD \mbox{ and
 } X \subseteq \vI(t) \}\bigr| = \card{\vT(X)}
+}
 \end{align*}
 
 \medskip
@@ -184,7 +186,9 @@ The {\em relative support}
 of $X$ is the fraction of
 transactions that contain $X$:
 \begin{align*}
+\tcbhighmath{
 \rsupp(X) = \frac{\supp(X)}{\card{\bD}}
+}
 \end{align*}
 It is an estimate of the {\em joint
   probability} of
@@ -321,29 +325,29 @@ $O(\card{\cI}\cdot\card{\bD}\cdot2^{\card{\cI}})$.
 
 
 \begin{frame}[fragile]{Brute Force Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmBF}{\algbf ($\bD$, $\cI$, $\minsup$)}
 \AlgorithmBF{}
-$\cF \assign \emptyset$ \tcp{set of frequent itemsets}
+$\cF \assign \emptyset$ \tcp{set of frequent itemsets}\;
 \ForEach{$X \subseteq \cI$}{
   $\supp(X)$ $\assign$ \algcomputesupport ($X, \bD$)\;
   \If{$\supp(X) \geq \minsup$}{
-  $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$
+  $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$\;
   }
 }
 \Return{$\cF$}
-\end{algorithm}
-\begin{algorithm}[H]
+\end{tightalgo}
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInput{AlgorithmCS}{\algcomputesupport ($X, \bD$)}
 \AlgorithmCS{}
 $\supp(X) \assign 0$\;
 \ForEach{$\tup{t, \vI(t)} \in \bD$}{
   \If{$X \subseteq \vI(t)$}{
-    $\supp(X) \assign \supp(X)+1$
+    $\supp(X) \assign \supp(X)+1$\;
   }
 }
 \Return{$\supp(X)$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -630,12 +634,12 @@ pref\/{i}x tree.
 \SetKwInput{AlgorithmB}{\algcomputesupport ($\Ck{k}, \bD$)}
 \SetKwInput{AlgorithmC}{\algextprefix ($\Ck{k}$)}
 \begin{frame}[fragile]{The Apriori Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \AlgorithmA{}
 $\cF \assign \emptyset$\;
-$\Ck{1} \assign \{\emptyset\}$ \tcp{Initial pref\/{i}x tree with single items}
+$\Ck{1} \assign \{\emptyset\}$ \tcp{Initial pref\/{i}x tree with single items}\;
 \lForEach{$i \in \cI$}{
-Add $i$ as child of $\emptyset$ in $\Ck{1}$ with $sup(i) \assign 0$
+Add $i$ as child of $\emptyset$ in $\Ck{1}$ with $sup(i) \assign 0$\;
 }
 $k \assign 1$ \tcp{$k$ denotes the level}
 \While{$\Ck{k} \not= \emptyset$}{
@@ -643,10 +647,10 @@ $k \assign 1$ \tcp{$k$ denotes the level}
   \algcomputesupport ($\Ck{k}, \bD$)\;
   \ForEach{ leaf $X \in \Ck{k}$}{
     \lIf{$\supp(X) \ge \minsup$}{
-      $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$
+      $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$\;
     }
     \lElse{
-    remove $X$ from $\Ck{k}$\nllabel{alg:fpm:iset:apr:rem}
+    remove $X$ from $\Ck{k}$\nllabel{alg:fpm:iset:apr:rem}\;
     }
   }
  $\Ck{k+1} \assign$ \algextprefix ($\Ck{k}$)
@@ -655,24 +659,24 @@ $k \assign 1$ \tcp{$k$ denotes the level}
 \nllabel{alg:fpm:iset:apr:whileend}
 }
 \Return{$\Fk{k}$}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
 
 \begin{frame}[fragile]{Apriori Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \AlgorithmB{}
 \ForEach{$\tup{t, \vI(t)} \in \bD$}{
   \ForEach{$k$-subset $X \subseteq \vI(t)$}{
     \lIf{$X \in \Ck{k}$}{
-      $\supp(X) \assign \supp(X)+1$
+      $\supp(X) \assign \supp(X)+1$\;
     }
   }
 }
-\end{algorithm}
+\end{tightalgo}
 
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \AlgorithmC{}
 \ForEach{$ \text{leaf } X_a \in \Ck{k}$}{
 \ForEach{$\text{leaf } X_b \in \textsc{sibling}(X_a),
@@ -683,13 +687,13 @@ $k \assign 1$ \tcp{$k$ denotes the level}
     X_{j} \subset X_{ab}, \text{ such that }
     \card{X_{j}} = \card{X_{ab}}-1$}{
      Add $X_{ab}$ as child of $X_a$ with
-     $sup(X_{ab}) \assign 0$}
+     $sup(X_{ab}) \assign 0$}\;
    }
    \If{no extensions from $X_a$}{remove $X_a$, and all ancestors of
    $X_a$ with no extensions, from $\Ck{k}$ }
 }
 \Return $\Ck{k}$\;
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1039,7 +1043,7 @@ equivalence class}.
 
 
 \begin{frame}[fragile]{Eclat Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmA}{\algeclat ($P$, $\minsup$, $\cF$)}
 \tcp{Initial Call: $\cF \assign \emptyset,
 P\assign \bigl\{\tup{i,\vT(i)} \mid i \in \cI,
@@ -1056,10 +1060,10 @@ P\assign \bigl\{\tup{i,\vT(i)} \mid i \in \cI,
     }
   }
   \lIf{$P_a \ne \emptyset$}{
-    \algeclat($P_a$, $\minsup$, $\cF$)
+    \algeclat($P_a$, $\minsup$, $\cF$)\;
   }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1101,7 +1105,7 @@ intersection operations in Eclat with diffset operations.
 
 
 \begin{frame}[fragile]{Algorithm dEclat}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmA}{\algdeclat ($P$, $\minsup$, $\cF$)}
 \tcp{Initial Call: $\cF \assign \emptyset$,
 $P \assign \bigl\{\tup{i,\bd(i),\supp(i)} \mid i \in \cI,
@@ -1122,10 +1126,10 @@ $P \assign \bigl\{\tup{i,\bd(i),\supp(i)} \mid i \in \cI,
     }
   }
   \lIf{$P_a \ne \emptyset$}{
-    \algdeclat($P_a$, $\minsup$, $\cF$)
+    \algdeclat($P_a$, $\minsup$, $\cF$)\;
   }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1489,7 +1493,7 @@ such itemset being given by the least frequent item in it.
 
 \begin{frame}[fragile]{FPGrowth Algorithm}
 \begin{footnotesize}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmA}{\algfpgrowth ($R$, $P$, $\cF$, $\minsup$)}
 \tcp{Initial Call: $R \assign \text{FP-tree}(\bD)$,
     $P \assign \emptyset$, $\cF \assign \emptyset$ }
@@ -1508,9 +1512,9 @@ Remove infrequent items from $R$\;
     \ForEach{$i \in R$ in increasing order of $\supp(i)$}{
         $X \assign P \cup \{i\}$\nllabel{alg:fpm:iset:fp:Pi} \;
         $\supp(X) \assign \supp(i)$ \tcp{sum of $cnt(i)$ for all nodes
-        labeled $i$}
+        labeled $i$}\;
         $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$\;
-        $R_X \assign \emptyset$ \tcp{projected FP-tree for $X$}
+        $R_X \assign \emptyset$ \tcp{projected FP-tree for $X$}\;
         \ForEach{$path \in \textsc{PathFromRoot}(i)$ \nllabel{alg:fpm:iset:fp:ptr}}{
             $cnt(i) \assign $ count of $i$ in $path$\;
             \nllabel{alg:fpm:iset:fp:pathsup}
@@ -1525,7 +1529,7 @@ Remove infrequent items from $R$\;
         }
     }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{footnotesize}
 \end{frame}
 
@@ -1706,7 +1710,9 @@ s = \supp(\mathit{XY}) = \supp(Z) \geq \minsup
 \medskip
 We compute the conf\/{i}dence as follows:
 \begin{align*}
+\tcbhighmath{
 c = \frac{\supp(X \cup Y)}{\supp(X)} = \frac{\supp(Z)}{\supp(X)}
+}
 \end{align*}
 If $c \geq \minconf$, then the rule is a strong rule. On the other
 hand, if $\conff(X\arule Y) < c$, then
@@ -1717,7 +1723,7 @@ avoid checking subsets of $X$.
 
 
 \begin{frame}[fragile]{Association Rule Mining Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgoRuleMining}{\algrulemining ($\cF$, $\minconf$)}
 \AlgoRuleMining{}
 \ForEach{$Z \in \cF$, such that $\card{Z} \ge 2$}{
@@ -1725,7 +1731,7 @@ avoid checking subsets of $X$.
   \nllabel{alg:fpm:iset:arule:initA}\;
   \While{$\cA \ne \emptyset$}{
     $X \gets \text{maximal element in } \cA$\;
-    $\cA \gets \cA \setminus X$\tcp{remove $X$ from $\cA$}
+    $\cA \gets \cA \setminus X$\tcp{remove $X$ from $\cA$}\;
     $c \gets \supp(Z)/\supp(X)$ \nllabel{alg:fpm:iset:arule:conf}\;
     \eIf{$c \ge \minconf$}{
       print $X \arule Y$, $\supp(Z)$, $c$\;
@@ -1733,9 +1739,9 @@ avoid checking subsets of $X$.
       $\cA \gets \cA \setminus
       \bigl\{W \mid W \subset X\bigr\}$ \;
       \nllabel{alg:fpm:iset:arule:removeW}
-      \tcp{remove all subsets of $X$ from $\cA$}
+      \tcp{remove all subsets of $X$ from $\cA$}\;
     }
   }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}

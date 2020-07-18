@@ -95,7 +95,8 @@ the degree of the corresponding node. Given the weighted
 adjacency
 matrix $\bA$ for a graph $G$, its normalized adjacency matrix is
 def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \bM =  \bDelta^{-1} \bA & =
     \matr{
         {a_{11}\over d_1} &  {a_{12}\over d_1} &
@@ -106,7 +107,8 @@ def\/{i}ned as
         {a_{n1}\over d_n} &  {a_{n2}\over d_n} & \cdots &
         {a_{nn}\over d_n}\\
     }
-\end{align*}
+\end{split}
+\end{empheq}
 Because $\bA$ is assumed to have non-negative elements, this implies
 that each element of $\bM$, namely $m_{ij}$ is also non-negative,
 as $m_{ij} = \tfrac{a_{ij}}{d_i} \ge 0$. 
@@ -122,7 +124,8 @@ is not symmetric, its eigenvectors are not necessarily orthogonal.
 \end{frame}
 
 
-\begin{frame}{Example Graph: Adjacency and Degree Matrices}
+\begin{frame}{Example Graph}
+\framesubtitle{Adjacency and Degree Matrices}
 \begin{figure}
     \centerline{
 	\scalebox{0.7}{
@@ -176,7 +179,8 @@ is not symmetric, its eigenvectors are not necessarily orthogonal.
 \end{frame}
 
 
-\begin{frame}{Example Graph: Normalized Adjacency Matrix}
+\begin{frame}{Example Graph}
+\framesubtitle{Normalized Adjacency Matrix}
 \begin{figure}
     \centerline{
 	\scalebox{0.7}{
@@ -253,12 +257,14 @@ Laplacian matrix} of a graph is def\/{i}ned as
         \vdots & \vdots & \cdots & \vdots\\
         a_{n1} & a_{n2} & \cdots & a_{nn}\\
     } \notag\\
-     & =    \matr{
+     & =    
+\tcbhighmath{\matr{
     \sum_{j\ne1} a_{1j} & -a_{12} & \cdots & -a_{1n} \\
     -a_{21} & \sum_{j\ne2} a_{2j} & \cdots & -a_{2n}\\
       \vdots & \vdots & \cdots & \vdots\\
       -a_{n1} & -a_{n2} &\cdots  & \sum_{j\ne n} a_{nj} \\
     } 
+}
 \end{align*}
 
 $\bL$ is a symmetric, positive
@@ -334,7 +340,8 @@ smallest eigenvalue is $\lambda_n = 0$.
   \small
 The {\em normalized
 symmetric Laplacian matrix} of a graph is def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \bL^s & = \bDelta^{-1/2}\bL\bDelta^{-1/2}
           =    \matr{
      {\sum_{j\ne1} a_{1j} \over \sqrt{d_1d_1}} & -{a_{12} \over
@@ -347,13 +354,14 @@ symmetric Laplacian matrix} of a graph is def\/{i}ned as
       \sqrt{d_nd_2}} & \cdots & {\sum_{j\ne n}a_{nj} \over
       \sqrt{d_nd_n}} \\
       } 
-\end{align*}
+\end{split}
+\end{empheq}
 $\bL^s$ is a symmetric, positive semidef\/{i}nite matrix, with 
 rank at most $n-1$. The
 smallest eigenvalue $\lambda_n = 0$.
-
 The {\em normalized asymmetric Laplacian} matrix is def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \bL^a &= \bDelta^{-1} \bL
      = \matr{
     {\sum_{j\ne1} a_{1j} \over d_1} & -{a_{12} \over d_1} &
@@ -364,7 +372,8 @@ The {\em normalized asymmetric Laplacian} matrix is def\/{i}ned as
       -{a_{n1} \over d_n} & -{a_{n2} \over d_n} &\cdots
       & {\sum_{j\ne n} a_{nj} \over d_n} \\
     }
-\end{align*}
+\end{split}
+\end{empheq}
 $\bL^a$ is also a
 positive semi-def\/{i}nite matrix with $n$ real eigenvalues $\lambda_1
 \ge \lambda_2 \ge \dots \ge \lambda_n = 0$.
@@ -372,7 +381,8 @@ positive semi-def\/{i}nite matrix with $n$ real eigenvalues $\lambda_1
 
 
 
-\begin{frame}{Example Graph: Normalized Symmetric Laplacian Matrix}
+\begin{frame}{Example Graph}
+\framesubtitle{Normalized Symmetric Laplacian Matrix}
 \begin{figure}
     \centerline{
 	\scalebox{0.6}{
@@ -423,7 +433,8 @@ The    normalized symmetric Laplacian is given as
 
 
 
-\begin{frame}{Example Graph: Normalized Asymmetric Laplacian Matrix}
+\begin{frame}{Example Graph}
+\framesubtitle{Normalized Asymmetric Laplacian Matrix}
 \begin{figure}
     \centerline{
 	\scalebox{0.6}{
@@ -489,7 +500,9 @@ subsets of the vertices. We denote by $W(S,T)$ the sum of the
 weights on all edges with one vertex in $S$ and the other in $T$,
 given as
 \begin{align*}
+\tcbhighmath{
     W(S, T) = \sum_{v_i \in S} \sum_{v_{j} \in T} a_{ij}
+}
 \end{align*}
 
 \medskip
@@ -517,30 +530,41 @@ that records the cluster membership for cluster $C_i$, def\/{i}ned as
 \end{align*}
 The cluster size can be written as
 \begin{align*}
+\tcbhighmath{
     \card{C_i} = \bc_i^T\bc_i = \norm{\bc_i}^2
+}
 \end{align*}
 The {\em volume} of a cluster
 $C_i$ is def\/{i}ned as the sum of all the weights on edges with one
 end in cluster $C_i$:
 \begin{align*}
+\tcbhighmath{
     vol(C_i) = W(C_i, V)  = \sum_{v_r \in C_i} d_r
     = \sum_{v_r \in C_i} c_{ir} d_r c_{ir}
      = \sum_{r=1}^n \sum_{s=1}^n c_{ir} \bDelta_{rs} c_{is}
      = \bc_i^T \bDelta \bc_i
+}
 \end{align*}
+\end{frame}
+
+\begin{frame}{Cuts and Matrix Operations}
 The sum of weights of all internal edges is:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     W(C_i, C_i) & = \sum_{v_r \in C_i} \sum_{v_s \in C_i}
     a_{rs}
      = \sum_{r=1}^n \sum_{s=1}^n c_{ir} a_{rs} c_{is} = \bc_i^T
     \bA \bc_i
-\end{align*}
+\end{split}
+\end{empheq}
 We can get the sum of weights for all the external edges as follows:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     W(C_i, \ol{C_i}) & = \sum_{v_r \in C_i} \sum_{v_s \in
     V- C_i} a_{rs} = W(C_i,V) - W(C_i,C_i)
      = \bc_i (\bDelta - \bA) \bc_i = \bc_i^T \bL \bc_i
-\end{align*}
+\end{split}
+\end{empheq}
 \end{frame}
 
 
@@ -552,12 +576,14 @@ optimization \hbox{problem} over the $k$-way cut $\cC =
 
 The {\em ratio cut} objective is def\/{i}ned
 over a $k$-way cut as follows:
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \min_\cC \; J_{rc}(\cC) & = \sum_{i=1}^k {W(C_i, \ol{C_i}) \over
     \card{C_i}} =  \sum_{i=1}^k {\bc_i^T \bL \bc_i \over
     \bc_i^T\bc_i} = \sum_{i=1}^k {\bc_i^T \bL \bc_i \over
     \norm{\bc_i}^2}
-\end{align*}
+\end{split}
+\end{empheq}
 Ratio cut tries to minimize the sum of the similarities from a
 cluster $C_i$ to other points not in the cluster $\ol{C_i}$,
 taking into account the size of each cluster. 
@@ -589,9 +615,11 @@ ratio cut, except that it divides the cut weight of each cluster
 by the volume of a cluster instead of its size. The objective
 function is given as
 \begin{align*}
+\tcbhighmath{
     \min_\cC \; J_{nc}(\cC) = \sum_{i=1}^k {W(C_i, \ol{C_i}) \over
     vol(C_i)} = \sum_{i=1}^k {\bc_i^T \bL \bc_i  \over
     \bc_i^T \bDelta \bc_i}
+}
 \end{align*}
 We can obtain an optimal solution by allowing $\bc_i$ to 
 be an arbitrary real vector. 
@@ -649,12 +677,11 @@ binary cluster indicator vectors $\bc_i$.
 
 \newcommand{\spectral}{\textsc{Spectral Clustering}}
 \begin{frame}[fragile]{Spectral Clustering Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\spectral\ ($\bD, k$)} \Algorithm{} Compute
-the similarity matrix $\bA \in \setR^{n\times n}$\; \lIf{ratio
-cut}{
-    \nllabel{alg:clus:spectral:spectral:lineBs}
-    $\bB \assign \bL$}
+the similarity matrix $\bA \in \setR^{n\times n}$\; 
+\lIf{ratio cut}{
+    \nllabel{alg:clus:spectral:spectral:lineBs} $\bB \assign \bL$}
 \lElseIf{normalized cut}{$\bB \assign \bL^s \text{ or } \bL^a$}
 Solve $\bB \bu_i = \lambda_i \bu_i$ for $i=n,\dots,n-k+1$, where
 $\lambda_n \le \lambda_{n-1} \le \dots \le \lambda_{n-k+1}$
@@ -662,7 +689,7 @@ $\lambda_n \le \lambda_{n-1} \le \dots \le \lambda_{n-k+1}$
 $\bU \assign \matr{\bu_n & \bu_{n-1}& \cdots & \bu_{n-k+1}}$\;
 $\bY \assign$ normalize rows of $\bU$ \; %using Eq.\nosp\eqref{eq:clus:spectral:yi}\;
  $\cC \assign \{C_1,\dots,C_k\}$ via K-means on $\bY$\;
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -760,13 +787,15 @@ $\bY \assign$ normalize rows of $\bU$ \; %using Eq.\nosp\eqref{eq:clus:spectral:
 \begin{frame}{Maximization Objectives: Average Cut}
  The {\em average weight} objective is
 def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \max_{\cC}\; J_{aw}(\cC) & =
     \sum_{i=1}^k {W(C_i,C_i) \over |C_i|} =
     \sum_{i=1}^k {\bc^T_i \bA \bc_i
     \over \bc_i^T\bc_i}
 	= \sum_{i=1}^k \bu_i^T \bA \bu_i
-\end{align*}
+\end{split}
+\end{empheq}
 where $\bu_i$ is an arbitrary real vector, which is a relaxation of the
 binary cluster indicator vectors $\bc_i$.
 
@@ -898,9 +927,11 @@ taking each element $m_{ij}$ to the power $r \ge 1$. Given a
 transition matrix $\bM$, def\/{i}ne the inflation operator $\Upsilon$
 as follows:
 \begin{align*}
+\tcbhighmath{
     \Upsilon(\bM,r) = \lB\{
         \frac{(m_{ij})^r}{\sum_{a=1}^n (m_{ia})^r}
     \rB\}_{i,j=1}^n
+}
 \end{align*}
 The net
 effect of the inflation operator is to increase the higher
@@ -960,7 +991,7 @@ attractors $S_{j}$, MCL f\/{i}nds the weakly connected
 
 \newcommand{\MCL}{{\textsc{Markov Clustering}}}
 \begin{frame}{Algorithm \MCL}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\MCL\ ($\bA, r, \epsilon$)} \Algorithm{}
 $t\assign 0$\; Add self-edges to $\bA$ if they do not exist\;
 $\bM_t \assign  \bDelta^{-1} \bA$\; \Repeat{$\norm{\bM_t -
@@ -970,7 +1001,7 @@ $\bM_t \assign  \bDelta^{-1} \bA$\; \Repeat{$\norm{\bM_t -
     $\bM_t \assign  \Upsilon(\bM_t, r)$\;
 } $G_t \assign  \text{directed graph induced by } \bM_t$\; $\cC
 \assign  \{ \text{weakly connected components in } G_t\}$\;
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 

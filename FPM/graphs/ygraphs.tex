@@ -348,8 +348,10 @@ Given a database of graphs, $\bD = \{
 G_1, G_2, \ldots, G_n\}$, and given some graph $G$, the support of
 $G$ in $\bD$ is def\/{i}ned as follows:
 \begin{align*}
+\tcbhighmath{
     \supp(G) = \bcard{\Big}{\bigl\{ G_i \in \bD \mid
     G \subseteq G_i\bigr\}}
+}
 \end{align*}
 The support is simply the number of graphs in the database that
 contain $G$. 
@@ -749,14 +751,14 @@ possible.
 \newcommand{\algcanonical}{\textsc{IsCanonical}\xspace}
 
 \begin{frame}[fragile]{Algorithm \alggspan}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInOut{gSpan}{\alggspan($C$, $\bD$, $\minsup$)}
   \tcp{Initial Call: $C \assign \emptyset$}
   \gSpan{}
   $\cE \gets \algRMPE(C, \bD)$ \tcp{extensions and supports}
     \nllabel{alg:fpm:graphs:gspan:callrmpe}
   \ForEach{$(t, sup(t)) \in \cE$}{
-  $C' \gets C \cup t$ \tcp{extend the code with extended edge tuple $t$}
+  $C' \gets C \cup t$ \tcp{extend code with extended edge tuple $t$}
   \nllabel{alg:fpm:graphs:gspan:extend}
   $sup(C') \gets sup(t)$ \tcp{record the support of new extension}
   \nllabel{alg:fpm:graphs:gspan:sup}
@@ -767,7 +769,7 @@ possible.
       \nllabel{alg:fpm:graphs:gspan:recurse}\;
     }
   }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -3146,7 +3148,7 @@ is the rightmost child $u_r$.
 
 \begin{frame}[fragile]{Algorithm \algRMPE}
 \begin{scriptsize}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInOut{RMPE}{\algRMPE($C$, $\bD$)}
   \RMPE{}
   $R \gets$ nodes on the rightmost path in $C$\;
@@ -3188,7 +3190,7 @@ is the rightmost child $u_r$.
   }
   \Return{set of pairs $\tup{s, sup(s)}$ for extensions $s \in \cE$, in
   tuple sorted order}
-\end{algorithm}
+\end{tightalgo}
 \end{scriptsize}
 \end{frame}
 
@@ -3292,7 +3294,7 @@ is the rightmost child $u_r$.
 
 \begin{frame}[fragile]{Algorithm \algISO}
 \small{
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInOut{ISO}{\algISO($C = \{t_1, t_2, \ldots, t_k\}$, $G$)}
   \ISO{}
   $\Phi \gets \{\phi(0) \to x \mid x \in G \text{ and } L(x)=L(0) \}$
@@ -3315,15 +3317,14 @@ is the rightmost child $u_r$.
       }{
       \tcp{backward edge}
       \lIf{$\phi(v) \in N_{G_{j}}(\phi(u))$}{
-          Add $\phi$ to $\Phi'$ \tcp*[h]{valid isomorphism}
-        \nllabel{alg:fpm:graphs:iso:ife}
+        Add $\phi$ to $\Phi'$ \tcp{valid isomorphism} \nllabel{alg:fpm:graphs:iso:ife}
         }
       }
     }
     $\Phi \gets \Phi'$ \tcp{update partial isomorphisms}
   }
   \Return{$\Phi$}
-\end{algorithm}
+\end{tightalgo}
 }
 \end{frame}
 
@@ -3458,7 +3459,7 @@ $C$ must be canonical.
 
 
 \begin{frame}[fragile]{Algorithm \algcanonical: Canonicality Checking}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInOut{iscanonical}{\algcanonical ($C$)}
   \iscanonical{}
   $\bD_C \gets \{G(C)\}$ \tcp{graph corresponding to code $C$}
@@ -3471,9 +3472,8 @@ $C$ must be canonical.
     $C$ is not canonical}}
     $C^* \gets C^* \cup s_i$\;
   }
-  \Return{true} \tcp{no
-  smaller code exists; $C$ is canonical}
-\end{algorithm}
+  \Return{true} \tcp{no smaller code exists; $C$ is canonical}
+\end{tightalgo}
 \end{frame}
 
 

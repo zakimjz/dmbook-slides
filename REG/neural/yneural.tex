@@ -1,0 +1,5039 @@
+\lecture{neural}{neural}
+
+\date{Chapter 25: Neural Networks}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%\chapter{Neural Networks}
+%\label{ch:reg:neural}
+%\index{neural networks}
+%\index{artificial neural networks|see{neural networks}}
+%
+\begin{frame}{Artificial Neural Networks}
+
+{\em Artificial neural networks} or simply {\em neural networks} are
+inspired by biological neuronal networks. A real biological neuron, or a
+{\em nerve cell}, comprises dendrites, a cell body, and an axon that leads
+to synaptic terminals. A neuron transmits information via electrochemical
+signals. When there is enough concentration of ions at the dendrites of a
+neuron it generates an electric pulse along its axon called an {\em action
+potential}, which in turn activates the synaptic terminals, releasing more
+ions and thus causing the information to flow to dendrites of other
+neurons. 
+
+\medskip
+
+A human brain has on the order of 100 billion neurons, with each
+neuron having between 1,000 to 10,000 connections to other neurons. %Thus,
+%a human brain is a neuronal network with 100 trillion to a quadrillion
+%($10^{15}$) interconnections! Interestingly, as far as we know, learning
+%happens by adjusting the synaptic strengths, since synaptic signals can be
+%either excitatory or inhibitory, making the post-synaptic neuron either more
+%or less likely to generate an action potential, respectively.
+%
+%\index{neural networks!activation function}
+
+\medskip
+
+Artificial neural networks are comprised of abstract neurons that try
+to mimic real neurons at a very high level. They can be described via a
+weighted directed graph $G=(V,E)$, with each node $v_i \in V$ representing
+a neuron, and each directed edge $(v_i, v_j) \in E$ representing a synaptic
+to dendritic connection from $v_i$ to $v_j$. The weight of the edge $w_{ij}$
+denotes the synaptic strength. %Neural networks are characterized by the type
+%of activation function used to generate an output, and the architecture of the
+%network in terms of how the nodes are interconnected. For example, whether
+%the graph is a directed acyclic graph or has cycles, whether the graph is
+%layered or not, and so on. It is important to note that a neural network is
+%designed to represent and learn information by adjusting the synaptic weights.
+\end{frame}
+%
+\begin{frame}{Artificial neuron: aggregation and activation.}
+%\begin{figure}[t!]
+%% \vspace*{0.2in}
+\psset{tnpos=l,tnsep=2pt,colsep=3,rowsep=0.75,mcol=c,
+    ArrowInside=->, arrowscale=2}
+\centerline{
+\psmatrix
+& \Tcircle[name=b,doubleline=true]{$x_0$}~[tnpos=l]{$1$}~[tnpos=r]{$\;\;$}\\[-2em]
+\Tcircle[name=x1]{$x_1$}\\[1em]
+\Tcircle[name=x2]{$x_2$} & 
+\Tcircle[name=zk]{$z_k$}~[tnpos=b]{{\footnotesize$\qquad\sum_{i=1}^d w_{ik}
+\cdot x_i + b_k$}} 
+ & [mnode=p,name=zo]\\[-2em]
+[mnode=none]{$\vdots$}\\[-2em]
+\Tcircle[name=xd]{$x_{d}$}
+\psset{ArrowInsidePos=.85}
+\ncline{x1}{zk} \ncput*{$w_{1k}$}
+\ncline{x2}{zk} \ncput*{$w_{2k}$}
+\ncline{xd}{zk} \ncput*{$w_{dk}$}
+\psset{ArrowInsidePos=0.95}
+\ncline{b}{zk}\ncput*{$b_k$}
+\psset{linecolor=gray}
+\psset{ArrowInsidePos=0.25}
+\ncline{zk}{zo} \ncput*{$w_{k\cdot}$}
+\endpsmatrix
+}
+\end{frame}
+%\vspace{0.2in}
+%\caption{Artificial neuron: aggregation and activation.}
+%\label{fig:reg:neural:neuron}
+%\end{figure}
+%
+%
+%\section{Artificial Neuron: Activation Functions}
+%\label{sec:reg:neural:activations}
+%\index{neural networks!activation functions}
+%
+%% \index{neural networks!binary neuron}
+\begin{frame}{Artificial Neuron}
+An artificial neuron acts as a processing unit, that first aggregates the
+incoming signals via a weighted sum, and then applies some function to
+generate an output. For example, a binary neuron will output a $1$ whenever
+the combined signal exceeds a threshold, or $0$ otherwise.
+%
+%\index{neural networks!bias neuron}
+%\cref{fig:reg:neural:neuron} shows the schematic of a neuron $z_k$ that
+%has incoming edges from neurons $x_1, \cdots, x_d$. For simplicity, both
+%the name and the (output) value of a neuron are denoted by the same symbol. Thus,
+%$x_i$ denotes neuron $i$, and also the value of that neuron. The net
+%input at $z_k$, denoted $\net_k$, is given as the weighted sum
+\begin{align}
+    \tcbhighmath{
+    \net_k = b_k + \sum^{d}_{i=1} w_{ik} \cdot x_i = b_k +
+\bw^T\bx}
+    % \label{eq:reg:neural:net}
+%    = \bw_{\cdot k}^T\bx + \bw_{\bdot k}^T\bx + b_k
+\end{align}
+where $\bw_k = (w_{1k}, w_{2k}, \cdots, w_{dk})^T \in \setR^d$ and $\bx
+= (x_1, x_2, \cdots, x_d)^T \in \setR^d$ is an input point. 
+%%Thus, $z_k$
+%%computes a weighted sum of its input neurons. 
+Notice that $x_0$ is a
+special {\em bias neuron} whose value is always fixed at $1$, and the
+weight from $x_0$ to $z_k$ is $b_k$, which specifies the bias term
+for the neuron. Finally, the output value of $z_k$ is given as some {\em
+    activation function}, $f(\cdot)$, applied to the net input at $z_k$
+\begin{align*}
+    z_k = f(\net_k)
+\end{align*}
+\end{frame}
+%The value $z_k$ is then passed along the outgoing edges from $z_k$ to
+%other neurons.
+%
+%
+%%\begin{figure}[t!]
+%%\captionsetup[subfloat]{captionskip=20pt}
+%%\def\pshlabel#1{{\large $#1$}}
+%%\def\psvlabel#1{{\large $#1$}}
+%%\centerline{%
+%%    \subfloat[Identity (or Linear)]{%
+%%        \label{fig:reg:neural:identity}
+%%    \scalebox{0.55}{%
+%%    \centering
+%%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%%    xAxisLabelPos={c,-1.2},yAxisLabelPos={-0.6,c} }
+%%    \psset{labels=none,ticks=none}
+%%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%%    \psgraph[]{->}(0,-0.001)(7,7.0001){4in}{1.9in}%
+%%    \psxTick(0){-\infty}
+%%    \psxTick(3.5){0}
+%%    \psxTick(7){+\infty}
+%%    \psyTick(0){-\infty}
+%%    \psyTick(3.5){0}
+%%    \psyTick(7){+\infty}
+%%    \psline[linewidth=2pt,linecolor=black](0,0)(7,7)
+%%    \psline[linewidth=0.5pt,linecolor=gray](3.5,0)(3.5,7)
+%%    \psline[linewidth=0.5pt,linecolor=gray](0,3.5)(7,3.5)
+%%    \endpsgraph
+%%    }}
+%%    \hspace{0.5in}
+%%    \subfloat[Step]{
+%%        \label{fig:reg:neural:step}
+%%    \scalebox{0.55}{%
+%%    \centering
+%%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%%    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.8,c} }
+%%    \psset{labels=y,ticks=y}
+%%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%%    \psgraph[Dy=0.5,Ox=-7]{->}(-7,-0.001)(7,1.0001){4in}{1.9in}%
+%%    \psxTick(-7){-\infty}
+%%    \psxTick(0){0}
+%%    \psxTick(7){+\infty}
+%%    \psline[linewidth=2pt,linecolor=black](-7,0)(0,0)
+%%    \psline[linewidth=2pt,linecolor=black](0,0)(0,1)
+%%    \psline[linewidth=2pt,linecolor=black](0,1)(7,1)
+%%    \psline[linewidth=0.5pt,linecolor=gray](-7,0.5)(7,0.5)
+%%    \endpsgraph
+%%    }}
+%%}
+%%\vspace{0.1in}
+%%\centerline{
+%%    \subfloat[Rectified Linear Unit]{
+%%        \label{fig:reg:neural:rlu}
+%%        \def\relu{(x)}
+%%    \scalebox{0.55}{%
+%%    \centering
+%%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%%    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.5,c} }
+%%    \psset{labels=none,ticks=none}
+%%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%%    \psgraph[Oy=0,Ox=-7]{->}(-7,0)(7,1.0001){4in}{1.9in}%
+%%    \psxTick(-7){-\infty}
+%%    \psxTick(0){0}
+%%    \psxTick(7){+\infty}
+%%    \uput[180](-7.1,1){\large$+\infty$}
+%%    \uput[180](-7.1,0){\large$0$}
+%%    \psline[linewidth=2pt,linecolor=black](-7,0)(0,0)
+%%    \psline[linewidth=2pt,linecolor=black](0,0)(7,1)
+%%    \psline[linewidth=0.5pt,linecolor=gray](0,0)(0,1)
+%%    \endpsgraph
+%%    }}
+%%    \hspace{0.5in}
+%%    \subfloat[Sigmoid]{
+%%        \label{fig:reg:neural:sigmoid}
+%%    \def\logit{1/(1 + EXP(-x))}
+%%    \scalebox{0.55}{%
+%%    \centering
+%%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%%    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.8,c} }
+%%    \psset{labels=y,ticks=y}
+%%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%%    \psgraph[Dy=0.5,Ox=-7]{->}(-7,0)(7,1.0001){4in}{1.9in}%
+%%    \psxTick(-7){-\infty}
+%%    \psxTick(0){0}
+%%    \psxTick(7){+\infty}
+%%    \psline[linewidth=0.5pt,linecolor=gray](0,0)(0,1.0)
+%%    \psline[linewidth=0.5pt,linecolor=gray](-7,0.5)(7,0.5)
+%%       \psplot[linewidth=2pt]{-7}{7}{\logit}
+%%    \endpsgraph
+%%    }}
+%%}
+%%\vspace{0.1in}
+%%\centerline{
+%%    \subfloat[Hyperbolic Tangent]{
+%%        \label{fig:reg:neural:tanh}
+%%        \def\tanhF{(1 - EXP(-2*x))/(1 + EXP(-2*x))}
+%%    \scalebox{0.55}{%
+%%    \centering
+%%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%%    xAxisLabelPos={c,-0.3},yAxisLabelPos={-1.5,c} }
+%%    \psset{labels=y,ticks=y}
+%%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%%    \psgraph[Dy=1,Oy=-1,Ox=-7]{->}(-7,-1.0001)(7,1.0001){4in}{1.9in}%
+%%    %\psxTick(-7){-\infty}
+%%    %\psxTick(0){0}
+%%    %\psxTick(7){+\infty}
+%%    \uput[90](-7,-1.2){\large$-\infty$}
+%%    \uput[90](0,-1.2){\large$0$}
+%%    \uput[90](7,-1.2){\large$+\infty$}
+%%    \psline[linewidth=0.5pt,linecolor=gray](0,-1)(0,1.0)
+%%    \psline[linewidth=0.5pt,linecolor=gray](-7,0)(7,0)
+%%       \psplot[linewidth=2pt]{-7}{7}{\tanhF}
+%%    \endpsgraph
+%%    }}
+%%    \hspace{0.5in}
+%%    \subfloat[Softmax ($\net_k$ versus $\net_{\!j}$)]{
+%%\label{fig:reg:neural:softmax}
+%%\psset{unit=0.15in}
+%%\psset{lightsrc=30 30 10 rtp2xyz}
+%%\psset{incolor=gray}
+%%\psset{opacity=0.2}
+%%\psset{viewpoint=30 220 10 rtp2xyz,Decran=60}
+%%\psset{axisnames={{\quad\net_k}, {\net_{\!j}\quad}, z_k}}
+%%\scalebox{0.7}{
+%%\begin{pspicture}(-8,-2)(12,6)
+%%    \axesIIID[](-4,-2,0)(4,4.1,2.75)
+%%\psset{linewidth=0.5pt, dotsize=0.3}
+%%\psset{showAxes=false, fillcolor=gray}
+%%\psset{transform={1.0 1.0 2.5 scaleOpoint3d}}
+%%\psSurface[ngrid=.3 .3,fillcolor=white,%axesboxed,
+%%    linewidth=0.5\pslinewidth,
+%%       color1 = {[rgb]{0 0 0}},
+%%        color2 = {[rgb]{1 1 1}},
+%%        hue=(color1) (color2), lightintensity=5,
+%%    algebraic,Zmin=0,Zmax=1](-5,-4)(5,4){%
+%%    (EXP(x))/(EXP(x) + EXP(y))}
+%%\end{pspicture}
+%%}}
+%%}
+%%\caption{Neuron activation functions.}
+%%\label{fig:reg:neural:activations}
+%%\end{figure}
+%
+%
+%
+%\begin{figure}[!htbp]
+%\captionsetup[subfloat]{captionskip=20pt}
+%\def\pshlabel#1{{\large $#1$}}
+%\def\psvlabel#1{{\large $#1$}}
+%\hspace{0.2in}
+%\centerline{%
+%    \subfloat[Linear ($z_k$ versus $\net_k$)]{%
+%        \label{fig:reg:neural:identity}
+%    \scalebox{0.55}{%
+%    \centering
+%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%    xAxisLabelPos={c,-1.4},yAxisLabelPos={-0.6,c} }
+%    \psset{labels=none,ticks=none}
+%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%    \psgraph[]{->}(0,-0.001)(7,7.0001){4in}{1.9in}%
+%    \psxTick(0){-\infty}
+%    \psxTick(3.5){0}
+%    \psxTick(7){+\infty}
+%    \psyTick(0){-\infty}
+%    \psyTick(3.5){0}
+%    \psyTick(7){+\infty}
+%    \psline[linewidth=2pt,linecolor=black](0,0)(7,7)
+%    \psline[linewidth=0.5pt,linecolor=gray](3.5,0)(3.5,7)
+%    \psline[linewidth=0.5pt,linecolor=gray](0,3.5)(7,3.5)
+%    \endpsgraph
+%    }}
+%    \hspace{0.5in}
+%    \subfloat[Linear ($z_k$ versus $\bw^T\bx$)]{
+%        \label{fig:reg:neural:identityB}
+\begin{frame}{Linear Function}
+
+Function:
+$
+      f(\net_k) = \net_k
+$
+
+Derivative:
+$
+    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} = 1
+$
+
+\bigskip
+
+\centerline{
+    \scalebox{0.85}{
+    \centering
+    \psset{xAxisLabel={\Large$\bw^T\bx$},yAxisLabel={\Large$z_k$},%
+    xAxisLabelPos={c,-1.4},yAxisLabelPos={-0.6,c} }
+    \psset{labels=none,ticks=none}
+    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+    \psgraph[Dy=0.5,Ox=-7]{->}(0,-0.001)(7,7.0001){4in}{1.9in}%
+    \psxTick(0){-\infty}
+    \psxTick(3.5){0}
+    \psxTick(2.5){{\Large-b_k}}
+    \psxTick(7){+\infty}
+    \psyTick(0){-\infty}
+    \psyTick(3.5){0}
+    \psyTick(7){+\infty}
+    \psline[linewidth=2pt,linecolor=black](0,1)(6,7)
+    \psline[linewidth=0.5pt,linecolor=gray](0,3.5)(7,3.5)
+    \psline[linewidth=0.5pt,linecolor=gray,linestyle=dashed](3.5,0)(3.5,7)
+    \psline[linewidth=0.5pt,linecolor=gray](2.5,0)(2.5,7)
+    \endpsgraph
+    }%}
+}
+\end{frame}
+%\vspace{0.1in}
+%\hspace{0.2in}
+%\centerline{
+%    \subfloat[Step ($z_k$ versus $\$
+%        \label{fig:reg:neural:step}
+%    \scalebox{0.55}{%
+%    \centering
+%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.8,c} }
+%    \psset{labels=y,ticks=y}
+%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%    \psgraph[Dy=0.5,Ox=-7]{->}(-7,-0.001)(7,1.0001){4in}{1.9in}%
+%    \psxTick(-7){-\infty}
+%    \psxTick(0){0}
+%    \psxTick(7){+\infty}
+%    \psline[linewidth=2pt,linecolor=black](-7,0)(0,0)
+%    \psline[linewidth=2pt,linecolor=black](0,0)(0,1)
+%    \psline[linewidth=2pt,linecolor=black](0,1)(7,1)
+%    \psline[linewidth=0.5pt,linecolor=gray](-7,0.5)(7,0.5)
+%    \endpsgraph
+%    }}
+%    \hspace{0.5in}
+%    \subfloat[Step ($z_k$ versus $\bw^T\bx$)]{
+%        \label{fig:reg:neural:stepB}
+\begin{frame}{Step Function}
+
+Function:
+$
+            f(\net_k) = 
+            \begin{cases}
+                0 & \text{if } \net_k \le 0\\
+                1 & \text{if } \net_k > 0
+            \end{cases}
+$
+
+Derivative:
+$
+    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} = 0
+$
+
+\bigskip
+
+\centerline{
+    \scalebox{0.85}{%
+    \centering
+    \psset{xAxisLabel={\Large$\bw^T\bx$},yAxisLabel={\Large$z_k$},%
+    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.8,c} }
+    \psset{labels=y,ticks=y}
+    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+    \psgraph[Dy=0.5,Ox=-7]{->}(-7,-0.001)(7,1.0001){4in}{1.9in}%
+    \psxTick(-7){-\infty}
+    \psxTick(0){0}
+    \psxTick(-2){{\Large-b_k}}
+    \psxTick(7){+\infty}
+    \psline[linewidth=2pt,linecolor=black](-7,0)(-2,0)
+    \psline[linewidth=2pt,linecolor=black](-2,0)(-2,1)
+    \psline[linewidth=2pt,linecolor=black](-2,1)(7,1)
+    \psline[linewidth=0.5pt,linecolor=gray,linestyle=dashed](0,0)(0,1)
+    \psline[linewidth=0.5pt,linecolor=gray](-7,0.5)(7,0.5)
+    \endpsgraph
+    %}}
+}
+}
+\end{frame}
+%\vspace{0.1in}
+%\hspace{0.2in}
+%\centerline{
+%    \subfloat[Rectified Linear ($z_k$ versus $\net_k$)]{
+%        \label{fig:reg:neural:rlu}
+%        \def\relu{(x)}
+%    \scalebox{0.55}{%
+%    \centering
+%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.5,c} }
+%    \psset{labels=none,ticks=none}
+%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%    \psgraph[Oy=0,Ox=-7]{->}(-7,0)(7,1.0001){4in}{1.9in}%
+%    \psxTick(-7){-\infty}
+%    \psxTick(0){0}
+%    \psxTick(7){+\infty}
+%    \uput[180](-7.1,1){\large$+\infty$}
+%    \uput[180](-7.1,0){\large$0$}
+%    \psline[linewidth=2pt,linecolor=black](-7,0)(0,0)
+%    \psline[linewidth=2pt,linecolor=black](0,0)(7,1)
+%    \psline[linewidth=0.5pt,linecolor=gray](0,0)(0,1)
+%    \endpsgraph
+%    }}
+%    \hspace{0.5in}
+%    \subfloat[Rectified Linear ($z_k$ versus $\bw^T\bx$)]{
+%        \label{fig:reg:neural:rluB}
+
+\begin{frame}{Rectified Linear Function}
+
+Function:
+$
+            f(\net_k) = 
+            \begin{cases}
+                0 & \text{if } \net_k \le 0\\
+                \net_k & \text{if } \net_k > 0
+            \end{cases}
+$
+
+Derivative:
+$
+    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} = 
+    \begin{cases}
+        0 & \text{if } \net_{\!j} \le 0\\
+        1 & \text{if } \net_{\!j} > 0\\
+    \end{cases}
+$
+
+\bigskip
+
+\centerline{
+    \scalebox{0.85}{%
+    \centering
+    \psset{xAxisLabel={\Large$\bw^T\bx$},yAxisLabel={\Large$z_k$},%
+    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.5,c} }
+    \psset{labels=none,ticks=none}
+    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+    \psgraph[Dy=0.5,Ox=-7]{->}(-7,-0.001)(7,1.0001){4in}{1.9in}%
+    \psxTick(-7){-\infty}
+    \psxTick(0){0}
+    \psxTick(-2){{\Large-b_k}}
+    \psxTick(7){+\infty}
+    \uput[180](-7.1,1){\large$+\infty$}
+    \uput[180](-7.1,0){\large$0$}
+    %\psyTick(1){+\infty}
+    %\psyTick(0){0}
+    \psline[linewidth=2pt,linecolor=black](-7,0)(-2,0)
+    \psline[linewidth=2pt,linecolor=black](-2,0)(7,1)
+    \psline[linewidth=0.5pt,linecolor=gray,linestyle=dashed](0,0)(0,1)
+    \psline[linewidth=0.5pt,linecolor=gray](-2,0)(-2,1)
+    \endpsgraph
+    }}
+%}
+\end{frame}
+%\vspace{0.1in}
+%\hspace{0.2in}
+%\centerline{
+%    \subfloat[Sigmoid ($z_k$ versus $\net_k$)]{
+%        \label{fig:reg:neural:sigmoid}
+%    \def\logit{1/(1 + EXP(-x))}
+%    \scalebox{0.55}{%
+%    \centering
+%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.8,c} }
+%    \psset{labels=y,ticks=y}
+%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%    \psgraph[Dy=0.5,Ox=-7]{->}(-7,0)(7,1.0001){4in}{1.9in}%
+%    \psxTick(-7){-\infty}
+%    \psxTick(0){0}
+%    \psxTick(7){+\infty}
+%    \psline[linewidth=0.5pt,linecolor=gray](0,0)(0,1.0)
+%    \psline[linewidth=0.5pt,linecolor=gray](-7,0.5)(7,0.5)
+%       \psplot[linewidth=2pt]{-7}{7}{\logit}
+%    \endpsgraph
+%    }}
+%    \hspace{0.5in}
+%    \subfloat[Sigmoid ($z_k$ versus $\bw^T\bx$)]{
+%        \label{fig:reg:neural:sigmoidB}
+\begin{frame}{Sigmoid Function}
+
+Function:
+$
+            f(\net_k) = \frac{1}{1 + \exp\{-\net_k\}}
+$
+
+Derivative:
+$
+    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} 
+    = f(\net_{\!j}) \cdot (1-f(\net_{\!j}))
+$
+
+\bigskip
+
+\centerline{
+    \def\logitB{1/(1 + EXP(-x-2))}
+    \scalebox{0.85}{%
+    \centering
+    \psset{xAxisLabel={\Large$\bw^T\bx$},yAxisLabel={\Large$z_k$},%
+    xAxisLabelPos={c,-0.2},yAxisLabelPos={-1.8,c} }
+    \psset{labels=y,ticks=y}
+    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+    \psgraph[Dy=0.5,Ox=-7]{->}(-7,0)(7,1.0001){4in}{1.9in}%
+    \psxTick(-7){-\infty}
+    \psxTick(0){0}
+    \psxTick(-2){{\Large-b_k}}
+    \psxTick(7){+\infty}
+    \psline[linewidth=0.5pt,linecolor=gray](-2,0)(-2,1.0)
+    \psline[linewidth=0.5pt,linecolor=gray,linestyle=dashed](0,0)(0,1.0)
+    \psline[linewidth=0.5pt,linecolor=gray](-7,0.5)(7,0.5)
+       \psplot[linewidth=2pt]{-7}{7}{\logitB}
+    \endpsgraph
+    }}
+%}
+\end{frame}
+%\vspace{0.1in}
+%\hspace{0.2in}
+%\centerline{
+%    \subfloat[Hyperbolic Tangent ($z_k$ versus $\net_k$)]{
+%        \label{fig:reg:neural:tanh}
+%        \def\tanh{(1 - EXP(-2*x))/(1 + EXP(-2*x))}
+%    \scalebox{0.55}{%
+%    \centering
+%    \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%    xAxisLabelPos={c,-0.4},yAxisLabelPos={-1.5,c} }
+%    \psset{labels=y,ticks=y}
+%    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%    \psgraph[Dy=1,Oy=-1,Ox=-7]{->}(-7,-1.0001)(7,1.0001){4in}{1.9in}%
+%    %\psxTick(-7){-\infty}
+%    %\psxTick(0){0}
+%    %\psxTick(7){+\infty}
+%    \uput[90](-7,-1.3){\large$-\infty$}
+%    \uput[90](0,-1.3){\large$0$}
+%    \uput[90](7,-1.3){\large$+\infty$}
+%    \psline[linewidth=0.5pt,linecolor=gray](0,-1)(0,1.0)
+%    \psline[linewidth=0.5pt,linecolor=gray](-7,0)(7,0)
+%       \psplot[linewidth=2pt]{-7}{7}{\tanh}
+%    \endpsgraph
+%    }}
+%    \hspace{0.5in}
+%    \subfloat[Hyperbolic Tangent ($z_k$ versus $\bw^T\bx$)]{
+%        \label{fig:reg:neural:tanhB}
+\begin{frame}{Hyperbolic Tangent Function}
+
+Function:
+$
+            f(\net_k) = \frac{\exp\{\net_k\} - \exp\{-\net_k\}}
+                     {\exp\{\net_k\} + \exp\{-\net_k\}} 
+            = \frac{\exp\{2\cdot\net_k\}-1}{\exp\{2\cdot\net_k\}+1}
+$
+
+Derivative:
+$
+    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} = 1-f(\net_{\!j})^2
+$
+
+\bigskip
+
+\centerline{
+        \def\tanhB{(1 - EXP(-2*x-4))/(1 + EXP(-2*x-4))}
+    \scalebox{0.85}{%
+    \centering
+    \psset{xAxisLabel={\Large$\bw^T\bx$},yAxisLabel={\Large$z_k$},%
+    xAxisLabelPos={c,-0.4},yAxisLabelPos={-1.5,c} }
+    \psset{labels=y,ticks=y}
+    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+    \psgraph[Dy=1,Oy=-1,Ox=-7]{->}(-7,-1.001)(7,1.0001){4in}{1.9in}%
+    \uput[90](-7,-1.3){\large$-\infty$}
+    \uput[90](0,-1.3){\large$0$}
+    \uput[90](-2,-1.3){\Large$-b_k$}
+    \uput[90](7,-1.3){\large$+\infty$}
+    %\psxTick(-7){-\infty}
+    %\psxTick(0){0}
+    %\psxTick(-2){b_k}
+   % \psxTick(7){+\infty}
+    \psline[linewidth=0.5pt,linecolor=gray](-2,-1)(-2,1.0)
+    \psline[linewidth=0.5pt,linecolor=gray,linestyle=dashed](0,-1)(0,1)
+    \psline[linewidth=0.5pt,linecolor=gray](-7,0)(7,0)
+       \psplot[linewidth=2pt]{-7}{7}{\tanhB}
+    \endpsgraph
+    }}
+\end{frame}
+%}
+%\vspace{0.1in}
+%\caption{Neuron activation functions; also illustrating the effect of bias.}
+%\label{fig:reg:neural:activations}
+%\end{figure}
+%
+%\begin{figure}[!b]
+%    \centering
+\begin{frame}{Softmax Function}
+
+Function:
+$
+           f(\net_k |\; \bnet) = \frac{\exp\{\net_k\}}
+           {\sum_{i=1}^p \exp\{ \net_i \} }
+$
+
+Derivative:
+$
+    \frac{\partial f(\net_{\!j}|\; \bnet)}{\partial \net_{\!j}} 
+    = f(\net_{\!j}) \cdot (1-f(\net_{\!j}))
+$
+
+\begin{center}
+\psset{unit=0.15in}
+\psset{lightsrc=30 30 10 rtp2xyz}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\psset{viewpoint=30 220 10 rtp2xyz,Decran=60}
+\psset{axisnames={{\quad\net_k}, {\net_{\!j}\quad}, z_k}}
+\scalebox{1}{
+\begin{pspicture}(-8,-2)(12,6)
+    \axesIIID[](-4,-2,0)(4,4.1,2.75)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{showAxes=false, fillcolor=gray}
+\psset{transform={1.0 1.0 2.5 scaleOpoint3d}}
+\psSurface[ngrid=.3 .3,fillcolor=white,%axesboxed,
+    linewidth=0.5\pslinewidth,
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-5,-4)(5,4){%
+    (EXP(x))/(EXP(x) + EXP(y))}
+\end{pspicture}
+}
+\end{center}
+\end{frame}
+%\vspace{0.2in}
+%\caption{Softmax ($\net_k$ versus $\net_{\!j}$).}
+%\label{fig:reg:neural:softmax}
+%\end{figure}
+%
+%% \begin{figure}
+%% \centerline{
+%%     %\def\softmax{EXP(x)/(EXP(x) + EXP(y))}
+%%     %\def\softmax{1/(1 + EXP(7-x))}
+%%     %\def\softmaxb{1/(1 + EXP(5-x) + EXP(-2-x))}
+%%     \scalebox{0.55}{%
+%%     \centering
+%%     \psset{xAxisLabel={\Large$\net_k$},yAxisLabel={\Large$z_k$},%
+%%     xAxisLabelPos={c,-0.3},yAxisLabelPos={-1.5,c} }
+%%     \psset{labels=y,ticks=y}
+%%     \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+%%     \psgraph[Dy=0.25,Oy=0,Ox=0]{->}(-7,0)(14,1.0001){4in}{2.5in}%
+%%        \psplot[linewidth=2pt]{-7}{14}{\softmax}
+%%     \endpsgraph
+%%     }}
+%% \end{figure}
+%
+%Neurons differ based on the type of activation function used.
+%Some commonly used activation functions, illustrated in
+%\cref{fig:reg:neural:activations}, are:
+%\begin{description}
+%\index{neural networks!linear function}
+%\index{neural networks!identity function}
+%% \index{identity activation function|see{linear activation function}}
+%    \item[{\bf Linear/Identity Function}:] Identity is the simplest activation
+%        function; it simply returns its argument, and is also 
+%        called a
+%        {\em linear} activation function:
+%        \begin{align}
+%            f(\net_k) = \net_k
+%            \label{eq:reg:neural:identity}
+%        \end{align}
+%        \cref{fig:reg:neural:identity} plots the identity function.
+%        To examine the role of the bias term, note that
+%        $\net_k > 0$ is equivalent to 
+%        $\bw^T\bx > -b_k$. That is, the output
+%        transitions from negative to positive when the weighted sum of the
+%        inputs exceeds $-b_k$, as shown in
+%        \cref{fig:reg:neural:identityB}. 
+%
+%       % The
+%       % bias term $b_k$ simply shifts the function to the left as
+%       % seen in \cref{fig:reg:neural:identityB}.
+%
+%\index{step function}
+%\index{neural networks!step function}
+%    \item[{\bf Step Function}:] This is a binary activation function,
+%        where the neuron outputs a $0$ if the net value is negative (or
+%        zero),
+%        and $1$ if the net value is positive (see
+%        \cref{fig:reg:neural:step}).
+%        \begin{align}
+%            f(\net_k) = 
+%            \begin{cases}
+%                0 & \text{if } \net_k \le 0\\
+%                1 & \text{if } \net_k > 0
+%            \end{cases}
+%            \label{eq:reg:neural:step}
+%        \end{align}
+%        % Since $\net_k = b_k + \sum^{d}_{i=1} w_{ik} \cdot x_i$, we
+%        % can see that $\net_k > 0$ is equivalent to 
+%        % $\sum^{d}_{i=1} w_{ik} \cdot x_i > -b_k$. That is, 
+%        It is interesting to note that the
+%        transition from $0$ to $1$ happens when the weighted sum of the
+%        inputs exceeds $-b_k$, as shown in
+%        \cref{fig:reg:neural:stepB}. 
+%
+%\index{ReLU function}
+%\index{neural networks!ReLU function}
+%\index{rectified linear unit|see{ReLU function}}
+%    \item[{\bf Rectified Linear Unit (ReLU)}:] Here, the neuron 
+%        remains inactive if the net input is less than or equal to zero, and then 
+%        increases linearly with $\net_k$, as shown
+%        in \cref{fig:reg:neural:rlu}.
+%        \begin{align}
+%            f(\net_k) = 
+%            \begin{cases}
+%                0 & \text{if } \net_k \le 0\\
+%                \net_k & \text{if } \net_k > 0
+%            \end{cases}
+%            \label{eq:reg:neural:relu}
+%        \end{align}
+%        An alternative expression for the ReLU activation is
+%        given as $f(\net_k) = \max\{0, \net_k\}$. The transition from
+%        zero to linear output happens when the weighted sum of the
+%        inputs exceeds $-b_k$ (see \cref{fig:reg:neural:rluB}).
+%        
+%
+%\index{sigmoid function}
+%\index{neural networks!sigmoid function}
+%    \item[{\bf Sigmoid}:] The sigmoid function, illustrated in
+%        \cref{fig:reg:neural:sigmoid} squashes its input so
+%        that the output ranges between $0$ and $1$
+%        \begin{align}
+%            f(\net_k) = \frac{1}{1 + \exp\{-\net_k\}}
+%            \label{eq:reg:neural:sigmoid}
+%        \end{align}
+%       % Note the difference between the sigmoid neuron without and with
+%       %  the bias term as shown in
+%       %  \cref{fig:reg:neural:sigmoid,fig:reg:neural:sigmoidB}.
+%        When $\net_k = 0$, we have $f(\net_k) = 0.5$, which implies that 
+%        the transition point where the output crosses $0.5$ happens when 
+%        the weighted sum of the inputs
+%        exceeds $-b_k$ (see \cref{fig:reg:neural:sigmoidB}).
+%
+%\index{tanh function}
+%\index{neural networks!tanh function}
+%\index{hyperbolic tangent|see{tanh function}}
+%    \item[{\bf Hyperbolic Tangent (tanh)}:] The hyperbolic tangent or
+%        tanh
+%        function is similar to the sigmoid, but its output ranges between
+%        $-1$ and $+1$ (see \cref{fig:reg:neural:tanh}).
+%        \begin{align}
+%            f(\net_k) = \frac{\exp\{\net_k\} - \exp\{-\net_k\}}
+%                     {\exp\{\net_k\} + \exp\{-\net_k\}} 
+%            = \frac{\exp\{2\cdot\net_k\}-1}{\exp\{2\cdot\net_k\}+1}
+%            \label{eq:reg:neural:tanh}
+%        \end{align}
+%        When $\net_k = 0$, we have $f(\net_k) = 0$, 
+%        which implies that 
+%        the output transitions from negative to positive when 
+%        the weighted sum of the inputs
+%        exceeds $-b_k$, as shown in \cref{fig:reg:neural:tanhB}.
+%
+%\index{softmax function}
+%\index{neural networks!softmax function}
+%    \item[{\bf Softmax}:] Softmax is a generalization of the sigmoid or
+%        logistic activation function. 
+%       Softmax is mainly used at the output layer in a neural
+%       network, and unlike the other functions it depends not only on
+%       the net input at neuron $k$, but it depends on the net signal at
+%       all other neurons in the output layer. Thus, given the net input
+%       vector, $\bnet = 
+%       (\net_1,
+%       \net_2, \cdots, \net_p)^T$, for all the $p$ output neurons, the
+%       output of the softmax function for the $k$th neuron is given as
+%       \begin{align}
+%           f(\net_k |\; \bnet) = \frac{\exp\{\net_k\}}
+%           {\sum_{i=1}^p \exp\{ \net_i \} }
+%            \label{eq:reg:neural:softmax}
+%       \end{align}
+%       \cref{fig:reg:neural:softmax} plots the softmax activation for 
+%       $\net_k$ versus the net signal $\net_{\!j}$, 
+%       with all other net values fixed at zero. The
+%       output behaves similar to a sigmoid curve for any given value of
+%       $\net_{\!j}$.
+%       % \begin{align*}
+%       %     f(\net_k |\; \net_{\!j}) & = \frac{\exp\{\net_k\}}
+%       %     {\sum_{i=1}^p \exp\{ \net_i \} } = 
+%       %  \frac{\exp\{\net_k\}}
+%       %  {\exp\{ \net_k \} + \exp\{ \net_{\!j}\} }
+%       %  = \frac{1}{1 + \exp\{-(\net_k - \net_{\!j})\}}
+%       % \end{align*}
+%\end{description}
+%
+%\subsection{Derivatives for Activation Functions}
+%\label{sec:reg:neural:deriv_activations}
+%For learning using a neural network, we need
+%to consider the derivative of an activation function with respect
+%to its argument. The derivatives for the activation functions are
+%given as follows:
+%\begin{description}
+%\index{linear function!derivative}
+%    \item [\bf Identity/Linear:] The identity (or linear) activation function
+%        has a derivative of $1$ with respect to its argument, giving us:
+%\begin{align}
+%    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} = 1
+%    \label{eq:reg:neural:deriv_identity}
+%\end{align}
+%
+%\index{step function!derivative}
+%\item [\bf Step:] The step function has a derivative of $0$ everywhere
+%    except for the discontinuity at $0$, where the derivative is
+%    $\infty$. 
+%    % Since a step function is zero everywhere (except at $0$) 
+%    % it is never
+%    % really used with backpropagation. 
+%
+%% A simple approximation to the step
+%    % function can be obtained via a sigmoid activation with an additional
+%    % steepness parameter $\beta \ge 1$, defined as
+%    % \begin{align*}
+%    %     f(\net_{\!j}) = \frac{1}{1 + \exp\{ -\beta \cdot \net_{\!j} \}}
+%    % \end{align*}
+%    % The larger $\beta$ is, the better the approximation to the step
+%    % function.
+%
+%\index{ReLU function!derivative}
+%\item[\bf ReLU:]
+%    The ReLU function [\cref{eq:reg:neural:relu}] is non-differentiable at 0, nevertheless for other
+%    values its derivative is $0$ if $net_{\!j} < 0$ and $1$ if
+%    $net_{\!j} > 0$. 
+%    At $0$, we can set the derivative to be any value
+%    in the range $[0,1]$, a simple choice being 0. Putting it all
+%    together, we have
+%\begin{align}
+%    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} = 
+%    \begin{cases}
+%        0 & \text{if } \net_{\!j} \le 0\\
+%        1 & \text{if } \net_{\!j} > 0\\
+%    \end{cases}
+%    \label{eq:reg:neural:deriv_relu}
+%\end{align}
+%    Even though ReLU has a discontinuity at $0$ it is a popular choice
+%    for training deep neural networks.
+%
+%\index{sigmoid function!derivative}
+%\item[\bf Sigmoid:]
+%    The derivative of the sigmoid function
+%    [\cref{eq:reg:neural:sigmoid}] 
+%    is given as
+%\begin{align}
+%    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} 
+%    = f(\net_{\!j}) \cdot (1-f(\net_{\!j}))
+%    \label{eq:reg:neural:deriv_sigmoid}
+%\end{align}
+%
+%\index{tanh function!derivative}
+%\item[\bf Hyperbolic Tangent:]
+%    The derivative of the tanh function [\cref{eq:reg:neural:tanh}] is given as
+%\begin{align}
+%    \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}} = 1-f(\net_{\!j})^2
+%    \label{eq:reg:neural:deriv_tanh}
+%\end{align}
+%
+%\index{softmax function!derivative}
+%\item[\bf Softmax:]
+%    The softmax activation function [\cref{eq:reg:neural:softmax}] is
+%     a vector valued function, which maps a vector input 
+%    $\bnet = (\net_1, \net_2, \cdots, \net_{p})^T$ to a vector of
+%    probability values. Softmax is typically used only for the output
+%    layer.
+%    The partial derivative of $f(\net_{\!j})$ with respect to
+%        $\net_{\!j}$ is given as
+%\begin{align*}
+%    \frac{\partial f(\net_{\!j}|\; \bnet)}{\partial \net_{\!j}} 
+%    = f(\net_{\!j}) \cdot (1-f(\net_{\!j}))
+%\end{align*}
+%whereas the partial derivative of $f(\net_{\!j})$ with respect to
+%        $\net_{k}$, with $k\ne j$ is given as
+%\begin{align*}
+%    \frac{\partial f(\net_{\!j}|\; \bnet)}{\partial \net_{k}} 
+%    = -f(\net_k) \cdot f(\net_{\!j})
+%\end{align*}
+%Since softmax is used at the output layer, if we denote the $i$th output
+%neuron as $o_i$, then
+%$f(\net_i) = o_i$, and we can write the derivative as:
+%\begin{align}
+%    \frac{\partial f(\net_{\!j}|\; \bnet)}{\partial \net_{k}} =
+%    \frac{\partial o_{\!j}}{\partial \net_{k}} =
+%    \begin{cases}
+%        o_{\!j} \cdot (1-o_{\!j}) & \text{if } k=j\\
+%        -o_{\!k} \cdot o_{\!j} & \text{if } k \ne j\\
+%    \end{cases}
+%    \label{eq:reg:neural:softmax_der}
+%\end{align}
+%\end{description}
+%
+%
+%
+%\section{Neural Networks: Regression and Classification}
+%Networks of (artificial) neurons are capable of representing and 
+%learning arbitrarily
+%complex functions for both regression and classification tasks. 
+%
+%\subsection{Regression}
+%\index{neural networks!regression}
+%Consider the multiple (linear) regression problem, where given an input
+%$\bx_i \in \setR^d$, the goal is to predict the response as follows
+%\begin{align*}
+%    \hy_i = b + w_1 x_{i1} + w_2 x_{i2} + \cdots + w_d x_{id}
+%%    = \bw^T\bx_i
+%\end{align*}
+%Here, $b$ is the bias term, and 
+%$w_{\!j}$ is the regression coefficient or weight for attribute 
+%$X_{\!j}$.
+%% Also, we have added an extra dimension fixed at
+%% $1$ to each
+%% point so that $\bx_k = (1,x_{k1},x_{k2}, \cdots, x_{kd})^T \in
+%% \setR^{d+1}$, and we have incorporated the bias term as just another
+%% weight for that fixed dimension, so that
+%% $\bw = (b, w_1, w_2, \cdots, w_d)^T \in \setR^{d+1}$.
+%Given a training data $\bD$ comprising $n$ points 
+%$\bx_i$ in a $d$-dimensional space, along with their
+%corresponding true response value $y_i$, 
+%the bias and weights for linear regression 
+%are chosen so as to minimize the sum of squared
+%errors between the true and predicted response over all data points
+%\begin{align*}
+%SSE = \sum_{i=1}^n (y_i - \hy_i)^2 
+%    %= \sum_{i=1}^n (y_i - b - \bw^T\bx_i)^2
+%\end{align*}
+%
+%\begin{figure}[!t]
+\begin{frame}{Linear and Logistic Regression via Neural Networks}
+\psset{tnpos=l,tnsep=2pt,colsep=3,rowsep=0.75,mcol=c,
+    ArrowInside=->, arrowscale=2}
+\centerline{
+%\subfloat[Single Output]{
+%\label{fig:reg:neural:ann_multiple_regression}
+\psmatrix
+\Tcircle[name=b,doubleline=true]{$x_0$}~[tnpos=l]{$1$}~[tnpos=r]{$\;\;$}\\[1em]
+\Tcircle[name=x1]{$x_1$} & \Tcircle[name=zk]{$o$}\\[-1em]
+[mnode=none]{$\vdots$}\\[-1em]
+\Tcircle[name=xd]{$x_{d}$}
+\psset{ArrowInsidePos=.85}
+\ncline{b}{zk}\ncput*{$b$}
+\ncline{x1}{zk} \ncput*{$w_{1}$}
+\ncline{xd}{zk} \ncput*{$w_{d}$}
+\endpsmatrix
+%}
+\hspace{0.25in}
+%\subfloat[Multiple Outputs]{
+%\label{fig:reg:neural:ann_multivariate_regression}
+\psmatrix
+\Tcircle[name=b,doubleline=true]{$x_0$}~[tnpos=l]{$1$}~[tnpos=r]{$\;\;$}\\[1em]
+\Tcircle[name=x1]{$x_1$} & \Tcircle[name=o1]{$o_1$}\\[-1em]
+[mnode=none]{$\vdots$} & [mnode=none]{$\vdots$}\\[-1em]
+\Tcircle[name=xd]{$x_{d}$} & \Tcircle[name=op]{$o_{p}$}
+\psset{ArrowInsidePos=.85,npos=0.25}
+\ncline{b}{o1}\ncput*{$b_1$}
+\ncline{b}{op}\ncput*{$b_p$}
+\ncline{x1}{o1}\ncput*{$w_{11}$}
+\ncline{x1}{op}\ncput*{$w_{1p}$}
+\ncline{xd}{o1}\ncput*{$w_{d1}$}
+\ncline{xd}{op}\ncput*{$w_{dp}$}
+\endpsmatrix
+%}
+}
+\end{frame}
+%\vspace{0.2in}
+%\caption{Linear and logistic regression via neural networks.}
+%\vspace{-0.2in}
+%\end{figure}
+%
+%
+%As
+%shown in \cref{fig:reg:neural:ann_multiple_regression}, 
+%a neural network with $d+1$ input neurons $x_0, x_1, \cdots, x_d$,
+%including the bias neuron $x_0=1$, and a single output neuron $o$, all
+%with identity activation functions and with $\hy=o$, represents the
+%exact same model as multiple linear regression.
+%Whereas the multiple
+%regression problem has a closed form solution, neural networks learn the bias
+%and weights via a gradient descent approach that minimizes the squared error.
+%
+%Neural networks can just as easily model the
+%multivariate (linear) regression task, where we have a $p$-dimensional 
+%response vector $\by_i \in \setR^p$ instead of a single value $y_i$. 
+%That is, the training data $\bD$ comprises $n$ points
+%$\bx_i \in \setR^d$ and their true response vectors $\by_i \in \setR^p$.
+%As shown in \cref{fig:reg:neural:ann_multivariate_regression},
+%multivariate regression can be modeled by a neural network with $d+1$
+%input neurons, and $p$ output neurons $o_1, o_2, \cdots, o_p$, with all
+%input and output neurons using the identity activation function.
+%A neural network learns the weights by comparing its 
+%predicted output $\hby = \bo = (o_1, o_2, \cdots, o_p)^T$ with the true
+%response vector $\by = (y_1, y_2, \cdots, y_p)^T$.
+%That is, training happens by first
+%computing the {\em error function} 
+%or {\em loss function} between $\bo$ and $\by$.
+%Recall that a loss function assigns a score or penalty for predicting
+%the output to be $\bo$ when the desired output is $\by$. When the
+%prediction matches the true output the loss should be zero.
+%The most common loss function for regression is the squared error
+%function
+%\begin{align*}
+%    \cE_\bx = \frac{1}{2} \norm{\by - \bo}^2 
+%    = \frac{1}{2} \sum_{j=1}^p (y_{\!j} - o_{\!j})^2
+%\end{align*}
+%where $\cE_\bx$ denotes the error on input $\bx$.
+%Across all the points in a dataset, the total sum of squared errors is
+%\begin{align*}
+%    \cE = \sum_{i=1}^n \cE_{\bx_i} = \frac{1}{2} \cdot 
+%    \sum^{n}_{i=1} \norm{\by_i - \bo_i}^2  
+%\end{align*}
+%
+%
+%
+%% neural -- linear run plwsl
+%%$ python3 ./neuralnet.py iris-plwsl.txt iris-plwsl.txt 0 0.0001 10000 sigmoid
+%% Weights: Input to Output
+%% [[-0.08733496]
+%%  [ 0.4516477 ]
+%%  [ 0.00959493]]
+%
+%% accuracy 6.18028272339 0.0412018848226
+%
+%%optimal multiple regression model
+%%weights [-0.08190841  0.44992999 -0.01385201] 0.209337858118
+%%accuracy, sse 0.0 6.178954243
+%
+%% multivariate regression iris-4d.txt
+%% $ python3 ./neuralnet.py iris-4d.txt iris-4d.txt 0 0.0001 10000 sigmoid identity
+%% epoch 9999 84.9019338059 0.566012892039
+%
+%% Weights: Input to Output
+%% [[ 1.72077749  0.71685135]
+%%  [-1.45859672 -0.49573522]
+%%  [-1.82704033 -1.46986061]]
+%
+%% accuracy 84.9019338059 0.566012892039
+%% skikit linear [[ 1.78081362 -1.33924232  0.        ]
+%%  [ 0.72659367 -0.47578234  0.        ]] [-2.55717488 -1.59402307]
+%% SCIKIT accuracy 84.1610345717 0.561073563811
+%
+%\enlargethispage{1\baselineskip}
+%\begin{example}[Neural Networks for Multiple and Multivariate Regression]
+\begin{frame}{ANN for Multiple and Multivariate Regression}
+\framesubtitle{Example}
+Consider the multiple regression of {\tt sepal length} and {\tt petal
+length} on the dependent attribute {\tt petal width} for the Iris
+dataset with $n=150$ points. 
+%From we find
+%that 
+The solution is given as
+   \begin{align*}
+       \hy = -0.014 -0.082 \cdot x_{1} + 0.45\cdot x_{2}
+\end{align*}
+    The squared error for this optimal solution is $6.179$ on the
+    training data.
+
+Using the presented neural network,% in
+%\cref{fig:reg:neural:ann_multiple_regression}, 
+with linear activation
+for the output and minimizing the squared error via gradient descent,
+results in the following learned parameters, $b = 0.0096$, $w_1 =
+-0.087$ and $w_2 = 0.452$, yielding the regression model
+\begin{align*}
+    o = 0.0096 - 0.087 \cdot x_{1} + 0.452 \cdot x_{2}
+\end{align*}
+with a squared error of $6.18$, which is very close to the optimal
+solution. 
+%However, it is important to note that this is the best result
+%over multiple runs of the neural network, since the learning uses a
+%random set of initial weights and bias.
+\end{frame}
+
+\begin{frame}{ANN for Multiple and Multivariate Regression}
+\framesubtitle{Example}
+
+\textbf{Multivariate Linear Regression}
+For multivariate regression, we use the neural network architecture 
+presented
+%in \cref{fig:reg:neural:ann_multivariate_regression} 
+to learn the weights
+and bias for the Iris dataset, where we use {\tt sepal
+length} and {\tt sepal width} as the independent attributes, and {\tt
+petal length} and {\tt petal width} as the response or dependent
+attributes. Therefore, each input point $\bx_i$ is 2-dimensional, and
+the true response vector $\by_i$ is also 2-dimensional. That is, $d=2$
+and $p=2$ specify the size of the input and output layers. Minimizing
+the squared error via gradient descent, yields the following parameters:
+\begin{align*}
+    \matr{%
+        b_1 & b_2\\
+        w_{11} & w_{12}\\
+        w_{21} & w_{22}
+    } & = 
+    \amatr{r}{
+  -1.83 & -1.47\\
+  1.72 &  0.72\\
+  -1.46 & -0.50
+  } &
+    \matr{o_1 \\ o_2} & =
+    \matr{
+        -1.83 + 1.72 \cdot x_{1} - 1.46 \cdot x_2\\
+        -1.47 + 0.72 \cdot x_{1} - 0.50 \cdot x_2
+    }
+\end{align*}
+The squared error on the training set is $84.9$. Optimal least squared
+multivariate regression yields a squared error of $84.16$ with the
+following parameters
+\begin{align*}
+    \matr{\hy_1 \\ \hy_2} =
+    \matr{
+        -2.56 + 1.78 \cdot x_{1} - 1.34 \cdot x_2\\
+        -1.59 + 0.73 \cdot x_{1} - 0.48 \cdot x_2
+    }
+    % \matr{%
+    %     b_1 & b_2\\
+    %     w_{11} & w_{12}\\
+    %     w_{21} & w_{22}
+    % } = 
+    % \amatr{r}{
+    %     -2.56 & -1.59\\
+    %     1.78 &  0.73\\
+    %     -1.34 & -0.48
+  % }
+\end{align*}
+\end{frame}
+%\end{example}
+%
+%
+%
+%\subsection{Classification}
+%\index{neural networks!logistic regression}
+%\index{neural networks!classification}
+%% The cross-entropy error is typically
+%% used for classification tasks, along with either sigmoid or
+%% softmax activation functions at the output layer.
+%Networks of artificial neurons can also learn to classify the inputs.
+%Consider the binary
+%classification problem, where $y=1$ denotes that the point
+%belongs to the positive class, and $y=0$ means that it belongs
+%to the negative class. 
+%Recall that in logistic regression, we model the probability of the positive
+%class via the logistic (or sigmoid) function:
+%$$\pi(\bx) = P(y = 1|\bx) = \frac{1}{1 + \exp\{ -(b + \bw^T\bx) \}}$$
+%where $b$ is the bias term and $\bw=(w_1,w_2,\cdots,w_d)^T$ is the
+%vector of estimated weights or regression coefficients.
+%On the other hand
+%$$P(y = 0 | \bx) = 1 - P(y=1|\bx) = 1 - \pi(\bx)$$ 
+%
+%A simple change to the neural network shown in
+%\cref{fig:reg:neural:ann_multiple_regression} allows it to solve the
+%logistic regression problem. All we have to do is use a sigmoid
+%activation function at the output neuron $o$, and use the cross-entropy
+%error instead of squared error. 
+%Given input $\bx$, true response $y$, and predicted response $o$, recall
+%that the {\em cross-entropy error} (see \cref{eq:reg:logit:crossentropy}) 
+%is defined as
+%\index{classification!cross-entropy error}
+%\begin{align*}
+%    \cE_\bx = - \bigl( y \cdot
+%        \ln(o) + (1-y) \cdot \ln(1-o) \bigr) 
+%\end{align*}
+%Thus, with sigmoid activation, the output of the neural network in
+%\cref{fig:reg:neural:ann_multiple_regression} is given as
+%$$o = f(\net_o) = \text{sigmoid}(b + \bw^T\bx) = 
+%\frac{1}{1 + \exp\{ -(b + \bw^T\bx) \}} = \pi(\bx)$$
+%which is the same as the logistic regression model.
+%
+%\paragraph{Multiclass Logistic Regression}
+%In a similar manner, the multiple output neural network architecture
+%shown in \cref{fig:reg:neural:ann_multivariate_regression} can be used
+%for multiclass or nominal logistic regression.
+%For the general classification problem with $K$ classes
+%$\{c_1, c_2,\cdots,c_K\}$, the true
+%response $y$ is encoded as a one-hot vector. Thus, class
+%$c_1$ is encoded as $\be_1 = (1,0,\cdots,0)^T$, class 
+%$c_2$ is encoded as $\be_2 = (0,1,\cdots,0)^T$, and so on, with
+%$\be_i \in \{0,1\}^K$ for $i=1,2,\cdots,K$. 
+%Thus, we encode $y$ as a multivariate vector $\by \in \{\be_1, \be_2,
+%\cdots, \be_K\}$.
+%Recall that
+%in multiclass logistic regression (see \cref{sec:reg:logit:multiclass})
+%the task is to estimate the per class bias $b_i$ and weight
+%vector $\bw_i \in \setR^{d}$, with the last class 
+%$c_K$ used as the base class with fixed bias $b_K=0$ and
+%fixed weight vector $\bw_K = (0,0,\cdots,0)^T\in \setR^d$. The probability
+%vector across all $K$ classes is modeled via the softmax
+%function (see \cref{eq:reg:logit:softmax}):
+%\begin{align*}
+%    \pi_i(\bx) = \frac{\exp\{b_i + \bw_i^T\bx\}}{\sum_{j=1}^K
+%    \exp\{b_j + \bw_{\!j}^T\bx\} }, \qquad
+%    \text{ for all } i = 1, 2, \cdots, K
+%\end{align*}
+%
+%Therefore, 
+%the neural network shown in 
+%\cref{fig:reg:neural:ann_multivariate_regression} (with $p=K$) can solve
+%the multiclass logistic regression task, provided we use a softmax
+%activation at the outputs, and use the $K$-way cross-entropy error 
+%%for a given input pair $(\bx, \by) \in \bD$
+%(see
+%\cref{eq:reg:logit:multi_likelihood}),
+%defined as
+%\begin{align*}
+%    \cE_\bx = - \Bigl( y_1 \cdot \ln(o_1) + \cdots 
+%            + y_K \cdot \ln(o_K) \Bigr) 
+%\end{align*}
+%where $\bx$ is an input vector, $\bo = (o_1, o_2, \cdots, o_K)^T$ is the
+%predicted response vector, and $\by = (y_1, y_2, \cdots, y_K)^T$ is the
+%true response vector. Note that 
+%only one element of $\by$ is $1$, and the rest are $0$,
+%due to the one-hot encoding.
+%
+%With softmax activation, 
+%the output of the neural network in 
+%\cref{fig:reg:neural:ann_multivariate_regression} (with $p=K$) 
+%is given as
+%$$o_i = P(\by = \be_i | \bx) = f(\net_i | \bnet) =
+%            \frac{\exp\{\net_i\}}
+%            {\sum_{j=1}^p \exp\{ \net_j \} } = \pi_i(\bx)$$
+%which matches the multiclass logistic regression task.
+%The only restriction we have to impose on the neural network is that the
+%weights on edges into the last output neuron should be zero to model the
+%base class weights $\bw_K$. However, in practice, we
+%can relax this restriction, and just learn a regular weight vector for
+%class $c_K$.
+%
+%
+%
+\begin{frame}{Neural networks for multiclass logistic regression}
+
+Iris principal components
+data. Misclassified point are shown in dark gray color. Points in class
+$c_1$ and $c_2$ are shown displaced with respect to the base class $c_3$
+only for illustration.
+%
+%\begin{figure}[t!]
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\def\PsEuler{2.71828182846}
+\psset{viewpoint=30 120 10 rtp2xyz,Decran=60}
+\psset{axisnames={X_1, X_2, Y}}
+\centerline{
+\scalebox{1}{%
+\begin{pspicture}(-6,-2)(6,6)
+\axesIIID[](-4,-2,0)(4.5,2.5,2.5)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{showAxes=false, fillcolor=gray}
+%% \psPoint(0.75,0.5,2.5){p1}
+%% \uput[l](p1){$\pi_1$}
+%% \psPoint(-3,-3,2.5){p2}
+%% \uput[l](p2){$\pi_2$}
+%% \psPoint(-0.5,-0.5,2.0){p3}
+%% \uput[l](p3){$\pi_3$}
+\psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\rput(-4,5.1){$\pi_1(\bx)$}
+\rput(-0.75,4.95){$\pi_3(\bx)$}
+\rput(5,4.75){$\pi_2(\bx)$}
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+\psSurface[ngrid=.2 .2,fillcolor=white,axesboxed=false,
+    linewidth=0.5\pslinewidth, 
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+        algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+        ((\PsEuler^((4.54*x)+(1.96*y)-0.89))/%
+        (\PsEuler^((4.54*x)+(1.96*y)-0.89) +%
+            \PsEuler^((-5.11*x)+(-2.88*y)-3.38) +%
+            \PsEuler^((0.52*x)+(0.92*y)+4.24)))}
+\psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\psSurface[ngrid=.2 .2,fillcolor=gray,axesboxed=false,
+    linewidth=0.5\pslinewidth, 
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+        ((\PsEuler^((-5.11*x)+(-2.88*y)-3.38))/%
+        (\PsEuler^((4.54*x)+(1.96*y)-0.89) +%
+         \PsEuler^((-5.11*x)+(-2.88*y)-3.38) +%
+         \PsEuler^((0.52*x)+(0.92*y)+4.24)))}
+\psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\psSurface[ngrid=.2 .2,fillcolor=darkgray,axesboxed=false,
+    linewidth=0.5\pslinewidth, 
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+        ((\PsEuler^((0.52*x)+(0.92*y)+4.24))/%
+        (\PsEuler^((4.54*x)+(1.96*y)-0.89) +%
+         \PsEuler^((-5.11*x)+(-2.88*y)-3.38) +%
+        \PsEuler^((0.52*x)+(0.92*y)+4.24)))}
+\psset{dotstyle=Bsquare,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C0.tex}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C1.tex}
+\psset{dotstyle=Btriangle,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C2.tex}
+%%misclassified points
+\psset{dotstyle=Bo, fillcolor=darkgray}
+\psPoint(-0.52,-1.19,2.0){x0} %point58
+\psdot(x0)
+\psPoint(-1.17,-0.16,2.0){x1} %point97
+\psdot(x1)
+\psset{dotstyle=Btriangle, fillcolor=darkgray}
+\psPoint(-1.55,0.26,0){x2} %point126
+\psdot(x2)
+\psPoint(-1.296,-0.33,0){x3} %point140
+\psdot(x3)
+\psPoint(-1.38,-0.42,0){x4} %point142
+\psdot(x4)
+\end{pspicture}
+}}
+\end{frame}
+%\vspace{0.2in}
+%\caption{Neural networks for multiclass logistic regression: Iris principal components
+%data. Misclassified point are shown in dark gray color. Points in class
+%$c_1$ and $c_2$ are shown displaced with respect to the base class $c_3$
+%only for illustration.}
+%\label{fig:reg:neural:iris-3K-multiclass}
+%\end{figure}
+%
+%\begin{example}[Logistic Regression: Binary and Multiclass]
+\begin{frame}{Logistic Regression: Binary and Multiclass}
+\framesubtitle{Example}
+    We applied the neural network presented,
+%in \cref{fig:reg:neural:ann_multiple_regression}, 
+with logistic
+    activation at the output neuron and cross-entropy error function, 
+    on the Iris principal components dataset. The output is
+a binary response indicating {\tt Iris-virginica} ($Y=1$) or one of
+the other Iris types ($Y=0$). As expected, 
+the neural network learns an identical set
+of weights and bias as shown for the logistic regression model,
+% in \cref{ex:reg:logit:logit}, 
+namely:
+    \begin{align*}
+        o = -6.79 -5.07 \cdot x_1 - 3.29 \cdot x_2
+    \end{align*}
+
+
+%python3 neuralnet.py iris-PC-3K.txt iris-PC-3K.txt 0 -eta 0.001 -eps 0.001 -t 100000 -of softmax -ef CE  -c -d " " -l
+% epoch 3626 145.0 0.9666666666666667 14.0046809394 0.000999892559042
+
+% Weights: Input to Output
+% [[ 3.61439879 -5.17714895  0.        ]
+%  [ 2.65259494 -3.3970625   0.        ]
+%  [-3.49440596 -6.94833725  0.        ]]
+% YMAP {0.0: 0, 1.0: 1, 2.0: 2}
+
+% accuracy 145.0 0.9666666666666667 14.0046809394
+    Next, we we applied the neural network presented,
+%in \cref{fig:reg:neural:ann_multivariate_regression}, 
+using a softmax
+activation and cross-entropy error function,
+to the Iris
+principal components data with three classes: {\tt Iris-setosa}
+($Y=1$), {\tt Iris-versicolor} ($Y=2$) and {\tt Iris-virginica}
+($Y=3$). 
+Thus, we need $K=3$ output neurons, $o_1$, $o_2$, and $o_3$.
+Further, to obtain the
+same model as in the multiclass logistic regression example,
+%from \cref{ex:reg:logit:multi-logit}, 
+we fix the incoming weights and bias for
+output neuron $o_3$ to be zero. The model is given as
+    \begin{align*}
+        o_1 & = -3.49 + 3.61 \cdot x_1 + 2.65 \cdot x_2\\
+        o_2 & = -6.95 -5.18 \cdot x_1 -3.40 \cdot x_2\\
+        o_3 & = 0 + 0 \cdot x_1 + 0 \cdot x_2
+    \end{align*}
+which is essentially the same as presented before.
+%in \cref{ex:reg:logit:multi-logit}.
+\end{frame}
+
+\begin{frame}{Logistic Regression: Binary and Multiclass}
+\framesubtitle{Example}
+If we do not constrain the weights and bias for $o_3$ we obtain the
+following model:
+    \begin{align*}
+        o_1 & = -0.89 + 4.54 \cdot x_1 + 1.96 \cdot x_2\\
+        o_2 & = -3.38 -5.11 \cdot x_1 -2.88 \cdot x_2\\
+        o_3 & = 4.24 + 0.52 \cdot x_1 + 0.92 \cdot x_2
+    \end{align*}
+The classification decision surface for each class is illustrated in
+%\cref{fig:reg:neural:iris-3K-multiclass}. 
+the figure.
+The points in class $c_1$ are shown as squares, $c_2$ as circles, and
+$c_3$ as triangles. 
+This figure should be
+contrasted with the decision boundaries shown for multiclass logistic
+regression,
+% in \cref{fig:reg:logit:iris-3K-multiclass}, 
+which 
+has the weights and bias set to $0$ for the base class $c_3$.
+
+\end{frame}
+%\end{example}
+%
+%% python3 neuralnet.py iris-PC-3K.txt iris-PC-3K.txt 0 -eta 0.001 -eps 0.001 -t 100000 -of softmax -ef CE  -c -d " "
+%% Weights: Input to Output
+%% [[ 4.54090129 -5.11417967  0.51748127]
+%%  [ 1.9603263  -2.88048547  0.92212899]
+%%  [-0.88670555 -3.3759307   4.24191964]]
+%% YMAP {0.0: 0, 1.0: 1, 2.0: 2}
+%
+%% accuracy 145.0 0.9666666666666667 13.2631586158
+%
+%
+%\subsection{Error Functions}
+%\index{neural networks!error functions}
+%\label{sec:reg:neural:errorDERIV}
+\begin{frame}{Error Functions}
+%Typically, for a regression task, we use squared error as the loss
+%function, whereas for classification, we use the cross-entropy loss
+%function. Furthermore, when learning from neural networks, we will
+%require the partial derivatives of the error function with respect to
+%the output neurons.
+%Thus, the commonly used error functions and their derivatives are listed
+%below:
+%
+%\begin{description}
+%\index{neural networks!squared error}
+
+    {\bf Squared Error:} Given an input vector $\bx \in \setR^d$,
+        the squared error loss function measures the squared deviation
+        between the predicted output vector $\bo \in \setR^p$ and the
+        true response $\by \in \setR^p$, defined as follows: 
+    \begin{align}
+        \tcbhighmath{
+    \cE_\bx = \frac{1}{2} \norm{\by - \bo}^2 
+= \frac{1}{2} \sum_{j=1}^p (y_{\!j} - o_{\!j})^2}
+    \label{eq:reg:neural:SSE}
+\end{align}
+where $\cE_\bx$ denotes the error on input $\bx$.
+%        
+        The partial derivative of the squared error function with
+        respect to a particular output neuron $o_{\!j}$ is
+        \begin{align}
+            \frac{\partial \cE_\bx}{\partial o_{\!j}} = 
+            \frac{1}{2} \cdot 2 \cdot (y_{\!j} - o_{\!j}) \cdot -1 = 
+            o_{\!j} -
+            y_{\!j}
+        \label{eq:reg:neural:deriv_SE_single}
+        \end{align}
+        Across all the output neurons, we can write this as
+        \begin{align}
+            \frac{\partial\cE_\bx}{\partial \bo} = \bo - \by
+        \label{eq:reg:neural:deriv_SE}
+        \end{align}
+%
+%\index{neural networks!cross-entropy error}
+\end{frame}
+
+\begin{frame}{Error Functions}
+
+    {\bf Cross-Entropy Error:} For classification tasks, with $K$
+        classes $\{c_1, c_2, \cdots, c_K\}$, we usually set the number
+        of output neurons $p=K$, with one output neuron 
+        per class. Furthermore, each of
+        the classes is coded as a one-hot vector, with class $c_i$
+        encoded as the $i$th standard basis vector 
+        $\be_i  = (e_{i1}, e_{i2}, \cdots, e_{iK})^T \in \{0,1\}^{K}$,
+        with $e_{ii}=1$ and $e_{ij} = 0$ for all $j\ne i$. Thus,
+        given input $\bx \in \setR^d$, with 
+        the true response $\by = (y_1,
+        y_2, \cdots, y_K)^T$, where $\by \in \{\be_1, \be_2,
+        \cdots, \be_K\}$, the cross-entropy loss is defined as 
+\begin{align}
+    \tcbhighmath{
+    \cE_\bx = - \sum_{i=1}^K y_i \cdot \ln(o_i) = 
+    - \Bigl( y_1 \cdot \ln(o_1) + \cdots 
++ y_K \cdot \ln(o_K) \Bigr) }
+            \label{eq:reg:neural:CE}
+\end{align}
+Note that only one element of $\by$ is $1$ and the rest are $0$
+due to the one-hot encoding. That is, if $\by = \be_i$, then only $y_i =
+1$, and the other elements $y_j = 0$ for $j \ne i$.
+
+The partial derivative of the cross-entropy error function with
+respect to a particular output neuron $o_{\!j}$ is
+\begin{align}
+    \frac{\partial \cE_\bx}{\partial o_{\!j}} = 
+    -\frac{y_{\!j}}{o_{\!j}}
+            \label{eq:reg:neural:deriv_CE}
+\end{align}
+\end{frame}
+
+\begin{frame}{Error Functions}
+
+The vector of partial derivatives of the error function with respect to
+the output neurons
+is therefore given as
+\begin{align}
+    \frac{\partial\cE_\bx}{\partial \bo} & = 
+    \lB(\frac{\partial \cE_\bx}{\partial o_{1}},
+        \frac{\partial \cE_\bx}{\partial o_{2}},
+    \;\cdots,\; \frac{\partial \cE_\bx}{\partial o_{K}}\rB)^T
+     = \lB( -\frac{y_1}{o_1}, -\frac{y_2}{o_2}, \cdots, 
+             -\frac{y_K}{o_K}
+    \rB)^T
+    \label{eq:reg:neural:pd_ef_o}
+\end{align}
+
+\end{frame}
+
+\begin{frame}{Error Functions}
+\index{neural networks!binary cross-entropy error}
+{\bf Binary Cross-Entropy Error:} For classification tasks with
+    binary classes, it is typical to encode the positive class as $1$
+    and the negative class as $0$, as opposed to using a one-hot
+    encoding as in the general $K$-class case. Given an input $\bx \in
+    \setR^d$, with true response $y \in \{0,1\}$, there is only
+    one output neuron $o$. Therefore, the binary cross-entropy error is
+    defined as
+    \begin{align}
+        \tcbhighmath{
+        \cE_\bx = - \bigl( y \cdot \ln(o) 
+            + (1-y) \cdot \ln(1-o) \bigr) 
+        }
+        \label{eq:reg:neural:CEbinary}
+    \end{align}
+    Here $y$ is either $1$ or $0$.
+The partial derivative of the binary cross-entropy error function with
+respect to the output neuron $o$ is
+\begin{align}
+    \frac{\partial \cE_\bx}{\partial o} & =
+    \frac{\partial}{\partial o} \Bigl\{- y\cdot\ln(o) -
+    (1-y)\cdot\ln(1-o) \Bigr\} \notag\\
+    & = -\lB(\frac{y}{o} + \frac{1-y}{1-o} \cdot -1\rB)
+         = \frac{-y \cdot (1-o) + (1-y)\cdot o} {o\cdot (1-o)} \notag\\
+         & = \frac{o-y}{o \cdot (1-o)}
+            \label{eq:reg:neural:deriv_CE_binary}
+\end{align}
+
+
+\end{frame}
+%\section{Multilayer Perceptron: One Hidden Layer}
+%
+%\index{MLP! see {multilayer perceptron}}
+%\index{multilayer perceptron}
+%\index{neural networks!multilayer perceptron}
+%
+\begin{frame}{Multilayer Perceptron: One Hidden Layer}
+A multilayer perceptron (MLP) is a neural network that has distinct layers of
+neurons. 
+
+\medskip 
+The inputs to the neural network comprise the {\em input
+layer}, and the final outputs from the MLP comprise the {\em output
+layer}. Any intermediate layer is called a {\em hidden layer}, and an MLP
+can have one or many hidden layers. Networks with many hidden layers are
+called {\em deep neural networks}. 
+
+
+\medskip 
+An MLP is also a feed-forward network. That is, information flows
+in the forward direction, and from a layer only to the subsequent layer. 
+\end{frame}
+%Thus, information flows from the input to the first hidden layer, from the
+%first to the second hidden layer, and so on, until it reaches the output
+%layer from the last hidden layer. 
+%Typically, MLPs are fully connected
+%between layers. That is, each neuron in the input layer is connected to
+%all the neurons in the first hidden layer, and each
+%neuron in the first hidden layer is connected to all neurons in the
+%second hidden layer, and so on, and finally,
+%each neuron in the last hidden layer
+%is connected to all neurons in the output layer. 
+%
+%\begin{figure}[!t]
+\begin{frame}{Multilayer perceptron with one hidden layer}
+\psset{tnpos=l,tnsep=2pt,colsep=3,rowsep=0.75,mcol=c,
+    ArrowInside=->, arrowscale=2}
+\centerline{
+\psmatrix
+[mnode=none]{Input} & [mnode=none]{Hidden} &
+[mnode=none]{Output}\\[-2.5em]
+[mnode=none]{Layer} & [mnode=none]{Layer} &
+[mnode=none]{Layer}\\[-2em]
+\Tcircle[name=x0,doubleline=true]{$x_0$}~[tnpos=l]{$1$} & 
+\Tcircle[name=z0,doubleline=true]{$z_0$}~[tnpos=l]{$1$}\\[1em] 
+\Tcircle[name=x1]{$x_1$} & \Tcircle[name=z1]{$z_1$} & 
+    \Tcircle[name=y1]{$o_1$}\\[-1em]
+[mnode=none]{$\vdots$} & [mnode=none]{$\vdots$} & 
+[mnode=none]{$\vdots$}\\[-1em]
+\Tcircle[name=xi]{$x_i$}& \Tcircle[name=zk]{$z_k$} &
+\Tcircle[name=yj]{$o_{\!j}$} \\[-1em]
+[mnode=none]{$\vdots$} & [mnode=none]{$\vdots$} &
+[mnode=none]{$\vdots$}\\[-1em]
+\Tcircle[name=xd]{$x_{d}$} & \Tcircle[name=zh]{$z_{m}$} &
+\Tcircle[name=yp]{$o_{\!p}$}
+%weights into zk and out of zk
+% \psset{ArrowInsidePos=.85}
+% \ncline[linecolor=gray,linewidth=0.5pt]{x0}{z0}\ncput*[npos=0.5]{$1$}
+\psset{ArrowInsidePos=.85}
+\psset{linecolor=black,linewidth=1.5pt,labelsep=0pt}
+\ncline{x0}{zk}\ncput*[npos=0.25]{$b_k$}
+\ncline{x1}{zk}\ncput*[npos=0.25]{$w_{1k}$}
+\ncline{xi}{zk}\ncput*[npos=0.25]{$w_{ik}$}
+\ncline{xd}{zk}\ncput*[npos=0.25]{$w_{dk}$}
+\ncline{zk}{y1}\ncput*[npos=0.25]{$w_{k1}$}
+\ncline{zk}{yj}\ncput*[npos=0.25]{$w_{k\!j}$}
+\ncline{zk}{yp}\ncput*[npos=0.25]{$w_{kp}$}
+%input to hidden
+\psset{linecolor=gray,linewidth=0.5pt}
+\ncline{x0}{z1}%\ncput*{$b_1$}
+\ncline{x0}{zh}%\ncput*{$b_h$}
+\ncline{x1}{z1}%\ncput*{$w_{11}$}
+\ncline{x1}{zh}%\ncput*{$w_{1h}$}
+\ncline{xi}{z1}%\ncput*{$w_{i1}$}
+\ncline{xi}{zh}%\ncput*{$w_{ih}$}
+\ncline{xd}{z1}%\ncput*{$w_{d1}$}
+\ncline{xd}{zh}%\ncput*{$w_{dh}$}
+%#hidden to output
+\ncline{z0}{y1}%\ncput*{$w'_{01}$}
+\ncline{z0}{yj}%\ncput*{$w'_{02}$}
+\ncline{z0}{yp}%\ncput*{$w'_{0p}$}
+\ncline{z1}{y1}%\ncput*{$w'_{11}$}
+\ncline{z1}{yj}%\ncput*{$w'_{12}$}
+\ncline{z1}{yp}%\ncput*{$w'_{1p}$}
+\ncline{z2}{y1}%\ncput*{$w'_{21}$}
+\ncline{z2}{yj}%\ncput*{$w'_{22}$}
+\ncline{z2}{yp}%\ncput*{$w'_{2p}$}
+\ncline{zh}{y1}%\ncput*{$w'_{h1}$}
+\ncline{zh}{yj}%\ncput*{$w'_{h2}$}
+\ncline{zh}{yp}%\ncput*{$w'_{hp}$}
+\endpsmatrix
+}
+\end{frame}
+%\vspace{0.2in}
+%\caption{Multilayer perceptron with one hidden layer. Input and output
+%    links for neuron $z_k$ are shown in bold. Neurons $x_0$ and $z_0$
+%are bias neurons.}
+%\label{fig:reg:neural:MLP}
+%\end{figure}
+%
+%
+%% \begin{figure}[!t]
+%% \centerline{
+%% \begin{neuralnetwork}[height=4]
+%% 		\newcommand{\nodetextclear}[2]{}
+%% 		\newcommand{\nodetextx}[2]{$x_#2$}
+%% 		\newcommand{\nodetexty}[2]{$y_#2$}
+%% 		\newcommand{\nodetextz}[2]{$z_#2$}
+%% 		\inputlayer[count=4, bias=false, title=Input\\layer, text=\nodetextx]
+%% 		\hiddenlayer[count=5, bias=false, title=Hidden\\layer,
+%%         text=\nodetextz] \linklayers
+%% 		\outputlayer[count=3, title=Output\\layer, text=\nodetexty] \linklayers
+%% \end{neuralnetwork}
+%% }
+%%\end{figure}
+%
+%
+%
+%
+%
+%For ease of explanation,  in this section,
+%we will consider an MLP with only one
+%hidden layer, and we will later generalize the discussion to deep MLPs.
+%For example, \cref{fig:reg:neural:MLP} shows an 
+%MLP with one hidden layer. The input layer has $d$ neurons, $x_1, x_2,
+%\cdots, x_d$,
+%and an additional neuron $x_0$ that specifies the biases for the hidden
+%layer. The hidden layer has $m$ neurons, $z_1, z_2, \cdots, z_m$, and an additional neuron $z_0$
+%that specifies the biases for the output neurons. Finally, the output
+%layer has $p$ neurons, $o_1, o_2, \cdots, o_p$. 
+%The bias neurons have no incoming edges, 
+%since their value is
+%always fixed at $1$.
+%Thus, in total there are $d \times m + m \times p$ 
+%weight parameters ($w_{ij}$) and a further $m + p$ bias parameters ($b_i$)
+%that need to be learned by the neural network. These parameters also
+%correspond to the total number of edges in the MLP.
+%
+%
+%\subsection{Feed-forward Phase}
+\begin{frame}{Feed-forward Phase}
+%\index{multilayer perceptron!feed-forward phase}
+%\index{neural networks!feed-forward phase}
+%
+%Let $\bD$ denote the training dataset, 
+%comprising $n$ input points $\bx_i \in \setR^d$ and
+%corresponding true response vectors $\by_i \in \setR^p$.
+%For each pair $(\bx, \by)$ in the data,
+%in the feed-forward phase, the point 
+%$\bx =  (x_1, x_2, \cdots, x_d)^T \in \setR^d$ 
+%is supplied as an input to the MLP. 
+%The input neurons do not use any activation
+%function, and simply pass along the supplied input values as their
+%output value. This is equivalent to saying that 
+%the net at input neuron $k$ is $\net_k = x_k$, and the activation function is
+%the identity function $f(\net_k) = \net_k$, 
+%so that the output value of neuron $k$ is simply $x_k$.
+%
+Given the input neuron values,  
+we compute the output value for each hidden neuron $z_k$
+as follows:
+\begin{align*}
+    z_k = f(\net_k) = f\lB(b_k + \sum_{i=1}^d w_{ik} \cdot x_i\rB)
+\end{align*}
+where $f$ is some activation function, and $w_{ik}$ denotes the weight
+between input neuron $x_i$ and hidden neuron $z_k$.
+Next, given the hidden
+neuron values, we compute the value for each output
+neuron $o_{\!j}$ as follows:
+\begin{align*}
+    o_{\!j} = f(\net_{\!j}) = f\lB(b_{\!j} + \sum_{i=1}^m w_{i\!j}
+    \cdot z_i\rB)
+\end{align*}
+where $w_{ij}$ denotes the weight between hidden neuron $z_i$ and output
+neuron $o_{\!j}$.
+\end{frame}
+%
+%We can write the feed-forward phase as a series of matrix-vector
+%operations. For this we define
+%the $d\times m$ matrix 
+%$\bW_{\!h}$
+%comprising the
+%weights between input and hidden layer neurons, 
+%and vector $\bb_{h} \in \setR^m$ comprising 
+%the bias terms for hidden layer neurons,
+%given as
+%\begin{align}
+%    \bW_{\!h} & = \matr{
+%        w_{11} & w_{12} & \cdots & w_{1m}\\
+%         w_{21} & w_{22} & \cdots & w_{2m}\\
+%         \vdots & \vdots & \cdots & \vdots\\
+%         w_{d1} & w_{d2} & \cdots & w_{dm}\\
+%    } & 
+%    \bb_{h} & = \matr{b_1\\  b_2\\ \vdots\\ b_m} 
+%    \label{eq:reg:neural:Wi}
+%\end{align}
+%where $w_{ij}$ denotes the weight on the edge between input neuron
+%$x_i$ and hidden neuron $z_{\!j}$, and 
+%$b_i$ denotes the bias weight from $x_0$ to $z_i$.
+%The net input and the output for all the hidden layer neurons can be 
+%computed via a matrix-vector multiplication operation, as follows:
+%% \begin{align*}
+%% \tikzmarkin[tmark]{bneth}
+%% \bnet_{h} & = \bb_{h} + \bW_{\!h}^T \bx 
+%% \tikzmarkend{bneth}
+%% &
+%% \tikzmarkin[tmark]{bz}(0.2,-1)(-0.2,1)
+%% \bz & = f(\bnet_h) = f\lB(\bb_{h} + \bW_{\!h}^T \bx \rB)
+%% \tikzmarkend{bz}
+%% \end{align*}
+%\begin{empheq}[box=\tcbhighmath]{gather}
+%\bnet_{h}  = \bb_{h} + \bW_{\!h}^T \bx \\
+%\bz  = f(\bnet_h) = f\lB(\bb_{h} + \bW_{\!h}^T \bx \rB)
+%\end{empheq}
+% Here, $\bnet_h = (\net_1, \cdots, \net_m)^T$ 
+%denotes the net input at each hidden neuron (excluding the bias neuron
+%$z_0$ whose value is always fixed at $z_0 = 1$), and
+%$\bz = (z_1, z_2, \cdots, z_m)^T$ denotes the vector of hidden neuron
+%values.
+%The activation function $f(\bdot)$ applies to, or distributes over, each
+%element of $\bnet_h$, i.e., $f(\bnet_h) = 
+%\lB(f(\net_1), \cdots, f(\net_m)\rB)^T \in \setR^{m}$.
+%Typically, all neurons in a given layer use the same activation
+%function, but they can also be different if desired.
+%
+%Likewise, let $\bW_{\!o} \in \setR^{m \times p}$ 
+%denote the weight matrix
+%between the hidden and output layers, and let $\bb_{o} \in
+%\setR^p$ be the bias
+%vector for output neurons, given as
+%\begin{align}
+%    \bW_{\!o} & = \matr{
+%         w_{11} & w_{12} & \cdots & w_{1p}\\
+%         w_{21} & w_{22} & \cdots & w_{2p}\\
+%         \vdots & \vdots & \cdots & \vdots\\
+%         w_{m1} & w_{m2} & \cdots & w_{mp}\\
+%    } &
+%    \bb_{o} & = \matr{b_1\\  b_2\\ \vdots\\ b_p} 
+%    \label{eq:reg:neural:Wo}
+%\end{align}
+%where $w_{ij}$ denotes the weight on the edge between hidden neuron
+%$z_i$ and output neuron $o_{\!j}$, and $b_i$ the bias weight
+%between $z_0$ and output neuron $o_{\!i}$.
+\begin{frame}{Feed-Forward Phase}
+The output vector can then be
+computed as follows:
+\begin{empheq}[box=\tcbhighmath]{gather}
+    \bnet_o = \bb_{o} + \bW_{\!o}^T\bz\\
+    \bo = f(\bnet_o) = f\lB(\bb_{o} + \bW_{\!o}^T\bz\rB)
+\end{empheq}
+To summarize, for a given input $\bx \in \bD$ with desired response $\by$,
+an MLP computes the output vector via the
+feed-forward process, as follows:
+\begin{align}
+    \bo = f\Bigl(\bb_{o} + \bW_{\!o}^T\bz\Bigr) 
+    = f\Bigl(\bb_{o} + \bW_{\!o}^T \cdot 
+    f\lB(\bb_{h} + \bW_{\!h}^T \bx \rB) \Bigr)
+    \label{eq:reg:neural:FFo}
+\end{align}
+where, $\bo = (o_1, o_2, \cdots, o_p)^T$ is the vector of predicted
+outputs from the single hidden layer MLP.
+\end{frame}
+%
+%
+%\subsection{Backpropagation Phase}
+%\index{multilayer perceptron!backpropagation phase}
+%\index{neural networks!backpropagation phase}
+%\index{backpropagation!neural networks}
+\begin{frame}{Backpropagation Phase}
+%
+Backpropagation is the algorithm used to learn the weights between
+successive layers in an MLP. The name comes from the manner in which the
+{\em error gradient} is propagated backwards from the output to input layers via
+the hidden layers. %For simplicity of exposition, we will consider
+%backpropagation for an MLP with a single hidden layer with $m$ neurons, 
+%with squared error
+%function, and with sigmoid activations for all neurons.
+%We will later generalize to multiple hidden layers, and
+%other error and activation functions.
+%
+%Let $\bD$
+%%= \lB\{\bx_i^T, \by_i\rB\}_{i=1}^n$, 
+%denote the training dataset, 
+%comprising $n$ input points 
+%$\bx_i = (x_{i1}, x_{i2}, \cdots, x_{id})^T \in \setR^d$ and
+%corresponding true response vectors $\by_i \in \setR^p$.
+%Let $\bW_{\!h} \in\setR^{d\times m}$ 
+%denote the weight matrix between the input and hidden layer,
+%and $\bb_{h} \in \setR^m$ 
+%the vector of bias terms for the hidden neurons from
+%\cref{eq:reg:neural:Wi}. Likewise,
+%let $\bW_{\!o} \in \setR^{m \times p}$ 
+%denote the weight matrix between the hidden and output layer,
+%and $\bb_{o} \in \setR^p$ the bias vector for output neurons from
+%\cref{eq:reg:neural:Wo}. 
+
+
+\medskip 
+%
+For a given input pair $(\bx, \by)$ in the training data, the MLP first computes the
+output vector  $\bo$ via the feed-forward step.% in
+%\cref{eq:reg:neural:FFo}.
+Next, it computes the error in the predicted output {\em vis-a-vis} 
+the true
+response $\by$ using the squared error function
+\begin{align}
+    \cE_\bx = \frac{1}{2} \norm{\by - \bo}^2 = 
+    \frac{1}{2} \sum^{p}_{j=1} (y_{\!j} - o_{\!j})^2
+    \label{eq:reg:neural:SSEderiv}
+\end{align}
+\end{frame}
+
+\begin{frame}{Backpropagation Phase}
+The basic idea behind backpropagation is to examine the extent to which
+an output neuron, say $o_{\!j}$, deviates from the corresponding 
+target response $y_{\!j}$, and to modify the
+weights $w_{ij}$ between each hidden neuron $z_i$ and $o_{\!j}$ as some
+function of the error -- large error should cause a correspondingly
+large change in the weight, and small error should result in smaller
+changes. 
+%Likewise, the weights between all input and hidden
+%neurons should also be updated as some function of the error at the
+%output, as well as changes already computed for the weights between the hidden
+%and output layers. That is, the error propagates backwards.
+%
+%\index{multilayer perceptron!weight update}
+%\index{multilayer perceptron!weight gradient}
+%\index{multilayer perceptron!gradient descent}
+%\index{neural networks!weight update}
+%\index{neural networks!weight gradient}
+%\index{neural networks!gradient descent}
+The weight update is done via a gradient descent approach to minimize
+the error. 
+Let $\grad_{w_{ij}}$ be the gradient of the error function with
+respect to $w_{ij}$, or simply the {\em weight gradient} at
+$w_{ij}$.
+Given the previous weight estimate $w_{ij}$, 
+a new weight is computed by taking a
+small step $\eta$ in a direction that is opposite to the weight gradient 
+at $w_{ij}$
+\begin{align}
+    w_{ij} = w_{ij} - \eta \cdot \grad_{w_{ij}}
+\end{align}
+In a similar manner, the bias term $b_{\!j}$ is also updated via gradient
+descent
+\begin{align}
+    b_{\!j} = b_{\!j} - \eta \cdot \grad_{b_{\!j}}
+\end{align}
+where 
+$\grad_{b_{\!j}}$ is the gradient of the error function with
+respect to $b_{\!j}$, which we call the {\em bias gradient} at
+$b_{\!j}$.
+\end{frame}
+%\index{multilayer perceptron!bias gradient}
+%\index{neural networks!bias gradient}
+%
+%
+%\subsubsection{Updating Parameters Between Hidden and Output Layer}
+\begin{frame}{Updating Parameters Between Hidden and Output Layer}
+%
+Consider the weight $w_{ij}$ between hidden neuron $z_i$ and
+output neuron $o_{\!j}$, and the bias term $b_{\!j}$
+between $z_0$ and $o_{\!j}$. 
+Using the chain rule of differentiation, we
+compute the weight gradient at $w_{ij}$ and bias gradient at
+$b_{\!j}$, as
+follows:
+\begin{align}
+    \label{eq:reg:neural:gradwij}
+    \begin{aligned}
+    \grad_{w_{ij}} & = 
+ \frac{\partial \cE_\bx}{\partial w_{ij}}
+     = \frac{\partial \cE_\bx}{\partial \net_{\!j}} \cdot 
+    \frac{\partial \net_{\!j}}{\partial w_{ij}}
+    = \delta_{\!j}  \cdot z_i\\
+    \grad_{b_{\!j}} & = 
+ \frac{\partial \cE_\bx}{\partial b_{\!j}}
+     = \frac{\partial \cE_\bx}{\partial \net_{\!j}} \cdot 
+    \frac{\partial \net_{\!j}}{\partial b_{\!j}}
+    = \delta_{\!j}
+\end{aligned}
+\end{align}
+where we use the symbol $\delta_{\!j}$ to denote the partial derivative of
+the error with respect to net signal at $o_{\!j}$, which we also call the
+{\em net gradient} at $o_{\!j}$
+%\index{multilayer perceptron!net gradient}
+%\index{neural networks!net gradient}
+%\begin{align}
+%    \delta_{\!j} = \frac{\partial \cE_\bx}{\partial \net_{\!j}}
+%\end{align}
+%Furthermore, the partial derivative of $\net_{\!j}$ with respect to
+%$w_{ij}$ and $b_{\!j}$ is given as
+%\begin{align*}
+%   \frac{\partial \net_{\!j}}{\partial w_{ij}} & = 
+%   \frac{\partial}{\partial w_{ij}} 
+%   \lB\{b_{\!j} + \sum_{k=1}^m w_{k\!j} \cdot z_{k} \rB\}
+%     = z_i &
+%   % = 
+%   % \frac{\partial}{\partial w_{ij}}
+%   %  \lB\{b_{\!j} + \sum_{k\ne i}^m w_{k\!j} \cdot z_{k} + 
+%   %  w_{i\!j} \cdot z_i \rB\}
+%   \frac{\partial \net_{\!j}}{\partial b_{\!j}} & = 
+%   \frac{\partial}{\partial b_{\!j}} 
+%   \lB\{b_{\!j} + \sum_{k=1}^m w_{k\!j} \cdot z_{k} \rB\}
+%     = 1
+%\end{align*}
+%where we used the fact that $b_{\!j}$ and 
+%all $w_{k\!j}$ for $k \ne i$
+%are constants with respect to $w_{ij}$.
+%
+Next, we need to compute $\delta_{\!j}$, the net gradient at
+$o_{\!j}$. This can also be computed via
+the chain rule
+\begin{align}
+    \delta_{\!j} = \frac{\partial \cE_\bx}{\partial \net_{\!j}} =
+   \frac{\partial \cE_\bx}{\partial f(\net_{\!j})} \cdot
+\frac{\partial f(\net_{\!j})}{\partial \net_{\!j}}
+\label{eq:reg:neural:deltaj_chain}
+\end{align}
+Note that $f(\net_{\!j}) = o_{\!j}$.
+\end{frame}
+
+\begin{frame}{Updating Parameters Between Hidden and Output Layer}
+%Thus, $\delta_{\!j}$ is composed of two terms, namely the partial derivative
+%of the error term with respect to the output or activation function
+%applied to the net signal, 
+%and the
+%derivative of the activation function with respect to its argument.
+Using the squared error function %and from
+%\cref{eq:reg:neural:deriv_SE_single}, 
+for the former, we have
+\begin{align*}
+   \frac{\partial \cE_\bx}{\partial f(\net_{\!j})}  =
+   \frac{\partial \cE_\bx}{\partial o_{\!j}}
+   = \frac{\partial}{\partial o_{\!j}} \lB\{\frac{1}{2} \sum^{p}_{k=1}
+   (y_{k} - o_{k})^2\rB\} \notag
+   = \lB( o_{\!j} - y_{\!j} \rB)
+\end{align*}
+where we used the observation that all $o_k$ for $k \ne j$ are constants
+with respect to $o_{\!j}$.
+Since we assume a sigmoid activation function, for the latter, we have
+%via \cref{eq:reg:neural:deriv_sigmoid}
+\begin{align*}
+   \frac{\partial f(\net_{\!j})}{\partial \net_{\!j}}  
+   = o_{\!j} \cdot \lB(1 - o_{\!j}\rB)
+\end{align*}
+Putting it all together, we get
+\begin{align*}
+    \delta_{\!j} & =\lB( o_{\!j} - y_{\!j} \rB) \cdot o_{\!j} \cdot \lB(1 -
+   o_{\!j}\rB)
+\end{align*}
+\end{frame}
+%
+%Let $\bdelta_o = (\delta_1, \delta_2, \ldots, \delta_p)^T$ denote the
+%vector of net gradients 
+%at each output neuron, which we call the {\em net gradient vector} for
+%the output layer. We can write $\bdelta_o$ as
+%\begin{empheq}[box=\tcbhighmath]{align}
+%    \bdelta_o = \bo \;\odot\; (\bone - \bo) \;\odot\; (\bo - \by)
+%\end{empheq}
+%where $\odot$ denotes the element-wise product (also called the {\em
+%Hadamard product}) between the vectors, and where
+%$\bo = (o_1,
+%o_2, \cdots, o_p)^T$ is the predicted output vector, $\by
+%= (y_1, y_2, \cdots, y_p)^T$ is the (true) response vector, and
+%$\bone = (1,\cdots,1)^T \in \setR^p$ is the $p$-dimensional 
+%vector of all ones. 
+%% Instead of computing the net gradient $\delta_{\!j}$ at each output
+%% neuron, we could have derived an expression for the net gradient vector
+%% $\bdelta_o$ via vector derivatives, as follows:
+%% \begin{align*}
+%%     \bdelta_o  = \frac{\partial \cE_\bx}{\partial \bnet_o} & = 
+%%     \frac{\partial \bo}{\partial \bnet_o} \odot \frac{\partial
+%%     \cE_\bx}{\partial \bo}\\
+%%     & = \bo (\bone - \bo) \odot (\bo - \by)
+%% \end{align*}
+%
+%Let $\bz = (z_1, z_2, \cdots, z_m)^T$ denote the vector comprising
+%the values of all hidden layer neurons (after applying the activation
+%function).
+%Based on \cref{eq:reg:neural:gradwij},
+%we can compute the gradients $\grad_{w_{ij}}$ for all
+%hidden to output neuron connections
+%via the outer product of $\bz$ and $\bdelta_o$:
+%\begin{align}
+%    \tcbhighmath{
+%    \bgrad_{\bW_{\!o}}  
+%    = \matr{
+%        \grad_{w_{11}} & \grad_{w_{12}} & \cdots &\grad_{w_{1p}}\\
+%        \grad_{w_{21}} & \grad_{w_{22}} & \cdots &\grad_{w_{2p}}\\
+%        \vdots & \vdots & \cdots & \vdots\\
+%        \grad_{w_{m1}} & \grad_{w_{m2}} & \cdots &\grad_{w_{mp}}\\
+%    }
+%= \bz \cdot \bdelta_o^T}
+%\end{align}
+%where $\bgrad_{\bW_{\!o}} \in \setR^{m \times p}$ is the 
+%matrix of weight gradients.
+%The vector of bias gradients is given as:
+%\begin{align}
+%    \tcbhighmath{
+%    \bgrad_{\!\bb_{o}} = 
+%    \lB(\grad_{b_1}, \grad_{b_2}, \cdots,
+%\grad_{b_p}\rB)^T = \bdelta_{\!o}}
+%\end{align}
+%where $\bgrad_{\!\bb_{o}} \in \setR^p$.
+%
+%Once the gradients have been computed, we can 
+%update all the weights and biases as follows
+%\begin{empheq}[box=\tcbhighmath]{align}
+%    \begin{aligned}
+%        \bW_{\!o} & = \bW_{\!o} - \eta \cdot \bgrad_{\bW_{\!o}}\\
+%        \bb_{o} & = \bb_{o} - \eta \cdot \bgrad_{\!\bb_{o}}
+%\end{aligned}
+%\end{empheq}
+%where $\eta$ is the step size (also called the {\em learning rate}) 
+%for gradient descent.
+%
+%
+%\subsubsection{Updating Parameters Between Input and Hidden Layer}
+\begin{frame}{Updating Parameters Between Input and Hidden Layer}
+Consider the weight $w_{ij}$ between input neuron $x_i$ and
+hidden neuron $z_{\!j}$, and the bias term between $x_0$ and
+$z_{\!j}$. 
+%The weight gradient at $w_{ij}$ and bias gradient at $b_{\!j}$ 
+%is computed similarly to
+%\cref{eq:reg:neural:gradwij}
+\begin{align}
+    \begin{aligned}
+    \grad_{w_{ij}} & = 
+ \frac{\partial \cE_\bx}{\partial w_{ij}}
+     = \frac{\partial \cE_\bx}{\partial \net_{\!j}} \cdot 
+    \frac{\partial \net_{\!j}}{\partial w_{ij}}
+    = \delta_{\!j}  \cdot x_i\\
+    \grad_{b_{\!j}} & = 
+ \frac{\partial \cE_\bx}{\partial b_{\!j}}
+     = \frac{\partial \cE_\bx}{\partial \net_{\!j}} \cdot 
+    \frac{\partial \net_{\!j}}{\partial b_{\!j}}
+    = \delta_{\!j}
+\end{aligned}
+\label{eq:reg:neural:gradwij_ih}
+\end{align}
+%which follows from
+%\begin{align*}
+%   \frac{\partial \net_{\!j}}{\partial w_{ij}} & = 
+%   \frac{\partial}{\partial w_{ij}} 
+%   \lB\{b_{\!j} + \sum_{k=1}^m w_{k\!j} \cdot x_{k} \rB\}
+%    = x_i &
+%  % = \frac{\partial}{\partial w_{ij}} 
+%  %   \lB\{b_{\!j} + \sum_{k\ne i}^m w_{k\!j} \cdot x_{k} +
+%  %   w_{i\!j} \cdot x_i \rB\}
+%   \frac{\partial \net_{\!j}}{\partial b_{\!j}} & = 
+%   \frac{\partial}{\partial b_{\!j}} 
+%   \lB\{b_{\!j} + \sum_{k=1}^m w_{k\!j} \cdot x_{k} \rB\}
+%    = 1
+%\end{align*}
+%
+%\enlargethispage{1\baselineskip}
+To compute the net gradient $\delta_{\!j}$ 
+at the hidden neuron $z_j$ we have to consider the error gradients that
+flow back from all the output neurons to $z_j$.
+Applying the chain rule, we get:
+\begin{align*}
+    \delta_{\!j} = \frac{\partial \cE_\bx}{\partial \net_{\!j}}
+    & =
+   \sum^{p}_{k=1} \frac{\partial \cE_\bx}{\partial \net_k} \cdot
+   \frac{\partial \net_{k}}{\partial z_{\!j}} \cdot
+\frac{\partial z_{\!j}}{\partial \net_{\!j}}
+    =
+\frac{\partial z_{\!j}}{\partial \net_{\!j}} \cdot
+   \sum^{p}_{k=1} \frac{\partial \cE_\bx}{\partial \net_k} \cdot
+   \frac{\partial \net_{k}}{\partial z_{\!j}} \\
+& = z_{\!j} \cdot (1-z_{\!j}) \cdot \sum^{p}_{k=1} \delta_k \cdot w_{\!jk}
+\end{align*}
+where $\tfrac{\partial z_{\!j}}{\partial \net_{\!j}} =
+z_{\!j}\cdot(1-z_{\!j})$, since we assume a sigmoid activation function
+for the hidden neurons.
+\end{frame}
+%The chain rule leads to a natural interpretation for backpropagation,
+%namely, to find the net gradient at $z_{\!j}$ we have to consider
+%the net gradients at each of the output neurons $\delta_k$ but weighted
+%by the strength of the connection $w_{\!jk}$ between $z_{\!j}$ and
+%$o_k$, as illustrated in \cref{fig:reg:neural:backpropOH}. 
+%That is, we compute the weighted sum of gradients 
+%$\sum_{k=1}^p \delta_k \cdot w_{\!jk}$, 
+%which is used to compute $\delta_{\!j}$, the net gradient at hidden
+%neuron $z_{\!j}$.
+%
+%\begin{figure}[!t]
+\begin{frame}{Backpropagation of gradients from output to hidden layer}
+\psset{tnpos=l,tnsep=2pt,colsep=2,rowsep=0.75,mcol=c,
+ArrowInside=->, arrowscale=1.5}
+\centerline{
+    \scalebox{0.9}{%
+\psmatrix
+[mnode=none]{Input} & [mnode=none]{Hidden} &
+[mnode=none]{Output}\\[-2.5em]
+[mnode=none]{Layer} & [mnode=none]{Layer} &
+[mnode=none]{Layer}\\[-2em]
+\Tcircle[name=x0,doubleline=true]{$x_0$}~[tnpos=l]{$1$}
+& & \Tcircle[name=y1]{$o_1$}~[tnpos=r]{$\delta_1$}\\[-1em]
+ &  & 
+[mnode=none]{$\vdots\quad$}\\[-1em]
+\Tcircle[name=xi]{$x_i$}&
+\Tcircle[name=zj]{$z_{\!j}$}~[tnpos=b]{{%
+        \footnotesize%
+    $\displaystyle\sum_{k=1}^p \delta_k \cdot w_{\!jk}$}} &
+\Tcircle[name=yk]{$o_{k}$}~[tnpos=r]{$\delta_k$} \\[-4em]
+& & [mnode=none]{$\vdots\quad$}\\[-1em]
+ &  & \Tcircle[name=yp]{$o_{\!p}$}~[tnpos=r]{$\delta_p$}
+%gradients into zj
+\psset{ArrowInsidePos=.9}
+\psset{linecolor=black,linewidth=1.5pt,labelsep=0pt}
+\ncline{zj}{x0}\ncput*[npos=0.5]{$b_{\!j}$}
+\ncline{zj}{xi}\ncput*[npos=0.5]{$w_{i\!j}$}
+\ncline{y1}{zj}\ncput*[npos=0.5]{$w_{\!j1}$}
+\ncline{yk}{zj}\ncput*[npos=0.5]{$w_{\!jk}$}
+\ncline{yp}{zj}\ncput*[npos=0.5]{$w_{\!jp}$}
+\endpsmatrix
+}}
+\end{frame}
+%\vspace{0.2in}
+%\caption{Backpropagation of gradients from output to hidden layer.}
+%\label{fig:reg:neural:backpropOH}
+%\vspace{-0.2in}
+%\end{figure}
+%
+%
+%
+%Let $\bdelta_o = (\delta_1, \delta_2, \ldots, \delta_p)^T$ denote the
+%vector of net gradients at
+%the output neurons, and
+%$\bdelta_h = (\delta_1, \delta_2, \ldots, \delta_m)^T$ the
+%net
+%gradients at the hidden layer neurons.
+%We can write $\bdelta_h$ compactly as
+%\begin{empheq}[box=\tcbhighmath]{align}
+%    \bdelta_h = \bz \;\odot\; (\bone - \bz) \;\odot\; (\bW_{\!o} \cdot \bdelta_o)
+%\end{empheq}
+%where $\odot$ is the element-wise product, 
+%$\bone = (1,1,\cdots,1) \in \setR^{m}$ is the vector
+%of all ones and
+%$\bz = (z_1, z_2, \cdots, z_m)^T$ is the vector of
+%hidden layer outputs. Furthermore, 
+%$\bW_{\!o} \cdot \bdelta_o \in \setR^m$ is the vector of
+%weighted gradients at each hidden neuron, since
+%\begin{align*}
+%   \bW_{\!o} \cdot \bdelta_o = 
+%   \matr{ 
+%    \displaystyle
+%    \sum_{k=1}^p \delta_k \cdot w_{1k}, & 
+%    \displaystyle
+%    \sum_{k=1}^p \delta_k \cdot w_{2k}, & 
+%    \cdots, & 
+%    \displaystyle
+%       \sum_{k=1}^p \delta_k \cdot w_{mk}
+%       }^T
+%\end{align*}
+%
+%% We could have directly computed the net gradient vector at the hidden
+%% layer via vector derivatives, as follows
+%% \begin{align*}
+%%     \bdelta_h  = \frac{\partial \cE_\bx}{\partial \bnet_h} & = 
+%%     \frac{\partial \bz}{\partial \bnet_h} \odot 
+%%     \lB(\frac{\partial \bnet_o}{\partial \bz} \cdot
+%%         \frac{\partial \cE_\bx}{\partial \bnet_o}\rB)\\
+%%         & = \bz (\bone - \bz) \odot \lB( \bW_o \cdot \bdelta_o\rB)
+%% \end{align*}
+%
+%
+%
+%
+%Let $\bx = (x_1, x_2, \cdots, x_d)^T$ denote the
+%input vector, then based on \cref{eq:reg:neural:gradwij_ih} we can compute the gradients
+%$\grad_{w_{ij}}$ for all input to hidden layer connections via the outer
+%product:
+%\begin{align}
+%    \tcbhighmath{
+%    \bgrad_{\bW_{\!h}} 
+%    = \matr{
+%         \grad_{w_{11}} & \cdots &\grad_{w_{1m}}\\
+%         \grad_{w_{21}} & \cdots &\grad_{w_{2m}}\\
+%         \vdots & \cdots & \vdots\\
+%         \grad_{w_{d1}} & \cdots &\grad_{w_{dm}}\\
+%    }
+%= \bx \cdot \bdelta_h^T}
+%\end{align}
+%where $\bgrad_{\bW_{\!h}} \in \setR^{d \times m}$ is the 
+%matrix of weight gradients. 
+%\enlargethispage{1\baselineskip}
+%The vector of bias gradients is given as:
+%\begin{align}
+%    \tcbhighmath{
+%    \bgrad_{\!\bb_{h}} = 
+%    \lB(\grad_{b_1}, \grad_{b_2}, \cdots,
+%\grad_{b_m}\rB)^T = \bdelta_h}
+%\end{align}
+%where $\bgrad_{\!\bb_{h}} \in \setR^m$.
+%
+%
+%Once the gradients have been computed, we can 
+%update all the weights and biases as follows
+%\begin{empheq}[box=\tcbhighmath]{align}
+%    \begin{aligned}
+%        \bW_{\!h} & = \bW_{\!h} - \eta \cdot \bgrad_{\bW_{\!h}}\\
+%        \bb_{h} & = \bb_{h} - \eta \cdot \bgrad_{\!\bb_{h}}
+%\end{aligned}
+%\end{empheq}
+%where $\eta$ is the step size (or learning rate).
+%
+%
+
+\begin{frame}{MLP Training: Stochastic Gradient Descent}
+\SetKwFunction{RandomMatrix}{RandomMatrix}
+\begin{tightalgo}[H]{\textwidth-18pt}
+    \SetKwInput{AlgorithmRM}{\textsc{RandomMatrix} ($r,
+    c$)}
+    \SetKwInOut{Algorithm}{\textsc{MLP-Training} ($\bD, m, \eta,
+    \texttt{maxiter}$)}
+\Algorithm{}
+\tcp{Initialize bias vectors}
+$\bb_{h} \assign$ random $m$-dimensional vector with small
+values\; 
+$\bb_{o} \assign$ random $p$-dimensional vector with small
+values\;
+\tcp{Initialize weight matrices}
+$\bW_{\!h} \assign \text{ random } d \times m \text{ matrix with small
+values}$\;
+$\bW_{\!o} \assign  \text{ random } m \times p \text{ matrix with small
+values}$\;
+$t \assign 0$ \tcp*[h]{iteration counter}\;
+\end{tightalgo}
+\end{frame}
+
+\begin{frame}{MLP Training: Stochastic Gradient Descent}
+\SetKwFunction{RandomMatrix}{RandomMatrix}
+\begin{tightalgo}[H]{\textwidth-18pt}
+\setcounter{AlgoLine}{5}
+\Repeat{$t \ge \text{\tt maxiter}$}
+{%
+    \ForEach{$(\bx_i,\by_i) \in \bD$ in random order}{%
+        \tcp{Feed-forward phase}
+        $\bz_i \assign f\lB(\bb_h + \bW_{\!h}^T \bx_i \rB)$\;
+        $\bo_i \assign f\Bigl(\bb_o + \bW_{\!o}^T\bz_i \Bigr)$\;
+        \tcp{Backpropagation phase: net gradients}
+        $\bdelta_o \assign \bo_i \;\odot\; (\bone - \bo_i) \;\odot\;
+        (\bo_i-\by_i)$ \;
+        $\bdelta_h \assign \bz_i \;\odot\; (\bone - \bz_i) \;\odot\; (\bW_{\!o}
+        \cdot \bdelta_o)$ \;
+        \tcp{Gradient descent for bias vectors}
+        $\bgrad_{\!\bb_{o}} \assign \bdelta_o; \quad
+        \bb_{o} \assign \bb_{o} - 
+                \eta \cdot \bgrad_{\bb_{o}}$\;   
+        $\bgrad_{\!\bb_{h}} \assign \bdelta_h; \quad
+        \bb_{h} \assign \bb_{h} - 
+                \eta \cdot \bgrad_{\bb_{h}}$\; 
+        \tcp{Gradient descent for weight matrices}
+        $\bgrad_{\bW_{\!o}} \assign \bz_i \cdot \bdelta_o^T; \quad  
+        \bW_{\!o} \assign \bW_{\!o} - \eta \cdot \bgrad_{\bW_{\!o}}$ \;
+        $\bgrad_{\bW_{\!h}} \assign \bx_i \cdot \bdelta_h^T; \quad
+        \bW_{\!h} \assign \bW_{\!h} - \eta \cdot \bgrad_{\bW_{\!h}}$ \;
+    }
+    $t \assign t+1$\;
+}%
+%\caption{MLP Training: Stochastic Gradient Descent}
+%\label{alg:reg:neural:mlp}
+\end{tightalgo}
+\end{frame}
+%
+%% \vspace*{-0.2in}
+%\subsection{MLP Training}
+%\index{multilayer perceptron!training}
+%\index{neural networks!training}
+%\index{multilayer perceptron!stochastic gradient descent}
+%\index{stochastic gradient descent}
+%\index{neural networks!stochastic gradient descent}
+%%So far we have discussed how the feed-forward and backpropagation steps
+%%handle a single input vector. 
+%\cref{alg:reg:neural:mlp} shows the
+%pseudo-code for 
+%learning the weights considering all of the input points
+%in $\bD$ via {\em stochastic gradient descent}. 
+%The code is shown for an MLP with a single hidden layer, using
+%a squared error function, and sigmoid activations for all hidden and
+%output neurons. The approach is called stochastic gradient descent since
+%we compute the weight and bias gradients after observing each training
+%point (in random order).
+%
+%The MLP algorithm takes as input the dataset $\bD$ (with points $\bx_i$
+%and desired responses $\by_i$ for $i=1,2,\cdots,n$), 
+%%= \lB\{\bx_i^T, \by_i\rB\}_{i=1,\cdots,n}$, 
+%the number of hidden layer neurons $m$, the
+%learning rate $\eta$, and an
+%integer threshold {\tt maxiter} that specifies the maximum number of
+%iterations. The size of the input ($d$) and output ($p$) layers is
+%determined automatically from $\bD$. The MLP first initializes the $d
+%\times m$ input to hidden layer weight matrix $\bW_{\!h}$, and the $m
+%\times p$ hidden to output layer matrix $\bW_{\!o}$ to small values, for
+%example, uniformly random in the range $[-0.01,0.01]$. It is important to note that
+%weights should not be set to $0$, otherwise, all hidden neurons will be
+%identical in their values, and so will be the output neurons.
+%
+%The MLP training takes multiple iterations over the input points. For
+%each input $\bx_i$, the MLP computes the output vector $\bo_i$ via the
+%feed-forward step. In the backpropagation phase, we compute the error
+%gradient vector $\bdelta_o$ with respect to the net at output neurons,
+%followed by $\bdelta_h$ for hidden neurons. In the stochastic gradient descent
+%step, we compute the error gradients with respect to the weights and
+%biases, which are used to update the weight matrices and bias vectors.
+%Thus, for every input vector $\bx_i$, all the weights and biases are
+%updated based on the error incurred between the predicted output $\bo_i$
+%and the true response $\by_i$. After each input has been processed, that
+%completes one iteration of training, called an {\em epoch}. 
+%Training stops when the maximum
+%number of iterations, {\tt maxiter}, has been reached.
+%On the other hand, during testing, for any input $\bx$, we apply the
+%feed-forward steps and print the predicted output $\bo$.
+%\index{multilayer perceptron!epoch}
+%\index{neural networks!epoch}
+%
+%In terms of computational complexity, each iteration of the MLP training
+%algorithm takes $O(dm+mp)$ time
+%for the feed-forward phase, 
+%$p + mp + m = O(mp)$ time for the backpropagation of error gradients, and
+%$O(dm + mp)$ time for updating the weight matrices and bias vectors.
+%Thus, the total training time per iteration is
+%$O(dm+mp)$.
+\begin{frame}{MLP with one hidden layer}
+\framesubtitle{Example}
+    %In the examples above we used neural networks for linear and 
+    %logistic regression, which did not require the use of the hidden
+    %layer. 
+    We now illustrate an MLP with a hidden layer using a
+    non-linear activation function to learn the sine curve.
+    %\cref{fig:reg:neural:sine1} 
+Figure shows the training data (the gray points
+    on the curve), which comprises $n=25$ points $x_i$ sampled randomly
+    in the range $[-10,10]$, with $y_i = \sin(x_i)$. 
+    The testing data comprises 1000 points sampled uniformly from 
+    the same range.
+    The figure also shows the desired output curve (thin line).
+ 
+
+\medskip 
+   We used an MLP with
+    one input neuron ($d=1$),
+    ten hidden neurons ($m=10$) and one output neuron ($p=1$). The hidden
+    neurons use tanh activations, whereas the output unit
+    uses an identity activation. The step size is $\eta=0.005$. 
+
+
+\medskip 
+
+    The input to hidden weight matrix $\bW_{\!h} \in \setR^{1\times 10}$ and the
+    corresponding bias vector $\bb_{h} \in \setR^{10 \times 1}$ 
+    are given as:
+    \begin{align*}        
+        \bW_{\!h} & = (-0.68,  0.77, -0.42, -0.72, -0.93, -0.42,
+        -0.66, -0.70, -0.62, -0.50)\\
+        \bb_{h} & = (-4.36,  2.43, -0.52,  2.35  -1.64,  3.98,
+        0.31,  4.45,  1.03, -4.77)^T
+    \end{align*}
+\end{frame}
+
+\begin{frame}{MLP with one hidden layer}
+\framesubtitle{Example}
+    The hidden to output weight matrix $\bW_{\!o} \in \setR^{10 \times 1}$ and the bias term
+    $\bb_{o} \in \setR$ are given as:
+    \begin{align*}
+        \bW_{\!o} & = (-1.82,
+       -1.69,
+       -0.82,
+       1.37,
+       0.14,
+       2.37,
+       -1.64,
+       -1.92,
+       0.78,
+       2.17)^T\\
+       \bb_{o} & = -0.16
+    \end{align*}
+
+
+    Figures 
+%    \cref{fig:reg:neural:sine1} 
+show the output of the MLP on the test for various numbers of iterations.
+%    set, after the 
+%    first iteration of training ($t=1$). We can see that initially the
+%    predicted response deviates significantly from the true sine
+%    response. 
+%\cref{fig:reg:neural:sine}\protect\subref{fig:reg:neural:sine1}--\protect\subref{fig:reg:neural:sine30k} show the output from the MLP
+%    after different number of training iterations. By $t=15000$
+%    iterations the output on the test set 
+%    comes close to the sine curve, but it takes
+%    another $15000$ iterations to get a closer fit. 
+The final SSE is $1.45$ over the 1000 test points.
+
+
+\medskip 
+    
+    We
+    can observe that, even with a very small training data of 25 points
+    sampled randomly from the sine curve, the MLP is able to learn the
+    desired function. 
+
+\medskip
+
+However, it is also important to recognize that
+    the MLP model has not really learned the sine function; rather, it
+    has learned to approximate it only in the specified
+    range $[-10,10]$. We can also see %in \cref{fig:reg:neural:sine20test}
+    that when we try to predict values outside this range, the MLP does
+    not yield a good fit.
+    \label{ex:reg:neural:mlp_sine}
+\end{frame}
+%\end{example}
+%
+%
+\readdata{\dataS}{REG/neural/figs/sine-train_n25.txt}
+\readdata{\dataPzero}{REG/neural/figs/n25_h10_100k/foo_e0.txt}
+\readdata{\dataPoneK}{REG/neural/figs/n25_h10_100k/foo_e1000.txt}
+\readdata{\dataPfiveK}{REG/neural/figs/n25_h10_100k/foo_e5000.txt}
+\readdata{\dataPtenK}{REG/neural/figs/n25_h10_100k/foo_e10000.txt}
+\readdata{\dataPfifteenK}{REG/neural/figs/n25_h10_100k/foo_e15000.txt}
+\readdata{\dataPthirtyK}{REG/neural/figs/n25_h10_100k/foo_e30000.txt}
+\readdata{\dataPsinM}{REG/neural/figs/n25_h10_100k/sine_n25_h10_test20_predict.txt}
+%\begin{figure}[htbp!]
+%    \captionsetup[subfloat]{captionskip=20pt}
+%    \centering
+    \def\pshlabel#1{\scriptsize {$#1$}}
+    \def\psvlabel#1{\scriptsize {$#1$}}
+    \psset{arrowscale=2}
+    \psset{xAxisLabel=$X$,yAxisLabel= $Y$,
+        xAxisLabelPos={0in,-0.35in},yAxisLabelPos={-0.35in,0in}}
+        %xAxisLabelPos={c,-0.35in},yAxisLabelPos={-0.35in,c}}
+\begin{frame}{MLP for sine curve}
+\framesubtitle{$t=1$}
+    \centerline{%
+%    \subfloat[$t=1$]{%
+%        \label{fig:reg:neural:sine1}
+    \scalebox{1.0}{%
+%    % \psset{yAxisLabelPos={-0.35in,0in}}
+        \psgraph[tickstyle=bottom,Dx=2,Dy=0.5,Ox=-12,Oy=-2.5]{->}(-12.0,-2.5)(12.5,1.25){4in}{2.25in}%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+    \listplot[plotstyle=dots,showpoints=true,plotNoMax=3,plotNo=3]{\dataPzero}
+    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+    \psline[linewidth=0.5pt,linestyle=dashed](-12,0)(12.5,0)
+    \endpsgraph
+    }}
+\end{frame}
+%    % \psset{yAxisLabelPos={-0.35in,c}}
+%    \hspace{0.5in}
+%    \subfloat[$t=1000$]{%
+%        \label{fig:reg:neural:sine1k}
+\begin{frame}{MLP for sine curve}
+\framesubtitle{$t=1000$}
+\hspace*{1cm}
+        \scalebox{1.00}{%
+    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+    \listplot[plotstyle=dots,showpoints=true,plotNoMax=3,plotNo=3]{\dataPoneK}
+    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+    \psline[linewidth=0.5pt,linestyle=dashed](-12,0)(12.5,0)
+    \endpsgraph
+%    }}
+    }
+\end{frame}
+%    \vspace{-0.1in}
+%    \centerline{%
+%    \subfloat[$t=5000$]{%
+%        \label{fig:reg:neural:sine5k}
+\begin{frame}{MLP for sine curve}
+\framesubtitle{$t=5000$}
+\hspace*{1cm}
+    \scalebox{1.00}{%
+    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+    \listplot[plotstyle=dots,showpoints=true,plotNoMax=3,plotNo=3]{\dataPfiveK}
+    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+    \psline[linewidth=0.5pt,linestyle=dashed](-12,0)(12.5,0)
+    \endpsgraph
+    }%}
+\end{frame}
+%    \hspace{0.5in}
+%    \subfloat[$t=10000$]{%
+%        \label{fig:reg:neural:sine10k}
+\begin{frame}{MLP for sine curve}
+\framesubtitle{$t=10000$}
+\hspace*{1cm}
+        \scalebox{1.00}{%
+    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]%
+                {->}(-12.0,-1.25)(12.5,1.5){4in}{2.5in}%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+    \listplot[plotstyle=dots,showpoints=true,plotNoMax=3,plotNo=3]{\dataPtenK}
+    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+    \psline[linewidth=0.5pt,linestyle=dashed](-12,0)(12.5,0)
+    \endpsgraph
+%    }}
+    }
+\end{frame}
+%    \vspace{-0.1in}
+%    \centerline{%
+%    \subfloat[$t=15000$]{%
+%        \label{fig:reg:neural:sine15k}
+\begin{frame}{MLP for sine curve}
+\framesubtitle{$t=15000$}
+\hspace*{1cm}
+    \scalebox{1.00}{%
+    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+    \listplot[plotstyle=dots,showpoints=true,plotNoMax=3,plotNo=3]{\dataPfifteenK}
+    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+    \psline[linewidth=0.5pt,linestyle=dashed](-12,0)(12.5,0)
+    \endpsgraph
+    }%}
+\end{frame}
+%    \hspace{0.5in}
+%    \subfloat[$t=30000$]{%
+%        \label{fig:reg:neural:sine30k}
+\begin{frame}{MLP for sine curve}
+\framesubtitle{$t=30000$}
+\hspace*{1cm}
+        \scalebox{1.00}{%
+    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+    \listplot[plotstyle=dots,showpoints=true,plotNoMax=3,plotNo=3]{\dataPthirtyK}
+    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+    \psline[linewidth=0.5pt,linestyle=dashed](-12,0)(12.5,0)
+    \endpsgraph
+%    }}
+    }
+\end{frame}
+%    \vspace{-0.1in}
+%    \centerline{%
+%    \subfloat[Test range ${[-20,20]}$]{%
+%    \label{fig:reg:neural:sine20test}
+\begin{frame}{MLP for sine curve}
+\framesubtitle{Test range ${[-20,20]}$}
+\hspace*{1cm}
+    \scalebox{1.0}{%
+        \psgraph[tickstyle=bottom,Dx=5,Dy=0.5,Ox=-20,Oy=-2.5]{->}(-20.0,-2.5)(24,2.5){4in}{2.25in}%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPsinM}
+    \psplot[linewidth=0.5pt,plotpoints=250]{-20}{20}{x RadtoDeg sin} 
+    \psline[linewidth=0.5pt,linestyle=dashed](-20,0)(20.5,0)
+    %\psline[linewidth=0.5pt](-10.1,-1.1)(10.1,-1.1)
+    %\psline[linewidth=0.5pt](10.1,-1.1)(10.1,1.1)
+    %\psline[linewidth=0.5pt](10.1,1.1)(-10.1,1.1)
+    %\psline[linewidth=0.5pt](-10.1,1.1)(-10.1,-1.1)
+    \psframe[linewidth=0.5pt](-10.1,-1.1)(10.1,1.1)
+    \endpsgraph
+%    }}
+    }
+\end{frame}
+%\vspace{0.2in}
+%\caption{MLP for sine curve: 10 hidden neurons with hyperbolic tangent
+%activation functions. The gray dots represent the training data. The
+%bold line is the predicted response, whereas the thin line is the true
+%response. \protect\subref{fig:reg:neural:sine1}--\protect\subref{fig:reg:neural:sine30k}:
+%Predictions after different number of iterations.
+%\protect\subref{fig:reg:neural:sine20test}: 
+%Testing outside the training range. Good fit within the training
+%    range $[-10,10]$ shown in the box.}
+%\label{fig:reg:neural:sine}
+%\end{figure}
+%
+%
+%%\readdata{\dataPsinM}{REG/neural/figs/sin20.txt}
+%%\begin{figure}[t!]
+%%    %\captionsetup[subfloat]{captionskip=20pt}
+%%    \centering
+%%    \def\pshlabel#1{\scriptsize {$#1$}}
+%%    \def\psvlabel#1{\scriptsize {$#1$}}
+%%    \psset{arrowscale=2}
+%%    \psset{xAxisLabel=$X$,yAxisLabel= $Y$,
+%%        xAxisLabelPos={c,-0.35in},yAxisLabelPos={-0.35in,c}}
+%%    \centerline{%
+%%    \scalebox{0.8}{%
+%%        \psgraph[tickstyle=bottom,Dx=5,Dy=0.5,Ox=-20,Oy=-2.5]{->}(-20.0,-2.5)(24,2.5){4in}{2.5in}%
+%%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPsinM}
+%%    \psplot[linewidth=0.5pt,plotpoints=250]{-20}{20}{x RadtoDeg sin} 
+%%    \psline[linewidth=0.5pt](-20,0)(20.5,0)
+%%    %\psline[linewidth=0.5pt](-10.1,-1.1)(10.1,-1.1)
+%%    %\psline[linewidth=0.5pt](10.1,-1.1)(10.1,1.1)
+%%    %\psline[linewidth=0.5pt](10.1,1.1)(-10.1,1.1)
+%%    %\psline[linewidth=0.5pt](-10.1,1.1)(-10.1,-1.1)
+%%    \psframe[linewidth=0.5pt](-10.1,-1.1)(10.1,1.1)
+%%    \endpsgraph
+%%    }
+%%    }
+%%    \vspace{0.2in}
+%%    \caption{MLP: Testing outside range. Good fit within the training
+%%    range $[-10,10]$ shown in the box.}
+%%    \label{fig:reg:neural:sine20test}
+%%\end{figure}
+%
+%
+%
+%% $ python3 ./neuralnet.py ./sine-train_n25.txt ./sine-test.txt 10 -of identity -hf tanh -ef SSE -d " " -eta 0.005 -eps 0.0001 -predfile foo -ws 1 -t 100000
+%% Using TensorFlow backend.
+%% args Namespace(Nh=10, No=1, alpha=0.0, classification=False, delim=' ', emulate_logistic=False, eps=0.0001, error_func='SSE', eta=0.005, fname_test='./sine-test.txt', fname_train='./sine-train_n25.txt', h_fact='tanh', max_epochs=100000, o_fact='identity', predfile=<_io.TextIOWrapper name='foo' mode='w' encoding='cp1252'>, print_weights=True, scikit=False, weight_scale=1.0)
+%% run:  ./sine-train_n25.txt 10 0.005 100000 0.0 tanh identity SSE
+%% 25 2
+%% 1 10 1
+%% YMAP {}
+%% test epoch 0 1747.08467762 1.74708467762 0.0
+%% epoch 0 49.5311909913 1.98124763965 0.0 0.630710930991
+%% test epoch 1000 268.742876194 0.268742876194 0.0
+%% epoch 29000 0.0146660761746 0.000586643046984 0.0 0.0061037355853
+%% test epoch 30000 1.45026161969 0.00145026161969 0.0
+%% epoch 30000 0.00516831481532 0.000206732592613 0.0 0.00569482033655
+%% test epoch 31000 1.64468151983 0.00164468151983 0.0
+%% epoch 31000 0.00517583092402 0.000207033236961 0.0 0.00765361623064
+%% test epoch 32000 1.3008066804 0.0013008066804 0.0
+%% test epoch 99000 0.808919201104 0.000808919201104 0.0
+%% epoch 99000 0.00131739910771 5.26959643083e-05 0.0 0.00112253767874
+%% test epoch 100000 1.27890965513 0.00127890965513 0.0
+%% epoch 100000 0.00664113782447 0.000265645512979 0.0 0.00369288465959
+%
+%% Weights: Input to Hidden
+%% [[-0.67602583  0.77173744 -0.41654405 -0.72181249 -0.93181399 -0.41730082
+%%   -0.65974388 -0.69908068 -0.62293081 -0.50419322  0.        ]
+%%  [-4.36082592  2.42651427 -0.51500966  2.3490174  -1.63554714  3.98393186
+%%    0.30621808  4.45275316  1.02691938 -4.76767523  0.        ]]
+%
+%% Weights: Hidden to Output
+%% [[-1.81652886]
+%%  [-1.68606964]
+%%  [-0.81960689]
+%%  [ 1.36510596]
+%%  [ 0.13842468]
+%%  [ 2.37200062]
+%%  [-1.64174947]
+%%  [-1.92307993]
+%%  [ 0.78482387]
+%%  [ 2.16741996]
+%%  [-0.15689627]]
+%
+%% accuracy 1.27890965513 0.00127890965513 0.0
+%
+%%% see trained_nn_example.R
+%% Wi = c(-0.67602583,  0.77173744, -0.41654405, -0.72181249, -0.93181399, -0.41730082,
+%%        -0.65974388, -0.69908068, -0.62293081, -0.50419322)
+%% Ti = c(-4.36082592,  2.42651427, -0.51500966,  2.3490174,  -1.63554714,  3.98393186,
+%%        0.30621808,  4.45275316,  1.02691938, -4.76767523)
+%% Wo = c(-1.81652886,
+%%        -1.68606964,
+%%        -0.81960689,
+%%        1.36510596,
+%%        0.13842468,
+%%        2.37200062,
+%%        -1.64174947,
+%%        -1.92307993,
+%%        0.78482387,
+%%        2.16741996
+%% )
+%% To = -0.15689627
+%
+%
+%
+%\begin{example}[MLP with one hidden layer]
+% WMJ Moved above prior to figures
+%
+%
+%
+%% \begin{figure}[!h]
+%%     \centerline{
+%%     \subfloat[$0$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M0_3.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$1$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M1_2.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$2$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M2_1.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$3$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             % view={0}{90},   % not needed for `matrix plot*' variant
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M3_18.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$4$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             % view={0}{90},   % not needed for `matrix plot*' variant
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M4_4.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     }
+%%     \centerline{%
+%%     \subfloat[$5$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             % view={0}{90},   % not needed for `matrix plot*' variant
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M5_8.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$6$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             % view={0}{90},   % not needed for `matrix plot*' variant
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M6_11.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$7$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             % view={0}{90},   % not needed for `matrix plot*' variant
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M7_0.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$8$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             % view={0}{90},   % not needed for `matrix plot*' variant
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M8_61.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     \subfloat[$9$]{%
+%%     \scalebox{0.25}{%
+%%     \begin{tikzpicture}
+%%         \begin{axis}[
+%%             % view={0}{90},   % not needed for `matrix plot*' variant
+%%             colormap/blackwhite,
+%%             enlargelimits=false,
+%%             axis on top,
+%%             point meta min=0,
+%%             point meta max=255,
+%%         ]
+%%        \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+%%             {REG/neural/figs/mnist_digits/digit_M9_7.txt};
+%%         \end{axis}
+%%     \end{tikzpicture}}}
+%%     }
+%%     \caption{MNIST Digits}
+%%     \end{figure}
+%
+%
+%%see mlp_mnist_output.txt for results
+%\begin{example}[MLP for handwritten digit classification]
+\begin{frame}{MLP for handwritten digit classification}
+\framesubtitle{Example}
+\small
+    % We now illustrate the use of a hidden layer with a
+    % non-linear activation function.
+    In this example, we apply an MLP with one hidden layer for the 
+    task of predicting the correct label for a hand-written digit
+    from the MNIST database, which contains 60,000 training images that
+    span the 10 digit labels, from $0$ to $9$. 
+    Each (grayscale)
+    image is a $28\times28$
+    matrix of pixels, with values between 0 and 255. Each pixel is
+    converted to a value in the interval $[0,1]$ by dividing by 255.
+    %\cref{fig:reg:neural:mnist_ex} 
+Figure shows an example of each digit from
+    the MNIST dataset.
+
+\medskip
+
+    
+    Since images are 2-dimensional matrices, we first {\em
+    flatten} them into a vector $\bx \in \setR^{784}$ with
+    dimensionality $d= 28\times 28=784 $. This is done by simply
+    concatenating all of the rows of the images to obtain one long
+    vector. 
+
+\medskip
+
+Next, since the output labels are categorical values that
+    denote the digits from $0$ to $9$, we need to convert them into
+    binary (numerical) vectors, using {\em one-hot} encoding. Thus, the
+    label $0$ is encoded as $\be_1 = (1,0,0,0,0,0,0,0,0,0)^T \in
+    \setR^{10}$, the label $1$ as $\be_2 =(0,1,0,0,0,0,0,0,0,0)^T \in
+    \setR^{10}$, and so on, and finally the label $9$ is encoded as 
+    $\be_{10} = (0,0,0,0,0,0,0,0,0,1)^T \in
+    \setR^{10}$. That is, each input image vector $\bx$ has a
+    corresponding target response vector $\by \in \{\be_1, \be_2,
+    \cdots, \be_{10}\}$. 
+
+\medskip
+
+Thus, the input layer for the MLP has $d=784$
+    neurons, and the output layer has $p=10$ neurons.
+\end{frame}
+
+\begin{frame}{MLP for handwritten digit classification}
+\framesubtitle{Example}
+    For the hidden layer, we consider several MLP models, each
+    with a different number of hidden neurons $m$. We try 
+    $m=0, 7, 49, 98, 196, 392$, to study the effect of increasing the
+    number of hidden neurons, from small to large. For the hidden layer,
+    we use ReLU activation function, and for the output layer, we use
+    softmax activation, since the target response vector 
+    has only one neuron with value $1$, with the rest being $0$.
+
+\medskip
+
+    Note that $m=0$ means that there is no hidden layer -- the input
+    layer is directly connected to the output layer, which is equivalent
+    to a multiclass logistic regression model.
+    We train each MLP for $t=15$ epochs, using step size $\eta=0.25$.
+
+\medskip
+
+    During training, we plot the number of misclassified images after
+    each epoch, on the 
+    separate MNIST test set comprising 10,000 images. 
+    %\cref{fig:reg:neural:mnist_errors_mlp} 
+
+\medskip
+
+Figure shows the number of errors
+    from each of the models (with a different number of hidden neurons
+    $m$), after each epoch. 
+
+\end{frame}
+
+\begin{frame}{MLP for handwritten digit classification}
+\framesubtitle{Example}
+
+The final test error at the end of training
+    is given as
+    \begin{center}
+        \begin{tabular}{|c||c|c|c|c|c|c|c|}
+            \hline
+            $m$ & $0$ & $7$ & $10$ & $49$ & $98$ & $196$ &
+            $392$\\
+            \hline
+            errors & 1677 & 901 & 792 & 546 & 495 & 470 & 454\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+\medskip
+
+    We can observe that adding a hidden layer significantly improves the
+    prediction accuracy. Using even a small number of hidden neurons helps,
+    compared to the logistic regression model ($m=0$).
+    For example, using $m=7$ results in 901 errors (or error rate 9.01\%)
+    compared to using $m=0$, which results in $1677$ errors (or error rate
+    16.77\%).
+
+\medskip
+
+    On the other hand, as we increase the number of hidden neurons, the
+    error rate decreases, though with diminishing returns. Using $m=196$,
+    the error rate is $4.70\%$, but even after doubling the number of
+    hidden neurons ($m=392$), the error rate goes down to only 4.54\%. 
+    Further increasing $m$ does not reduce the error rate.
+\end{frame}
+%    \label{ex:reg:neural:mlp_mnist}
+%\end{example}
+%
+%
+%
+\begin{frame}{MNIST dataset: sample handwritten digits}
+%\begin{figure}[!t]
+%    \centerline{
+%    \subfloat[label $0$]{%
+%    %\scalebox{0.25}{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_0}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M0_10.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $1$]{%
+%    % \scalebox{0.25}{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_1}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M1_5.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $2$]{%
+%    % \scalebox{0.25}{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_2}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M2_35.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $3$]{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \scalebox{0.25}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_3}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M3_30.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $4$]{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \scalebox{0.25}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_4}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M4_6.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    }
+
+%    \centerline{%
+%    \subfloat[label $5$]{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \scalebox{0.25}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_5}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M5_15.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $6$]{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \scalebox{0.25}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_6}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M6_21.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $7$]{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \scalebox{0.25}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_7}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M7_17.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $8$]{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \scalebox{0.25}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_8}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M8_84.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    \subfloat[label $9$]{%
+    \resizebox{0.75in}{0.75in}{%
+%    % \scalebox{0.25}{%
+%    % \tikzsetnextfilename{reg_neural_mnist_ex_9}
+    \begin{tikzpicture}
+        \begin{axis}[
+            % view={0}{90},   % not needed for `matrix plot*' variant
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {REG/neural/figs/mnist_digits/digit_M9_9.txt};
+        \end{axis}
+    \end{tikzpicture}}%}
+%    }
+%    \vspace{0.2in}
+%    \caption{MNIST dataset: Sample handwritten digits.}
+%    \label{fig:reg:neural:mnist_ex}
+%\end{figure}
+\end{frame}
+%\begin{figure}[!t]
+%    \centering
+\pgfplotscreateplotcyclelist{my black white}{%
+solid, every mark/.append style={solid, fill=black}, mark=*\\%
+solid, every mark/.append style={solid, fill=black}, mark=square*\\%
+solid, every mark/.append style={solid, fill=gray}, mark=otimes*\\%
+densely dashed, every mark/.append style={solid, fill=gray},mark=square*\\%
+solid, every mark/.append style={solid, fill=gray}, mark=*\\%
+solid, every mark/.append style={solid, fill=gray},mark=diamond*\\%
+solid, every mark/.append style={solid,
+fill=gray},mark=triangle*\\%
+}
+% \tikzsetnextfilename{reg_neural_mnist_errors_mlp}
+\begin{frame}{MNIST: Prediction error as a function of epochs}
+\begin{tikzpicture}
+    \begin{axis}[
+            width=3.25in,
+            height=2in,
+            scale only axis,
+            xmin=1, xmax=15,
+            ymin=100, ymax=3000,
+            label style={font=\small},
+            tick label style={font=\tiny},
+            xlabel=epochs,
+        ylabel=errors,
+        xtick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
+        % enlargelimits=false,
+        axis on top,
+        legend style ={ at={(1.02,1)},
+            anchor=north west, draw=black,
+        fill=white, align=left},
+        cycle list name=my black white,
+        % smooth
+    ]
+    \addplot table [x index=0, y index=2] %
+        {REG/neural/figs/test_loss/test_loss_output_m0.txt};
+        \addlegendentry{$m=0$};
+        \addplot table [x index=0, y index=2] %
+        {REG/neural/figs/test_loss/test_loss_output_m7.txt};
+        \addlegendentry{$m=7$};
+        \addplot table [x index=0, y index=2] %
+        {REG/neural/figs/test_loss/test_loss_output_m10.txt};
+        \addlegendentry{$m=10$};
+        \addplot table [x index=0, y index=2] %
+        {REG/neural/figs/test_loss/test_loss_output_m49.txt};
+        \addlegendentry{$m=49$};
+        \addplot table [x index=0, y index=2] %
+        {REG/neural/figs/test_loss/test_loss_output_m98.txt};
+        \addlegendentry{$m=98$};
+        \addplot table [x index=0, y index=2] %
+        {REG/neural/figs/test_loss/test_loss_output_m196.txt};
+        \addlegendentry{$m=196$};
+        \addplot table [x index=0, y index=2] %
+        {REG/neural/figs/test_loss/test_loss_output_m392.txt};
+        \addlegendentry{$m=392$};
+    \end{axis}
+\end{tikzpicture}
+\end{frame}
+%\caption{MNIST: Prediction error as a function of epochs.}
+%\label{fig:reg:neural:mnist_errors_mlp}
+%\end{figure}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%% \readdata{\dataRt}{REG/neural/figs/kernelSine10.txt}
+%% \readdata{\dataRy}{REG/neural/figs/kernelSine20.txt}
+%% \begin{figure}[t!]
+%%     \captionsetup[subfloat]{captionskip=20pt}
+%%     \centering
+%%     \def\pshlabel#1{\scriptsize {$#1$}}
+%%     \def\psvlabel#1{\scriptsize {$#1$}}
+%%     \psset{arrowscale=2}
+%%     \psset{xAxisLabel=$X$,yAxisLabel= $Y$,
+%%         xAxisLabelPos={c,-0.35in},yAxisLabelPos={-0.35in,c}}
+%%     \centerline{%
+%%         \subfloat[$(-10,10)$]{%
+%%         \label{fig:reg:neural:kernel10}
+%%     \scalebox{0.55}{%
+%%         \psgraph[tickstyle=bottom,Dx=2.5,Dy=0.5,Ox=-12.5,Oy=-1.25]%
+%%                 {->}(-12.0,-1.25)(12.5,1.25){4in}{2.5in}%
+%%     \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%     \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%     \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%     \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataRt}
+%%     \psplot[linewidth=0.5pt]{-10}{10}{x RadtoDeg sin} 
+%%     \psline[linewidth=0.5pt](-12,0)(12.5,0)
+%%     \endpsgraph
+%%     }}
+%%     \hspace{0.5in}
+%%     \subfloat[$(-20,20)$]{
+%%         \label{fig:reg:neural:kernel20}
+%%     \scalebox{0.55}{%
+%%         \psgraph[tickstyle=bottom,Dx=5,Dy=0.5,Ox=-20,Oy=-2.5]%
+%%         {->}(-20.0,-2.5)(20.5,2.5){4in}{2.5in}%
+%%     \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%     \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%     \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%     \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataRy}
+%%     \psplot[linewidth=0.5pt]{-20}{20}{x RadtoDeg sin} 
+%%     \psline[linewidth=0.5pt](-20,0)(20.5,0)
+%%     \endpsgraph
+%%     }}
+%%     }
+%%     \caption{Kernel Ridge Regression for Sine Curve: Gaussian kernel
+%%     ($\sigma=6.5$).}
+%%     \label{fig:reg:neural:kernel_regression}
+%% \end{figure}
+%
+%
+%
+%
+%
+\begin{frame}{Deep Multilayer Perceptron}
+%\begin{figure}[!b]
+%\captionsetup[subfloat]{captionskip=10pt}
+%    \centering
+%    \psset{tnpos=l,tnsep=2pt,colsep=1.5,rowsep=0.75,mcol=c,
+%    ArrowInside=->, arrowscale=2}
+\centerline{
+%    \subfloat[detail view]{
+%    \label{fig:reg:neural:deepMLPdetailed}
+    \scalebox{0.5}{%
+\psmatrix
+[mnode=none]{$l=0$} 
+    & [mnode=none]{$l=1$} 
+    & [mnode=none]{$l=2$} 
+    & [mnode=none]{$\ldots$} 
+    & [mnode=none]{$l=h$} 
+    & [mnode=none]{$l=h+1$}\\[-1em]
+\Tcircle[name=z00,doubleline=true]{$x_0$}~[tnpos=l]{$1$} 
+    & \Tcircle[name=z10,doubleline=true]{$z^1_0$}~[tnpos=l]{$1$} 
+    & \Tcircle[name=z20,doubleline=true]{$z^2_0$}~[tnpos=l]{$1$} 
+    & \Tcircle[name=zi0,linecolor=gray,doubleline=true]{$\cdots$}~[tnpos=l]{$1$} 
+    & \Tcircle[name=zh0,doubleline=true]{$z^h_0$}~[tnpos=l]{$1$}\\[1em] 
+\Tcircle[name=z01]{$x_1$} 
+    & \Tcircle[name=z11]{$z^1_1$}
+    & \Tcircle[name=z21]{$z^2_1$} 
+    & \Tcircle[name=zi1,linecolor=gray]{$\cdots$} 
+    & \Tcircle[name=zh1]{$z^h_1$} 
+    & \Tcircle[name=y1]{$o_1$}\\[-1em]
+[mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$}\\[-1em]
+\Tcircle[name=z0k]{$x_i$}
+    & \Tcircle[name=z1k]{$z^1_i$} 
+    & \Tcircle[name=z2k]{$z^2_i$} 
+    & \Tcircle[name=zik,linecolor=gray]{$\cdots$} 
+    & \Tcircle[name=zhk]{$z^h_i$} 
+    & \Tcircle[name=yk]{$o_{i}$} \\[-1em]
+[mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$} 
+    & [mnode=none]{$\vdots$}\\[-1em]
+\Tcircle[name=z0h]{$x_{d}$} 
+    & \Tcircle[name=z1h]{$z^1_{n_{1}}$} 
+    & \Tcircle[name=z2h]{$z^2_{n_{2}}$} 
+    & \Tcircle[name=zih,linecolor=gray]{$\cdots$} 
+    & \Tcircle[name=zhh]{$z^h_{n_{h}}$} 
+    & \Tcircle[name=yh]{$o_{\!p}$}
+\psset{ArrowInsidePos=.95}
+\psset{linecolor=gray,linewidth=0.5pt}
+%bias to next layer
+\ncline{z20}{zi1}
+\ncline{z20}{zik}
+\ncline{z20}{zih}
+\ncline{zi0}{zh1}
+\ncline{zi0}{zhk}
+\ncline{zi0}{zhh}
+%hidden2 to hidden-dots
+\ncline{z21}{zi1}
+\ncline{z21}{zik}
+\ncline{z21}{zih}
+\ncline{z2k}{zi1}
+\ncline{z2k}{zik}
+\ncline{z2k}{zih}
+\ncline{z2h}{zi1}
+\ncline{z2h}{zik}
+\ncline{z2h}{zih}
+%hidden-dots to hidden-h
+\ncline{zi1}{zh1}
+\ncline{zi1}{zhk}
+\ncline{zi1}{zhh}
+\ncline{zik}{zh1}
+\ncline{zik}{zhk}
+\ncline{zik}{zhh}
+\ncline{zih}{zh1}
+\ncline{zih}{zhk}
+\ncline{zih}{zhh}
+\psset{linecolor=black,linewidth=0.5pt}
+%bias to next layer
+\ncline{z00}{z11}
+\ncline{z00}{z1k}
+\ncline{z00}{z1h}
+\ncline{z10}{z21}
+\ncline{z10}{z2k}
+\ncline{z10}{z2h}
+\ncline{zh0}{y1}
+\ncline{zh0}{yk}
+\ncline{zh0}{yh}
+%input to hidden
+\ncline{z01}{z11}
+\ncline{z01}{z1k}
+\ncline{z01}{z1h}
+\ncline{z0k}{z11}
+\ncline{z0k}{z1k}
+\ncline{z0k}{z1h}
+\ncline{z0h}{z11}
+\ncline{z0h}{z1k}
+\ncline{z0h}{z1h}
+%hidden1 to hidden2
+\ncline{z11}{z21}
+\ncline{z11}{z2k}
+\ncline{z11}{z2h}
+\ncline{z1k}{z21}
+\ncline{z1k}{z2k}
+\ncline{z1k}{z2h}
+\ncline{z1h}{z21}
+\ncline{z1h}{z2k}
+\ncline{z1h}{z2h}
+%#hidden-h to output
+\ncline{zh1}{y1}
+\ncline{zh1}{yk}
+\ncline{zh1}{yh}
+\ncline{zhk}{y1}
+\ncline{zhk}{yk}
+\ncline{zhk}{yh}
+\ncline{zhh}{y1}
+\ncline{zhh}{yk}
+\ncline{zhh}{yh}
+\endpsmatrix
+}}
+%}
+%\vspace{0.2in}
+%\centerline{
+%    \subfloat[layer view]{
+%\label{fig:reg:neural:deepMLP_layered}
+
+\centerline{
+\scalebox{0.5}{%
+\psmatrix
+[mnode=none]{$l=0$} 
+    & [mnode=none]{$l=1$} 
+    & [mnode=none]{$l=2$} 
+    & [mnode=none]{$\ldots$} 
+    & [mnode=none]{$l=h$} 
+    & [mnode=none]{$l=h+1$}\\[-1em]
+    %\TR[name=l0]{\psframe(-1,-1)(1,1)\rput(0,0){$\bx$}}
+\TR[name=l0]{\myfbox{$\bx$}}
+    & \TR[name=l1]{\myfbox{$\bz^1$}}
+    & \TR[name=l2]{\myfbox{$\bz^2$}}
+    & \TR[name=li]{\myfboxB[linecolor=gray]{$\cdots\!$}}
+    & \TR[name=lh]{\myfbox{$\bz^h$}}
+    & \TR[name=lo]{\myfbox{$\bo$}}
+\psset{ArrowInside=-}
+\psset{arrows=->}
+\psset{linewidth=2pt}
+%bias to next layer
+\ncline{l0}{l1}\nbput[npos=0.5]{$\bW_0, \bb_0$}
+\ncline{l1}{l2}\nbput[npos=0.5]{$\bW_1, \bb_1$}
+\ncline[linecolor=gray,linewidth=1pt]{l2}{li}%\nbput[npos=0.5]{$\bW_2, \bb_2$}
+\ncline[linecolor=gray,linewidth=1pt]{li}{lh}%\nbput[npos=0.5]{$\bW_{h-1},\bb_{h-1}$}
+\ncline{lh}{lo}\nbput[npos=0.5]{$\bW_h, \bb_{h}$}
+\endpsmatrix
+}}
+%}
+%\vspace{0.2in}
+%\caption{Deep multilayer perceptron, with $h$ hidden layers.}
+%\label{fig:reg:neural:deepMLP}
+%\end{figure}
+\end{frame}
+%
+%
+%
+%\section{Deep Multilayer Perceptrons}
+%\index{deep multilayer perceptron}
+%\index{deep learning}
+%\index{deep MLP|see{deep multilayer perceptron}}
+%We now generalize the feed-forward and backpropagation steps for
+%many hidden layers, as well as arbitrary error
+%and neuron activation functions.
+%
+%Consider an MLP with $h$ hidden layers as shown in
+%\cref{fig:reg:neural:deepMLP}.
+%We assume that the input to the MLP comprises $n$ points $\bx_i \in
+%\setR^d$ with the corresponding true response vector $\by_i \in
+%\setR^p$. 
+%We denote the input neurons as
+%layer $l=0$, the first hidden layer as $l=1$, the last hidden layer as
+%$l=h$, and finally the output
+%layer as layer $l=h+1$. 
+%We use $n_l$ to denote the number of neurons in layer $l$.
+%Since the input points are $d$-dimensional, this implies
+%$n_0 = d$, and since the true response vector is $p$-dimensional, we
+%have $n_{h+1} = p$. The hidden layers have $n_1$ neurons for the first
+%hidden layer, $n_2$ for the second layer, and $n_h$ for the last hidden
+%layer.
+%The vector of neuron values for layer $l$ (for $l=0,\cdots,h+1$) 
+%is denoted as
+%\begin{align*}
+%    \bz^l = \lB(z^l_{1}, \cdots, z^l_{n_l}\rB)^T
+%\end{align*}
+%Each layer except
+%the output layer has one extra bias neuron, which is the neuron
+%at index $0$. Thus, the bias neuron for layer $l$ is denoted $z^l_0$ and
+%its value is fixed at $z^l_{0}=1$.
+%\cref{fig:reg:neural:deepMLPdetailed} displays a detailed view of an MLP
+%with $h$ hidden layers, showing the individual neurons in each layer
+%including the bias neuron.
+%Note that the vector of input neuron values is also written as
+%\begin{align*}
+%    \bx = \lB(x_1,x_2,\cdots,x_d\rB)^T 
+%    = \lB(z^0_{1}, z^0_{2}, \cdots, z^0_{d}\rB)^T = \bz^0
+%\end{align*}
+%and the vector of output neuron values is also denoted as
+%\begin{align*}
+%    \bo = (o_1, o_2, \cdots, o_p)^T  = \lB(z^{h+1}_{1}, z^{h+1}_{2},
+%    \cdots, z^{h+1}_{p}\rB)^T = \bz^{h+1}  
+%\end{align*}
+%
+%The weight matrix between 
+%layer $l$ and layer $l+1$ neurons
+%is denoted $\bW_{\!l} \in \setR^{n_{l} \times n_{l+1}}$, 
+%and the vector of bias terms from the bias neuron 
+%$z^l_0$ to neurons in layer $l+1$ is
+%denoted $\bb_l \in \setR^{n_{l+1}}$,
+%for $l=0,1,\cdots,h$.
+%Thus, $\bW_0 \in \setR^{d \times n_{1}}$ is the weight matrix between the input and first hidden
+%layer, $\bW_1 \in \setR^{n_{1} \times n_{2}}$ is the weight matrix
+%between the first and second hidden layer, and so on; finally,
+%$\bW_{\!h} \in \setR^{n_{h} \times p}$ 
+%is the weight matrix between the last hidden layer
+%and the output layer. For the bias vectors, $\bb_0 \in \setR^{n_1}$
+%specifies the biases for neurons in the first hidden layer, $\bb_1
+%\in \setR^{n_2}$ the biases for neurons in the second hidden layer, and
+%so on. Thus, $\bb_{h} \in \setR^p$ specifies the biases for the
+%output neurons.
+%\cref{fig:reg:neural:deepMLP_layered} shows a layer view for an MLP with
+%$h$ hidden layers. This is a more compact representation that clearly 
+%specifies the architecture or topology of the MLP. Each layer $l$ is
+%represented as a rectangular node, and is marked with the vector of neuron values,
+%$\bz^{l}$. The bias neurons are not shown, but are assumed to be present
+%in each layer except the output.
+%An edge between layer $l$ and
+%$l+1$ is
+%labeled with the weight matrix $\bW_l$ and bias vector
+%$\bb_{l}$ that specify the parameters between those layers.
+%
+%For training deep MLPs, we will refer to several partial
+%derivative vectors, described next.
+%Define $\delta^{l}_i$ as the net gradient, i.e., the partial
+%derivative of the error function
+%with respect to the net value at $z^{l}_i$
+%\begin{align}
+%\delta^l_i = \frac{\partial \cE_\bx}{\partial \net_i}
+%\label{eq:reg:neural:deltali}
+%\end{align}
+%and let $\bdelta^l$ denote the net gradient vector at layer $l$, for
+%$l=1,2,\cdots,h+1$
+%\begin{align}
+%    \bdelta^l = \bigl(\delta^l_1, \cdots, \delta^l_{n_l} \bigr)^T 
+%    \label{eq:reg:neural:bdelta}
+%\end{align}
+%Let $f^l$ denote the
+%activation function for layer $l$, for $l=0,1,\cdots,h+1$, and further
+%let $\partial\bff^{\;l}$ denote the vector of the derivatives of the activation
+%function with respect to $\net_{i}$ for all neurons $z_i^l$ in layer $l$:
+%\begin{align}
+%    \partial\bff^{\;l} = \lB(\frac{\partial f^l(\net_{1})}{\partial \net_{1}},
+%    \cdots, \frac{\partial f^l(\net_{n_l})}{\partial \net_{n_l}}\rB)^T
+%    \label{eq:reg:neural:bff}
+%\end{align}
+%% Let $\partial\bff^{\;h+1}$ denote the vector of the derivatives of the activation
+%% function with respect to the $\net_{\!i}$ for all output neurons:
+%% \begin{align}
+%%     \partial\bff^{\;h+1} = 
+%%     \lB(\frac{\partial f^{h+1}(\net_{1})}{\partial \net_{1}},
+%%         \frac{\partial f^{h+1}(\net_{2})}{\partial \net_{2}}, 
+%%     \;\cdots,\; \frac{\partial f^{h+1}(\net_{p})}{\partial
+%% \net_{p}}\rB)^T
+%% \label{eq:reg:neural:bffO}
+%% \end{align}
+%Finally, let $\partial\cE_\bx$ denote the vector of partial
+%derivatives of the error function with respect to the values
+%$o_i$ for all output neurons:
+%\begin{align}
+%    \partial\bcE_\bx = 
+%    \lB(\frac{\partial \cE_\bx}{\partial o_{1}},
+%        \frac{\partial \cE_\bx}{\partial o_{2}},
+%    \;\cdots,\; \frac{\partial \cE_\bx}{\partial o_{p}}\rB)^T
+%    \label{eq:reg:neural:vE}
+%\end{align}
+%
+%\subsection{Feed-forward Phase} 
+%\index{deep multilayer perceptron!feed-forward phase}
+%\index{deep learning!feed-forward phase}
+\begin{frame}{Feed-forward Phase} 
+%
+Typically in a deep MLP, the same activation function $f^l$ is used for
+all neurons in a given layer $l$.  The input layer always uses the identity
+activation, so $f^0$ is the identity function. Also, all bias neurons also
+use the identity function with a fixed value of $1$.  The output layer
+typically uses sigmoid or softmax activations for classification tasks,
+or identity activations for regression tasks. The hidden layers typically
+use sigmoid, tanh, or ReLU activations.  %In our discussion, we
+%assume a fixed activation function $f^l$ for all neurons in a given layer.
+%However, it is easy to generalize to a neuron specific activation function
+%$f^l_i$ for neuron $z_i^l$ in layer $l$.
+%
+For a given input pair $(\bx, \by) \in \bD$,
+the deep MLP computes the output vector via the
+feed-forward process:
+\begin{samepage}
+\begin{align*}
+    \bo & = f^{h+1}\Bigl(\bb_{h} + \bW_{\!h}^T \cdot \bz^h\Bigr)\\ 
+    & = f^{h+1}\Bigl(\bb_{h} + \bW_{\!h}^T \cdot 
+    f^h\lB(\bb_{h-1} + \bW_{\!h-1}^T \cdot \bz^{h-1} \rB) \Bigr)\\
+    & = \qquad \vdots\\
+    & = f^{h+1}\Biggl(\bb_{h} + \bW_{\!h}^T \cdot 
+        f^h\biggl(\bb_{h-1} + \bW_{\!h-1}^T \cdot f^{h-1}%
+            \Bigl(\cdots f^2 \Bigl(\bb_{1} +  \bW_{1}^T \cdot
+                f^1 \bigl(\bb_{0} +  \bW_{0}^T \cdot \bx
+\bigr) \Bigr) \Bigr) \biggr) \Biggr) 
+\end{align*}
+\end{samepage}
+\end{frame}
+%Note that each $f^l$ distributes over its argument. That is,
+%$$f^l\lB(\bb_{l-1} + \bW_{l-1}^T \cdot \bx\rB) 
+%= \Bigl( f^l\lB(\net_{1}\rB), f^l\lB(\net_{2}\rB), \cdots,
+%f^l\lB(\net_{n_l}\rB) \Bigr)^T $$
+%% If each neuron has its own specific activation function $f^l_i$, 
+%% we would write it as
+%% \begin{empheq}[box=\tcbhighmath]{align}
+%% f^1\lB(\bb_0 + \bW_0^T \cdot \bx\rB) 
+%% = \Bigl( f^1_1\lB(\net_{1}\rB), f^1_2\lB(\net_{2}\rB), \cdots,
+%% f^1_{n_1}\lB(\net_{n_1}\rB) \Bigr)^T 
+%% \end{empheq}
+%
+%
+%\subsection{Backpropagation Phase}
+%\index{deep multilayer perceptron!backpropagation phase}
+%\index{deep learning!backpropagation phase}
+%\index{backpropagation!deep multilayer perceptron}
+%\index{backpropagation!deep learning}
+%
+\begin{frame}{Backpropagation Phase}
+Consider the weight update between a given layer and another, including
+between the input and hidden layer, or between two hidden layers, or
+between the last hidden layer and the output layer. 
+Let $z^l_i$ be a neuron in layer $l$, and $z^{l+1}_{\!j}$ a neuron in the next
+layer $l+1$. Let $w^l_{ij}$ be the weight between $z^l_i$ and
+$z^{l+1}_j$, and let $b^l_{\!j}$ denote the bias term between
+$z^l_0$ and $z^{l+1}_j$.
+The weight and bias are updated using the gradient descent approach
+%\index{deep multilayer perceptron!weight gradient}
+%\index{deep learning!weight gradient}
+%\index{deep multilayer perceptron!bias gradient}
+%\index{deep learning!bias gradient}
+\begin{align*}
+   w^l_{i\!j} & = w^l_{ij} - \eta \cdot \grad_{w^l_{ij}} &
+   b^l_{\!j} & = b^l_{\!j} - \eta \cdot \grad_{b^l_{\!j}}
+\end{align*}
+where $\grad_{w^l_{ij}}$ is the weight gradient and
+$\grad_{b^l_{\!j}}$ is the bias gradient, i.e., the partial
+derivative of the error function with
+respect to the weight and bias, respectively.
+\end{frame}
+%\begin{align*}
+%\grad_{w^l_{ij}} & = \frac{\partial \cE_\bx}{\partial w^l_{ij}} &
+%\grad_{b^l_{\!j}} & = \frac{\partial \cE_\bx}{\partial b^l_{\!j}}
+%\end{align*}
+%
+\begin{frame}{Backpropagation Phase}
+%As noted earlier in \cref{eq:reg:neural:gradwij}, 
+We can use the chain
+rule to write the weight and bias gradient, as follows
+\begin{align}
+    \begin{aligned}
+    \grad_{w^l_{ij}} = 
+ \frac{\partial \cE_\bx}{\partial w^l_{ij}}
+     & = \frac{\partial \cE_\bx}{\partial \net_{\!j}} \cdot 
+    \frac{\partial \net_{\!j}}{\partial w^l_{ij}}
+    = \delta^{l+1}_j  \cdot z^l_i
+    = z^l_i \cdot \delta^{l+1}_j \notag\\ 
+    \grad_{b^l_{\!j}} = 
+ \frac{\partial \cE_\bx}{\partial b^l_{\!j}}
+     & = \frac{\partial \cE_\bx}{\partial \net_{\!j}} \cdot 
+    \frac{\partial \net_{\!j}}{\partial b^l_{\!j}}
+    = \delta^{l+1}_j
+\end{aligned}
+%    \label{eq:reg:neural:gradwij_deep}
+\end{align}
+%where $\delta^{l+1}_j$ is the net gradient [\cref{eq:reg:neural:deltali}], 
+%i.e., the partial
+%derivative of the error function
+%with respect to the net value at $z^{l+1}_j$,
+%and we have
+%\begin{align*}
+%   \frac{\partial \net_{\!j}}{\partial w^l_{ij}} & = 
+%   \frac{\partial}{\partial w^l_{ij}} 
+%   \lB\{b^l_{\!j} + \sum_{k=0}^{n_l} w^l_{k\!j} \cdot z^l_{k} \rB\}
+%     = z^l_i &
+%     % = 
+%   % \frac{\partial}{\partial w^l_{ij}}
+%    % \lB\{\sum_{k\ne i}^m w^l_{k\!j} \cdot z^l_{k} + 
+%    % w^l_{i\!j} \cdot z^l_i \rB\}
+%   \frac{\partial \net_{\!j}}{\partial b^l_{\!j}} & = 
+%   \frac{\partial}{\partial b^l_{\!j}} 
+%   \lB\{b^l_{\!j} + \sum_{k=0}^{n_l} w^l_{k\!j} \cdot z^l_{k} \rB\}
+%     = 1
+%\end{align*}
+%
+%Given the vector of neuron values at layer $l$, namely
+%    $\bz^l = \lB(z^l_{1}, \cdots, z^l_{n_l}\rB)^T$,
+%we can compute the entire weight gradient matrix via an outer product
+%operation
+%\begin{align}
+%    \tcbhighmath{
+%    \bgrad_{\bW_l} = \bz^l \cdot \lB(\bdelta^{l+1}\rB)^T}
+%\label{eq:reg:neural:gradW_deep}
+%\end{align}
+%and the bias gradient vector as:
+%\begin{align}
+%    \tcbhighmath{
+%    \bgrad_{\bb_l} = \bdelta^{l+1}}
+%\label{eq:reg:neural:gradB_deep}
+%\end{align}
+%with $l=0,1,\cdots,h$. Here $\bdelta^{l+1}$ is the net gradient vector
+%at layer $l+1$ [\cref{eq:reg:neural:bdelta}].
+%
+%This also allows us to update all the weights and biases as follows
+In summary, the update of the weights and biases is
+\begin{empheq}[box=\tcbhighmath]{align}
+    \begin{aligned}
+    \bW_l & = \bW_l - \eta \cdot \bgrad_{\bW_l}\\
+    \bb_l & = \bb_l - \eta \cdot \bgrad_{\bb_l}
+\end{aligned}
+\end{empheq}
+where $\eta$ is the step size.
+However, we observe that to compute
+the weight and bias gradients for layer $l$ 
+we need to compute
+the net gradients $\bdelta^{l+1}$ at layer $l+1$. 
+\end{frame}
+%
+%\subsection{Net Gradients at Output Layer}
+%\label{sec:reg:neural:netgradients}
+%\index{deep multilayer perceptron!net gradient}
+%\index{deep learning!net gradient}
+\begin{frame}{Net Gradients at Output Layer}
+Let us consider how to compute the net gradients at the output layer
+$h+1$. If all of the output neurons are independent (for example, when
+using linear or sigmoid activations), the net gradient is
+obtained by differentiating the error function with
+respect to the net signal at the output neurons. That is,
+\begin{align*}
+    \delta^{h+1}_{\!j} = \frac{\partial \cE_\bx}{\partial \net_{\!j}} =
+    \frac{\partial \cE_\bx}{\partial f^{h+1}(\net_{\!j})} \cdot
+\frac{\partial f^{h+1}(\net_{\!j})}{\partial \net_{\!j}} = 
+\frac{\partial \cE_\bx}{\partial o_{\!j}} \cdot 
+\frac{\partial f^{h+1}(\net_{\!j})}{\partial \net_{\!j}} 
+\end{align*}
+Thus, the gradient depends on two terms, the partial derivative of the
+error function with respect to the output neuron value, and the
+derivative of the activation function with respect to its argument.
+%The net gradient vector across all output neurons is given as
+%\begin{align}
+%    \tcbhighmath{
+%    \bdelta^{h+1} = \partial\bff^{\;h+1} \;\odot\; \partial\bcE_\bx}
+%\end{align}
+%where $\odot$ is the element-wise or Hadamard product, 
+%$\partial\bff^{\;h+1}$ is the vector of derivatives of the activation function
+%with respect to its argument [\cref{eq:reg:neural:bff}] at the output 
+%layer $l=h+1$, and $\partial\bcE_\bx$ is the vector of error derivatives with
+%respect to the output neuron values [\cref{eq:reg:neural:vE}].
+%
+On the other hand, if the output neurons are not independent (for
+example, when using a softmax activation), then we have to modify the
+computation of the net gradient at each output neuron as follows:
+\begin{align*}
+    \delta^{h+1}_{\!j} = \frac{\partial \cE_\bx}{\partial \net_{\!j}} =
+    \sum^{p}_{i=1} \frac{\partial \cE_\bx}{\partial f^{h+1}(\net_{\!i})} \cdot
+\frac{\partial f^{h+1}(\net_{\!i})}{\partial \net_{\!j}}
+\end{align*}
+%Across all output neurons, we can write this compactly as follows:
+%\begin{align}
+%    \tcbhighmath{
+%    \bdelta^{h+1}
+%= \partial\bF^{\;h+1} \cdot \partial\bcE_\bx}
+%    \label{eq:reg:neural:FE_dependent}
+%\end{align}
+%where $\partial\bF^{\;h+1}$ is the matrix of derivatives of $o_i =
+%f^{h+1}(\net_i)$ with respect to $net_{\!j}$ for all $i,j=1,2,\cdots,p$, given as
+%\begin{align*}
+%    \partial\bF^{\;h+1} & = 
+%    \matr{
+%        \displaystyle\frac{\partial o_1}{\partial \net_{1}} &
+%        \displaystyle\frac{\partial o_1}{\partial \net_{2}} &
+%          \cdots & 
+%          \displaystyle\frac{\partial o_1}{\partial \net_{p}}\\[1em]
+%        \displaystyle\frac{\partial o_2}{\partial \net_{1}} &
+%        \displaystyle\frac{\partial o_2}{\partial \net_{2}} &
+%          \cdots & 
+%         \displaystyle\frac{\partial o_2}{\partial \net_{p}}\\
+%         \vdots & \vdots & \cdots & \vdots\\
+%         \displaystyle\frac{\partial o_p}{\partial \net_{1}} &
+%        \displaystyle\frac{\partial o_p}{\partial \net_{2}} &
+%          \cdots & 
+%         \displaystyle\frac{\partial o_p}{\partial \net_{p}}
+%     } 
+%\end{align*}
+%
+Typically, for regression tasks, we use the squared error function with
+linear activation function at the output neurons, whereas for 
+logistic regression and classification, we use the cross-entropy error
+function with a sigmoid activation for binary classes, and softmax
+activation for multiclass problems. %For these common cases, 
+%the net gradient vector at the output
+%layer is given as follows:
+\end{frame}
+%
+%\begin{description}
+%\index{deep multilayer perceptron!squared error}
+%\index{neural networks!squared error}
+%\index{deep learning!squared error}
+%    \item[\bf Squared Error:] 
+%        From \cref{eq:reg:neural:deriv_SE},
+%        the error gradient is given as
+%        \begin{align*}
+%            \partial \bcE_{\bx} = \frac{\partial\bcE_\bx}{\partial \bo} = \bo - \by    
+%        \end{align*}
+%    The net gradient at the output layer is given as
+%    \begin{align*}
+%        \bdelta^{h+1} = \partial\bff^{\;h+1} \odot \partial\bcE_\bx
+%    \end{align*}
+%    where $\partial\bff^{\;h+1}$ depends on the activation function at the output.
+%    Typically, for regression tasks, we use a linear activation at the
+%    output neurons. In that case, we have $\partial\bff^{\;h+1} = \bone$
+%    (see \cref{eq:reg:neural:deriv_identity}). 
+%    
+%
+%\index{deep multilayer perceptron!binary cross-entropy error}
+%\index{deep learning!binary cross-entropy error}
+%\index{neural networks!binary cross-entropy error}
+%    \item[\bf Cross-Entropy Error (binary output, sigmoid activation):] Consider the binary case first, with
+%        a single output neuron $o$ with sigmoid activation. 
+%        Recall that the binary cross-entropy error [\cref{eq:reg:neural:CEbinary}] is given as
+%        \begin{align*}
+%            \cE_\bx = -\bigl( y\cdot\ln(o) +
+%            (1-y)\cdot\ln(1-o) \bigr)
+%        \end{align*}
+%        From \cref{eq:reg:neural:deriv_CE_binary} we have
+%        \begin{align*}
+%            \partial \bcE_\bx = \frac{\partial \cE_\bx}{\partial o} & = \frac{o-y}{o \cdot (1-o)}
+%        \end{align*}
+%        Further, for sigmoid activation, we have  
+%        \begin{align*}
+%        \partial\bff^{\;h+1} = \frac{\partial f(net_o)}{\partial \net_o}
+%        = o\cdot(1-o)
+%        \end{align*}
+%    Therefore, the net gradient at the output neuron is
+%    \begin{align*}
+%        \delta^{h+1} & = \partial \bcE_\bx \cdot \partial
+%        \bff^{\;h+1} = \frac{o-y}{o \cdot (1-o)} \cdot o\cdot(1-o) = o-y
+%    \end{align*}
+%
+%
+%\index{deep multilayer perceptron!cross-entropy error}
+%\index{deep learning!cross-entropy error}
+%\index{neural networks!cross-entropy error}
+%\item[\bf Cross-Entropy Error ($K$ outputs, softmax activation):] 
+%    Recall that the cross-entropy error function [\cref{eq:reg:neural:CE}] is given as
+%\begin{align*}
+%    \cE_\bx = - \sum_{i=1}^K y_i \cdot \ln(o_i) = 
+%    - \Bigl( y_1 \cdot \ln(o_1) + \cdots 
+%            + y_K \cdot \ln(o_K) \Bigr) 
+%\end{align*}
+%
+%Using \cref{eq:reg:neural:deriv_CE}, 
+%the vector of error derivatives
+%with respect to the output
+%neurons is given as
+%\begin{align*}
+%    \partial\bcE_\bx & = 
+%    \lB(\frac{\partial \cE_\bx}{\partial o_{1}},
+%        \frac{\partial \cE_\bx}{\partial o_{2}},
+%    \;\cdots,\; \frac{\partial \cE_\bx}{\partial o_{K}}\rB)^T
+%     = \lB( -\frac{y_1}{o_1}, -\frac{y_2}{o_2}, \cdots, 
+%             -\frac{y_K}{o_K}
+%    \rB)^T
+%\end{align*}
+%where $p = K$ is the number of output neurons.
+%    
+%    Cross-entropy error is typically used with the softmax
+%    activation so that we get a (normalized) probability 
+%    value for each
+%    class. That is, 
+%    \begin{align*}
+%        o_{\!j} & = \softmax( net_{\!j}) = \frac{\exp\{ net_{\!j} \}}{ \sum_{i=1}^K \exp \{
+%        net_{i} \} }
+%    \end{align*}
+%    so that the output
+%    neuron values sum to one, $\sum_{j=1}^K o_{\!j} = 1$.
+%    Since an output neuron depends on all other output
+%    neurons, 
+%    we need to compute the matrix of derivatives of each output with
+%    respect to each of the net signals at the output neurons [see
+%    \cref{eq:reg:neural:softmax_der,eq:reg:neural:pd_ef_o}]:
+%    \begin{align*}
+%    \partial\bF^{\;h+1} & = 
+%    \begin{small}
+%    \matr{
+%        \displaystyle\frac{\partial o_1}{\partial \net_{1}} &
+%        \displaystyle\frac{\partial o_1}{\partial \net_{2}} &
+%          \cdots & 
+%          \displaystyle\frac{\partial o_1}{\partial \net_{K}}\\[1em]
+%        \displaystyle\frac{\partial o_2}{\partial \net_{1}} &
+%        \displaystyle\frac{\partial o_2}{\partial \net_{2}} &
+%          \cdots & 
+%         \displaystyle\frac{\partial o_2}{\partial \net_{K}}\\
+%         \vdots & \vdots & \cdots & \vdots\\
+%         \displaystyle\frac{\partial o_K}{\partial \net_{1}} &
+%        \displaystyle\frac{\partial o_K}{\partial \net_{2}} &
+%          \cdots & 
+%         \displaystyle\frac{\partial o_K}{\partial \net_{K}}
+%     } 
+%     = \matr{
+%         o_1\cdot (1-o_1) & -o_1\cdot o_2 & \cdots & -o_1 \cdot o_K\\
+%         -o_1 \cdot o_2 & o_2\cdot (1-o_2) & \cdots & -o_2 \cdot o_K\\
+%         \vdots & \vdots & \cdots & \vdots\\
+%         -o_1 \cdot o_K & -o_2 \cdot o_K & \cdots & o_K\cdot (1-o_K)
+%     }
+%    \end{small}
+%%\label{eq:reg:neural:bF}
+%\end{align*}
+%
+%Therefore, the net gradient vector at the output layer is
+%\begin{align}
+%    \bdelta^{h+1} & 
+%    = \partial\bF^{\;h+1} \cdot \partial\bcE_\bx\\
+%    & = \matr{
+%         o_1\cdot (1-o_1) & -o_1\cdot o_2 & \cdots & -o_1 \cdot o_K\\
+%         -o_1 \cdot o_2 & o_2\cdot (1-o_2) & \cdots & -o_2 \cdot o_K\\
+%         \vdots & \vdots & \cdots & \vdots\\
+%         -o_1 \cdot o_K & -o_2 \cdot o_K & \cdots & o_K\cdot (1-o_K)
+%     }
+%     \cdot \matr{-\frac{y_1}{o_1}\\[0.25em]
+%         -\frac{y_2}{o_2}\\[0.25em]
+%         \vdots\\ 
+%             -\frac{y_K}{o_K}
+%         }\notag\\
+%    & = \matr{
+%        -y_1 + y_1\cdot o_1 + \sum_{i\ne 1}^K y_i\cdot o_1\\[0.25em]
+%        -y_2 + y_2\cdot o_2 + \sum_{i\ne 2}^K y_i\cdot o_2\\[0.25em]
+%        \vdots\\
+%        -y_K + y_K\cdot o_K + \sum_{i\ne K}^K y_i\cdot o_K\\
+%    }
+%    = \matr{
+%        -y_1 + o_1 \cdot \sum_{i=1}^K y_i\\[0.25em]
+%        -y_2 + o_2 \cdot \sum_{i=1}^K y_i\\[0.25em]
+%        \vdots\\
+%        -y_K + o_K \cdot \sum_{i=1}^K y_i\\
+%    } \notag\\
+%    & = \matr{
+%        -y_1 + o_1\\
+%        -y_2 + o_2\\
+%        \vdots\\
+%        -y_K + o_K\\
+%        }, \text{since } \sum_{i=1}^K y_i = 1\notag\\
+%    & =  \bo - \by\notag
+%\end{align}
+%
+%\end{description}
+%
+%
+%\subsection{Net Gradients at Hidden Layers}
+\begin{frame}{Net Gradients at Hidden Layers}
+%\index{deep multilayer perceptron!net gradient}
+%\index{deep learning!net gradient}
+Let us assume that we have already computed the net gradients at layer
+$l+1$, namely $\bdelta^{l+1}$.
+Since neuron $z^l_{\!j}$ in layer $l$ is connected to all of the neurons in
+layer $l+1$ (except for the bias neuron $z^{l+1}_0$), 
+to compute the net gradient at
+$z^l_{\!j}$, we
+have to account for the error from each neuron in layer $l+1$, as
+follows:
+\begin{align*}
+    \delta^l_{\!j} = \frac{\partial \cE_\bx}{\partial \net_{\!j}}
+    & =
+    \sum^{n_{l+1}}_{k=1} \frac{\partial \cE_\bx}{\partial \net_k} \cdot
+    \frac{\partial \net_{k}}{\partial f^l(\net_{\!j})} \cdot
+    \frac{\partial f^l(\net_{\!j})}{\partial \net_{\!j}}\\
+& = \frac{\partial f^l(\net_{\!j})}{\partial \net_{\!j}} \cdot 
+\sum^{n_{l+1}}_{k=1} \delta^{l+1}_k \cdot w^l_{\!jk}
+\end{align*}
+So the net gradient at $z^l_{\!j}$ in layer $l$ depends on the derivative of the 
+activation function with respect to its $\net_j$, and the 
+weighted sum of the net gradients from
+all the neurons $z^{l+1}_k$ at the next layer $l+1$.
+\end{frame}
+%
+%We can compute the net gradients for all the
+%neurons in level $l$ in one step, as follows:
+%\begin{align}
+%    \tcbhighmath{
+%    \bdelta^l = \partial\bff^{\;l} \;\odot\; \bigl(\bW_l \cdot
+%\bdelta^{l+1}\bigr)}
+%    \label{eq:reg:neural:bdelta_l}
+%\end{align}
+%where $\odot$ is the element-wise product, and
+%$\partial\bff^{\;l}$ is the vector of derivatives of the activation function
+%with respect to its argument [\cref{eq:reg:neural:bff}] at layer $l$.
+\begin{frame}{Net Gradients at Hidden Layers}
+For the commonly used activation functions at the hidden layer, %using
+%the derivatives from \cref{sec:reg:neural:deriv_activations}, 
+we have
+\begin{align*}
+    \partial \bff^{\;l} = 
+    \begin{cases}
+        \bone & \text{for linear}\\
+        \bz^l (\bone - \bz^l) & \text{for sigmoid}\\
+        (\bone - \bz^l \odot \bz^l) & \text{for }\tanh\\
+    \end{cases}
+\end{align*}
+%For ReLU, we have to apply \cref{eq:reg:neural:deriv_relu} to each
+%neuron. Note that softmax is generally not used for hidden layers.
+%
+The net gradients are computed recursively, starting from the output
+layer $h+1$, then hidden layer $h$, and so on, until we finally compute
+the net gradients at the first hidden layer $l=1$. That is,
+\begin{samepage}
+\begin{align*}
+\bdelta^h & = \partial\bff^{\;h} \;\odot\; \lB(\bW_h \cdot
+\bdelta^{h+1}\rB) \\
+\bdelta^{h-1} & = 
+\partial\bff^{\;h-1} \;\odot\; \lB(\bW_{\!h-1} \cdot
+\bdelta^{h}\rB) =    
+\partial\bff^{\;h-1} \;\odot\; 
+    \Bigl(\bW_{\!h-1} \cdot 
+    \bigl( \partial\bff^{\;h} \;\odot\; \lB(\bW_h \cdot \bdelta^{h+1}\rB) 
+    \bigr) 
+    \Bigr) \\
+  & \qquad \vdots\\
+   \bdelta^1 
+%    & = \partial\bff^{\;1} \;\odot\; \bigl(\bW_1 \cdot \bdelta^{2}\bigr)\\
+%    & = \partial\bff^{\;1} \;\odot\; \Bigl(\bW_1 \cdot 
+%    \bigl( \partial\bff^{\;2} \;\odot\; \lB(\bW_2 \cdot \bdelta^{3}\rB) \bigr)
+%    \Bigr)\\
+%    & = \qquad \vdots\\
+   & = \partial\bff^{\;1} \;\odot\; 
+   \Biggl(\bW_1 \cdot 
+    \biggl( \partial\bff^{\;2} \;\odot\; 
+    \Bigl(\bW_2 \cdot 
+    \cdots
+    \bigl( \partial\bff^{\;h} \;\odot\; \lB(\bW_h \cdot \bdelta^{h+1}\rB) 
+    \bigr) 
+    \Bigr) 
+    \biggr)
+   \Biggr)
+\end{align*}
+\end{samepage}
+\end{frame}
+%
+%
+\begin{frame}{Deep MLP Training: Stochastic Gradient Descent}
+\begin{small}
+\begin{tightalgo}[H]{\textwidth-18pt}
+    \SetKwInOut{Algorithm}{\textsc{Deep-MLP-Training} ($\bD, h, \eta,
+    \texttt{maxiter}, n_1, n_2, \cdots, n_h, f^1, f^2, \cdots, f^{h+1}$)}
+\Algorithm{}
+ $n_0 \assign d$ \tcp*[h]{input layer size}\;
+ $n_{h+1} \assign p$ \tcp*[h]{output layer size}\;
+\tcp{Initialize weight matrices and bias vectors}
+\For{$l=0,1,2,\cdots,h$}{%
+    $\bb_l \assign\; $ random $n_{l+1}$ vector with small
+    values\;
+    $\bW_l \assign\; $ random $n_l \times n_{l+1}$ matrix with small
+    values}
+$t \assign 0$ \tcp*[h]{iteration counter}\;
+\end{tightalgo}
+\end{small}
+\end{frame}
+
+\begin{frame}{Deep MLP Training: Stochastic Gradient Descent}
+\hspace*{-1cm}
+\begin{small}
+\begin{tightalgo}[H]{\textwidth+18pt}
+\setcounter{AlgoLine}{6}
+\Repeat{$t \ge \text{\tt maxiter}$}
+{%
+    \ForEach{$(\bx_i,\by_i) \in \bD$ in random order}{%
+        $\bz^0 \assign \bx_i$ \tcp{Feed-Forward Phase}
+        \lFor{$l=0,1,2,\ldots,h$}{
+            $\bz^{l+1} \assign f^{l+1}\Bigl(\bb_l + \bW_l^T \cdot \bz^l \Bigr)$}
+        $\bo_i \assign \bz^{h+1}$\;
+        % \[\bdelta^{h+1} \assign 
+        % \begin{cases}
+        % \partial\bff^{\;h+1} \;\odot\; \partial\bcE_{\bx_i} & \text {if
+        % independent outputs}\\
+        % \partial\bF^{\;h+1} \cdot
+        % \partial\bcE_{\bx_i} & \text{otherwise}
+% \end{cases}\]
+        % \tcp*[h]{net gradients at output}\; 
+        \eIf(\texttt{// Backpropagation phase}){independent outputs}{ %\tcp{Backpropagation Phase}
+            $\bdelta^{h+1} \assign \partial\bff^{\;h+1} \;\odot\;
+        \partial\bcE_{\bx_i}$\tcp*[h]{net gradients at output} \;
+        }{%
+       $\bdelta^{h+1} \assign  \partial\bF^{\;h+1} \cdot
+        \partial\bcE_{\bx_i}$\tcp*[h]{net gradients at output}\;
+        }
+        \lFor{$l=h,h-1,\cdots,1$}{
+            $\bdelta^l \assign \partial\bff^{\;l} \;\odot\; \bigl(\bW_l \cdot
+            \bdelta^{l+1}\bigr)$
+            \tcp*[h]{net gradients}}% at layer $l$}}
+        \For(\texttt{// Gradient Descent Step}){$l=0,1,\cdots,h$}{ %\tcp{Gradient Descent Step}
+            $\bgrad_{\bW_{l}} \assign \bz^l \cdot \bigl(\bdelta^{l+1}\bigr)^T$  
+            \tcp*[h]{weight gradient matrix at layer $l$}\;
+            $\bgrad_{\!\bb_{l}} \assign \bdelta^{l+1}$  
+            \tcp*[h]{bias gradient vector at layer $l$}\;
+        }
+        \For{$l=0,1,\cdots,h$}{
+            $\bW_{l} \assign \bW_{l} - \eta \cdot \bgrad_{\bW_{l}}$ 
+            \tcp*[h]{update $\bW_{l}$}\;
+            $\bb_{l} \assign \bb_{l} - \eta \cdot
+            \bgrad_{\bb_{l}}$ 
+            \tcp*[h]{update $\bb_{l}$}\;}
+    }
+    $t \assign t+1$\;
+}%
+\end{tightalgo}
+\end{small}
+\end{frame}
+%\caption{Deep MLP Training: Stochastic Gradient Descent}
+%\label{alg:reg:neural:deepmlp}
+%\end{tightalgo}
+%
+%
+%\vspace*{-0.3in}
+%\subsection{Training Deep MLPs}
+%\index{deep learning!training}
+%\index{deep multilayer perceptron!training}
+%\index{neural networks!training}
+%
+%\cref{alg:reg:neural:deepmlp} shows the
+%pseudo-code for
+%learning the weights and biases for a deep MLP.
+%The inputs comprise the dataset $\bD$,
+%%= \lB\{\bx_i^T, \by_i\rB\}_{i=1,\cdots,n}$, 
+%the number of hidden layers $h$,
+%the step size or learning rate for gradient descent $\eta$,
+%an integer threshold {\tt maxiter} denoting the number of iterations for
+%training, parameters $n_1, n_2, \cdots, n_h$ that denote the
+%number of neurons (excluding
+%bias, which will be added automatically) for each of the hidden layers
+%$l=1,2,\cdots,h$, and the type of activation functions
+%$f^1, f^2, \cdots, f^{h+1}$ for each of the layers (other than the input
+%layer that uses identity activations).
+%The size of the input ($d$) and output ($p$) layers is
+%determined directly from $\bD$.
+%
+%
+%The MLP first initializes 
+%the $(n_l \times n_{l+1})$ weight matrices $\bW_l$ between layers
+%$l$ and $l+1$ with small values chosen uniformly at random, e.g., in the
+%range $[-0.01,0.01]$. 
+%The MLP considers each input pair $(\bx_i, \by_i) \in
+%\bD$, and computes the predicted response $\bo_i$ via the feed-forward
+%process. The backpropagation phase begins by computing the error between
+%$\bo_i$ and true response $\by_i$, and computing the net gradient vector
+%$\bdelta^{h+1}$ at the output layer. These net gradients are
+%backpropagated from layer $h+1$ to layer $h$, from $h$ to $h-1$, and so
+%on until we obtain the net gradients at the first hidden layer $l=1$.
+%These net gradients are used to compute the weight gradient matrix
+%$\bgrad_{\bW_l}$ at layer $l$, which can in turn be used to update the
+%weight matrix $\bW_l$. Likewise, the net gradients specify the bias
+%gradient vector $\bgrad_{\!\bb_{l}}$ at layer $l$, which is used to
+%update $\bb_{l}$.
+%After each point has been used to update the
+%weights, that completes one iteration or epoch of training.
+%The training stops when {\tt maxiter} epochs have been reached.
+%On the other hand, during testing, for any input $\bx$, we apply the
+%feed-forward steps and print the predicted output $\bo$.
+%
+%\index{multilayer perceptron!stochastic gradient descent}
+%\index{stochastic gradient descent}
+%\index{neural networks!stochastic gradient descent}
+%It is important to note that \cref{alg:reg:neural:deepmlp} follows a
+%stochastic gradient descent approach, since 
+%the points are considered in random order, and the weight and bias
+%gradients are computed after observing each training point. 
+%In practice, it is
+%common to update the gradients by considering a fixed sized 
+%subset of the training points called a {\em minibatch} instead of using
+%single points. That is, the training data is divided into minibatches
+%using an additional parameter called {\em batch size}, and a gradient
+%descent step is performed after computing the bias and weight gradient
+%from each minibatch.
+%This helps better estimate the gradients, and also
+%allows vectorized matrix operations over the minibatch of points, which
+%can lead to faster convergence and substantial speedups in the
+%learning. 
+%% \index{deep multilayer perceptron!batch size}
+%\index{deep multilayer perceptron!minibatch learning}
+%% \index{deep learning!batch size}
+%\index{deep learning!minibatch learning}
+%\index{minibatch learning}
+%
+%\index{deep multilayer perceptron!vanishing gradient}
+%\index{deep multilayer perceptron!exploding gradient}
+%\index{deep learning!vanishing gradient}
+%\index{deep learning!exploding gradient}
+%\index{vanishing gradient}
+%\index{exploding gradient}
+\begin{frame}{Vanishing or Exploding Gradients}
+%One caveat while training very deep MLPs is the problem of vanishing
+%and exploding gradients. 
+In the {\em vanishing gradient} problem, the norm of the net gradient can
+decay exponentially with the distance from the output layer, that is, as
+we backpropagate the gradients from the output layer to the input layer.
+In this case the network will learn extremely slowly, if at all, since
+the gradient descent method will make minuscule changes to the weights
+and biases. 
+
+\medskip
+
+On the other hand, in the {\em exploding gradient} problem, 
+the norm of the net gradient can grow exponentially
+with the distance from the output layer. In this case, the weights and
+biases will become exponentially large, resulting in a failure to learn.
+The gradient explosion problem can be mitigated to some extent 
+by {\em gradient thresholding}, that is, by resetting the value if it
+exceeds an upper bound. 
+
+\medskip
+
+The vanishing gradients problem is more
+difficult to address. Typically sigmoid activations are more susceptible
+to this problem, and one solution is to use alternative activation
+functions such as ReLU. In general, recurrent neural networks, which 
+are deep neural networks with {\em feedback} connections, are more prone to
+vanishing and exploding gradients.%; we will revisit these issues  in
+\end{frame}
+%\cref{sec:reg:deep:LSTM}.
+%
+%% \begin{figure}[!ht]
+%% \centerline{
+%% \scalebox{0.4}{%
+%%     \Large
+%% \psmatrix
+%% [mnode=none]{$l=0$} 
+%%     & [mnode=none]{$l=1$} 
+%%     & [mnode=none]{$l=2$}\\[-3em] 
+%% \TR[name=w0]{\myfbox{
+%% $\bW_0 = \amatr{r}{0.4638\\
+%% -0.4890\\
+%% -0.3576\\
+%% -1.3367\\
+%%  1.0434}$\\~\\
+%% $\bb_0  = \amatr{r}{
+%% -1.9776\\
+%% -1.2075\\
+%%  0.3886\\
+%% -3.2220\\
+%% -2.1704}$
+%%  }} &
+%% \TR[name=w1]{\myfbox{
+%% $\bW_1 = \amatr{r}{
+%%  0.6617&  0.2607&  0.0738&  1.0666&  0.6877\\
+%% -0.1105& -0.3099&  1.1666& -0.8218&  0.4280\\
+%%  0.1276&  0.2138&  0.9959&  0.0097&  0.3180\\
+%% -0.3977&  0.0937& -0.4843&  0.6051&  0.1378\\
+%% -0.1607& -0.3974&  0.2491& -0.2231& -0.1669}$\\~\\
+%% $\bb_1 = \amatr{r}{
+%%     -2.8153\\
+%%  0.0007\\
+%% -0.3644\\
+%% -0.8676\\
+%%  1.6138}$
+%%  }} &
+%% \TR[name=w2]{\myfbox{
+%% $\bW_2  = \amatr{r}{
+%%  1.1419& -0.1673& -0.2480&  0.4529& -0.8849\\
+%% -0.1565& -0.5049&  0.9812& -0.0152&  0.1220\\
+%% -0.9481&  1.1906&  0.6961& -0.1330&  0.0390\\
+%%  0.3197& -0.4164& -0.4143& -0.2397& -0.0909\\
+%%  0.5029&  0.5316&  0.5418&  0.0520& -0.0547}$\\
+%% $\bb_2 = \amatr{r}{
+%%     -1.6861\\
+%% -0.2840\\
+%% -0.0666\\
+%% -0.2217\\
+%% -0.9404}$
+%%  }}%
+%%  \\
+%%   & [mnode=none]{$l=3$} 
+%%     & [mnode=none]{$l=4$}\\[-3em]
+%% & \TR[name=w3]{\myfbox{
+%% $\bW_3 = \amatr{r}{
+%%  0.4947& -0.2944& -1.2717& -0.2165&  0.3168\\
+%%  0.0392& -0.9671&  0.4323&  0.1788& -0.5804\\
+%%  0.8031&  0.5081&  0.8192& -0.3131&  0.4112\\
+%% -0.1011& -0.2265&  0.4354&  0.3456& -0.5670\\
+%% -0.2308&  0.3691& -0.5308&  0.1618& -0.1812}$\\~\\
+%% $\bb_3 = \amatr{r}{
+%%  0.4946\\
+%%  0.5053\\
+%% -1.3389\\
+%%  0.2651\\
+%%  0.7855}$
+%%  }} &
+%% \TR[name=w4]{\myfbox{
+%% $\bW_4 = \amatr{r}{
+%%  0.2735& -0.1405&  0.2914&  0.3434&  0.3361\\
+%% -0.1564& -0.4411&  0.4550&  0.1145& -0.0671\\
+%%  0.1110&  0.1876& -0.1310& -0.1022&  0.0700\\
+%% -1.1419&  0.8067& -0.5453&  0.5210& -0.8485\\
+%%  0.5680&  0.3033&  0.6067& -0.1326& -0.3219}$\\~\\
+%% $\bb_4 = \amatr{r}{
+%% -0.1972\\
+%% -0.8991\\
+%% -0.2521\\
+%%  0.6895\\
+%% -1.6376}$
+%%  }}\\
+%% [mnode=none]{$l=5$}
+%%     & [mnode=none]{$l=6$} 
+%%     & [mnode=none]{$l=7$}\\[-3em]
+%% \TR[name=w5]{\myfbox{
+%% $\bW_5 = \amatr{r}{
+%% -0.0448& -0.1771& -0.2649& -0.6728& -0.4034\\
+%%  0.0184&  0.3338& -0.2538& -0.3805&  0.6332\\
+%% -0.7608& -0.4046& -0.0080&  0.9755& -0.2662\\
+%% -0.7241&  0.5369& -0.1765& -0.1966& -0.2071\\
+%%  0.0103& -0.4657& -0.4335&  0.3140& -0.1524}$\\~\\
+%% $\bb_5 = \amatr{r}{
+%%  0.8455\\
+%% -1.4781\\
+%%  0.4122\\
+%%  0.7232\\
+%%  0.0418}$
+%%  }} &
+%% \TR[name=w6]{\myfbox{
+%% $\bW_6 = \amatr{r}{
+%%  0.2661& -0.6841& -0.3484&  0.1431& -0.4535\\
+%%  0.3161& -0.6000& -0.5746& -0.1459&  0.0317\\
+%% -0.1101&  0.0255&  0.8850&  0.5128&  0.0837\\
+%% -0.0913& -0.2297& -0.1306&  0.2683& -0.0414\\
+%% -0.2465& -0.3955& -1.0111& -0.8854&  0.0149}$\\~\\
+%% $\bb_6 = \amatr{r}{
+%%     0.5508\\
+%%  1.2972\\
+%% -0.3870\\
+%% -0.3943\\
+%%  1.7865}$
+%%  }} &
+%% \TR[name=w7]{\myfbox{
+%% $\bW_7 = \amatr{r}{ 0.6622\\ 0.9750\\-0.6919\\0.1791\\-1.4889}^T$\\~\\
+%% $\bb_7 = \matr{ 0.4266 }$
+%% }}
+%% \endpsmatrix
+%% }}
+%% \caption{Deep multilayer perceptron for sine curve.}
+%% \label{fig:reg:neural:deepMLP_sine_arch}
+%% \end{figure}
+%
+%
+%% \begin{figure}[!ht]
+%% \centerline{
+%% \scalebox{0.45}{%
+%%     \large
+%% \parbox{.95\linewidth}{%
+%% \begin{align*}    
+%% \bW_0 & = \amatr{r}{0.4638 &
+%% -0.4890 & 
+%% -0.3576 &
+%% -1.3367 &
+%%  1.0434} &
+%% \bb_0 & = \amatr{r}{
+%% -1.9776\\
+%% -1.2075\\
+%%  0.3886\\
+%% -3.2220\\
+%% -2.1704} &
+%% \bW_1 & = \amatr{r}{
+%% 0.6617 & -0.1105 & 0.1276 & -0.3977 & -0.1607 \\
+%% 0.2607 & -0.3099 & 0.2138 & 0.0937 & -0.3974 \\
+%% 0.0738 & 1.1666 & 0.9959 & -0.4843 & 0.2491 \\
+%% 1.0666 & -0.8218 & 0.0097 & 0.6051 & -0.2231 \\
+%% 0.6877 & 0.428 & 0.318 & 0.1378 & -0.1669} &
+%% \bb_1 & = \amatr{r}{
+%%     -2.8153\\
+%%  0.0007\\
+%% -0.3644\\
+%% -0.8676\\
+%%  1.6138}\\
+%% \bW_2 & = \amatr{r}{
+%% 1.1419 & -0.1565 & -0.9481 & 0.3197 & 0.5029 \\
+%% -0.1673 & -0.5049 & 1.1906 & -0.4164 & 0.5316 \\
+%% -0.248 & 0.9812 & 0.6961 & -0.4143 & 0.5418 \\
+%% 0.4529 & -0.0152 & -0.133 & -0.2397 & 0.052 \\
+%% -0.8849 & 0.122 & 0.039 & -0.0909 & -0.0547} &
+%% \bb_2 & = \amatr{r}{
+%%     -1.6861\\
+%% -0.2840\\
+%% -0.0666\\
+%% -0.2217\\
+%% -0.9404} &
+%% \bW_3 & = \amatr{r}{
+%% 0.4947 & 0.0392 & 0.8031 & -0.1011 & -0.2308 \\
+%% -0.2944 & -0.9671 & 0.5081 & -0.2265 & 0.3691 \\
+%% -1.2717 & 0.4323 & 0.8192 & 0.4354 & -0.5308 \\
+%% -0.2165 & 0.1788 & -0.3131 & 0.3456 & 0.1618 \\
+%% 0.3168 & -0.5804 & 0.4112 & -0.567 & -0.1812} &
+%% \bb_3 & = \amatr{r}{
+%%  0.4946\\
+%%  0.5053\\
+%% -1.3389\\
+%%  0.2651\\
+%%  0.7855}\\
+%% \bW_4  &= \amatr{r}{
+%% 0.2735 & -0.1564 & 0.111 & -1.1419 & 0.568 \\
+%% -0.1405 & -0.4411 & 0.1876 & 0.8067 & 0.3033 \\
+%% 0.2914 & 0.455 & -0.131 & -0.5453 & 0.6067 \\
+%% 0.3434 & 0.1145 & -0.1022 & 0.521 & -0.1326 \\
+%% 0.3361 & -0.0671 & 0.07 & -0.8485 & -0.3219} &
+%% \bb_4 & = \amatr{r}{
+%% -0.1972\\
+%% -0.8991\\
+%% -0.2521\\
+%%  0.6895\\
+%% -1.6376} &
+%% \bW_5  & = \amatr{r}{
+%% -0.0448 & 0.0184 & -0.7608 & -0.7241 & 0.0103 \\
+%% -0.1771 & 0.3338 & -0.4046 & 0.5369 & -0.4657 \\
+%% -0.2649 & -0.2538 & -0.008 & -0.1765 & -0.4335 \\
+%% -0.6728 & -0.3805 & 0.9755 & -0.1966 & 0.314 \\
+%% -0.4034 & 0.6332 & -0.2662 & -0.2071 & -0.1524} &
+%% \bb_5 & = \amatr{r}{
+%%  0.8455\\
+%% -1.4781\\
+%%  0.4122\\
+%%  0.7232\\
+%%  0.0418} \\
+%% \bW_6 & = \amatr{r}{
+%% 0.2661 & 0.3161 & -0.1101 & -0.0913 & -0.2465 \\
+%% -0.6841 & -0.6 & 0.0255 & -0.2297 & -0.3955 \\
+%% -0.3484 & -0.5746 & 0.885 & -0.1306 & -1.0111 \\
+%% 0.1431 & -0.1459 & 0.5128 & 0.2683 & -0.8854 \\
+%% -0.4535 & 0.0317 & 0.0837 & -0.0414 & 0.0149} &
+%% \bb_6 & = \amatr{r}{
+%%     0.5508\\
+%%  1.2972\\
+%% -0.3870\\
+%% -0.3943\\
+%%  1.7865} &
+%% \bW_7 & = \amatr{r}{ 0.6622 \\ 0.9750 \\-0.6919 \\0.1791 \\ -1.4889} &
+%% \bb_7 & = \matr{ 0.4266 }
+%% \end{align*}
+%% }}}
+%% \caption{Parameters (weight matrices and bias vectors) for the deep MLP for sine curve: 7 hidden layers
+%%     with 5 hidden neurons per layer. Input and output layers have a
+%% single neuron.}
+%% \label{fig:reg:neural:deepMLP_sine_arch}
+%% \end{figure}
+%
+%%\begin{figure}[!t]
+%%\centerline{
+%%\scalebox{0.55}{%
+%%    \large
+%%\parbox{.95\linewidth}{%
+%%\begin{align*}    
+%%\bW_0 & = \amatr{r}{0.46 &
+%%-0.49 & 
+%%-0.36 &
+%%-1.34 &
+%% 1.04} &
+%%\bb_0 & = \amatr{r}{
+%%-1.98\\
+%%-1.21\\
+%% 0.39\\
+%%-3.22\\
+%%-2.17} &
+%%\bW_1 & = \amatr{r}{
+%%0.66 & -0.11 & 0.13 & -0.39 & -0.16 \\
+%%0.26 & -0.31 & 0.21 & 0.09 & -0.39 \\
+%%0.07 & 1.17 & 0.99 & -0.48 & 0.25 \\
+%%1.07 & -0.82 & 0.01 & 0.61 & -0.22 \\
+%%0.69 & 0.43 & 0.32 & 0.14 & -0.17} &
+%%\bb_1 & = \amatr{r}{
+%%    -2.82\\
+%% 0.00\\
+%%-0.36\\
+%%-0.87\\
+%% 1.61}\\
+%%\bW_2 & = \amatr{r}{
+%%1.14 & -0.16 & -0.95 & 0.32 & 0.50 \\
+%%-0.17 & -0.50 & 1.19 & -0.42 & 0.53 \\
+%%-0.25 & 0.98 & 0.69 & -0.41 & 0.54 \\
+%%0.45 & -0.02 & -0.13 & -0.24 & 0.05 \\
+%%-0.88 & 0.12 & 0.04 & -0.09 & -0.05} &
+%%\bb_2 & = \amatr{r}{
+%%    -1.69\\
+%%-0.28\\
+%%-0.07\\
+%%-0.22\\
+%%-0.94} &
+%%\bW_3 & = \amatr{r}{
+%%0.49 & 0.04 & 0.80 & -0.10 & -0.23 \\
+%%-0.29 & -0.97 & 0.51 & -0.23 & 0.37 \\
+%%-1.27 & 0.43 & 0.82 & 0.44 & -0.53 \\
+%%-0.22 & 0.18 & -0.31 & 0.35 & 0.16 \\
+%%0.32 & -0.58 & 0.41 & -0.57 & -0.18} &
+%%\bb_3 & = \amatr{r}{
+%% 0.49\\
+%% 0.51\\
+%%-1.34\\
+%% 0.27\\
+%% 0.79}\\
+%%\bW_4  &= \amatr{r}{
+%%0.27 & -0.16 & 0.11 & -1.14 & 0.57 \\
+%%-0.14 & -0.44 & 0.19 & 0.81 & 0.30 \\
+%%0.29 & 0.46 & -0.13 & -0.55 & 0.61 \\
+%%0.34 & 0.11 & -0.10 & 0.52 & -0.13 \\
+%%0.34 & -0.07 & 0.07 & -0.85 & -0.32} &
+%%\bb_4 & = \amatr{r}{
+%%-0.19\\
+%%-0.89\\
+%%-0.25\\
+%% 0.69\\
+%%-1.64} &
+%%\bW_5  & = \amatr{r}{
+%%-0.04 & 0.02 & -0.76 & -0.72 & 0.01 \\
+%%-0.18 & 0.33 & -0.40 & 0.54 & -0.47 \\
+%%-0.27 & -0.25 & -0.01 & -0.18 & -0.43 \\
+%%-0.67 & -0.38 & 0.98 & -0.19 & 0.31 \\
+%%-0.40 & 0.63 & -0.27 & -0.21 & -0.15} &
+%%\bb_5 & = \amatr{r}{
+%% 0.85\\
+%%-1.48\\
+%% 0.41\\
+%% 0.72\\
+%% 0.04} \\
+%%\bW_6 & = \amatr{r}{
+%%0.27 & 0.32 & -0.11 & -0.09 & -0.25 \\
+%%-0.68 & -0.60 & 0.03 & -0.23 & -0.39 \\
+%%-0.35 & -0.57 & 0.89 & -0.13 & -1.01 \\
+%%0.14 & -0.15 & 0.51 & 0.27 & -0.89 \\
+%%-0.45 & 0.03 & 0.08 & -0.04 & 0.01} &
+%%\bb_6 & = \amatr{r}{
+%%    0.55\\
+%% 1.29\\
+%%-0.39\\
+%%-0.39\\
+%% 1.79} &
+%%\bW_7 & = \amatr{r}{ 0.66 \\ 0.98 \\-0.69 \\0.18 \\ -1.49} &
+%%\bb_7 & = \matr{ 0.43 }
+%%\end{align*}
+%%}}}
+%%\caption{Parameters (weight matrices and bias vectors) for the deep MLP for sine curve: 7 hidden layers
+%%    with 5 hidden neurons per layer. Input and output layers have a
+%%single neuron.}
+%%\label{fig:reg:neural:deepMLP_sine_arch}
+%%\end{figure}
+%
+%
+%%\readdata{\dataS}{REG/neural/figs/sine-train_n100.txt}
+%%\readdata{\dataPfiveH}{REG/neural/figs/Nh5_Nl6/foo_e500.txt}
+%%\readdata{\dataPoneK}{REG/neural/figs/Nh5_Nl6/foo_e1000.txt}
+%%\readdata{\dataPtwofiveK}{REG/neural/figs/Nh5_Nl6/foo_e2500.txt}
+%%\readdata{\dataPtenK}{REG/neural/figs/Nh5_Nl6/foo_e10000.txt}
+%%\readdata{\dataPthirtyK}{REG/neural/figs/Nh5_Nl6/foo_e30000.txt}
+%%\readdata{\dataPsinM}{REG/neural/figs/Nh5_Nl6/test2_predict.txt}
+%%\begin{figure}[htb!]
+%%    \captionsetup[subfloat]{captionskip=20pt}
+%%    \centering
+%%    \def\pshlabel#1{\scriptsize {$#1$}}
+%%    \def\psvlabel#1{\scriptsize {$#1$}}
+%%    \psset{arrowscale=2}
+%%    \psset{xAxisLabel=$X$,yAxisLabel= $Y$,
+%%        xAxisLabelPos={c,-0.35in},yAxisLabelPos={-0.35in,c}}
+%%    \centerline{%
+%%    \subfloat[$t=500$]{%
+%%        \label{fig:reg:neural:sine_deep_500}
+%%    \scalebox{0.55}{%
+%%    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+%%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPfiveH}
+%%    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+%%    \psline[linewidth=0.5pt](-12,0)(12.5,0)
+%%    \endpsgraph
+%%    }}
+%%    \hspace{0.5in}
+%%    \subfloat[$t=1000$]{%
+%%        \label{fig:reg:neural:sine_deep_1k}
+%%        \scalebox{0.55}{%
+%%    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+%%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPoneK}
+%%    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+%%    \psline[linewidth=0.5pt](-12,0)(12.5,0)
+%%    \endpsgraph
+%%    }}
+%%    }
+%%    \vspace{-0.1in}
+%%    \centerline{%
+%%    \subfloat[$t=2500$]{%
+%%        \label{fig:reg:neural:sine_deep_2500}
+%%    \scalebox{0.55}{%
+%%    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+%%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPtwofiveK}
+%%    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+%%    \psline[linewidth=0.5pt](-12,0)(12.5,0)
+%%    \endpsgraph
+%%    }}
+%%    \hspace{0.5in}
+%%    \subfloat[$t=10000$]{%
+%%        \label{fig:reg:neural:sine_deep_10k}
+%%        \scalebox{0.55}{%
+%%    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+%%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPtenK}
+%%    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+%%    \psline[linewidth=0.5pt](-12,0)(12.5,0)
+%%    \endpsgraph
+%%    }}
+%%    }
+%%    \vspace{-0.1in}
+%%    \centerline{%
+%%    \subfloat[$t=30000$]{%
+%%        \label{fig:reg:neural:sine_deep_30k}
+%%    \scalebox{0.55}{%
+%%    \psgraph[tickstyle=bottom,Dx=2,Dy=0.25,Ox=-12,Oy=-1.25]{->}(-12.0,-1.25)(12.5,1.25){4in}{2.25in}%
+%%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPthirtyK}
+%%    \psplot[linewidth=0.5pt,plotpoints=200]{-10}{10}{x RadtoDeg sin} 
+%%    \psline[linewidth=0.5pt](-12,0)(12.5,0)
+%%    \endpsgraph
+%%    }}
+%%    \hspace{0.5in}
+%%    \subfloat[Test range ${[-20,20]}$]{%
+%%    \label{fig:reg:neural:sine_deep_20test}
+%%    \scalebox{0.55}{%
+%%        \psgraph[tickstyle=bottom,Dx=5,Dy=0.5,Ox=-20,Oy=-1.5]{->}(-20.0,-1.5)(24,1.5){4in}{2.25in}%
+%%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
+%%    \dataplot[plotstyle=dots,showpoints=true]{\dataS}
+%%    \psset{dotstyle=Bo,dotscale=0.5,fillcolor=black}
+%%    \listplot[plotstyle=dots,showpoints=true,plotNoMax=2,plotNo=2]{\dataPsinM}
+%%    \psplot[linewidth=0.5pt,plotpoints=250]{-20}{20}{x RadtoDeg sin} 
+%%    \psline[linewidth=0.5pt](-20,0)(20.5,0)
+%%    %\psline[linewidth=0.5pt](-10.1,-1.1)(10.1,-1.1)
+%%    %\psline[linewidth=0.5pt](10.1,-1.1)(10.1,1.1)
+%%    %\psline[linewidth=0.5pt](10.1,1.1)(-10.1,1.1)
+%%    %\psline[linewidth=0.5pt](-10.1,1.1)(-10.1,-1.1)
+%%    \psframe[linewidth=0.5pt](-10.1,-1.1)(10.1,1.1)
+%%    \endpsgraph
+%%    }}
+%%    }
+%%%\vspace{0.4in}
+%%    \caption{Deep MLP for sine curve: 7 hidden layers, 5 hidden neurons
+%%        per layer, ReLU activations.
+%%The gray dots represent the training data. The
+%%bold line is the predicted response, whereas the thin line is the true
+%%response.
+%%\protect\subref{fig:reg:neural:sine_deep_500}--\protect\subref{fig:reg:neural:sine_deep_30k}:
+%%Predictions after different number of iterations.
+%%\protect\subref{fig:reg:neural:sine_deep_20test}: 
+%%Testing outside the training range. Good fit within the training
+%%    range $[-10,10]$ shown in the box.}
+%%\label{fig:reg:neural:sine_deep}
+%%\end{figure}
+%
+%
+%%\begin{example}[Deep MLP]
+%%    We now illustrate a deep MLP for learning the sine data.
+%%    \cref{fig:reg:neural:sine_deep} shows the training data (the gray points
+%%    on the curve), which comprises $n=100$ points $x_i$ sampled randomly
+%%    in the range $[-10,10]$, with $y_i = \sin(x_i)$. 
+%%    The testing data comprises 1000 points sampled uniformly from 
+%%    the same range.
+%%    The figure also shows the desired output curve (thin line).
+%%    We used a deep MLP with seven hidden layers using ReLU
+%%    activations. The size of each of the hidden layers is $5$, with the
+%%    input and output layers comprising a single neuron.
+%%    The output unit
+%%    uses an identity activation, and the step size $\eta=0.001$.
+%
+%%    \cref{fig:reg:neural:deepMLP_sine_arch} shows the 
+%%     weight matrices and bias vectors for the different layers
+%%     obtained after training.
+%%    \cref{fig:reg:neural:sine_deep} shows the output of the deep MLP on
+%%    the test set, after different number of epochs. The final SSE is
+%%    $0.98$ over
+%%    the 1000 test points. 
+%%    %Interestingly, with 5 hidden neurons per layer, we found that fewer
+%%    %than seven ReLU layers did not result in a good fit.
+%%    Furthermore, we can observe in
+%%    \cref{fig:reg:neural:sine_deep_20test} that whereas the deep MLP is able to
+%%    approximate the sine curve in the specified test range $[-10,10]$,
+%%    it does not  yield a good fit outside this range.
+%%\end{example}
+%
+%
+%
+\begin{frame}{MNIST: Deep MLPs}
+\framesubtitle{Prediction error as a function of epochs.}
+%
+%\begin{figure}[!b]
+    \centering
+\pgfplotscreateplotcyclelist{my black white}{%
+solid, every mark/.append style={solid, fill=gray}, mark=*\\%
+solid, every mark/.append style={solid, fill=gray}, mark=square*\\%
+solid, every mark/.append style={solid, fill=gray},
+mark=diamond*\\%
+densely dashed, every mark/.append style={solid, fill=gray},
+mark=triangle*\\%
+}
+    % \tikzsetnextfilename{reg_neural_mnist_errors_mlp}
+\begin{tikzpicture}
+    \begin{axis}[
+            width=3.25in,
+            height=2in,
+            scale only axis,
+            xmin=1, xmax=15,
+            ymin=100, ymax=5500,
+            label style={font=\small},
+            tick label style={font=\tiny},
+            xlabel=epochs,
+        ylabel=errors,
+        xtick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
+        % enlargelimits=false,
+        axis on top,
+        legend style ={ at={(0.25,0.95)},
+            anchor=north west, draw=black,
+        fill=white, align=left, font=\small},
+        cycle list name=my black white,
+        % smooth
+    ]
+    \addplot table [x index=0, y index=2] %
+    {REG/neural/figs/test_loss/test_loss_output_deep_m392.txt};
+    \addlegendentry{$n_1=392$};
+    \addplot table [x index=0, y index=2] %
+    {REG/neural/figs/test_loss/test_loss_output_deep_m196_49.txt};
+    \addlegendentry{$n_1=196,n_2=49$};
+    \addplot table [x index=0, y index=2] %
+    {REG/neural/figs/test_loss/test_loss_output_deep_m392_196_49.txt};
+    \addlegendentry{$n_1=392,n_2=196,n_3=49$};
+    \addplot table [x index=0, y index=2] %
+    {REG/neural/figs/test_loss/test_loss_output_deep_m392_196_98_49.txt};
+    \addlegendentry{$n_1=392,n_2=196,n_3=98,n_4=49$};
+    \end{axis}
+\end{tikzpicture}
+%\caption{MNIST: Deep MLPs; prediction error as a function of epochs.}
+%\label{fig:reg:neural:mnist_deep_mlp}
+%\end{figure}
+\end{frame}
+%
+%
+%\begin{example}[Deep MLP]
+\begin{frame}{Deep MLP}
+\framesubtitle{Example}
+    We now examine deep MLPs for predicting the labels for the
+    MNIST handwritten images dataset.
+
+\medskip
+
+% that we considered in \cref{ex:reg:neural:mlp_mnist}. 
+Recall that this dataset has
+    $n=60000$ grayscale images of size $28\times28$ that we treat as
+    $d=784$ dimensional vectors. 
+    The pixel values between 0 and 255 are converted to the range 0 and
+    1 by dividing each value by 255.
+    The target response vector is a one-hot
+    encoded vector for class labels $\{0,1,\ldots,9\}$. 
+
+\medskip
+
+    Thus, the input to the MLP $\bx_i$ has dimensionality $d=784$, and
+    the output layer has dimensionality $p=10$. We use softmax
+    activation for the output layer. We use ReLU activation for the
+    hidden layers, and consider several deep models with different
+    number and sizes of the hidden layers. We use step size $\eta=0.3$
+    and train for $t=15$ epochs.
+    Training was done using minibatches, using batch size of 1000.
+\end{frame}
+
+\begin{frame}{Deep MLP}
+\framesubtitle{Example}
+
+    During the training of each of the deep MLPs, we evaluate its
+    performance on the separate MNIST test datatset that contains 10,000
+    images.
+    %\cref{fig:reg:neural:mnist_deep_mlp} 
+Figure plots the number of errors
+    after each epoch for the different deep MLP models.
+    The final test error at the end of training
+    is given as
+    \begin{center}
+        \begin{tabular}{|c||c|}
+            \hline
+            hidden layers & errors\\
+            \hline
+            $n_1=392$ & 396\\
+            $n_1=196,n_2=49$ & 303\\
+            $n_1=392,n_2=196,n_3=49$ & 290\\
+            $n_1=392,n_2=196,n_3=98,n_4=49$ & 278\\
+            \hline
+        \end{tabular}
+    \end{center}
+    We can observe that as we increase the number of layers, we do get
+    performance improvements. The deep MLP with four hidden layers of
+    sizes $n_1=392,n_2=196,n_3=98,n_4=49$ results in an error rate of
+    2.78\% on the training set, whereas the MLP with a single hidden
+    layer of size $n_1=392$ has an error rate of 3.96\%.
+    Thus, the deeper MLP significantly improves the prediction accuracy.
+    However, adding more layers does not reduce the error rate, and can
+    also lead to performance degradation.
+\end{frame}
+%    \label{ex:reg:neural:mlp_mnist_deep}
+%\end{example}
+%
+%
+%\section{Further Reading}
+%\label{sec:reg:neural:ref}
+%\begin{refsection}
+%    Artificial neural networks have their origin in the work of
+%    \citet*{mcculloch1943logical}. The first application of a single
+%    neuron, called a {\em perceptron}, to supervised learning was by
+%    \citet*{rosenblatt1958perceptron}.
+%    \citet*{minsky1969perceptron} pointed out limitations of
+%    perceptrons, which were not overcome until the development of the 
+%     backpropagation algorithm, which was introduced by
+%    \citet*{rumelhart1986learning} to train general multilayer
+%    perceptrons.
+%
+%\printbibliography[heading=emptyheading]
+%\end{refsection}
+%
+%\section{Exercises}
+%\label{sec:reg:neural:exercise}
+%
+%\begin{exercises}[Q1.]
+%
+%
+%    \begin{figure}[!t]
+%    \centering
+%    \scalebox{0.9}{\scantokens{
+%    % \tikzsetnextfilename{reg_neural_ex_q1}
+%    \begin{tikzpicture}
+%        \matrix [matrix of math nodes, nodes={circle, draw}, column
+%        sep={3cm}, row sep = {1cm}]{
+%        & |(z1)| z_1 & \\
+%        |(x)| x & |(z2)| z_2 & |(o)| o\\
+%        & |(z3)| z_3 & \\
+%    };
+%    \begin{scope}[
+%            every path/.style={draw, thick, -Stealth[black],shorten
+%            >=2pt},
+%           every node/.style={font=\small\itshape,fill=white,circle}]
+%        \path (x) -> node [midway] {$w_1$} (z1);
+%        \draw (x) -- node [midway] {$w_2$}  (z2);
+%        \draw (x) --  node [midway] {$w_3$} (z3);
+%        \draw (z1) ->  node [midway] {$w'_1$} (o);
+%        \draw (z2) --  node [midway] {$w'_2$} (o);
+%        \draw (z3) --  node [midway] {$w'_3$} (o);
+%    \end{scope}
+%    \end{tikzpicture}
+%    \endinput}}
+%    \caption{Neural network for Q\ref{q:reg:neural:q_nn}.}
+%    \label{fig:reg:neural:q_nn}
+%    \end{figure}
+%\item \label{q:reg:neural:q_nn} Consider the neural network in
+%    \cref{fig:reg:neural:q_nn}.
+%    Let bias values be fixed at 0, and let the weight matrices between the input and hidden, and hidden and
+%    output layers, respectively, be:
+%    \begin{align*}
+%    \bW & = (w_1, w_2, w_3) = (1, 1, -1) &
+%    \bW' & = (w'_1, w'_2, w'_3)^T = (0.5, 1, 2)^T    
+%    \end{align*}
+%            Assume that the hidden layer
+%            uses ReLU, whereas the output layer uses
+%            sigmoid activation. Assume SSE error.
+%            Answer the following questions, when the input is $x=4$ and
+%            the true response is $y=0$:
+%    \begin{sexercises}
+%        
+%        \item Use forward propagation to compute
+%            the predicted output.
+%        % \item Using inverted dropout for the hidden layer,
+%        %     with the dropout vector $\bu = (1, 0, 1)^T$ and the
+%        %     probability of retention $r=2/3$ (i.e., a dropout rate of
+%        %     $1-r = 1/3$), show the forward propagation step to compute
+%        %     the predicted output.
+% 
+%
+%        \item What is the loss or error value?
+%            
+%        \item Compute the net gradient vector $\bdelta^o$ for
+%            the output layer.
+%            
+%        \item Compute the net gradient vector $\bdelta^h$ for
+%            the hidden layer.
+%            
+%        \item Compute the weight gradient matrix
+%            $\bgrad_{\bW'}$ between the hidden and output layers.
+%            
+%
+%        \item Compute the weight gradient matrix
+%            $\bgrad_{\bW}$ between the input and hidden layers.
+%    \end{sexercises}
+%
+%
+%
+%\item Show that the derivative of the sigmoid function
+%[\cref{eq:reg:neural:sigmoid}]  with
+%    respect to its argument is given as
+%    $$\frac{\partial f(z)}{\partial z} = f(z) \cdot (1-f(z))$$
+%
+%
+%\item Show that the derivative of the hyperbolic tangent
+%function [\cref{eq:reg:neural:tanh}] with
+%    respect to its argument is given as
+%$$\frac{\partial f(z)}{\partial z} = 1-f(z)^2$$
+%
+%% \begin{answer}
+%% Let $h = e^z - e^{-z}$ and $g=e^z+e^{-z}$. Then,
+%% \begin{align*}
+%%     \frac{\partial f(z)}{\partial z} 
+%%     & = \frac{h' \cdot g - h \cdot g'}{g^2}\\ 
+%%     & = \frac{(e^z+e^{-z})\cdot (e^z+e^{-z}) - (e^z-e^{-z})\cdot
+%%     (e^z-e^{-z})}{(e^z+e^{-z})^2}\\
+%%     & = \frac{(e^z+e^{-z})^2 - (e^z-e^{-z})^2}{(e^z+e^{-z})^2}\\
+%%     & = 1 - \lB(\frac{e^z-e^{-z}}{e^z+e^{-z}}\rB)^2\\
+%%     & = 1 - f(z)^2
+%% \end{align*}
+%% \end{answer}
+%
+%\item Show that the derivative of the softmax
+%    function is given as
+%    \begin{align*}
+%        \frac{\partial f(z_{\!i}|\;\bz)}{\partial z_{\!j}} = 
+%    \begin{cases}
+%        f(z_{\!i}) \cdot (1-f(z_{\!i})) & \text{if } j=i\\
+%        -f(z_{\!i}) \cdot f(z_{\!j}) & \text{if } j\ne i
+%    \end{cases}
+%    \end{align*}
+%    where $\bz = \{z_1, z_2, \cdots, z_p\}$.
+%% \begin{answer}
+%% Consider the case when $z_i = z_j$.
+%% Let $h = e^{z_i}$ and $g=\sum_{k=1}^p e^{z_k}$. Then,
+%%  \begin{align*}
+%%      \frac{\partial f(z_i)}{\partial z_i} 
+%%      & = \frac{h' \cdot g - h \cdot g'}{g^2}\\ 
+%%      & = \frac{(e^{z_i})\cdot g - (e^{z_i} \cdot e^{z_i})}
+%%      {g^2}\\
+%%      & = \frac{e^{z_i}}{g} \cdot \lB(\frac{g - e^{z_i}}{g}\rB)
+%%      = \frac{e^{z_i}}{g} \cdot \lB(1 - \frac{e^{z_i}}{g}\rB)\\
+%%      & = f(z_i)\cdot (1 - f(z_i))
+%%  \end{align*}
+%% For the case when $z_i \ne z_j$.
+%% Let $h = e^{z_i}$ and $g=\sum_{k=1}^p e^{z_k}$. Then,
+%% \begin{align*}
+%%     \frac{\partial f(z_i)}{\partial z_{\!j}} 
+%%     & = \frac{h' \cdot g - h \cdot g'}{g^2}\\ 
+%%     & = \frac{0 \cdot g - (e^{z_i} \cdot e^{z_{\!j}})}
+%%     {g^2}\\
+%%     & = -\frac{e^{z_i}}{g} \cdot \frac{e^{z_{\!j}}}{g}\\
+%%     & = -f(z_i)\cdot f(z_{\!j})
+%% \end{align*}
+%% \end{answer}
+%
+%\item Derive an expression for the net gradient vector at the output
+%    neurons when using softmax activation with the squared error
+%    function.
+%
+%    % \begin{answer}
+%    %     Since we are using the softmax activation, we will use the
+%    %     matrix of gradients given in \cref{eq:reg:neural:bF}. 
+%
+%    %     The net gradient is given as
+%    %     \begin{align*}
+%    %    \frac{\partial \cE_\bx}{\partial \net_{\!j}}
+%    %    & = \sum_{i=1}^K \frac{\partial \cE_\bx}{\partial o_{i}} \cdot
+%    %    \frac{\partial o_{i}}{\partial \net_{\!j}} = 
+%    %    \lB(\partial \bF^{h+1}\rB)^T \cdot (\bo-\by)
+%    %     \end{align*}
+%    %     We can simplify the expression further, as follows
+%    %    \begin{align*}
+%    % \frac{\partial \cE_\bx}{\partial \net_{\!j}}
+%    %    & = \sum_{i=1}^K \frac{\partial \cE_\bx}{\partial o_{i}} \cdot
+%    %    \frac{\partial o_{i}}{\partial \net_{\!j}}\\
+%    %    & = (o_{\!j}-y_{\!j}) o_{\!j} (1-o_{\!j}) + 
+%    %    \sum_{i\ne j} (o_i-y_i) \cdot (-o_i \cdot o_{\!j})\\
+%    %    & = o_{\!j}(o_{\!j}-y_{\!j}) - o_{\!j} \lB( 
+%    %        \sum_{i=1}^K (o_i-y_i) \cdot o_i
+%    %    \rB)\\
+%    %    & = o_{\!j}(o_{\!j}-y_{\!j}) - o_{\!j} \cdot (\bo-\by)^T\bo
+%    %    \end{align*}
+%    %    Across all the neurons, we can write this compactly as
+%    %    \begin{align*}
+%    %        \bdelta^{h+1} = \bo \odot (\bo-\by) - \bo \cdot (\bo-\by)^T\bo
+%    %    \end{align*}
+%    % \end{answer}
+%
+%\item Show that if the weight matrix and bias vectors are initialized to
+%    zero, then all neurons in a given layer will have identical values
+%    in each iteration.
+%
+%\item Prove that with linear activation functions, a
+%    multilayered network is equivalent to a single-layered neural
+%    network.
+%
+%\item Compute the
+%    expression for the net gradient vector at the
+%    output layer, $\bdelta^{h+1}$, assuming cross-entropy error,
+%    $\cE_\bx = - \sum^{K}_{i=1} y_i \cdot \ln(o_i)$,
+%    with $K$ independent binary output neurons that use sigmoid
+%    activation, that is, $o_i = \text{sigmoid}(\net_i)$. 
+%
+%\item Given an MLP with one hidden layer, derive the equations for
+%    $\bdelta_h$ and $\bdelta_o$ using vector derivatives, i.e., by
+%    computing $\frac{\partial \cE_\bx}{\partial \bnet_{h}}$ and
+%    $\frac{\partial \cE_\bx}{\partial \bnet_{o}}$, where
+%$\bnet_{h}$ and $\bnet_{o}$ are the net input vectors at the hidden and
+%output layers.
+%\end{exercises}
+%

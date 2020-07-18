@@ -40,8 +40,10 @@ $O(k^n/k!)$ clusterings of $n$ points into $k$ groups.
 The {\em sum of squared errors}
 scoring function is def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
   SSE(\cC) = \sum_{i=1}^{k}\sum_{\bx_{j} \in
   C_{i}}\norm{\bx_{j}-\bmu_i}^2
+}
 \end{align*}
 
 \medskip
@@ -92,8 +94,7 @@ minima.
 
 
 \begin{frame}[fragile]{K-Means Algorithm}
-\begin{algorithm}[H]
-%\begin{tightalgo}[!h]{\textwidth-18pt}
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\textsc{K-means} ($\bD, k, \epsilon$)}
 \Algorithm{}
 $t = 0$\;
@@ -114,7 +115,7 @@ Randomly initialize $k$ centroids: $\bmu_1^t, \bmu_2^t, \dots,
         $\bmu_i^{t} \assign \frac{1}{|C_i|} \sum_{\bx_{j} \in C_i} \bx_{j}$\;
     }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -550,11 +551,14 @@ follows:
 \begin{align*}
     C^*(\bx_{j}) & = \arg \min_{i} \lB\{
     \norm{\phi(\bx_{j}) - \bmu^\phi_i}^2  \rB\}\\
-    & = \arg \min_{i} \Biggl\{
+    & = 
+\tcbhighmath{
+\arg \min_{i} \Biggl\{
     {1\over n_i^2} \sum_{\bx_a\in C_i} \sum_{\bx_b \in C_i}
         K(\bx_a, \bx_b)
      - \frac{2}{n_i} \sum_{\bx_a \in C_i} K(\bx_a, \bx_{j})
     \Biggr\}
+}
 \end{align*}
 \end{frame}
 
@@ -562,7 +566,7 @@ follows:
 \newcommand{\KKmeans}{\textsc{Kernel-Kmeans}}
 \begin{frame}[fragile]{Kernel-Kmeans Algorithm}
 \small{
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\KKmeans ($\bK, k, \epsilon$)}
 \Algorithm{}
 $t \assign 0$\;
@@ -590,12 +594,11 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
         }
         $j^* \assign \arg \min_{i} \bigl\{ d(\bx_{j},C_i) \bigr\}$\;
         $C^{t}_{j^*} \assign C^{t}_{j^*} \cup \{\bx_{j}\}$ \tcp{Cluster
-        reassignment}
-        \nllabel{alg:clust:rep:kkmeans:cluserassignment}
+        reassignment} \nllabel{alg:clust:rep:kkmeans:cluserassignment}
     }
     $\cC^{t} \assign \lB\{ C^{t}_1, \dots, C^{t}_k \rB\}$\;
 }
-\end{algorithm}
+\end{tightalgo}
 }
 \end{frame}
 
@@ -687,7 +690,8 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
 \end{frame}
 
 
-\begin{frame}{Expectation-Maximization Clustering: Gaussian Mixture Model}
+\begin{frame}{Expectation-Maximization Clustering}
+\framesubtitle{Gaussian Mixture Model}
 \small
   Let $X_a$ denote the random variable corresponding to
 the $a$th attribute. 
@@ -701,10 +705,12 @@ We assume that
 each cluster $C_i$ is characterized by
 a multivariate normal distribution
 \begin{align*}
+\tcbhighmath{
 f_i(\bx) = f(\bx|\bmu_i,\cov_i)
 = \frac{1}{(2\pi)^\frac{d}{2}|\cov_i|^\frac{1}{2}}
     \exp\lB\{-\frac{(\bx-\bmu_{i})^{T} \cov_i^{-1}
     (\bx-\bmu_{i})}{2}\rB\}
+}
 \end{align*}
 where the cluster mean $\bmu_i \in \setR^d$ and
 covariance matrix
@@ -716,8 +722,10 @@ The probability density function of $\bX$
 is given as a
 {\em Gaussian mixture model} over all the $k$ clusters
 \begin{align*}
+\tcbhighmath{
     f(\bx) = \sum_{i=1}^k f_i(\bx) P(C_i)
     = \sum_{i=1}^k f(\bx | \bmu_i, \cov_i) P(C_i)
+}
 \end{align*}
 where the prior probabilities $P(C_i)$ are called the
 {\em mixture parameters}, which must satisfy the condition
@@ -731,12 +739,13 @@ where the prior probabilities $P(C_i)$ are called the
 
 
 
-\begin{frame}{Expectation-Maximization Clustering: Maximum Likelihood Estimation}
+\begin{frame}{Expectation-Maximization Clustering}
+\framesubtitle{Maximum Likelihood Estimation}
 
   \small
 We write the set of all the model parameters compactly as
 \begin{align*}
-    \btheta = \lB\{\bmu_1,\cov_1,P(C_i) \dots, \bmu_k, \cov_k,
+    \btheta = \lB\{\bmu_1,\cov_1,P(C_1) \dots, \bmu_k, \cov_k,
    P(C_k)\rB\}
 \end{align*}
 Given the dataset $\bD$, we def\/{i}ne the {\em likelihood} of
@@ -775,10 +784,12 @@ Given the current estimates for $\btheta$, in the {\em expectation step}
 EM computes the cluster posterior probabilities $P(C_i|\bx_{j})$ via the Bayes
 theorem:
 \begin{align*}
+\tcbhighmath{
   P(C_i | \bx_{j}) = \frac{P(C_i \mbox{ and } \bx_{j})}{P(\bx_{j})} =
   \frac{P(\bx_{j} | C_i) P(C_i)}{\sum_{a=1}^k P(\bx_{j} | C_a) P(C_a)}
  = \frac{f_i(\bx_{j}) \cdot P(C_{i})}
     {\sum_{a=1}^k f_a(\bx_{j}) \cdot P(C_{a})}
+}
 \end{align*}
 
 In the {\em maximization step}, using the weights
@@ -960,7 +971,7 @@ P(C_{i}) & =
 
 \begin{frame}{EM in $d$ Dimensions}
 Each
-cluster we have to reestiamte the $d\times d$ covariance matrix:
+cluster we have to reestimate the $d\times d$ covariance matrix:
 \begin{align*}
 \cov_i = \matr{
 (\sigma^i_{1})^2 & \sigma^i_{12} & \ldots & \sigma^i_{1d}\\[1ex]
@@ -1026,7 +1037,7 @@ The prior probability $P(C_i)$ for each cluster is
 
 
 \begin{frame}[fragile]{Expectation-Maximization Clustering Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\textsc{Expectation-Maximization} ($\bD, k, \epsilon$)}
 \Algorithm{}
 $t \assign 0$\;
@@ -1055,7 +1066,7 @@ $\cov_i^t \assign \bI,\;\forall i=1,\dots,k$\;
         \tcp{re-estimate priors}
     }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1240,7 +1251,8 @@ transform={1 1 6 scaleOpoint3d},algebraic](-4,-1.5)(4,2){
 \end{frame}
 
 
-\begin{frame}{Iris Principal Components Data: Full Covariance Matrix}
+\begin{frame}{Iris Principal Components Data}
+\framesubtitle{Full Covariance Matrix}
 \setcounter{subfigure}{0}
 \begin{figure}
 \psset{unit=0.5in}
@@ -1300,7 +1312,8 @@ transform={1 1 6 scaleOpoint3d},algebraic](-4,-1.5)(4,2){
 \end{frame}
 
 
-\begin{frame}{Iris Principal Components Data: Diagonal Covariance Matrix}
+\begin{frame}{Iris Principal Components Data}
+\framesubtitle{Diagonal Covariance Matrix}
 \begin{figure}
 \psset{unit=0.5in}
 \psset{dotscale=1.5,fillcolor=lightgray,

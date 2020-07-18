@@ -1,9 +1,0 @@
-! Analyse tutorial.data finding rules that do not include
-! Profitability98, Spend98 or NoVisits98 on the RHS or
-! Profitability99, Spend99 or NoVisits99 on the LHS.
-! Note, you may need to specify the full path name for tutorial.nam and
-! tutorial.data.
-names-file=tutorial.nam
-data-file=tutorial.data
-rhs-exclude=Profitability98,Spend98,NoVisits98
-lhs-exclude=Profitability99,Spend99,NoVisits99

@@ -19,8 +19,10 @@ Given a binary database $\bD \subseteq \cT \times \cI$,
 over the tids $\cT$ and items $\cI$, let $\cF$
 denote the set of all frequent itemsets, that is,
 \begin{align*}
+\tcbhighmath{
 \cF = \bigl\{X \mid X \subseteq \cI \mbox{ and } \supp(X) \ge \minsup
 \bigr\}
+}
 \end{align*}
 
 \medskip
@@ -31,8 +33,10 @@ if it has no
 frequent supersets. Let $\cM$ be the set of all maximal frequent
 itemsets, given as
 \begin{align*}
+\tcbhighmath{
 \cM = \bigl\{X \mid X \in \cF \mbox{ and } \not\exists Y \supset X, \mbox{
   such that } Y \in \cF \bigr\}
+}
 \end{align*}
 
 \medskip
@@ -103,8 +107,10 @@ and an itemset $X$ is called {\em closed} if $\vc(X) = X$.
 It follows that $\vT(\vc(X))=\vT(X)$. The
 set of all closed frequent itemsets is thus def\/{i}ned as
 \begin{align*}
+\tcbhighmath{
 \cC = \bigl\{X \mid X \in  \cF \text{ and } \not\exists Y \supset X
 \text{  such that } \supp(X) = \supp(Y)\bigr\}
+}
 \end{align*}
 $X$ is closed if all supersets of $X$ have strictly less
 support, that is, $\supp(X) > \supp(Y)$, for all $Y \supset X$.
@@ -120,8 +126,10 @@ frequent, as well as the exact support of $X$ using $\cC$ alone.
 A frequent itemset $X$ is a {\em minimal generator} if
 it has no subsets with the same support:
 \begin{align*}
+\tcbhighmath{
 \cG = \bigl\{X \mid X \in  \cF \text{ and } \not\exists Y \subset X,
 \text{ such that } \supp(X) = \supp(Y)\bigr\}
+}
 \end{align*}
 
   \medskip
@@ -420,7 +428,7 @@ $Z \in \cM$.
 \end{frame}
 
 \begin{frame}[fragile]{GenMax Algorithm}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmA}{\alggenmax($P$, $\minsup$, $\cM$)}
 \tcp{Initial Call: $\cM \assign \emptyset$,
 $P \assign \bigl\{ \tup{i,\vT(i)} \mid i \in
@@ -438,17 +446,17 @@ $Y \assign \bigcup X_i$ \nllabel{alg:fpm:sumrep:alggenmax:Us}\;
     $\vT(X_{ij}) = \vT(X_i)\; \cap\; \vT(X_{j})$\;
     \lIf{$\supp(X_{ij}) \geq \minsup$}{
       $P_i \assign P_i \cup \{ \tup{X_{ij}, \vT(X_{ij})} \}$
-      \nllabel{alg:fpm:sumrep:alggenmax:Pe}
+      \nllabel{alg:fpm:sumrep:alggenmax:Pe}\;
     }
   }
   \lIf{$P_i \ne \emptyset$}{
-    \alggenmax($P_i$, $\minsup$, $\cM$)
+    \alggenmax($P_i$, $\minsup$, $\cM$)\;
   }
   \ElseIf{$\not\exists Z \in \cM, X_i \subseteq Z$}{
   $\cM = \cM \cup X_i\quad$ \nllabel{alg:fpm:sumrep:alggenmax:addM}
-  \tcp{add $X_i$ to maximal set}}
+  \tcp{add $X_i$ to maximal set}\;}
 }
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 
@@ -582,7 +590,7 @@ uses the following three properties:
 
 \begin{frame}{Charm Algorithm: Closed Itemsets}
 \begin{footnotesize}
-\begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmA}{\algcharm\ ($P$, $\minsup$, $\cC$)}
 \tcp{Initial Call: $\cC \assign \emptyset$,
 $P \assign \bigl\{ \tup{i,\vT(i)} : i \in \cI,
@@ -623,7 +631,7 @@ Sort $P$ in increasing order of support (i.e., by increasing $|\vT(X_i)|$)\;
         set}\nllabel{alg:fpm:sumrep:algcharm:addtoC}
   }
 }
-\end{algorithm}
+\end{tightalgo}
 \end{footnotesize}
 \end{frame}
 
@@ -761,8 +769,10 @@ of negated items.
 Def\/{i}ne the support of a generalized itemset $Y\ol{Z}$ as the number
 of transactions that contain all items in $Y$ but no item in $Z$:
 \begin{align*}
+\tcbhighmath{
   \supp(Y\ol{Z}) = \bigl| \{ t \in \cT \mid Y \subseteq \vI(t)
   \text{ and } Z \cap \vI(t) = \emptyset\} \bigr|
+}
 \end{align*}
 \end{frame}
 
@@ -771,23 +781,26 @@ of transactions that contain all items in $Y$ but no item in $Z$:
 
 The inclusion--exclusion principle allows one to directly compute the
 support of $Y\ol{Z}$
-\begin{align*}
-  \supp(Y\ol{Z}) & = \sum_{Y \subseteq W \subseteq X}
-  -1^{\card{W\setminus Y}}\cdot \supp(W)
-\end{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
+  \supp(Y\ol{Z}) & = \sum_{Y \subseteq W \subseteq X} -1^{\card{W\setminus Y}}\cdot \supp(W)
+\end{split}
+\end{empheq}
 
 \medskip
 From the $2^k$
 possible subsets $Y\subseteq X$, we derive $2^{k-1}$ lower bounds and
 $2^{k-1}$ upper bounds  for $\supp(X)$, obtained after
 setting $\supp(Y\ol{Z}) \ge 0$
+%\begin{empheq}[box=\tcbhighmath]{align*}
+%\begin{split}
 \begin{align*}
-\text{{\bf Upper Bounds} ($|X\setminus Y|$ is odd):} & &
-\supp(X) & \leq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus
-Y|+1\rB)} \supp(W)\\[2pt]
-\text{{\bf Lower Bounds} ($|X\setminus Y|$ is even):} & &
-\supp(X) & \geq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus
-Y|+1\rB)} \supp(W)
+\text{{\bf Upper Bounds }} & (|X\setminus Y| \mbox{ is odd}): & &  
+\supp(X) & \leq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus Y|+1\rB)} \supp(W)\\[2pt]
+\text{{\bf Lower Bounds }} & (|X\setminus Y| \mbox{ is even}): & & 
+\supp(X) & \geq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus Y|+1\rB)} \supp(W) \\
+%\end{split}
+%\end{empheq}
 \end{align*}
 \end{frame}
 
@@ -932,12 +945,14 @@ Y|+1\rB)} \cdot \supp(W)
 \medskip
 Then, the sets of all upper and lower bounds for
 $\supp(X)$ are given as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   \mathit{UB}(X) & = \Bigl\{\mathit{IE}(Y) \big|\; Y \subseteq X,\; \card{X\setminus Y}
   \text{ is odd} \Bigr\}\\
   \mathit{LB}(X) & = \Bigl\{\mathit{IE}(Y) \big|\; Y \subseteq X,\; \card{X\setminus Y}
   \text{ is even} \Bigr\}
-\end{align*}
+\end{split}
+\end{empheq}
 
 \bigskip
 An itemset $X$ is called {\em nonderivable} if $\max\{\mathit{LB}(X)\} \ne

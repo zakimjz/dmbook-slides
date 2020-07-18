@@ -58,23 +58,28 @@ Let $r$ denote the largest magnitude among all points:
 The data hyperspace can be represented as a
 $d$-dimensional {\em hyperball}
 centered at $\bzero$ with radius $r$, def\/{i}ned as
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   B_d(r) & = \bigl\{ \bx\; |\;\; \norm{\bx} \le r\bigr\}\\
+\end{split}
   \text{or } B_d(r) & = \lB\{
     \bx = (x_1, x_2, \ldots, x_d) \; \big| \;
     \sum_{j=1}^{d} x_{j}^2 \le r^2
     \rB\}
-\end{align*}
+\end{empheq}
 
 The surface of the hyperball is called a {\em hypersphere},
 and it consists of all the points exactly at distance $r$ from
 the center of the hyperball
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
   S_d(r) & = \bigl\{ \bx\; |\;\; \norm{\bx} = r\bigr\}\\
+%}
   \text{or } S_d(r) & = \lB\{\bx = (x_1, x_2, \ldots, x_d)
   \; \big| \;
   \sum_{j=1}^{d} (x_{j})^2 = r^2\rB\}
-\end{align*}
+\end{split}
+\end{empheq}
 \end{frame}
 
 
@@ -104,12 +109,14 @@ the center of the hyperball
 
 \begin{frame}{High-dimensional Volumes}
 %
-
+\small
 
 {\bf Hypercube:}
 The volume of a hypercube with edge length $l$ is given as
 \begin{align*}
+\tcbhighmath{
 \vol(H_d(l)) = l^d
+}
 \end{align*}
 %
 
@@ -119,19 +126,26 @@ The volume of a hyperball and its corresponding hypersphere
 is identical
 The volume of a hypersphere is given as
 \begin{align*}
-  \text{In 1 dimension: } & \vol(S_1(r)) = 2r \\
-  \text{In 2 dimensions: } & \vol(S_2(r)) = \pi r^2 \\
-  \text{In 3 dimensions: } & \vol(S_3(r)) = \frac{4}{3}\pi r^3 \\
-\text{In $d$-dimensions: } & \vol(S_d(r))=K_d r^d =
+  \text{In 1D: } & \vol(S_1(r)) = 2r &
+  \text{In 2D: } & \vol(S_2(r)) = \pi r^2 & 
+  \text{In 3D: } & \vol(S_3(r)) = \frac{4}{3}\pi r^3 \\
+\end{align*}
+\begin{align*}
+\text{In $d$-dimensions: } & 
+\tcbhighmath{
+\vol(S_d(r))=K_d r^d =
 \lB(\frac{\pi^{\frac{d}{2}}}{\Gamma\lB(\frac{d}{2}+1\rB)}\rB) r^d
+}
 \end{align*}
 where
 \begin{align*}
+\tcbhighmath{
 \Gamma\lB(\frac{d}{2}+1\rB) =
 \begin{cases}
   {\lB(\frac{d}{2}\rB)}! & \text{if $d$ is even}\\
   \sqrt{\pi}\lB(\frac{d!!}{2^{(d+1)/2}}\rB) & \text{if $d$ is odd}
 \end{cases}
+}
 \end{align*}
 \end{frame}
 
@@ -144,8 +158,10 @@ f\/{i}rst increases up to a point, and then
 starts to decrease, and ultimately vanishes. In particular, for the
 unit hypersphere with $r=1$,
 \begin{align*}
+\tcbhighmath{
 \lim_{d\to\infty} \vol(S_d(1)) =
 \lim_{d\to\infty}\frac{\pi^{\frac{d}{2}}}{\Gamma(\frac{d}{2}+1)} \to 0
+}
 \end{align*}
     
 \normalsize
@@ -177,8 +193,10 @@ hypercube with side length $l=2r$ is given as
 \frac{\vol(S_3(r))}{\vol(H_3(2r))} = 
 \frac{\frac{4}{3} \pi r^3}{8 r^3} = \frac{\pi}{6} = 52.4\%\\
 \text{In $d$ dimensions: } &
+\tcbhighmath{
 \lim_{d \to \infty} \frac{\vol(S_d(r))}{\vol(H_d(2r))} = \lim_{d \to \infty}
 \frac{\pi^{d/2}}{2^d \Gamma(\frac{d}{2}+1)} \to 0
+}
 \end{align*}
 
 As the dimensionality increases, most of the volume of
@@ -300,8 +318,10 @@ volume of the outer sphere:
 
 As $d$ increases, we have
 \begin{align*}
+\tcbhighmath{
 \lim_{d\to \infty} \frac{\vol(S_d(r,\epsilon))}{\vol(S_d(r))} =
 \lim_{d\to \infty} 1 - \lB(1-\frac{\epsilon}{r}\rB)^d \to 1
+}
 \end{align*}
 
 
@@ -337,7 +357,7 @@ ${\bm 0}_d = (0_1,0_2,\ldots,0_d)$, and bounded in each dimension in
 the range $[-1,1]$. Each \hbox{``corner''} of the hyperspace is a
 $d$-dimensional vector of the form $(\pm 1_1, \pm 1_2, \ldots, \pm 1_d)^T$.
 
-\smallskip
+\medskip
 Let $\be_i = (0_1, \ldots, 1_i, \ldots, 0_d)^T$ denote the
 $d$-dimensional canonical unit vector in dimension $i$,
 and let $\bone$ denote the $d$-dimensional diagonal vector
@@ -352,15 +372,22 @@ $\bone$ and the f\/{i}rst axis $\be_1$, in $d$ dimensions:
   \frac{\be_1^T \bone}{\sqrt{\be_1^T\be_1} \sqrt{\bone^T\bone}} =
   \frac{1}{\sqrt{1}\sqrt{d}}  = \frac{1}{\sqrt{d}}
 \end{align*}
+\end{frame}
 
+\begin{frame}{Diagonals in Hyperspace}
 \medskip
 As $d$ increases, we have
 \begin{align*}
 & \lim_{d\to \infty} \cos \theta_d =
 \lim_{d\to\infty} \frac{1}{\sqrt{d}} \to 0\\
 \shortintertext{which implies that}
-& \lim_{d\to\infty} \theta_d \to \frac{\pi}{2} = 90^\circ
 \end{align*}
+
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
+& \lim_{d\to\infty} \theta_d \to \frac{\pi}{2} = 90^\circ
+\end{split}
+\end{empheq}
 \end{frame}
 
 
@@ -478,8 +505,10 @@ $\alpha$ fraction of the density at the mean
 The sum of squared IID random variables follows a chi-squared
 distribution $\chi^2_d$. Thus,
 \begin{align*}
+\tcbhighmath{
 P\lB(\frac{f(\bx)}{f(\bzero)} \geq \alpha\rB) 
 =  F_{\chi^2_d}(-2\ln(\alpha))
+}
 \end{align*}
 where $F_{\chi^2_q}$ is the CDF.
 
@@ -646,7 +675,6 @@ the extreme or tail regions.
 \endpspicture
 }
 
-\column{0.5\textwidth}
 \small
 The point $\bx=(x_1, x_2)$ in polar coordinates
 \vspace*{-0.3cm}
@@ -654,11 +682,14 @@ The point $\bx=(x_1, x_2)$ in polar coordinates
     x_1 & = r \cos\theta_1 = r c_1\\[0.1cm]
     x_2 & = r \sin\theta_1 = r s_1
 \end{align*}
-\vspace*{-0.3cm}
+%\vspace*{-0.3cm}
 where $r = \norm{\bx}$, and
 $\cos\theta_1 = c_1$ and
 $\sin\theta_1= s_1$.
 
+
+\column{0.5\textwidth}
+\small
 The {\em Jacobian matrix} for this transformation is given as
 \begin{align*}
     J(\theta_1) =

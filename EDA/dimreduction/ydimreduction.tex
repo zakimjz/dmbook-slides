@@ -27,20 +27,26 @@ orthonormal vectors $\bu_1, \bu_2, \ldots, \bu_d$
 we can
 re-express each point $\bx$ as
 \begin{align*}
+\tcbhighmath{
     \bx = a_1 \bu_1 + a_2 \bu_2 + \cdots + a_d \bu_d
+}
 \end{align*}
 where $\ba = (a_1, a_2, \ldots, a_d)^T$ represents the
 coordinates of $\bx$ in the new basis. 
 More compactly:
 \begin{align*}
+\tcbhighmath{
     \bx = \bU \ba
+}
 \end{align*}
 where $\bU$ is the $d \times d$ orthogonal matrix, 
 whose $i$th column comprises the $i$th basis vector $\bu_i$.
 Thus $\bU^{-1} = \bU^T$, and we have
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \ba &= \bU^T \bx
-\end{align*}
+\end{split}
+\end{empheq}
 \end{frame}
 %
 
@@ -74,7 +80,9 @@ Also, restricting $\ba = \bU^T \bx$ to $r$ terms, we have
 \medskip
 The $r$-dimensional projection of $\bx$ is thus given as:
 \begin{align*}
+\tcbhighmath{
     \bx' = \bU_r\bU_r^T \bx = \bP_r \bx
+}
 \end{align*}
 where $\bP_r = \bU_r \bU_r^T = \sum_{i=1}^r \bu_i \bu_i^T$ is the {\em
 orthogonal projection
@@ -89,7 +97,9 @@ Given the projected vector $\bx' = \bP_r \bx$, the corresponding
 {\em error vector}, is the projection onto the remaining $d-r$ basis
 vectors
 \begin{align*}
+\tcbhighmath{
     \bepsilon = \sum_{i=r+1}^d a_i \bu_i = \bx - \bx'
+}
 \end{align*}
 The error vector $\bepsilon$ is orthogonal to $\bx'$.
 
@@ -275,11 +285,13 @@ The projection of $\bx_i$ on $\bu$ is given as
 Across all the points, the 
 projected variance along $\bu$ is
 \begin{align*}
+\tcbhighmath{
   \sigma^2_\bu  
   = \frac{1}{n}\sum_{i=1}^n (a_i-\mu_\bu)^2 
   = \frac{1}{n} \sum_{i=1}^n \bu^T \lB(\bx_{i}\bx_i^T\rB) \bu
    =  \bu^T \lB(\frac{1}{n}\sum_{i=1}^n \bx_i\bx_i^T\rB) \bu
   =  \bu^T \cov \bu
+}
 \end{align*}
 
 
@@ -305,8 +317,11 @@ with respect to $\bu$ to the zero vector, to obtain
 \begin{align*}
   \frac{\partial}{\partial \bu} \lB(\bu^T \cov \bu - \alpha
   (\bu^T\bu-1)\rB) & = \bzero\\
-  \text{that is, }2 \cov \bu - 2 \alpha \bu  &= \bzero
-  \text{which implies } \cov \bu  = \alpha \bu
+  \text{that is, }2 \cov \bu - 2 \alpha \bu  &= \bzero \\
+  \text{which implies } 
+\tcbhighmath{
+\cov \bu  = \alpha \bu
+}
 \end{align*}
 Thus $\alpha$ is an eigenvalue of the covariance matrix
 $\cov$, with the associated eigenvector $\bu$.
@@ -361,31 +376,32 @@ component}.
 The direction that
 maximizes the projected variance is also the
 one that minimizes the average squared error.
-
-
-\medskip
 The mean squared error ({\it MSE}) optimization condition is 
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     MSE(\bu) & =  {1 \over n} \sum_{i=1}^n \norm{\bepsilon_i}^2
      =  {1 \over n} \sum_{i=1}^n \| \bx_i - \bx'_i \|^2 
 	 =\sum_{i=1}^n \frac{\| \bx_i\|^2}{n}-\bu^T \cov \bu
-\end{align*}
+\end{split}
+\end{empheq}
 Since the first term is fixed for a dataset $\bD$, we see that the
 direction $\bu_1$ that maximizes the
 variance is also the one that minimizes the MSE.
-
-\medskip
-Further, we have
-\begin{align*}
+Further,
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     \sum_{i=1}^n \frac{\| \bx_i\|^2}{n}-\bu^T \cov \bu = var(\bD) = 
 	tr(\cov) = \sum_{i=1}^d \sigma_i^2
-\end{align*}
+\end{split}
+\end{empheq}
 
 \medskip
 Thus, for the direction $\bu_1$ that minimizes MSE, we have
-\begin{align*}
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
     MSE(\bu_1) = var(\bD) - \bu_1^T\cov \bu_1 = var(\bD) - \lambda_1 
-\end{align*}
+\end{split}
+\end{empheq}
 \end{frame}
 
 
@@ -550,11 +566,13 @@ choosing $r$ is to compute the fraction of the total variance
 captured by the
 f\/{i}rst $r$ principal components, computed as
 \begin{align*}
+\tcbhighmath{
   f(r) =
   \frac{\lambda_1+\lambda_2+\cdots+\lambda_r}
   {\lambda_1+\lambda_2+\cdots+\lambda_d}
   = \frac{\sum_{i=1}^r \lambda_i}{\sum_{i=1}^d \lambda_i}
   = \frac{\sum_{i=1}^r \lambda_i}{var(\bD)}
+}
   \label{eq:eda:dimr:fracvar}
 \end{align*}
 
@@ -570,31 +588,23 @@ total variance.
 \end{frame}
 
 
-\begin{frame}{Principal Component Analysis: Algorithm}
-  \begin{algorithm}[H]
 \newcommand{\PCA}{\textsc{PCA}}
+\begin{frame}{Principal Component Analysis: Algorithm}
+\begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{Algorithm}{\PCA\ ($\bD, \alpha$)}
 \Algorithm{}
 $\bmu = {1\over n}\sum_{i=1}^n \bx_i$ \tcp{compute mean}
 $\bZ = \bD - \bone \cdot \bmu^T$ \tcp{center the data}
 $\cov = {1\over n} \lB(\bZ^T \bZ\rB)$ \tcp{compute covariance matrix}
-$(\lambda_1, \lambda_2, \ldots, \lambda_d) =
-\text{eigenvalues}(\cov)$ \tcp{compute eigenvalues}
-$\bU = \matr{\bu_1 & \bu_2 & \cdots & \bu_d} =
-\text{eigenvectors}(\cov)$ \tcp{compute eigenvectors}
-$f(r) = \frac{\sum_{i=1}^r \lambda_i}{\sum_{i=1}^d \lambda_i},
-\;\; \text{for all } r=1, 2, \ldots, d$ \tcp{fraction of total
-variance}
-Choose smallest $r$ so that $f(r) \ge \alpha$ \tcp{choose
-dimensionality}
-$\bU_r = \matr{\bu_1 & \bu_2 & \cdots & \bu_r}$ \tcp{reduced
-basis}
-$\bA = \{\ba_i \mid \ba_i = \bU_r^T\bx_i, \text{for } i=1, \ldots,
-n\}$ \tcp{reduced dimensionality data}
-\end{algorithm}
+$(\lambda_1, \lambda_2, \ldots, \lambda_d) = \text{eigenvalues}(\cov)$ \tcp{compute eigenvalues}
+$\bU = \matr{\bu_1 & \bu_2 & \cdots & \bu_d} = \text{eigenvectors}(\cov)$ \tcp{compute eigenvectors}
+$f(r) = \frac{\sum_{i=1}^r \lambda_i}{\sum_{i=1}^d \lambda_i},\;\; 
+\text{for all } r=1, 2, \ldots, d$ \tcp{fraction of total variance}
+Choose smallest $r$ \ so that $f(r) \ge \alpha$ \tcp{choose dimensionality}
+$\bU_r = \matr{\bu_1 & \bu_2 & \cdots & \bu_r}$ \tcp{reduced basis}
+$\bA = \{\ba_i \mid \ba_i = \bU_r^T\bx_i, \text{for } i=1, \ldots, n\}$ \tcp{reduced dimensionality data}
+\end{tightalgo}
 \end{frame}
-
-
 
 \begin{frame}{Iris Principal Components}
 Covariance matrix:
@@ -907,16 +917,13 @@ $\lambda_{j} = {\eta_{j} \over n}$.
 
 
 \begin{frame}{Kernel PCA Algorithm}
-  \begin{algorithm}[H]
+\begin{tightalgo}[H]{\textwidth-18pt}
 \newcommand{\KPCA}{\textsc{KernelPCA}}
 \SetKwInOut{Algorithm}{\KPCA\ ($\bD, K, \alpha$)}
 \Algorithm{}
-$\bK = \bigl\{K(\bx_i, \bx_{j}) \bigr\}_{i,j=1,\ldots,n}$ \tcp{compute $n
-\times n$ kernel
-matrix}
+$\bK = \bigl\{K(\bx_i, \bx_{j}) \bigr\}_{i,j=1,\ldots,n}$ \tcp{compute $n \times n$ kernel matrix}
 $\bK  = (\bI - {1\over n}\bone_{n\times n}) \bK (\bI - {1\over
-n}\bone_{n \times n})$ \tcp{center the kernel
-matrix}
+n}\bone_{n \times n})$ \tcp{center the kernel matrix}
 $(\eta_1, \eta_2, \ldots, \eta_d) =
 \text{eigenvalues}(\bK)$ \tcp{compute eigenvalues}
 $\matr{\bc_1 & \bc_2 & \cdots & \bc_n} =
@@ -934,7 +941,7 @@ $\bC_r = \matr{\bc_1 & \bc_2 & \cdots & \bc_r}$ \tcp{reduced
 basis}
 $\bA = \{\ba_i \mid \ba_i = \bC_r^T\bK_i, \text{for } i=1, \ldots,
 n\}$ \tcp{reduced dimensionality data}
-\end{algorithm}
+\end{tightalgo}
 \end{frame}
 
 

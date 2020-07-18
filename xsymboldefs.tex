@@ -43,6 +43,27 @@
 }
 \makeatother
 
+\newsavebox\myboxA
+\newsavebox\myboxB
+\newlength\mylenA
+
+\newcommand*\xoverline[2][0.75]{%
+    \sbox{\myboxA}{$\m@th#2$}%
+    \setbox\myboxB\null% Phantom box
+    \ht\myboxB=\ht\myboxA%
+    \dp\myboxB=\dp\myboxA%
+    \wd\myboxB=#1\wd\myboxA% Scale phantom
+    \sbox\myboxB{$\m@th\overline{\copy\myboxB}$}%  Overlined phantom
+    \setlength\mylenA{\the\wd\myboxA}%   calc width diff
+    \addtolength\mylenA{-\the\wd\myboxB}%
+    \ifdim\wd\myboxB<\wd\myboxA%
+       \rlap{\hskip 0.5\mylenA\usebox\myboxB}{\usebox\myboxA}%
+    \else
+        \hskip -0.5\mylenA\rlap{\usebox\myboxA}{\hskip 0.5\mylenA\usebox\myboxB}%
+    \fi}
+\makeatother
+
+
 
 % for inserting comments on the text that are printable and easily
 % removed whenever necessary
@@ -54,7 +75,7 @@
 %\newcommand{\zaki}[1]{{\bf ZAKI: #1}}
 \newcommand{\meira}[1]{}
 \newcommand{\zaki}[1]{}
-\newcommand{\comment}[1]{}
+%\newcommand{\comment}[1]{}
 \newcommand{\TimeStamp}{{\bf\color{red}{Last Modified: \timestamp}}}
 
 % for generating draft versions and final version of the graphs
@@ -67,7 +88,6 @@
 
 %for algorithms style
 \DontPrintSemicolon
-%\SetEndCharOfAlgoLine{}
 
 % after stop using svmono, we had to define.
 
@@ -144,7 +164,7 @@
 %\setcounter{examp}{0}
 %\renewcommand{\theexamp}{\thechapter.\arabic{examp}}
 
-\def\exf{\fontfamily{opl}\fontseries{b}\fontshape{n}\selectfont\fontsize{10}{10}\selectfont}
+% \def\exf{\fontfamily{opl}\fontseries{b}\fontshape{n}\selectfont\fontsize{10}{10}\selectfont}
 
 %\makeatletter
 %\newtheoremstyle{tintthit}
@@ -197,8 +217,8 @@
 \DeclareMathOperator{\sign}{sign}
 %\newcommand{\avg}{\operatorname{avg}}
 %\newcommand{\vect}[1]{\mathbold{#1}}
-\newcommand{\vect}[1]{\mathbf{#1}}
-%\newcommand{\vect}[1]{{\boldsymbol #1}}
+% \newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\vect}[1]{{\boldsymbol #1}}
 
 
 \newcommand{\pvalue}{{p\text{-}value}}
@@ -216,6 +236,7 @@
 %%%\newcommand{\bl}{\vect{l}}
 \newcommand{\bmm}{\vect{m}}
 \newcommand{\bn}{\vect{n}}
+\newcommand{\bo}{\vect{o}}
 \newcommand{\bp}{\vect{p}}
 \newcommand{\bq}{\vect{q}}
 \newcommand{\br}{\vect{r}}
@@ -291,6 +312,12 @@
 \newcommand{\hbsigma}{\hat{\bsigma}}
 \newcommand{\hcov}{\widehat{\cov}}
 \newcommand{\hrho}{\hat{\rho}}
+
+%2nd edition
+\newcommand{\truew}{\omega}
+\newcommand{\truebw}{\bomega}
+\newcommand{\trueb}{\beta}
+
 
 
 \newcommand{\hrul}{\rule[1pt]{0.3in}{0.5pt}}
@@ -369,6 +396,122 @@
 \renewcommand{\approx}{\simeq}
 
 \newcommand{\Iff}{{\it iff}}
+
+\newcommand{\hY}{\widehatL{Y}}
+
+\newcommand{\widehatL}[1]{\mkern 1.5mu\widehat{\mkern-1.5mu#1}\mkern 1.5mu}
+\newcommand{\mX}{\overbarL{X}} %use for centered X variable
+\newcommand{\overbarL}[1]{\mkern 1.5mu\overline{\mkern-4.0mu#1}\mkern 1.5mu}
+\DeclareMathOperator{\proj}{proj}
+\newcommand{\abD}{\tilde{\bD}}
+\newcommand{\abw}{\tilde{\bw}}
+
+
+\makeatletter
+%adds minipage to inside of algorithms
+  \newlength{\tightalgowidth}
+  \newlength{\tightalgoremainder}
+
+  % uncomment to use centered floating algorithms
+  \newenvironment{tightalgo}[2][]
+  {
+     \setlength{\tightalgowidth}{#2}
+     \setlength{\tightalgoremainder}{3pc}
+     \begin{algorithm}[#1] }
+  { \end{algorithm} }
+
+  \makeatletter
+  \patchcmd{\@algocf@start}{%
+    \begin{lrbox}{\algocf@algobox}%
+  }{%
+    \rule{0.5\tightalgoremainder}{\z@}%
+    \begin{lrbox}{\algocf@algobox}%
+    \begin{minipage}{\tightalgowidth}%
+  }{}{}
+  \patchcmd{\@algocf@finish}{%
+    \end{lrbox}%
+  }{%
+    \end{minipage}%
+    \end{lrbox}%
+  }{}{}
+  \makeatother
+\SetAlCapFnt{\sansb}
+\makeatother
+
+\newcommand{\abx}{\tilde{\bx}}
+\newcommand{\abK}{\tilde{\bK}}
+
+\DeclareMathOperator{\zscore}{z\text{-}score}
+\DeclareMathOperator{\mean}{mean}
+\newcommand{\mbD}{\overbarR{\bD}} %use for centered bD variable
+\newcommand{\overbarR}[1]{\mkern 1.5mu\overline{#1\mkern-4.0mu}\mkern 1.5mu}
+\newcommand{\mY}{\overbarL{Y}} %use for centered Y variable
+\DeclareMathOperator{\ocov}{cov}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\vspan}{span}
+
+\newcommand{\aphi}{\tilde{\phi}}
+\newcommand{\aK}{\tilde{K}}
+\newcommand{\mx}{\overbarLL{x}{2.0}}
+\newcommand{\my}{\overbarLL{y}{2.0}}
+\newcommand{\overbarLL}[2]{\mkern 1.5mu\overline{\mkern-#2mu#1}\mkern 1.5mu}
+
+\newcommand{\net}{\mathit{net}}%%%
+\newcommand{\bnet}{\mathbf{net}}%%%
+
+\newcommand{\myfbox}[2][linecolor=black]{%
+    \psframebox[#1]{%
+    \begin{tabular}{c}
+        ~\\#2\\~\\
+    \end{tabular}
+}}
+
+\newcommand{\myfboxB}[2][linecolor=black]{%
+    \psframebox[#1]{%
+    \begin{tabular}{c}
+        #2
+    \end{tabular}
+}}
+\newcommand{\myfboxD}[3][linecolor=black]{%
+    \begin{tabular}{c}
+    \psframebox[#1]{%
+    \begin{tabular}{c}
+        #2
+    \end{tabular}
+    }\\
+    \psframebox[#1]{%
+    \begin{tabular}{c}
+        #3
+    \end{tabular}
+    }
+    \end{tabular}
+}
+
+\def\mytext#1{%
+    \begin{tabular}{c} #1 \end{tabular}%
+}
+
+\newcommand{\abX}{\tilde{\bX}}
+\newcommand{\trueabw}{\tilde{\bomega}}
+\DeclareMathOperator{\odds}{odds}
+\newcommand{\abz}{\tilde{\bz}}
+\newcommand{\abW}{\tilde{\bW}}
+\DeclareMathOperator*{\argmax}{arg\;max}
+
+\newcommand{\bgrad}{{\bm \grad}}
+\newcommand{\bcE}{{\bm{\mathcal E}}}
+\newcommand{\bF}{\vect{F}}
+\newcommand{\bphi}{{\bm \phi}}
+\newcommand{\bkappa}{{\bm \kappa}}
+
+\DeclareMathOperator*{\summ}{sum} %operator with limits
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\newcommand{\hby}{\hat{\by}}
+\newcommand{\bTheta}{{\bm \Theta}}
+\newcommand{\btz}{\tilde{\bz}}
+\DeclareMathOperator{\se}{se}
+%\newcommand{\mbx}{\xoverline{\bx}} %use for centered bx variable
+\newcommand{\mbx}{\overline{\bx}} %use for centered bx variable
 
 %%% Local Variables:
 %%% mode: latex
