@@ -327,6 +327,7 @@ $$E[\hsigma^2] \to \sigma^2 \qquad \text{as } n \to \infty$$
 
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Bivariate Analysis}
 In bivariate analysis\index{bivariate analysis!numeric}, we consider two attributes at the same
@@ -456,10 +457,10 @@ are given as
     \hsigma_{12} = {\mX_1^T \mX_2 \over n}
 \end{empheq}
 \begin{empheq}[box=\tcbhighmath]{align*}
-  \hrho_{12} = \frac{Z_1^T Z_2}{\sqrt{Z_1^T Z_1} \sqrt{Z_2^T Z_2}}
-  = \frac{Z_1^T Z_2}{\norm{Z_1} \; \norm{Z_2}}
-  = \lB(\frac{Z_1}{\norm{Z_1}}\rB)^T
-  \lB(\frac{Z_2}{\norm{Z_2}}\rB) = \cos \theta
+  \hrho_{12} = \frac{\mX_1^T \mX_2}{\sqrt{\mX_1^T \mX_1} \sqrt{\mX_2^T \mX_2}}
+  = \frac{\mX_1^T \mX_2}{\norm{\mX_1} \; \norm{\mX_2}}
+  = \lB(\frac{\mX_1}{\norm{\mX_1}}\rB)^T
+  \lB(\frac{\mX_2}{\norm{\mX_2}}\rB) = \cos \theta
 \end{empheq}
 The correlation coeff\/{i}cient is simply the cosine  of the
 angle between the two centered
@@ -551,6 +552,7 @@ $$\hrho_{12} = {-0.039 \over \sqrt{0.681 \cdot 0.187}} = -0.109$$
   \end{columns}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Multivariate Analysis}
 In multivariate analysis we consider all the
@@ -685,12 +687,13 @@ i.e., $\hcov$ is given as
 the pairwise {\em inner or dot products} 
 of the centered attribute vectors,
 normalized by the sample size, or as a 
-sum of rank-one matrices obtained a 
+sum of rank-one matrices obtained as the
 {\em outer product} of each centered point.
 \begin{align*}
 \end{align*}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Data Normalization}
   If the attribute values are in vastly different scales, then it is
@@ -761,9 +764,9 @@ $\bx_{10}$ & 40 & 2700 \\
 Since {\tt Income} is much larger, it dominates {\tt Age}.
 
 The sample range for {\tt Age} is $\hat{r} = 40-12 = 28$, whereas for
-{\tt Income} it is $2700-300=2400$. For range normalization,
+{\tt Income} it is $6000-300=5700$. For range normalization,
 the point $\bx_2 = (14,500)$ is scaled to 
-$$\bx'_2 = \lB( {14-12 \over 28}, {500-300 \over 2400}\rB) = (0.071,0.035)$$
+$$\bx'_2 = \lB( {14-12 \over 28}, {500-300 \over 5700}\rB) = (0.071,0.035)$$
 
 For $z$-normalization, we have 
 \begin{center}

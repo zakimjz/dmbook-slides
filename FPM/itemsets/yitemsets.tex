@@ -251,44 +251,6 @@ The 19 frequent itemsets shown in the table comprise the set $\cF$.
 \end{frame}
 
 
-\begin{frame}{Association Rules}
-An {\it association rule}
-is an expression 
-$$X \arule{s,c} Y$$
-where $X$ and $Y$ are itemsets and they are disjoint, that is,
-$X,Y \subseteq \cI$, and $X \cap Y = \emptyset$.
-Let the itemset $X \cup Y$ be denoted as $\mathit{XY}$.
-
-\smallskip
-The
-{\em support}
-of the rule is the number of transactions in which
-both $X$ and $Y$ co-occur as subsets:
-\begin{align*}
-  s = \supp(X \arule Y) = \card{\vT(\mathit{XY})} = \supp(\mathit{XY})
-\end{align*}
-
-\smallskip
-The {\em relative support} of the rule is def\/{i}ned as the fraction of transactions
-where $X$ and $Y$ co-occur, and it provides an estimate of the joint probability of $X$ and $Y$:
-\begin{align*}
-  \rsupp(X \arule Y) =  \frac{\supp(\mathit{XY})}{\card{\bD}} =
-  P(X \wedge Y)
-\end{align*}
-
-\smallskip
-The {\em conf\/{i}dence}
-of a rule is the conditional probability
-that a transaction contains $Y$ given that it contains $X$:
-\begin{align*}
-c = \conff(X \arule Y) = P(Y|X) =
-\frac{P(X \wedge Y)}{P(X)} =
- \frac{\supp (\mathit{XY})}{\supp (X)}
-\end{align*}
-
-\end{frame}
-
-
 
 \begin{frame}{Itemset Mining Algorithms: Brute Force}
 \small
@@ -350,6 +312,7 @@ $\supp(X) \assign 0$\;
 \end{tightalgo}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Itemset lattice and pref\/{i}x-based search tree}
 
@@ -525,6 +488,189 @@ pref\/{i}x tree.
 \end{frame}
 
 
+\SetKwInput{AlgorithmA}{\algApriori ($\bD$, $\cI$, $\minsup$)}
+\SetKwInput{AlgorithmB}{\algcomputesupport ($\Ck{k}, \bD$)}
+\SetKwInput{AlgorithmC}{\algextprefix ($\Ck{k}$)}
+\begin{frame}[fragile]{The Apriori Algorithm}
+\begin{tightalgo}[H]{\textwidth-18pt}
+\AlgorithmA{}
+$\cF \assign \emptyset$\;
+$\Ck{1} \assign \{\emptyset\}$ \tcp{Initial pref\/{i}x tree with single items}
+\lForEach{$i \in \cI$}{
+Add $i$ as child of $\emptyset$ in $\Ck{1}$ with $sup(i) \assign 0$
+}
+$k \assign 1$ \tcp{$k$ denotes the level}
+\While{$\Ck{k} \not= \emptyset$}{
+  \nllabel{alg:fpm:iset:apr:whilestart}
+  \algcomputesupport ($\Ck{k}, \bD$)\;
+  \ForEach{ leaf $X \in \Ck{k}$}{
+    \lIf{$\supp(X) \ge \minsup$}{
+      $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$
+    }
+    \lElse{
+    remove $X$ from $\Ck{k}$\nllabel{alg:fpm:iset:apr:rem}
+    }
+  }
+ $\Ck{k+1} \assign$ \algextprefix ($\Ck{k}$)
+ \nllabel{alg:fpm:iset:apr:ext}\;
+  $k \assign k+1$\;
+\nllabel{alg:fpm:iset:apr:whileend}
+}
+\Return{$\Fk{k}$}
+\end{tightalgo}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Apriori Algorithm}
+\begin{tightalgo}[H]{\textwidth-18pt}
+\AlgorithmB{}
+\ForEach{$\tup{t, \vI(t)} \in \bD$}{
+  \ForEach{$k$-subset $X \subseteq \vI(t)$}{
+    \lIf{$X \in \Ck{k}$}{
+      $\supp(X) \assign \supp(X)+1$
+    }
+  }
+}
+\end{tightalgo}
+
+\begin{tightalgo}[H]{\textwidth-18pt}
+\AlgorithmC{}
+\ForEach{$ \text{leaf } X_a \in \Ck{k}$}{
+\ForEach{$\text{leaf } X_b \in \textsc{sibling}(X_a),
+    \text{such that } b > a$}{
+    $X_{ab} \assign X_a \cup X_b$\;
+    \tcp{prune if there are any infrequent subsets}
+    \If{$X_{j} \in \Ck{k}, \textbf{ for all }
+    X_{j} \subset X_{ab}, \text{ such that }
+    \card{X_{j}} = \card{X_{ab}}-1$}{
+     Add $X_{ab}$ as child of $X_a$ with
+     $sup(X_{ab}) \assign 0$}
+   }
+   \If{no extensions from $X_a$}{remove $X_a$ and its ancestors with no extensions from $\Ck{k}$ }
+}
+\Return $\Ck{k}$\;
+\end{tightalgo}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Itemset Mining: Apriori Algorithm}
+  \framesubtitle{Infrequent itemsets in gray}
+  \psset{unit=0.75in}
+  %C1
+  \begin{center}
+
+  %\begin{tabular}[t]{TTT}
+  \begin{tabular}[t]{ccc}
+  $\bD$ & & $\Ck{1}$\\
+  {
+      \begin{tabular}{|c|c|} \hline
+        $t$ & $\vI(t)$\\ \hline
+    1 & $\mathit{ABDE}$\\ \hline
+    2 & $\mathit{BCE}$\\ \hline
+    3 & $\mathit{ABDE}$\\ \hline
+    4 & $\mathit{ABCE}$\\ \hline
+    5 & $\mathit{ABCDE}$\\ \hline
+    6 & $\mathit{BCD}$\\     \hline
+      \end{tabular}
+  }
+	  & \hspace{0.5in} &
+    {
+    \scalebox{0.55}{
+    \psset{treesep=0.3,levelsep=*0.75}
+    \pstree[]{\Toval{$\emptyset(6)$}}{
+    \Toval{$A$(4)}
+    \Toval{$B$(6)}
+    \Toval{$C$(4)}
+    \Toval{$D$(4)}
+    \Toval{$E$(5)}
+    }
+    }
+    } \\
+  \end{tabular}
+ % C2
+  \centerline{\hspace{0.8in}$\Ck{2}$}
+
+  \scalebox{0.55}{%
+  \psset{treesep=0.125,levelsep=*0.75}
+  \pstree[]{\Toval{$\emptyset(6)$}}{
+    \pstree[]{\Toval{$A$(4)}}{
+      \Toval{$\mathit{AB}$(4)}
+      \Toval[fillstyle=solid,fillcolor=lightgray]{$\mathit{AC}$(2)}
+      \Toval{$\mathit{AD}$(3)}
+      \Toval{$\mathit{AE}$(4)}
+    }
+    \pstree[]{\Toval{$B$(6)}}{
+      \Toval{$\mathit{BC}$(4)}
+      \Toval{$\mathit{BD}$(4)}
+      \Toval{$\mathit{BE}$(5)}
+    }
+    \pstree[]{\Toval{$C$(4)}}{
+      \Toval[fillstyle=solid,fillcolor=lightgray]{$\mathit{CD}$(2)}
+      \Toval{$\mathit{CE}$(3)}
+    }
+    \pstree[]{\Toval{$D$(4)}}{
+      \Toval{$\mathit{DE}$(3)}
+    %}
+    }}
+    }
+\end{center}
+\end{frame}
+
+\begin{frame}{Itemset Mining: Apriori Algorithm}
+  \psset{unit=0.75in}
+ % C3
+\begin{minipage}{5cm}
+  \begin{center}
+	\hspace{1.2in}$\Ck{3}$
+
+  \scalebox{0.55}{%
+  \psset{treesep=0.2,levelsep=*0.75}
+  \pstree[]{\Toval{$\emptyset(6)$}}{
+    \pstree[]{\Toval{$A$(4)}}{
+      \pstree[]{\Toval{$\mathit{AB}$(4)}}{
+        \Toval{$\mathit{ABD}$(3)}
+        \Toval{$\mathit{ABE}$(4)}
+      }
+      \pstree[]{\Toval{$\mathit{AD}$(3)}}{
+        \Toval{$\mathit{ADE}$(3)}
+      }
+    }
+    \pstree[]{\Toval{$B$(6)}}{
+      \pstree[]{\Toval{$\mathit{BC}$(4)}}{
+        \Toval{$\mathit{BCE}$(3)}
+      }
+      \pstree[]{\Toval{$\mathit{BD}$(4)}}{
+        \Toval{$\mathit{BDE}$(3)}
+      }
+    }
+    }
+    }
+\end{center}
+\end{minipage}
+ % C4
+\hspace{3cm}
+\begin{minipage}{2cm}
+\begin{center}
+ $\Ck{4}$
+
+  \scalebox{0.55}{%
+  \psset{treesep=0.2,levelsep=*0.5}
+  \pstree[]{\Toval{$\emptyset(6)$}}{
+    \pstree[]{\Toval{$A$(4)}}{
+      \pstree[]{\Toval{$\mathit{AB}$(4)}}{
+      \pstree[]{\Toval{$\mathit{ABD}$(3)}}{
+        \Toval{$\mathit{ABDE}$(3)}
+      }
+      }
+    }
+    }}
+    %}}
+\end{center}
+\end{minipage}
+\end{frame}
+
 \begin{frame}{Apriori Algorithm: Pref\/{i}x Search Tree and Pruning}
   \psset{unit=1in}
   \centerline{
@@ -630,73 +776,6 @@ pref\/{i}x tree.
 \end{frame}
 
 
-\SetKwInput{AlgorithmA}{\algApriori ($\bD$, $\cI$, $\minsup$)}
-\SetKwInput{AlgorithmB}{\algcomputesupport ($\Ck{k}, \bD$)}
-\SetKwInput{AlgorithmC}{\algextprefix ($\Ck{k}$)}
-\begin{frame}[fragile]{The Apriori Algorithm}
-\begin{tightalgo}[H]{\textwidth-18pt}
-\AlgorithmA{}
-$\cF \assign \emptyset$\;
-$\Ck{1} \assign \{\emptyset\}$ \tcp{Initial pref\/{i}x tree with single items}\;
-\lForEach{$i \in \cI$}{
-Add $i$ as child of $\emptyset$ in $\Ck{1}$ with $sup(i) \assign 0$\;
-}
-$k \assign 1$ \tcp{$k$ denotes the level}
-\While{$\Ck{k} \not= \emptyset$}{
-  \nllabel{alg:fpm:iset:apr:whilestart}
-  \algcomputesupport ($\Ck{k}, \bD$)\;
-  \ForEach{ leaf $X \in \Ck{k}$}{
-    \lIf{$\supp(X) \ge \minsup$}{
-      $\cF \assign \cF \cup \bigl\{(X, \supp(X))\bigr\}$\;
-    }
-    \lElse{
-    remove $X$ from $\Ck{k}$\nllabel{alg:fpm:iset:apr:rem}\;
-    }
-  }
- $\Ck{k+1} \assign$ \algextprefix ($\Ck{k}$)
- \nllabel{alg:fpm:iset:apr:ext}\;
-  $k \assign k+1$\;
-\nllabel{alg:fpm:iset:apr:whileend}
-}
-\Return{$\Fk{k}$}
-\end{tightalgo}
-\end{frame}
-
-
-
-\begin{frame}[fragile]{Apriori Algorithm}
-\begin{tightalgo}[H]{\textwidth-18pt}
-\AlgorithmB{}
-\ForEach{$\tup{t, \vI(t)} \in \bD$}{
-  \ForEach{$k$-subset $X \subseteq \vI(t)$}{
-    \lIf{$X \in \Ck{k}$}{
-      $\supp(X) \assign \supp(X)+1$\;
-    }
-  }
-}
-\end{tightalgo}
-
-\begin{tightalgo}[H]{\textwidth-18pt}
-\AlgorithmC{}
-\ForEach{$ \text{leaf } X_a \in \Ck{k}$}{
-\ForEach{$\text{leaf } X_b \in \textsc{sibling}(X_a),
-    \text{such that } b > a$}{
-    $X_{ab} \assign X_a \cup X_b$\;
-    \tcp{prune candidate if there are any infrequent subsets}
-    \If{$X_{j} \in \Ck{k}, \textbf{ for all }
-    X_{j} \subset X_{ab}, \text{ such that }
-    \card{X_{j}} = \card{X_{ab}}-1$}{
-     Add $X_{ab}$ as child of $X_a$ with
-     $sup(X_{ab}) \assign 0$}\;
-   }
-   \If{no extensions from $X_a$}{remove $X_a$, and all ancestors of
-   $X_a$ with no extensions, from $\Ck{k}$ }
-}
-\Return $\Ck{k}$\;
-\end{tightalgo}
-\end{frame}
-
-
 \begin{frame}{Apriori Algorithm: Details}
   \small 
   
@@ -733,123 +812,7 @@ This process continues until no new candidates are added.
 \end{frame}
 
 
-
-\begin{frame}[fragile]{Itemset Mining: Apriori Algorithm}
-  \framesubtitle{Infrequent itemsets in gray}
-  \psset{unit=0.75in}
-  %C1
-  \begin{center}
-
-  %\begin{tabular}[t]{TTT}
-  \begin{tabular}[t]{ccc}
-  $\bD$ & & $\Ck{1}$\\
-  {
-      \begin{tabular}{|c|c|} \hline
-        $t$ & $\vI(t)$\\ \hline
-    1 & $\mathit{ABDE}$\\ \hline
-    2 & $\mathit{BCE}$\\ \hline
-    3 & $\mathit{ABDE}$\\ \hline
-    4 & $\mathit{ABCE}$\\ \hline
-    5 & $\mathit{ABCDE}$\\ \hline
-    6 & $\mathit{BCD}$\\     \hline
-      \end{tabular}
-  }
-	  & \hspace{0.5in} &
-    {
-    \scalebox{0.65}{
-    \psset{treesep=0.3,levelsep=*0.75}
-    \pstree[]{\Toval{$\emptyset(6)$}}{
-    \Toval{$A$(4)}
-    \Toval{$B$(6)}
-    \Toval{$C$(4)}
-    \Toval{$D$(4)}
-    \Toval{$E$(5)}
-    }
-    }
-    } \\
-  \end{tabular}
- % C2
-  \centerline{\hspace{0.8in}$\Ck{2}$}
-
-  \scalebox{0.65}{%
-  \psset{treesep=0.125,levelsep=*0.75}
-  \pstree[]{\Toval{$\emptyset(6)$}}{
-    \pstree[]{\Toval{$A$(4)}}{
-      \Toval{$\mathit{AB}$(4)}
-      \Toval[fillstyle=solid,fillcolor=lightgray]{$\mathit{AC}$(2)}
-      \Toval{$\mathit{AD}$(3)}
-      \Toval{$\mathit{AE}$(4)}
-    }
-    \pstree[]{\Toval{$B$(6)}}{
-      \Toval{$\mathit{BC}$(4)}
-      \Toval{$\mathit{BD}$(4)}
-      \Toval{$\mathit{BE}$(5)}
-    }
-    \pstree[]{\Toval{$C$(4)}}{
-      \Toval[fillstyle=solid,fillcolor=lightgray]{$\mathit{CD}$(2)}
-      \Toval{$\mathit{CE}$(3)}
-    }
-    \pstree[]{\Toval{$D$(4)}}{
-      \Toval{$\mathit{DE}$(3)}
-    %}
-    }}
-    }
-\end{center}
-\end{frame}
-
-\begin{frame}{Itemset Mining: Apriori Algorithm}
-  \psset{unit=0.75in}
- % C3
-\begin{minipage}{5cm}
-  \begin{center}
-	\hspace{1.2in}$\Ck{3}$
-
-  \scalebox{0.65}{%
-  \psset{treesep=0.2,levelsep=*0.75}
-  \pstree[]{\Toval{$\emptyset(6)$}}{
-    \pstree[]{\Toval{$A$(4)}}{
-      \pstree[]{\Toval{$\mathit{AB}$(4)}}{
-        \Toval{$\mathit{ABD}$(3)}
-        \Toval{$\mathit{ABE}$(4)}
-      }
-      \pstree[]{\Toval{$\mathit{AD}$(3)}}{
-        \Toval{$\mathit{ADE}$(3)}
-      }
-    }
-    \pstree[]{\Toval{$B$(6)}}{
-      \pstree[]{\Toval{$\mathit{BC}$(4)}}{
-        \Toval{$\mathit{BCE}$(3)}
-      }
-      \pstree[]{\Toval{$\mathit{BD}$(4)}}{
-        \Toval{$\mathit{BDE}$(3)}
-      }
-    }
-    }
-    }
-\end{center}
-\end{minipage}
- % C4
-\hspace{3cm}
-\begin{minipage}{2cm}
-\begin{center}
- $\Ck{4}$
-
-  \scalebox{0.7}{%
-  \psset{treesep=0.2,levelsep=*0.5}
-  \pstree[]{\Toval{$\emptyset(6)$}}{
-    \pstree[]{\Toval{$A$(4)}}{
-      \pstree[]{\Toval{$\mathit{AB}$(4)}}{
-      \pstree[]{\Toval{$\mathit{ABD}$(3)}}{
-        \Toval{$\mathit{ABDE}$(3)}
-      }
-      }
-    }
-    }}
-    %}}
-\end{center}
-\end{minipage}
-\end{frame}
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 
 \begin{frame}{Tidset Intersection Approach: Eclat Algorithm}
@@ -876,6 +839,31 @@ pref\/{i}x search tree in a DFS-like manner, processing a group of
 itemsets that have the same pref\/{i}x, also called a {\em pref\/{i}x
 equivalence class}.
 
+\end{frame}
+
+
+\begin{frame}[fragile]{Eclat Algorithm}
+\begin{tightalgo}[H]{\textwidth-18pt}
+\SetKwInOut{AlgorithmA}{\algeclat ($P$, $\minsup$, $\cF$)}
+\tcp{Initial Call: $\cF \assign \emptyset,
+P\assign \bigl\{\tup{i,\vT(i)} \mid i \in \cI,
+\card{\vT(i)} \ge \minsup\bigr\}$}
+\AlgorithmA{}
+\ForEach{$\tup{X_a, \vT(X_a)} \in P$}{
+  $\cF \assign \cF \cup \bigl\{(X_{a}, \supp(X_{a}))\bigr\}$\;
+  $P_a \assign \emptyset$\;
+  \ForEach{$\tup{X_b,\vT(X_b)} \in P$, with $X_b > X_a$}{
+  $X_{ab} = X_a \cup X_b$\;
+    $\vT(X_{ab}) = \vT(X_a) \cap \vT(X_b)$\;
+    \If{$\supp(X_{ab}) \geq \minsup$}{
+      $P_a \assign P_a \cup \bigl\{ \tup{X_{ab}, \vT(X_{ab})} \bigr\}$\;
+    }
+  }
+  \lIf{$P_a \ne \emptyset$}{
+    \algeclat($P_a$, $\minsup$, $\cF$)
+  }
+}
+\end{tightalgo}
 \end{frame}
 
 
@@ -1042,31 +1030,6 @@ equivalence class}.
 \end{frame}
 
 
-\begin{frame}[fragile]{Eclat Algorithm}
-\begin{tightalgo}[H]{\textwidth-18pt}
-\SetKwInOut{AlgorithmA}{\algeclat ($P$, $\minsup$, $\cF$)}
-\tcp{Initial Call: $\cF \assign \emptyset,
-P\assign \bigl\{\tup{i,\vT(i)} \mid i \in \cI,
-\card{\vT(i)} \ge \minsup\bigr\}$}
-\AlgorithmA{}
-\ForEach{$\tup{X_a, \vT(X_a)} \in P$}{
-  $\cF \assign \cF \cup \bigl\{(X_{a}, \supp(X_{a}))\bigr\}$\;
-  $P_a \assign \emptyset$\;
-  \ForEach{$\tup{X_b,\vT(X_b)} \in P$, with $X_b > X_a$}{
-  $X_{ab} = X_a \cup X_b$\;
-    $\vT(X_{ab}) = \vT(X_a) \cap \vT(X_b)$\;
-    \If{$\supp(X_{ab}) \geq \minsup$}{
-      $P_a \assign P_a \cup \bigl\{ \tup{X_{ab}, \vT(X_{ab})} \bigr\}$\;
-    }
-  }
-  \lIf{$P_a \ne \emptyset$}{
-    \algeclat($P_a$, $\minsup$, $\cF$)\;
-  }
-}
-\end{tightalgo}
-\end{frame}
-
-
 
 
 \begin{frame}{Diffsets: Difference of Tidsets}
@@ -1104,6 +1067,34 @@ intersection operations in Eclat with diffset operations.
 \end{frame}
 
 
+\begin{frame}{Diffsets: Difference of Tidsets}
+
+  Given $\cT = 123456$:
+  \begin{align*}
+	  \bd(A) & = \cT \setminus 1345 = 26 & \bd(B) & = \cT \setminus 123456 = \emptyset\\
+	  \bd(C) & = \cT \setminus 2456 = 13 & \bd(D) & = \cT \setminus 1356 = 24\\
+	  \bd(E) & = \cT \setminus 12345 = 6 & & \\
+  \end{align*}
+
+  For instance, the diffsets of $\mathit{AB}$ and $\mathit{AC}$ are given~as
+  \begin{align*}
+  \bd(\mathit{AB}) & = \bd(B) \setminus \bd(A)
+  = \emptyset \setminus \{2,6\} =   \emptyset\\
+  \bd(\mathit{AC}) & = \bd(C) \setminus \bd(A) = \{1,3\} \setminus \{2,6\} = 13
+  \end{align*}
+  and their support values are
+  \begin{align*}
+    \supp(\mathit{AB}) &= \supp(A) - \card{\bd(\mathit{AB})} = 4-0 = 4\\
+    \supp(\mathit{AC}) &= \supp(A) - \card{\bd(\mathit{AC})} = 4-2 = 2
+  \end{align*}
+
+  The new pref\/{i}x equivalence class $P_A$ is:
+  $$P_A = \bigl\{ \tup{\mathit{AB},\emptyset,4}, \tup{\mathit{AD}, 4, 3},
+  \tup{\mathit{AE}, \emptyset, 4}\bigr\}$$
+
+\end{frame}
+
+
 \begin{frame}[fragile]{Algorithm dEclat}
 \begin{tightalgo}[H]{\textwidth-18pt}
 \SetKwInOut{AlgorithmA}{\algdeclat ($P$, $\minsup$, $\cF$)}
@@ -1126,7 +1117,7 @@ $P \assign \bigl\{\tup{i,\bd(i),\supp(i)} \mid i \in \cI,
     }
   }
   \lIf{$P_a \ne \emptyset$}{
-    \algdeclat($P_a$, $\minsup$, $\cF$)\;
+    \algdeclat($P_a$, $\minsup$, $\cF$)
   }
 }
 \end{tightalgo}
@@ -1294,6 +1285,8 @@ $P \assign \bigl\{\tup{i,\bd(i),\supp(i)} \mid i \in \cI,
     }
   }
 \end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 
 \begin{frame}{Frequent Pattern Tree Approach: FPGrowth Algorithm}
@@ -1463,7 +1456,7 @@ FP-tree is complete when all transactions have been inserted.
 \end{frame}
 
 
-\begin{frame}{FPGrowth Algorithm: Details}
+\begin{frame}{FPGrowth Algorithm: Rationale}
 Given an FP-tree $R$, projected FP-trees are built for each
 frequent item $i$ in $R$ in increasing order of support in a recursive
 manner.
@@ -1690,6 +1683,46 @@ Remove infrequent items from $R$\;
     } }
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+\begin{frame}{Association Rules}
+An {\it association rule}
+is an expression 
+$$X \arule{s,c} Y$$
+where $X$ and $Y$ are itemsets and they are disjoint, that is,
+$X,Y \subseteq \cI$, and $X \cap Y = \emptyset$.
+Let the itemset $X \cup Y$ be denoted as $\mathit{XY}$.
+
+\smallskip
+The
+{\em support}
+of the rule is the number of transactions in which
+both $X$ and $Y$ co-occur as subsets:
+\begin{align*}
+  s = \supp(X \arule Y) = \card{\vT(\mathit{XY})} = \supp(\mathit{XY})
+\end{align*}
+
+\smallskip
+The {\em relative support} of the rule is def\/{i}ned as the fraction of transactions
+where $X$ and $Y$ co-occur, and it provides an estimate of the joint probability of $X$ and $Y$:
+\begin{align*}
+  \rsupp(X \arule Y) =  \frac{\supp(\mathit{XY})}{\card{\bD}} =
+  P(X \wedge Y)
+\end{align*}
+
+\smallskip
+The {\em conf\/{i}dence}
+of a rule is the conditional probability
+that a transaction contains $Y$ given that it contains $X$:
+\begin{align*}
+c = \conff(X \arule Y) = P(Y|X) =
+\frac{P(X \wedge Y)}{P(X)} =
+ \frac{\supp (\mathit{XY})}{\supp (X)}
+\end{align*}
+
+\end{frame}
+
+
 
 \begin{frame}{Generating Association Rules}
 Given a frequent itemset $Z \in \cF$,
@@ -1731,7 +1764,7 @@ avoid checking subsets of $X$.
   \nllabel{alg:fpm:iset:arule:initA}\;
   \While{$\cA \ne \emptyset$}{
     $X \gets \text{maximal element in } \cA$\;
-    $\cA \gets \cA \setminus X$\tcp{remove $X$ from $\cA$}\;
+    $\cA \gets \cA \setminus X$\tcp{remove $X$ from $\cA$}
     $c \gets \supp(Z)/\supp(X)$ \nllabel{alg:fpm:iset:arule:conf}\;
     \eIf{$c \ge \minconf$}{
       print $X \arule Y$, $\supp(Z)$, $c$\;
@@ -1739,7 +1772,7 @@ avoid checking subsets of $X$.
       $\cA \gets \cA \setminus
       \bigl\{W \mid W \subset X\bigr\}$ \;
       \nllabel{alg:fpm:iset:arule:removeW}
-      \tcp{remove all subsets of $X$ from $\cA$}\;
+      \tcp{remove all subsets of $X$ from $\cA$}
     }
   }
 }

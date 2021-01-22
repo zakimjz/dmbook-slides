@@ -89,6 +89,7 @@ Attributes may be classif\/{i}ed into two main types
 \end{itemize}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Data: Algebraic and Geometric View}
   \small
@@ -342,6 +343,7 @@ where
     }
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Data: Probabilistic View}
 
@@ -361,7 +363,7 @@ if it can take on any value in $\setR$.
 By default, a numeric attribute $X_j$ 
 is considered as the identity random variable given as
 $$X(v) = v$$
-for all $v \in \cO$. Here $\cO = \setR$.
+$\forall v \in \cO$. Here $\cO = \setR$.
 
 \begin{block}{Discrete Variable: Long Sepal Length}
 Define random variable $A$, denoting long sepal length (7cm or more) 
@@ -385,7 +387,7 @@ If $X$ is
 discrete, the {\em probability mass function} of $X$ is
 def\/{i}ned as
 \begin{empheq}[box=\tcbhighmath]{align*}
-    f(x) = P(X = x) \qquad \text{for all } x \in \setR
+    f(x) = P(X = x) \qquad \forall x \in \setR
 \end{empheq}
 $f$ must obey the basic rules of probability.
 That is, $f$ must be non-negative:
@@ -508,7 +510,7 @@ and the sum of all
 probabilities should add to $1$:
 $$\int_{-\infty}^\infty f(x)\ dx = 1$$
 
-\bigskip Note that $P(X=v) = 0$ for all $v \in \setR$ since there are
+\bigskip Note that $P(X=v) = 0 \forall v \in \setR$ since there are
 infinite possible values in the sample space. What it means is
 that the probability mass is spread so thinly over the range of
 values that it can be measured only over intervals $[a,b] \subset
@@ -562,7 +564,7 @@ $F:\setR \to [0,1]$,
 gives the probability of observing a value at most
 some given value $x$:
 \begin{empheq}[box=\tcbhighmath]{align*}
-    F(x) = P(X \le x) \qquad \text{for all } -\infty < x < \infty
+    F(x) = P(X \le x) \qquad \forall x | -\infty < x < \infty
 \end{empheq}
 When $X$ is discrete, $F$ is given as
 \begin{align*}
@@ -785,6 +787,7 @@ transform={1 1 5 scaleOpoint3d},algebraic](0,0)(10,6){
 \end{columns}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Random Sample and Statistics}
   Given a random variable $X$, a {\em random sample} of size $n$

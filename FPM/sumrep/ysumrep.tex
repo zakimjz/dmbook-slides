@@ -12,42 +12,6 @@
 \newcommand{\algndi}{\textsc{NDI}\xspace}
 \newcommand{\algcomputebounds}{\textsc{ComputeBounds}\xspace}
 
-
-\begin{frame}{Maximal Frequent Itemsets}
-
-Given a binary database $\bD \subseteq \cT \times \cI$,
-over the tids $\cT$ and items $\cI$, let $\cF$
-denote the set of all frequent itemsets, that is,
-\begin{align*}
-\tcbhighmath{
-\cF = \bigl\{X \mid X \subseteq \cI \mbox{ and } \supp(X) \ge \minsup
-\bigr\}
-}
-\end{align*}
-
-\medskip
-A frequent itemset $X \in \cF$ is called {\em maximal}
-\index{maximal itemsets}
-\index{itemsets!maximal}
-if it has no
-frequent supersets. Let $\cM$ be the set of all maximal frequent
-itemsets, given as
-\begin{align*}
-\tcbhighmath{
-\cM = \bigl\{X \mid X \in \cF \mbox{ and } \not\exists Y \supset X, \mbox{
-  such that } Y \in \cF \bigr\}
-}
-\end{align*}
-
-\medskip
-The set $\cM$ is a condensed representation of the set of all frequent
-itemset $\cF$, because we can determine whether any itemset $X$ is
-frequent or not using $\cM$. If there exists a maximal itemset $Z$ such
-that $X \subseteq Z$, then $X$ must be frequent; otherwise $X$ cannot be
-frequent. 
-\end{frame}
-
-
 \begin{frame}{An Example Database}
 \begin{footnotesize}
 \begin{minipage}{1.5in}
@@ -88,6 +52,42 @@ $\supp$ & Itemsets\\
 \end{minipage}
 \end{footnotesize}
 \end{frame}
+
+
+\begin{frame}{Maximal Frequent Itemsets}
+
+Given a binary database $\bD \subseteq \cT \times \cI$,
+over the tids $\cT$ and items $\cI$, let $\cF$
+denote the set of all frequent itemsets, that is,
+\begin{align*}
+\tcbhighmath{
+\cF = \bigl\{X \mid X \subseteq \cI \mbox{ and } \supp(X) \ge \minsup
+\bigr\}
+}
+\end{align*}
+
+\medskip
+A frequent itemset $X \in \cF$ is called {\em maximal}
+\index{maximal itemsets}
+\index{itemsets!maximal}
+if it has no
+frequent supersets. Let $\cM$ be the set of all maximal frequent
+itemsets, given as
+\begin{align*}
+\tcbhighmath{
+\cM = \bigl\{X \mid X \in \cF \mbox{ and } \not\exists Y \supset X, \mbox{
+  such that } Y \in \cF \bigr\}
+}
+\end{align*}
+
+\medskip
+The set $\cM$ is a condensed representation of the set of all frequent
+itemset $\cF$, because we can determine whether any itemset $X$ is
+frequent or not using $\cM$. If there exists a maximal itemset $Z$ such
+that $X \subseteq Z$, then $X$ must be frequent; otherwise $X$ cannot be
+frequent. 
+\end{frame}
+
 
 
 \begin{frame}{Closed Frequent Itemsets}
@@ -375,6 +375,7 @@ Itemsets boxed and shaded are closed, double boxed are
 maximal, and those boxed are minimal generators
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Mining Maximal Frequent Itemsets: GenMax Algorithm}
 Mining maximal itemsets requires additional steps beyond
@@ -446,15 +447,15 @@ $Y \assign \bigcup X_i$ \nllabel{alg:fpm:sumrep:alggenmax:Us}\;
     $\vT(X_{ij}) = \vT(X_i)\; \cap\; \vT(X_{j})$\;
     \lIf{$\supp(X_{ij}) \geq \minsup$}{
       $P_i \assign P_i \cup \{ \tup{X_{ij}, \vT(X_{ij})} \}$
-      \nllabel{alg:fpm:sumrep:alggenmax:Pe}\;
+      \nllabel{alg:fpm:sumrep:alggenmax:Pe}
     }
   }
   \lIf{$P_i \ne \emptyset$}{
-    \alggenmax($P_i$, $\minsup$, $\cM$)\;
+    \alggenmax($P_i$, $\minsup$, $\cM$)
   }
   \ElseIf{$\not\exists Z \in \cM, X_i \subseteq Z$}{
   $\cM = \cM \cup X_i\quad$ \nllabel{alg:fpm:sumrep:alggenmax:addM}
-  \tcp{add $X_i$ to maximal set}\;}
+  \tcp{add $X_i$ to maximal set}}
 }
 \end{tightalgo}
 \end{frame}
@@ -561,6 +562,7 @@ $Y \assign \bigcup X_i$ \nllabel{alg:fpm:sumrep:alggenmax:Us}\;
   }
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Mining Closed Frequent Itemsets: Charm Algorithm}
 Mining closed frequent itemsets requires that we perform closure
@@ -623,7 +625,7 @@ Sort $P$ in increasing order of support (i.e., by increasing $|\vT(X_i)|$)\;
     }
   }
   \lIf{$P_i \ne \emptyset$}{
-    \algcharm($P_i$, $\minsup$, $\cC$)\;
+    \algcharm($P_i$, $\minsup$, $\cC$)
   }
   \If{$\not\exists Z \in \cC, \text{ such that }
   X_i \subseteq Z \text{ and } \vT(X_i) = \vT(Z)$}{
@@ -744,6 +746,7 @@ Sort $P$ in increasing order of support (i.e., by increasing $|\vT(X_i)|$)\;
     }%}}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Nonderivable Itemsets}
 \small
@@ -773,34 +776,6 @@ of transactions that contain all items in $Y$ but no item in $Z$:
   \supp(Y\ol{Z}) = \bigl| \{ t \in \cT \mid Y \subseteq \vI(t)
   \text{ and } Z \cap \vI(t) = \emptyset\} \bigr|
 }
-\end{align*}
-\end{frame}
-
-
-\begin{frame}{Inclusion--Exclusion Principle: Support Bounds}
-
-The inclusion--exclusion principle allows one to directly compute the
-support of $Y\ol{Z}$
-\begin{empheq}[box=\tcbhighmath]{align*}
-\begin{split}
-  \supp(Y\ol{Z}) & = \sum_{Y \subseteq W \subseteq X} -1^{\card{W\setminus Y}}\cdot \supp(W)
-\end{split}
-\end{empheq}
-
-\medskip
-From the $2^k$
-possible subsets $Y\subseteq X$, we derive $2^{k-1}$ lower bounds and
-$2^{k-1}$ upper bounds  for $\supp(X)$, obtained after
-setting $\supp(Y\ol{Z}) \ge 0$
-%\begin{empheq}[box=\tcbhighmath]{align*}
-%\begin{split}
-\begin{align*}
-\text{{\bf Upper Bounds }} & (|X\setminus Y| \mbox{ is odd}): & &  
-\supp(X) & \leq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus Y|+1\rB)} \supp(W)\\[2pt]
-\text{{\bf Lower Bounds }} & (|X\setminus Y| \mbox{ is even}): & & 
-\supp(X) & \geq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus Y|+1\rB)} \supp(W) \\
-%\end{split}
-%\end{empheq}
 \end{align*}
 \end{frame}
 
@@ -848,6 +823,40 @@ setting $\supp(Y\ol{Z}) \ge 0$
 \end{frame}
 
 
+\begin{frame}{Inclusion--Exclusion Principle: Support Bounds}
+
+
+Let $Y\ol{Z}$ be a generalized itemset, and let $X = Y \cup Z = \mathit{YZ}$.
+The inclusion--exclusion principle allows one to directly compute the
+support of $Y\ol{Z}$ as a combination of the supports for all itemsets
+$W$, such that $Y \subseteq W \subseteq X$:
+
+\medskip
+
+\begin{empheq}[box=\tcbhighmath]{align*}
+\begin{split}
+  \supp(Y\ol{Z}) & = \sum_{Y \subseteq W \subseteq X} -1^{\card{W\setminus Y}}\cdot \supp(W)
+\end{split}
+\end{empheq}
+
+%\medskip
+%From the $2^k$
+%possible subsets $Y\subseteq X$, we derive $2^{k-1}$ lower bounds and
+%$2^{k-1}$ upper bounds  for $\supp(X)$, obtained after
+%setting $\supp(Y\ol{Z}) \ge 0$
+%%\begin{empheq}[box=\tcbhighmath]{align*}
+%%\begin{split}
+%\begin{align*}
+%\text{{\bf Upper Bounds }} & (|X\setminus Y| \mbox{ is odd}): & &  
+%\supp(X) & \leq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus Y|+1\rB)} \supp(W)\\[2pt]
+%\text{{\bf Lower Bounds }} & (|X\setminus Y| \mbox{ is even}): & & 
+%\supp(X) & \geq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus Y|+1\rB)} \supp(W) \\
+%%\end{split}
+%%\end{empheq}
+%\end{align*}
+\end{frame}
+
+
 
 \begin{frame}{Inclusion--Exclusion for Support}
 Consider the generalized itemset
@@ -877,27 +886,27 @@ But, this is precisely what the inclusion--exclusion formula gives:
 
 
 \begin{frame}{Support Bounds}
-From each of the partitions, we
-get one bound, and out of the eight possible regions, exactly four give
-upper bounds and the other four give lower bounds for the support of $\mathit{ACD}$:
-\begin{align*}
-\begin{array}{lll}
-    \supp(\mathit{ACD}) & \geq 0                   & \mbox{ when } Y=\mathit{ACD}\\
-    &\leq \supp(\mathit{AC})                     & \mbox{ when } Y=\mathit{AC}\\
-    &\leq \supp(\mathit{AD})                  & \mbox{ when } Y=\mathit{AD}\\
-    &\leq \supp(\mathit{CD})                     & \mbox{ when } Y=\mathit{CD}\\
-    &\geq \supp(\mathit{AC}) +\supp(\mathit{AD}) - \supp(A)   & \mbox{ when } Y=A\\
-    &\geq \supp(\mathit{AC}) + \supp(\mathit{CD}) - \supp(C)  & \mbox{ when } Y=C\\
-    &\geq \supp(\mathit{AD}) +\supp(\mathit{CD}) - \supp(D)   & \mbox{ when } Y=D\\
-    &\leq \supp(\mathit{AC}) + \supp(\mathit{AD}) + \supp(\mathit{CD})- \\
-    & \quad \supp(A) - \supp(C) - \supp(D)
-    + \supp(\emptyset) &\mbox{ when } Y=\emptyset\\
-\end{array}
-\end{align*}
+
+Because the support of any (generalized)
+itemset must be non-negative, we can derive a bound on the support of
+$X$ from each of the $2^k$ generalized itemsets by setting
+$\supp(Y\ol{Z}) \ge 0$. 
+
+Thus, from the $2^k$
+possible subsets $Y\subseteq X$, we derive $2^{k-1}$ lower bounds and
+$2^{k-1}$ upper bounds  for $\supp(X)$, obtained after
+setting $\supp(Y\ol{Z}) \ge 0$:
+
+\begin{empheq}[box=\tcbhighmath]{align}
+\text{{\bf Upper Bounds} ($|X\setminus Y|$ is odd):} & &
+\supp(X) & \leq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus
+W|+1\rB)} \supp(W) \label{eq:fpm:sumrep:IEPU}\\[2pt]
+\text{{\bf Lower Bounds} ($|X\setminus Y|$ is even):} & &
+\supp(X) & \geq\sum_{Y \subseteq W \subset X} -1^{\lB(|X\setminus
+W|+1\rB)} \supp(W) \label{eq:fpm:sumrep:IEPL}
+\end{empheq}
 
 \end{frame}
-
-
 
 \begin{frame}{Support Bounds for Subsets}
   \begin{center}
@@ -932,6 +941,43 @@ upper bounds and the other four give lower bounds for the support of $\mathit{AC
 \end{frame}
 
 
+\begin{frame}{Support Bounds}
+\framesubtitle{Example}
+
+ For example, if $Y=C$, then the inclusion-exclusion principle
+  gives us
+  \begin{align*}
+\supp(C\ol{\mathit{AD}}) = \supp(C) - \supp(\mathit{AC}) - \supp(\mathit{CD}) + \supp(\mathit{ACD})
+\end{align*}
+Setting $\supp(C\ol{\mathit{AD}}) \ge 0$, we obtain
+  \begin{align*}
+\supp(\mathit{ACD}) \ge  -\supp(C) + \supp(\mathit{AC}) + \supp (\mathit{CD})
+\end{align*}
+
+\medskip
+
+From each of the partitions, we
+get one bound, and out of the eight possible regions, exactly four give
+upper bounds and the other four give lower bounds for the support of $\mathit{ACD}$:
+\begin{align*}
+\begin{array}{lll}
+    \supp(\mathit{ACD}) & \geq 0                   & \mbox{ when } Y=\mathit{ACD}\\
+    &\leq \supp(\mathit{AC})                     & \mbox{ when } Y=\mathit{AC}\\
+    &\leq \supp(\mathit{AD})                  & \mbox{ when } Y=\mathit{AD}\\
+    &\leq \supp(\mathit{CD})                     & \mbox{ when } Y=\mathit{CD}\\
+    &\geq \supp(\mathit{AC}) +\supp(\mathit{AD}) - \supp(A)   & \mbox{ when } Y=A\\
+    &\geq \supp(\mathit{AC}) + \supp(\mathit{CD}) - \supp(C)  & \mbox{ when } Y=C\\
+    &\geq \supp(\mathit{AD}) +\supp(\mathit{CD}) - \supp(D)   & \mbox{ when } Y=D\\
+    &\leq \supp(\mathit{AC}) + \supp(\mathit{AD}) + \supp(\mathit{CD})- \\
+    & \quad \supp(A) - \supp(C) - \supp(D)
+    + \supp(\emptyset) &\mbox{ when } Y=\emptyset\\
+\end{array}
+\end{align*}
+
+\end{frame}
+
+
+
 \begin{frame}{Nonderivable Itemsets}
 
   \small
@@ -957,14 +1003,14 @@ $\supp(X)$ are given as
 \bigskip
 An itemset $X$ is called {\em nonderivable} if $\max\{\mathit{LB}(X)\} \ne
 \min\{\mathit{UB}(X)\}$,
-which implies that the support of $X$ cannot be derived from the
-support values of its subsets;
-we know only the range of possible values, that is,
+%which implies that the support of $X$ cannot be derived from the
+%support values of its subsets;
+and we know only the range of possible values, that is,
 $$\supp(X) \in \Bigl[  \max\{\mathit{LB}(X)\}, \min\{\mathit{UB}(X)\} \Bigr]$$
-On the other hand, $X$ is derivable if
+$X$ is derivable if
 $\supp(X) = \max\{\mathit{LB}(X)\} = \min\{\mathit{UB}(X)\}$
-because in this case $\supp(X)$
-can be derived exactly using the supports of its subsets.
+%because in this case $\supp(X)$
+%can be derived exactly using the supports of its subsets.
 Thus, the set of all frequent nonderivable itemsets is given as
 \begin{align*}
   \cN = \bigl\{X \in \cF \mid \max\{\mathit{LB}(X)\} \ne \min\{\mathit{UB}(X)\}\bigr\}

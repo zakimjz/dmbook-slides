@@ -1,11 +1,10 @@
 \lecture{fpmeval}{fpmeval}
 
-\date{Chap.\ 12: Pattern and Rule Assessment}
+\date{Chapter 12: Pattern and Rule Assessment}
 
 \begin{frame}
 \titlepage
 \end{frame}
-
 
 \newcommand{\lift}{\mathit{lift}}
 \newcommand{\leverage}{leverage}
@@ -55,6 +54,8 @@ antecedent $X$:
 
 
 \begin{frame}[fragile]{Example Dataset: Support and Confidence}
+\begin{columns}
+  \column{0.3\textwidth}
 \begin{center}
 \begin{tabular}{|c|l|}
 \hline
@@ -67,9 +68,7 @@ Tid & Items \\ \hline
 6 & {\it BCD}\\ \hline
 \end{tabular}
 \end{center}
-
-\begin{columns}
-  \column{0.5\textwidth}
+  \column{0.7\textwidth}
 \begin{center}
   \scalebox{0.9}{
 \begin{tabular}{|c|c|c|}
@@ -86,7 +85,11 @@ $\mathit{ADE}$\\
 \end{tabular}
 }
 \end{center}
-\column{0.5\textwidth}
+
+\end{columns}
+
+\begin{columns}
+  \column{0.4\textwidth}
 \begin{center}
   \scalebox{0.9}{
 \begin{tabular}{|r>{\centering}m{0.2in}l|r|}
@@ -102,7 +105,10 @@ $\mathit{BC}$ & $\arule$ & $\mathit{E}$ & 0.75 \\ \hline
 \end{tabular}
 }
 \end{center}
-
+  \column{0.6\textwidth}
+	\begin{minipage}{0.7\textwidth}
+        Confidence should be evaluated considering the support of the rule components. For instance, since $P(BC)=0.67$, the rule $E \arule BC$, with a 60\% confidence, has a deleterious effect on $BC$.
+	\end{minipage}
 \end{columns}
 
 \end{frame}
@@ -152,11 +158,10 @@ similarity between the tidsets of $X$ and $Y$:
 
 \end{frame}
 
-
-\begin{frame}{Lift, Leverage, Jaccard, Support and Confidence}
+\begin{frame}{Lift and Leverage}
   \begin{columns}
 
-	\column{0.5\textwidth}
+	\column{0.62\textwidth}
 \begin{center}
 \begin{tabular}{|r>{\centering}m{0.2in}l|r|}
 \hline
@@ -167,17 +172,19 @@ $\mathit{BE}$ & $\arule$ & $\mathit{AC}$ & 1.20 \\ \hline
 \end{tabular}
 \end{center}
 
-\begin{center}
-\begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|}
-\hline
-\multicolumn{3}{|c|}{Rule} & $\rsupp$ & $\conff$ & $\lift$ \\ \hline
-$\mathit{E}$ & $\arule$ & $\mathit{AC}$ & 0.33 & 0.40 & 1.20\\ \hline
-$\mathit{E}$ & $\arule$ & $\mathit{AB}$ & 0.67 & 0.80 & 1.20\\ \hline
-$\mathit{B}$ & $\arule$ & $\mathit{E}$ & 0.83 & 0.83 & 1.00\\ \hline
-\end{tabular}
-\end{center}
-	
 \column{0.5\textwidth}
+\begin{minipage}{0.7\textwidth}
+$lift < 1$ indicates the rule support is smaller than expected, while $lift>1$ means the reverse.
+\end{minipage}
+
+\end{columns}
+
+\bigskip
+
+\begin{columns}
+
+\column{0.5\textwidth}
+
 \begin{center}
 	\scalebox{0.8}{
 \begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|}
@@ -190,19 +197,71 @@ $\mathit{A}$ & $\arule$ & $\mathit{E}$ &   0.67 & 1.20 & 0.11\\ \hline
 \end{tabular}
 }
 \end{center}
+	
+\column{0.5\textwidth}
+\begin{center}
+\begin{minipage}{0.7\textwidth}
+Lift and leverage must be evaluated together, since the same lift may refer to significantly different leverages.
+\end{minipage}
+\end{center}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Lift, Jaccard, and Confidence}
+\begin{columns}
+\column{0.4\textwidth}
+\begin{center}
+\begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|}
+\hline
+\multicolumn{3}{|c|}{Rule} & $\rsupp$ & $\conff$ & $\lift$ \\ \hline
+$\mathit{E}$ & $\arule$ & $\mathit{AC}$ & 0.33 & 0.40 & 1.20\\ \hline
+$\mathit{E}$ & $\arule$ & $\mathit{AB}$ & 0.67 & 0.80 & 1.20\\ \hline
+$\mathit{B}$ & $\arule$ & $\mathit{E}$ & 0.83 & 0.83 & 1.00\\ \hline
+\end{tabular}
+\end{center}
+
+\column{0.6\textwidth}
+\begin{center}
+\begin{minipage}{0.7\textwidth}
+Lift and confidence must be evaluated together, to avoid either weak rules
+or rules where the antecedent and consequent are independent ($lift=1$).
+
+\end{minipage}
+\end{center}
+
+\end{columns}
+
+\bigskip
+	
+\begin{columns}
+\column{0.4\textwidth}
 \begin{center}
 \begin{tabular}{|r>{\centering}m{0.2in}l|r|r|r|r|}
 \hline
 \multicolumn{3}{|c|}{Rule} & $\rsupp$ & $\lift$ & $\jaccard$\\ \hline
 $\mathit{A}$ & $\arule$ & $\mathit{C}$ & 0.33 & 0.75 & 0.33 \\ \hline
+$\mathit{A}$ & $\arule$ & $\mathit{E}$ & 0.67 & 1.20 & 0.80 \\ \hline
+$\mathit{A}$ & $\arule$ & $\mathit{B}$ & 0.67 & 1.00 & 0.67 \\ \hline
 \end{tabular}
 \end{center}
+
+\column{0.6\textwidth}
+\begin{center}
+\begin{minipage}{0.7\textwidth}
+Jaccard and Lift provide similar information, but Jaccard is bounded to the interval $[0,1]$.
+\end{minipage}
+\end{center}
+
 \end{columns}
 \end{frame}
 
 
 
 \begin{frame}{Contingency Table for {\it X} and {\it Y}}
+
+We may also define the contingency table for $X$ and $Y$, and exploit their absence, represented by $\neg X$ and $\neg Y$.
+
 \begin{center}
 \begin{tabular}{|c|cc||c|}
     \hline
@@ -236,7 +295,8 @@ complement of the consequent, def\/{i}ned as
 %\tcbhighmath{
   \conviction(X \arule Y) &
   = \frac{P(X) \cdot P(\neg Y)}{P(X \neg Y)}
-  = \frac{1}{\lift(X \arule \neg Y)}
+  = \frac{1}{\lift(X \arule \neg Y)} 
+	= \frac{1-P(Y)}{1-conf(X \arule Y)}
 %}
 \end{align*}
 If the joint
@@ -257,6 +317,12 @@ $\mathit{E}$   & $\arule$ & $\mathit{C}$    & 0.50    & 0.60       & 0.90    & 0
 $\mathit{C}$   & $\arule$ & $\mathit{E}$    & 0.50    & 0.75       & 0.90    & 0.68 \\ \hline
 \end{tabular}%}{}
 \end{center}
+
+$A \arule DE$ is a strong rule, confirmed by high values of both lift and conviction. 
+
+$DE \arule A$ has 100\% confidence, being a trivial rule. 
+
+$E \arule C$ and $C \arule E$ are weak, but, despite the same support and lift, conviction indicates that the $E \arule C$ is stronger than $C \arule E$, while confidence indicates the reverse.
 \end{frame}
 
 \begin{frame}{Rule Assessment Measures: Odds Ratio}
@@ -330,11 +396,14 @@ $\neg A$ & 1 & 1\\
    \frac{\supp(\mathit{AD}) \cdot \supp(\neg  A \neg D)}{\supp(A \neg D) \cdot
    \supp(\neg \mathit{AD})} = \frac{3 \times 1}{1 \times 1} = 3
 \end{align*}
+
+Thus $D \arule A$ is stronger than $C \arule A$, which is also confirmed by lift and confidence.
 \end{frame}
 
 
 
-\begin{frame}{Iris Data: Discretization}
+\begin{frame}{Example: Association Rules from Iris Data}
+\framesubtitle{Discretization of Iris Data}
 \begin{center}
 \begin{tabular}{|l|c|l|}
 \hline
@@ -362,11 +431,12 @@ Attribute & Range or value & Label \\ \hline
 \captionsetup[subfloat]{captionskip=0.5in}
 \begin{frame}[fragile]{Iris: Support vs.\ Conf\/{i}dence, and Conviction
   vs. Lift}
+\framesubtitle{$minsup=10$ and $minlift=0.1$ results in 79 rules}
 \begin{figure}
 \centerline{
         \hspace{0.2in}
 \subfloat[Support vs.\ conf\/{i}dence]{
-\label{fig:fpm:fpmeval:irissuppconfclass} \scalebox{0.95}{
+\label{fig:fpm:fpmeval:irissuppconfclass} \scalebox{0.75}{
 \readdata{\dataSLWa}{FPM/fpmeval/figs/irissuppconfclass1.dat}
 \readdata{\dataSLWb}{FPM/fpmeval/figs/irissuppconfclass2.dat}
 \readdata{\dataSLWc}{FPM/fpmeval/figs/irissuppconfclass3.dat}
@@ -395,7 +465,7 @@ Attribute & Range or value & Label \\ \hline
         }}
         \hspace{0.7in}
 \subfloat[Lift vs.\ conviction]{
-\label{fig:fpm:fpmeval:irisliftconvclass} \scalebox{0.95}{
+\label{fig:fpm:fpmeval:irisliftconvclass} \scalebox{0.75}{
 \readdata{\dataSLWa}{FPM/fpmeval/figs/irisliftconvclass1.dat}
 \readdata{\dataSLWb}{FPM/fpmeval/figs/irisliftconvclass2.dat}
 \readdata{\dataSLWc}{FPM/fpmeval/figs/irisliftconvclass3.dat}
@@ -423,6 +493,8 @@ Attribute & Range or value & Label \\ \hline
         \endpsgraph
         }}}
 \end{figure}
+
+For each class we select the most specific (i.e., with maximal antecedent) rule with the highest relative support and then confidence, and also those with the highest conviction and then lift.
 \end{frame}
 
 
@@ -437,7 +509,7 @@ $pw_2 \arule c_2$           & 0.327 & 0.91 & 2.72 & 6.00 \\ \hline
 $pl_3 \arule c_3$           & 0.327 & 0.89 & 2.67 & 5.24 \\ \hline
 \end{tabular}%}{}
 \end{center}
-\vspace{0.25in}
+\vspace{0.15in}
 \begin{center}
 \begin{tabular}{|l|r|r|r|r|}
   \multicolumn{5}{c}{Best Rules by Lift and Conviction}\\
@@ -448,8 +520,11 @@ $\{pl_2, pw_2\} \arule c_2$ & 0.29 & 0.98 & 2.93 & 15.00 \\ \hline
 $\{sl_3, pl_3, pw_3\} \arule c_3$ & 0.25 & 1.00 & 3.00 & $\infty$ \\ \hline
 \end{tabular}%}{}
 \end{center}
+
+Comparing the rules for each criterion, we verify that the best rule for $c_1$ is the same, but the comparison between rules for $c_2$ and $c_3$ suggests a trade-off between support and novelty, represented by lift and conviction.
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Pattern Assessment Measures: Support and Lift}
 
@@ -517,6 +592,8 @@ maximum, and minimum lift values for $X$ as follows:
 
 \begin{frame}{Iris Data: Support Values for $\{pl_2, pw_2, c_2\}$ and
   its Subsets}
+
+Consider the support and relative support of itemset $X=\{pl_2, pw_2, c_2\}$ and its subsets.
 \begin{center}
 \begin{tabular}{|l|c|l|}
 \hline
@@ -530,10 +607,17 @@ $\{pw_2\}$ &  54 & 0.360\\ \hline
 $\{c_2\}$ &  50 & 0.333\\ \hline
 \end{tabular}%}{}\vspace*{-3pt}
 \end{center}
+
+\[
+lift(X) = \frac{rsup(X)}{rsup(pl_2)rsup(pw_2)rsup(c_2)}=\frac{0.293}{0.3*0.36*0.333}=8.16
+\]
+
 \end{frame}
 
 
-\begin{frame}{Rules Generated from $\{pl_2, pw_2, c_2\}$}
+\begin{frame}{Rules Generated from $X=\{pl_2, pw_2, c_2\}$}
+
+Consider all rules that may be generated from $X$:
 \begin{center}
 \begin{tabular}{|c|l|l|l|l|}
 \hline
@@ -550,13 +634,30 @@ $c_2\arule \{pl_2, pw_2\}$ & 2.933 &0.193 & 0.880\\ \cline{2-5}
 & $\{pl_2, pw_2\} \arule c_2$ & 2.933 &0.193 & 0.978\\ \hline
 \end{tabular}%}{}\vspace*{-3pt}
 \end{center}
+
+We may then calculate $AvgLift(X)$:
+
+\medskip
+
+$AvgLift(X) = avg\{2.993,2.778,2.933\} = 2.901$
+
+\medskip
+
+And also $AvgConf(X)$: 	
+
+\medskip
+
+$AvgConf(X) = avg\{0.978,0.898,0.815,1.0,0.88,0.978\} = 0.925$
+
 \end{frame}
 
 
 \begin{frame}[fragile]{Iris: Relative Support and Average Lift of Patterns} 
+\framesubtitle{306 frequent itemsets with $minsup=1$ and $k\geq2$}
 \readdata{\dataSLW}{FPM/fpmeval/figs/irisliftsupp.dat}
 \begin{figure}%[!t]\vspace*{16pt}
         \centering
+	\scalebox{0.75}{
         \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,
               arrowscale=2,PointName=none}
         \psset{xAxisLabel=$\rsupp$, yAxisLabel= $\mathit{AvgLift}$,
@@ -564,10 +665,15 @@ $c_2\arule \{pl_2, pw_2\}$ & 2.933 &0.193 & 0.880\\ \cline{2-5}
         \psgraph[tickstyle=bottom,Dx=0.05,Dy=1.0,
                  Ox=0,Oy=0,subticks=2]{->}(0.0,0.0)(0.0,0.0)(0.36,7.5){3.5in}{2.5in}%
         \dataplot[plotstyle=dots,showpoints=true]{\dataSLW}
-        \psline[linestyle=dashed](0,3)(0.35,3)
+        \psline[linestyle=dashed](0,2.5)(0.35,2.5)
         \psline[linestyle=dashed](0.1,0)(0.1,7)
         \endpsgraph
+	}
 \end{figure}
+
+\bigskip
+
+	For sake of analysis, we focus on patterns with high $rsup$ and then high $AvgLift$, such as $X=\{pl_1,pw_1,c_1\}$.
 \end{frame}
 
 
@@ -586,6 +692,9 @@ constraints on pattern assessment measures like lift or leverage.
 
 
 \begin{frame}{Iris: Maximal Patterns for Average~Lift}
+
+We focus on the 37 class-specific itemsets that present $rsup>0.1$ and $AvgLift>2.5$ and select the maximal ones:
+
 \begin{center}
 \begin{tabular}{|l|c|}
 \hline
@@ -597,6 +706,8 @@ $\{sl_3, sw_2, pl_3, pw_3, c_3\}$ & 2.88 \\ \hline
 $\{sw_1, pl_3, pw_3, c_3\}$ & 2.52 \\ \hline
 \end{tabular}%}{}
 \end{center}
+
+For instance, for $c_1$, the essential items are $sl_1$, $pl_1$, $pw_1$ and either $sw_2$ or $sw_3$.
 \end{frame}
 
 
@@ -635,6 +746,15 @@ minimal generators.
 \end{frame}
 
 \begin{frame}{Closed Itemsets and Minimal Generators}
+
+The support of an itemset $X$ is
+
+\begin{itemize}
+\item the maximum support among all closed itemsets that contain $X$.
+
+\item the minimum support among all minimal generators that are subsets of $X$.
+\end{itemize}
+
 \begin{center}
 \begin{tabular}{|c|l|l|}
 \hline
@@ -648,8 +768,19 @@ $\supp$ & Closed Itemset & Minimal Generators \\ \hline
 6 & $B$ & $B$\\ \hline
 \end{tabular}%}{}
 \end{center}
+
+Consider itemset $AE$:
+\medskip
+
+	$sup(AE) = max\{sup(ABE),sup(ABDE)\} = 4$
+
+	\medskip
+
+	$sup(AE) = min\{sup(A),sup(E)\} = 4$
+
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Comparing Itemsets: Productive Itemsets}
 An itemset $X$ is {\em productive}
@@ -687,6 +818,31 @@ MinLeverage(X) =
 \end{align*}
 \end{frame}
 
+\begin{frame}{Comparing Itemsets: Productive Itemsets}
+
+	$ABDE$ is not productive because there is at least a bipartition with $lift=1$. For instance, the bipartition $\{B,ADE\}$:
+\begin{align*}
+\lift(B \arule \mathit{ADE}) & =
+    \frac{\rsupp(\mathit{ABDE})}{\rsupp(B) \cdot \rsupp(\mathit{ADE})}
+    = \frac{3/6}{6/6 \cdot 3/6} = 1
+\end{align*}
+
+$ADE$, on the other hand, is productive:
+
+\begin{align*}
+\lift(A \arule DE) & =
+    \frac{\rsupp(\mathit{ADE})}{\rsupp(A) \cdot \rsupp(\mathit{DE})}
+    = \frac{3/6}{4/6 \cdot 3/6} = 1.5\\[6pt]
+    \lift(D \arule \mathit{AE}) & =
+    \frac{\rsupp(\mathit{ADE})}{\rsupp(D) \cdot \rsupp(\mathit{AE})}
+    = \frac{3/6}{4/6 \cdot 4/6} = 1.125\\[6pt]
+    \lift(E \arule \mathit{AD}) & =
+    \frac{\rsupp(\mathit{ADE})}{\rsupp(E) \cdot \rsupp(\mathit{AD})}
+    = \frac{3/6}{5/6 \cdot 3/6} = 1.2
+\end{align*}
+
+\end{frame}
+
 
 \begin{frame}{Comparing Rules}
 Given two rules $R: X \arule Y$ and $R': W \arule Y$ that have the same
@@ -716,6 +872,39 @@ A rule $R: X \arule Y$ is {\em productive} if
 its improvement is greater than zero, which implies that
 for all more general rules $R': W \arule
 Y$ we have  $\conff(R) > \conff(R')$. 
+\end{frame}
+
+\begin{frame}{Comparing Rules}
+Consider
+rule $R: \mathit{BE} \arule C$, which has support $3$, and conf\/{i}dence $3/5
+= 0.60$.
+%lift $0.9$, and leverage $-0.06$.
+
+It has two generalizations, namely
+\begin{alignat*}{2}
+R'_1: E \arule C,& \quad \supp= 3, \conff = 3/5=0.6\\[-3pt]
+R'_2: B \arule C,& \quad \supp= 4, \conff = 4/6 =0.67
+\end{alignat*}
+Thus, $\mathit{BE} \arule C$ is redundant w.r.t. $E \arule C$ because they
+have the same support, that is, $\supp(\mathit{BCE}) = \supp(\mathit{BC})$. 
+
+\medskip
+
+$\mathit{BE} \arule C$ is also unproductive,
+since 
+
+\medskip
+
+
+$imp(\mathit{BE} \arule C) = 0.6 - \max\{0.6, 0.67\} = -0.07$. 
+
+\medskip
+
+
+It has a
+more general rule, namely $R'_2$, with higher conf\/{i}dence.
+
+
 \end{frame}
 
 
@@ -844,6 +1033,139 @@ shown in the table below:
   is a productive rule.
 \end{frame}
 
+\begin{frame}{Fisher Exact Test: Example}
+
+  Consider another rule $\{sw_1, pw_2\} \arule c_2$, with
+  $X=\{sw_1,pw_2\}$ and $Y=c_2$. Consider its three
+  generalizations, and the corresponding contingency tables and
+  p-values:
+  \begin{center}\vspace*{10pt}
+    \begin{tabular}{p{2in}c}
+      \begin{tabular}{l}
+      $R'_1: pw_2 \arule c_2$\\ \hline
+      $Z=\{sw_1\}$ \\
+      $W=X\setminus Z = \{pw_2\}$ \\
+      $\pvalue=0.84$
+      \end{tabular} &
+{  \tabcolsep12pt\renewcommand{\arraystretch}{1.1}    \begin{tabular}{|c|cc|c|} \hline
+      $W= pw_2$ & $c_2$ & $\neg c_2$ & \\ \hline
+      $sw_1$ & 34 & 4 & 38\\
+      $\neg sw_1$ & 15 & 1 & 16\\ \hline
+       & 49 & 5 & 54\\ \hline
+      \end{tabular}}\\
+      %
+      & \\
+      \begin{tabular}{l}
+      $R'_2: sw_1 \arule c_2$\\ \hline
+      $Z=\{pw_2\}$\\
+      $W=X\setminus Z=\{sw_1\}$\\
+      $\pvalue=1.39\times10^{-11}$
+      \end{tabular} &
+{ \tabcolsep12pt\renewcommand{\arraystretch}{1.1}     \begin{tabular}{|c|cc|c|} \hline
+      $W= sw_1$ & $c_2$ & $\neg c_2$ & \\ \hline
+      $pw_2$ & 34 & 4 & 38\\
+      $\neg pw_2$ & 0 & 19 & 19\\ \hline
+       & 34 & 23 & 57\\ \hline
+      \end{tabular}}\\
+       & \\
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Fisher Exact Test: Example}
+
+  \begin{center}
+    \hspace*{-1cm}
+    \begin{tabular}{p{1.5in}c}
+      %
+      \begin{tabular}{l}
+      $R'_3: \emptyset \arule c_2$\\ \hline
+      $Z=\{sw_1,pw_2\}$\\
+      $W=X\setminus Z=\emptyset$\\
+      $\pvalue=3.55\times10^{-17}$
+      \end{tabular} &
+{ \tabcolsep12pt\renewcommand{\arraystretch}{1.1}     \begin{tabular}{|c|cc|c|} \hline
+      $W= \emptyset$ & $c_2$ & $\neg c_2$ & \\ \hline
+      $\{sw_1,pw_2\}$ & 34 & 4 & 38\\
+      $\neg\{sw_1,pw_2\}$ & 16 & 96 & 112\\ \hline
+       & 50 & 100 & 150\\ \hline
+      \end{tabular}}
+    \end{tabular}
+  \end{center}
+
+  We can see that whereas the $\pvalue$ with respect to $R'_2$ and
+  $R'_3$ is small, for $R'_1$ we have $\pvalue=0.84$, which is too
+  high and thus we cannot reject the null hypothesis. We
+  conclude that $R:\{sw_1, pw_2\} \arule c_2$ is not productive. In
+  fact, its generalization $R'_1$ is the one that is productive.
+
+\end{frame}
+
+\begin{frame}{Multiple Hypothesis Testing}
+
+There can be an exponentially large number of rules that need to
+be tested to check whether they are productive or not. 
+
+\medskip
+
+
+\textbf{Multiple hypothesis testing problem:} The sheer number
+of hypothesis tests leads to some unproductive rules passing the $\pvalue \le
+\alpha$ threshold by random chance.
+
+\medskip
+
+
+\textbf{Bonferroni correction:} takes into account the number of experiments
+performed during the hypothesis testing process.
+
+\medskip
+
+$$\alpha' = \frac{\alpha}{\#r}$$
+
+where $\#r$ is the number of rules to be tested or its estimate.
+
+\medskip
+
+The rule false discovery rate becomes bounded by $\alpha$, where a false discovery is to claim that a rule
+is productive when it is not.
+\end{frame}
+
+\begin{frame}{Multiple Hypothesis Testing}
+
+  Given the class-specif\/{i}c rules of discretized Iris dataset,
+  the maximum number of class-specif\/{i}c rules 
+  is given as
+\begin{align*}
+  \#r = c \times \lB(\sum_{i=1}^4 {4\choose i} b^i\rB)
+\end{align*}
+
+where $c$ is the number of Iris classes, $b$
+is the maximum number of bins for any other attribute,
+$i$ is the antecedent size,  and 
+there are $b^i$ possible
+combinations for the chosen set of $i$ attributes. 
+
+\medskip
+
+Since $c=3$ and $b=3$, the number of possible
+rules is:
+\begin{align*}
+\#r= 3 \times \lB(\sum_{i=1}^4 {4\choose i} 3^i\rB) = 3(12+54+108+81)=
+3\cdot 255= 765
+\end{align*}
+
+Given $\alpha=0.01$, $\alpha'=\alpha/\#r = 0.01/765 = 1.31\times10^{-5}$.
+
+\medskip
+
+The rule $pw_2 \arule c_2$ 
+has $\pvalue=1.51 \times 10^{-32}$, and thus it remains productive even
+when we use $\alpha'$.
+
+\end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Permutation Test for Significance: Swap Randomization}
 A {\em permutation} or {\em randomization} test determines
@@ -982,12 +1304,53 @@ Sum&4&6&4&4&5& \\ \hline
 \end{frame}
 
 
+\begin{frame}[fragile]{Swap Randomization Example}
+
+We generated $k=100$ swap randomized datasets (150 swaps).
+
+\medskip
+
+Let the test statistic be the total number of
+frequent itemsets using $\minsup=3$. 
+
+For $\bD$, we have $\card{\cF} = 19$, and for the
+$k=100$ permuted datasets we find:
+\begin{align*}
+  P\bigl(\card{\cF}=19\bigr) & = 0.67 & P\bigl(\card{\cF} = 17\bigr) = 0.33
+\end{align*}
+
+
+Because $\pvalue(19)=0.67$, we may conclude
+that the set of frequent itemsets is essentially
+determined by the row and column marginals.
+
+\medskip
+
+	Consider $\mathit{ABDE}$, where
+$\supp(\mathit{ABDE})=3$ and the probability
+that $\mathit{ABDE}$ is frequent is $17/100 = 0.17$. 
+As this probability is not very low,
+$\mathit{ABDE}$ is not a statistically signif\/{i}cant pattern.
+
+\medskip
+
+Consider $\mathit{BCD}$, where
+$\supp(\mathit{BCD})=2$. The empirical PMF is given as
+\begin{align*}
+  P(sup=2) & = 0.54 & P(sup = 3) & = 0.44 & P(sup=4) = 0.02
+\end{align*}
+
+	Since 54\% indicates $\mathit{BCD}$ is infrequent, we may assume it.
+
+\end{frame}
+
+
 
 \readdata{\dISC}{FPM/fpmeval/figs/iris-supp-1.cdf}
 \begin{frame}[fragile]{CDF for Number of Frequent Itemsets: Iris}
-  \framesubtitle{$k=100$ swap randomization steps}
 \begin{center}
 \begin{figure}[H]
+	\scalebox{0.85}{
         \psset{xAxisLabel=$\minsup$,yAxisLabel=$\hF$,
         xAxisLabelPos={c,-0.4in}}%, yAxisLabelPos={-0.6in,c}}
     \psgraph[tickstyle=bottom,Dy=0.25,dy=0.25,
@@ -997,14 +1360,33 @@ Sum&4&6&4&4&5& \\ \hline
     \psline[linestyle=dotted](9,0)(9,0.517)
     \psline[linestyle=dotted](0,0.517)(9,0.517)
     \endpsgraph
+    }
 \end{figure}
 \end{center}
+
+\vspace*{0.7cm}
+
+We choose
+$\minsup=10$, for which we have $\hF(10) = P(sup < 10) = 0.517$,
+that is,
+48.3\% of the itemsets that occur at least once are frequent.
 \end{frame}
 
 
 \readdata{\dILR}{FPM/fpmeval/figs/iris-liftrel.cdf}
 \begin{frame}[fragile]{CDF for Average Relative Lift: Iris}
-  \framesubtitle{$k=100$ swap randomization steps}
+  \framesubtitle{$k=100$ swap randomization steps, $140$ frequent itemsets}
+
+The relative lift statistic is
+\begin{align*}
+  \mathit{rlift}(X,\bD,\bD_i) = \frac{\supp(X,\bD) - \supp(X,\bD_i)}{\supp(X,\bD)}
+  = 1 -  \frac{\supp(X,\bD_i)}{\supp(X,\bD)}
+\end{align*}
+
+$\bD_i$ is $i$th swap randomized dataset obtained after $k$ steps.
+
+\medskip
+
 \begin{center}
 \begin{figure}[H]
         %\vspace{0.2in}
@@ -1028,21 +1410,22 @@ Sum&4&6&4&4&5& \\ \hline
         \vspace{0.35in}
 \end{figure}
 \end{center}
-
-The relative lift statistic is
-\begin{align*}
-  \mathit{rlift}(X,\bD,\bD_i) = \frac{\supp(X,\bD) - \supp(X,\bD_i)}{\supp(X,\bD)}
-  = 1 -  \frac{\supp(X,\bD_i)}{\supp(X,\bD)}
-\end{align*}
-$\bD_i$ is $i$th swap randomized dataset obtained after $k$ steps.
 \end{frame}
 
 
 \readdata{\dPMF}{FPM/fpmeval/figs/iris-11-42.pmf}
 \begin{frame}[fragile]{PMF for Relative Lift: $\{{\it sl}_1, {\it pw}_2\}$}
   \framesubtitle{$k=100$ swap randomization steps}
+
+Its average
+relative lift value is $-$0.55, and $\pvalue(-0.2) = 0.069$, which
+indicates that the itemset is likely to be disassociative.
+
+\medskip
+
 \begin{center}
 \begin{figure}[H]
+\scalebox{0.85}{
 \def\pshlabel#1{\small {$#1$}}
 \def\psvlabel#1{\small {$#1$}}
         \centering
@@ -1053,6 +1436,7 @@ $\bD_i$ is $i$th swap randomized dataset obtained after $k$ steps.
         dy=0.04,Ox=-1.2,Dx=0.2,dx=0.2]{->}(-1.2,0)(0.2,0.2){3in}{2in}
           \listplot[plotstyle=LineToXAxis,linewidth=4pt,linecolor=gray]{\dPMF}
     \endpsgraph
+    }
 \end{figure}
 \end{center}
 \end{frame}
@@ -1085,9 +1469,13 @@ the interval for
 the test statistic by discarding values from the tail ends of $\hF$ on both sides
 that encompass $(1-\alpha)/2$ of
 the probability mass.
+In other words, the interval
+$\bigl[v_{1-\alpha/2}, v_{\alpha/2}\bigr]$ encompasses $1-\alpha$
+fraction of the probability mass, and therefore it is called the
+$100(1-\alpha)$\%
+conf\/{i}dence interval for the chosen test statistic $\Theta$.
 
 \end{frame}
-
 
 \newcommand{\algbootstrapCI}{\textsc{Bootstrap-ConfidenceInterval}}
 \begin{frame}[fragile]{Bootstrap Confidence Interval Algorithm}
@@ -1106,9 +1494,16 @@ $\hF(x) = P\lB(\Theta \le x\rB) = \frac{1}{k} \sum_{i=1}^k
 \end{tightalgo}
 \end{frame}
 
-
 \readdata{\dBSPMF}{FPM/fpmeval/figs/epmf-bootstrap.txt}
-\begin{frame}[fragile]{Empirical PMF for Relative Support: Iris}
+\begin{frame}[fragile]{Empirical PMF for RelSupport: $X = \{sw_1, pl_3, pw_3, cl_3\}$}
+
+
+Given $\rsupp(X, \bD) = 0.113$ (or $\supp(X,\bD)=17$) and 
+$k=100$ bootstrap samples, we compute the relative support
+of $X$ in each of the samples ($\rsupp(X,\bD_i)$).
+
+\medskip
+
 \begin{center}
 \def\pshlabel#1{\small {#1}}
 \def\psvlabel#1{\small {#1}}
@@ -1125,12 +1520,14 @@ $\hF(x) = P\lB(\Theta \le x\rB) = \frac{1}{k} \sum_{i=1}^k
 \end{center}
 \end{frame}
 
-
 \readdata{\dBS}{FPM/fpmeval/figs/ecdf-bootstrap.txt}
 \def\pshlabel#1{\small {#1}}
 \def\psvlabel#1{\small {#1}}
-\begin{frame}{Empirical CDF for Relative Support:
-  Iris}
+\begin{frame}[fragile]{Empirical CDF for RelSupport: $X = \{sw_1, pl_3, pw_3, cl_3\}$}
+\begin{columns}
+\column{0.55\textwidth}
+\hspace*{0.7cm}
+	\scalebox{0.8}{
         \centering
         \psset{xAxisLabel=$\rsupp$,
           yAxisLabel=$\hF$,
@@ -1144,4 +1541,28 @@ $\hF(x) = P\lB(\Theta \le x\rB) = \frac{1}{k} \sum_{i=1}^k
         \pcline[arrowscale=1.5]{->}(0.16,1.1)(0.16,0.0)
         \uput[u](0.16,1.1){$v_{0.95}$}
     \endpsgraph
+    }
+
+\column{0.45\textwidth}
+
+\begin{minipage}{0.7\textwidth}
+Let the conf\/{i}dence level be $1-\alpha = 0.9$, thus $\alpha = 0.1$,
+discarding the values that account for $\alpha/2=0.05$:
+  \begin{align*}
+    v_{1-\alpha/2} = v_{0.95} & = 0.073\\
+      v_{\alpha/2} = v_{0.05} & = 0.16 
+  \end{align*}
+
+\end{minipage}
+
+\end{columns}
+
+\vspace*{1cm}
+
+The 90\% conf\/{i}dence interval for $\rsupp(X) \in [0.073, 0.16]$, i.e.,  $sup \in [11,24]$.
+  
+\medskip
+
+Note that $\rsupp(X,\bD)=0.113$, with $\pvalue(0.113) = 0.45$, 
+and $\mu_{\rsupp(X)} = 0.115$.
 \end{frame}

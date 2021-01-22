@@ -155,6 +155,9 @@ Using $\minsup=3$, the set of frequent subsequences is given as:
 \end{frame}
 
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+
 \begin{frame}{Level-wise Sequence Mining: GSP Algorithm}
 \small
   The GSP algorithm searches the sequence pref\/{i}x tree using a
@@ -209,7 +212,7 @@ $k \assign 1$ \tcp{$k$ denotes the level}
     }
   }
  $\Ck{k+1} \assign$ \algSeqextprefix ($\Ck{k}$)
- \nllabel{alg:fpm:seq:gsp:ext}
+ \nllabel{alg:fpm:seq:gsp:ext} \;
   $k \assign k+1$
 }
 \Return{$\Fk{k}$}
@@ -308,7 +311,7 @@ $\br_b$} \nllabel{alg:fpm:seq:gsp:cand}
 \end{center}
 \end{frame}
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Vertical Sequence Mining: Spade}
 The Spade algorithm uses a vertical database representation for sequence
@@ -637,6 +640,7 @@ $P \assign \bigl\{\tup{s,\cL(s)} \mid
   }}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Projection-Based Sequence Mining: Pref\/{i}xSpan}
 Let $\bD$ denote a database, and let $s \in \Sigma$ be any
@@ -830,6 +834,8 @@ $\br \assign \emptyset$, $\cF \assign \emptyset$}
       \end{tabular}}}%
 } }
 \end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 
 \begin{frame}{Substring Mining via Suff\/{i}x Trees}
@@ -1085,6 +1091,7 @@ $O(|\bq|+k)$, if there are $k$ matches.
 
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Ukkonen's Linear Time Suffix Tree Algorithm}
 

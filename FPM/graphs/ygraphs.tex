@@ -209,138 +209,10 @@ there exists a {\em path} from $u$ to $v$ in $G'$.
 \end{figure}
 \end{frame}
 
-
-
-
-\begin{frame}{Graph and Subgraph Isomorphism} 
-  A graph $G'=(V', E')$ is
-said to be {\em isomorphic} to another graph $G=(V, E)$ if there exists
-a bijective function $\phi:V' \to V$, i.e., both injective (into) and
-surjective (onto), such that
-\begin{itemize}
-\item $(u, v) \in E' \iff (\phi(u),\phi(v)) \in E$
-\item $\forall u\in V', \; L(u) = L(\phi(u))$
-\item $\forall (u,v) \in E', \; L(u,v) = L(\phi(u),\phi(v))$
-\end{itemize}
-
-\bigskip
-In other words, the {\em isomorphism}
-$\phi$ preserves the edge
-adjacencies as well as the vertex and edge labels. Put differently, the
-extended tuple $\tup{u, v, L(u), L(v), L(u,v)} \in G'$ if and only if
-$\tup{\phi(u), \phi(v), L(\phi(u)), L(\phi(v)), L(\phi(u),\phi(v))} \in G$.
-
-\bigskip
-If the function $\phi$ is only injective but
-not surjective, we say that the mapping $\phi$ is a {\em subgraph
-isomorphism} from $G'$ to $G$.
-In this case, we say that $G'$ is
-isomorphic to a subgraph of $G$, that is, $G'$ is {\em subgraph
-isomorphic} to $G$, denoted $G' \subseteq G$;
-we also say that $G$ {\em contains} $G'$.
-\end{frame}
-
-
-\begin{frame}[fragile]{Graph and Subgraph Isomorphism}
-\begin{figure}
-  \psset{tnpos=l,tnsep=2pt,rowsep=1.25,colsep=0.5}
-  \centerline{
-   \scalebox{0.9}{
-    \psmatrix
-    &\Tcircle[name=u1]{$a$}~[tnpos=a]{$G_1$}~{$u_1$}\\
-    &\Tcircle[name=u2]{$a$}~{$u_2$}\\
-    \Tcircle[name=u3]{$b$}~{$u_3$} & &
-    \Tcircle[name=u4]{$b$}~{$u_4$}
-    \endpsmatrix
-    \ncline{u1}{u2}
-    \ncline{u2}{u3}
-    \ncline{u2}{u4}
-    \ncarc[arcangle=-40]{u4}{u1}
-    \ncarc[arcangle=40]{u3}{u1}
-    %
-    \hspace{0.25in}
-    \psmatrix
-    \Tcircle[name=v1]{$a$}~[tnpos=a]{$G_2$}~{$v_1$}\\
-    \Tcircle[name=v3]{$a$}~{$v_3$}\\
-    \Tcircle[name=v2]{$b$}~{$v_2$} &
-    \Tcircle[name=v4]{$b$}~{$v_4$}
-    \endpsmatrix
-    \ncline{v1}{v3}
-    \ncline{v3}{v2}
-    \ncline{v3}{v4}
-    \ncarc[arcangle=-40]{v2}{v1}
-    \ncarc[arcangle=-20]{v4}{v1}
-    %
-    \hspace{0.25in}
-    \psmatrix
-    \Tcircle[name=w1]{$a$}~[tnpos=a]{$G_3$}~{$w_1$}\\
-    \Tcircle[name=w2]{$a$}~{$w_2$}\\
-    \Tcircle[name=w3]{$b$}~{$w_3$} &
-    \endpsmatrix
-    \ncline{w1}{w2}
-    \ncline{w2}{w3}
-    \ncarc[arcangle=-60]{w3}{w1}
-    %
-    \hspace{0.25in}
-    \psmatrix
-    \Tcircle[name=x1]{$b$}~[tnpos=a]{$G_4$}~{$x_1$}\\
-    \Tcircle[name=x2]{$a$}~{$x_2$}\\
-    \Tcircle[name=x3]{$b$}~{$x_3$} &
-    \endpsmatrix
-    \ncline{x1}{x2}
-    \ncline{x2}{x3}
-    \ncarc[arcangle=-60]{x3}{x1}
-   }
-  }
-\end{figure}
-\end{frame}
-
-
-\begin{frame}{Graph Isomorphism}
-$G_1$
-and $G_2$ are isomorphic graphs. There are several possible
-isomorphisms between $G_1$ and $G_2$. An example of
-an isomorphism $\phi: V_2 \to V_1$ is
-\begin{align*}
-  \phi(v_1) & = u_1 & \phi(v_2) &= u_3 & \phi(v_3) & = u_2 &
-  \phi(v_4) & = u_4
-\end{align*}
-The inverse mapping $\phi^{-1}$ specif\/{i}es the isomorphism from $G_1$
-to $G_2$. For example, $\phi^{-1}(u_1) = v_1$,
-$\phi^{-1}(u_2) = v_3$, and so on.
-
-\bigskip
-The set of all possible isomorphisms from $G_2$ to $G_1$ are as
-follows:
-\begin{center}
-\begin{tabular}{c|cccc}
-  & $v_1$ & $v_2$ & $v_3$ & $v_4$\\
-  \hline
-  $\phi_1$ & $u_1$ & $u_3$ & $u_2$ & $u_4$\\
-  $\phi_2$ & $u_1$ & $u_4$ & $u_2$ & $u_3$\\
-  $\phi_3$ & $u_2$ & $u_3$ & $u_1$ & $u_4$\\
-  $\phi_4$ & $u_2$ & $u_4$ & $u_1$ & $u_3$
-\end{tabular}
-\end{center}
-\end{frame}
-
-\begin{frame}{Subgraph Isomorphism}
-The graph $G_3$ is subgraph isomorphic to
-both $G_1$ and $G_2$. The set of all possible subgraph
-isomorphisms from $G_3$ to $G_1$ are as follows:
-\begin{center}
-\begin{tabular}{c|ccc}
-  & $w_1$ & $w_2$ & $w_3$\\
-  \hline
-  $\phi_1$ & $u_1$ & $u_2$ & $u_3$\\
-  $\phi_2$ & $u_1$ & $u_2$ & $u_4$\\
-  $\phi_3$ & $u_2$ & $u_1$ & $u_3$\\
-  $\phi_4$ & $u_2$ & $u_1$ & $u_4$\\
-\end{tabular}
-\end{center}
-
-\end{frame}
-
+\newcommand{\alggspan}{\textsc{gSpan}\xspace}
+\newcommand{\algRMPE}{\textsc{RightMostPath-Extensions}\xspace}
+\newcommand{\algISO}{\textsc{SubgraphIsomorphisms}\xspace}
+\newcommand{\algcanonical}{\textsc{IsCanonical}\xspace}
 
 \begin{frame}{Mining Frequent Subgraph}
 
@@ -386,6 +258,7 @@ database. This involves subgraph isomorphism checking, as we have to
 f\/{i}nd the set of graphs that contain a given candidate.
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Candidate Generation}
 
@@ -459,81 +332,6 @@ highest index in the DFS order.
 \end{figure}
 \end{frame}
 
-
-\begin{frame}[fragile]{Rightmost Path Extensions}
-  \small
-For generating new candidates from a given graph $G$, we extend it
-by adding a new edge to vertices only on the rightmost path.  We can
-either extend $G$ by adding backward edges from the {\em rightmost
-vertex} to some other vertex on the rightmost path (disallowing
-self-loops or multi-edges), or we can extend $G$ by adding forward edges
-from any of the vertices on the rightmost path. A backward extension does
-not add a new vertex, whereas a forward extension adds a new vertex.
-
-\bigskip
-For systematic candidate generation we impose a total order on the
-extensions, as follows:
-F{i}rst, we try all backward extensions from the rightmost
-vertex, and then we try forward extensions from vertices on the
-rightmost path.  
-
-\medskip
-Among the backward edge extensions, if $u_r$ is the
-rightmost vertex, the extension $(u_r,v_i)$ is tried before $(u_r,v_{j})$
-if $i < j$.  In other words, backward extensions closer to the root are
-considered before those farther away from the root along the rightmost
-path.  
-
-\medskip
-Among the forward edge extensions, if $v_x$ is the new vertex to
-be added, the extension $(v_i,v_x)$ is tried before $(v_{j}, v_x)$ if $i >
-j$. In other words, the vertices farther from the root (those at
-greater depth) are extended
-before those closer to the root. Also note that the new vertex will be
-numbered $x=r+1$, as it will become the new rightmost vertex after
-the extension.
-
-\end{frame}
-
-
-\begin{frame}[fragile]{Rightmost Path Extensions}
-\begin{figure}
-  \psset{unit=0.4in,tnpos=l,tnsep=2pt}
-  \centerline{
-   \scalebox{0.9}{
-    \psmatrix[rowsep=1.25,colsep=1.5]
-    & & & \Tcircle[name=v1]{$a$}~{$v_1$}\\
-    & \Tcircle[name=v2]{$a$}~{$v_2$} & & \Tcircle[name=v5]{$c$}~{$v_5$}
-    & \TC*[name=x6]~[tnpos=r]{\#6}\\
-    \Tcircle[name=v3]{$b$}~{$v_3$} & \Tcircle[name=v4]{$c$}~{$v_4$} &
-    \Tcircle[name=v6]{$d$}~{$v_6$} & \Tcircle[name=v7]{$a$}~{$v_7$} &
-    \TC*[name=x5]~[tnpos=r]{\#5}\\
-    & & & \Tcircle[doubleline=true,name=v8]{$b$}~{$v_8$} &
-    \TC*[name=x4]~[tnpos=r]{\#4}\\
-    & & & &\TC*[name=x3]~[tnpos=r]{\#3}
-    \endpsmatrix
-    \ncline{v1}{v2}
-    \ncline{v2}{v3}
-    \ncline{v2}{v4}
-    \ncline{v5}{v6}
-    \ncline[linewidth=3pt]{v1}{v5}
-    \ncline[linewidth=3pt]{v5}{v7}
-    \ncline[linewidth=3pt]{v7}{v8}
-    \ncline[linestyle=dashed]{v1}{x6}
-    \ncline[linestyle=dashed]{v5}{x5}
-    \ncline[linestyle=dashed]{v7}{x4}
-    \ncline[linestyle=dashed]{v8}{x3}
-    \ncarc[linecolor=gray,arcangle=-20]{v3}{v1}
-    \ncarc[linecolor=gray,arcangle=-20]{v4}{v1}
-    \ncarc[linecolor=gray,arcangle=-10]{v6}{v1}
-    \ncarc[linestyle=dashed,arcangle=-80]{v8}{v1}\ncput*{\#1}
-    \ncarc[linestyle=dashed,arcangle=-40]{v8}{v5}\ncput*{\#2}
-   }
-  }
-\end{figure}
-\end{frame}
-
-
 \begin{frame}[fragile]{DFS Code}
   For systematic enumeration we rank the set of isomorphic graphs and 
   pick one member as the {\em canonical} representative.
@@ -565,11 +363,6 @@ extended edge tuples of the form
 $\ltup{\big}{v_i,v_{j},L(v_i),L(v_{j}),L(v_i,v_{j})}$ listed in the DFS edge
 order.
 \end{frame}
-
-
-
-
-
 
 
 
@@ -720,6 +513,758 @@ for a graph $G$ is def\/{i}ned as follows:
 \end{figure}
 \end{frame}
 
+
+\begin{frame}{Canonicality Checking}
+Given a DFS code $C
+= \{t_1, t_2, \ldots, t_k\}$ comprising $k$ extended edge tuples
+and the corresponding graph $G(C)$, the task is to check whether
+the code $C$ is canonical. 
+
+\medskip
+This can be accomplished by trying to
+reconstruct the canonical code $C^*$ for $G(C)$ in an iterative
+manner starting from the empty code and selecting the least
+rightmost path extension at each step, where the least edge
+extension is based on the extended tuple comparison operator.
+
+\medskip
+If at any step the current
+(partial) canonical DFS code $C^*$ is smaller than $C$, then we
+know that $C$ cannot be canonical and can thus be pruned. On the
+other hand, if no smaller code is found after $k$ extensions then
+$C$ must be canonical. 
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Algorithm \algcanonical: Canonicality Checking}
+\begin{tightalgo}[H]{\textwidth-18pt}
+  \SetKwInOut{iscanonical}{\algcanonical ($C$)}
+  \iscanonical{}
+  $\bD_C \gets \{G(C)\}$ \tcp{graph corresponding to code $C$}
+  $C^* \gets \emptyset$ \tcp{initialize canonical DFScode}
+  \For{$i=1\cdots k$}{
+  $\cE = \algRMPE(C^*, \bD_C)$ \tcp{extensions of $C^*$}
+    $(s_i, sup(s_i)) \gets \min\{\cE\}$ \tcp{least rightmost edge
+    extension of $C^*$}
+    \If{$s_i < t_i$}{\Return{false} \tcp{$C^*$ is smaller, thus
+    $C$ is not canonical}}
+    $C^* \gets C^* \cup s_i$\;
+  }
+  \Return{true} \tcp{no smaller code exists; $C$ is canonical}
+\end{tightalgo}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Canonicality Checking}
+\begin{figure}[!t]
+  \centering
+  \psset{unit=0.3in}
+  \psset{tnpos=l,rowsep=1,colsep=1,tnsep=0}
+  \scalebox{0.9}{%
+  \begin{tabular}{c|ccc}
+    $G$ & Step 1 & Step 2 & Step 3\\
+    \psmatrix
+    \Tcircle[name=a0]{$a^0$}\\
+    \Tcircle[name=a1]{$a^1$}\\
+    \Tcircle[name=b2]{$b^2$} &
+    \Tcircle[name=b3]{$b^3$}
+    \endpsmatrix
+    \ncline{a0}{a1}
+    \ncline{a1}{b2}
+    \ncline{a1}{b3}
+    \ncarc[arcangle=-30]{b3}{a0}
+      &
+    \psmatrix
+    \Tcircle[name=a0]{$a$}~[tnpos=a]{$G^*$}\\
+    \Tcircle[name=a1]{$a$}
+    \endpsmatrix
+    \ncline[linewidth=2pt]{a0}{a1}
+      &
+    \psmatrix
+    \Tcircle[name=v0]{$a$}~[tnpos=a]{$G^*$}\\
+    \Tcircle[name=v1]{$a$}\\
+    \Tcircle[name=v2]{$b$}\\
+    \endpsmatrix
+    \ncline[linewidth=2pt]{v0}{v1}
+    \ncline[linewidth=2pt]{v1}{v2}
+  &
+    \psmatrix
+    \Tcircle[name=v0]{$a$}~[tnpos=a]{$G^*$}\\
+    \Tcircle[name=v1]{$a$}\\
+    \Tcircle[name=v2]{$b$}
+    \endpsmatrix
+    \ncline[linewidth=2pt]{v0}{v1}
+    \ncline[linewidth=2pt]{v1}{v2}
+    \ncarc[arcangle=-45]{v2}{v0}
+  ~\\[3ex]
+    \psframebox[linewidth=1pt]{
+      \begin{tabular}{c}
+        $C$\\
+        $t_{1} = \tup{0,1,a,a}$\\
+        $t_{2} = \tup{1,2,a,b}$\\
+        $t_{3} = \tup{1,3,a,b}$\\
+        $t_{4} = \tup{3,0,b,a}$\\
+      \end{tabular}} &
+    \psframebox[]{
+      \begin{tabular}{c}
+        $C^*$\\
+        $s_{1} = \tup{0,1,a,a}$
+      \end{tabular}} &
+    \psframebox[]{
+      \begin{tabular}{c}
+        $C^*$\\
+        $s_{1} = \tup{0,1,a,a}$\\
+        $s_{2} = \tup{1,2,a,b}$
+      \end{tabular}} &
+    \psframebox[]{
+      \begin{tabular}{c}
+        $C^*$\\
+        $s_{1} = \tup{0,1,a,a}$\\
+        $s_{2} = \tup{1,2,a,b}$\\
+        $s_{3} = \tup{2,0,b,a}$\\
+      \end{tabular}}
+  \end{tabular}
+  }
+\end{figure}
+\end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+\begin{frame}{Graph and Subgraph Isomorphism} 
+  A graph $G'=(V', E')$ is
+said to be {\em isomorphic} to another graph $G=(V, E)$ if there exists
+a bijective function $\phi:V' \to V$, i.e., both injective (into) and
+surjective (onto), such that
+\begin{itemize}
+\item $(u, v) \in E' \iff (\phi(u),\phi(v)) \in E$
+\item $\forall u\in V', \; L(u) = L(\phi(u))$
+\item $\forall (u,v) \in E', \; L(u,v) = L(\phi(u),\phi(v))$
+\end{itemize}
+
+\bigskip
+In other words, the {\em isomorphism}
+$\phi$ preserves the edge
+adjacencies as well as the vertex and edge labels. Put differently, the
+extended tuple $\tup{u, v, L(u), L(v), L(u,v)} \in G'$ if and only if
+$\tup{\phi(u), \phi(v), L(\phi(u)), L(\phi(v)), L(\phi(u),\phi(v))} \in G$.
+
+\bigskip
+If the function $\phi$ is only injective but
+not surjective, we say that the mapping $\phi$ is a {\em subgraph
+isomorphism} from $G'$ to $G$.
+In this case, we say that $G'$ is
+isomorphic to a subgraph of $G$, that is, $G'$ is {\em subgraph
+isomorphic} to $G$, denoted $G' \subseteq G$;
+we also say that $G$ {\em contains} $G'$.
+\end{frame}
+
+
+\begin{frame}[fragile]{Graph and Subgraph Isomorphism}
+\begin{figure}
+  \psset{tnpos=l,tnsep=2pt,rowsep=1.25,colsep=0.5}
+  \centerline{
+   \scalebox{0.9}{
+    \psmatrix
+    &\Tcircle[name=u1]{$a$}~[tnpos=a]{$G_1$}~{$u_1$}\\
+    &\Tcircle[name=u2]{$a$}~{$u_2$}\\
+    \Tcircle[name=u3]{$b$}~{$u_3$} & &
+    \Tcircle[name=u4]{$b$}~{$u_4$}
+    \endpsmatrix
+    \ncline{u1}{u2}
+    \ncline{u2}{u3}
+    \ncline{u2}{u4}
+    \ncarc[arcangle=-40]{u4}{u1}
+    \ncarc[arcangle=40]{u3}{u1}
+    %
+    \hspace{0.25in}
+    \psmatrix
+    \Tcircle[name=v1]{$a$}~[tnpos=a]{$G_2$}~{$v_1$}\\
+    \Tcircle[name=v3]{$a$}~{$v_3$}\\
+    \Tcircle[name=v2]{$b$}~{$v_2$} &
+    \Tcircle[name=v4]{$b$}~{$v_4$}
+    \endpsmatrix
+    \ncline{v1}{v3}
+    \ncline{v3}{v2}
+    \ncline{v3}{v4}
+    \ncarc[arcangle=-40]{v2}{v1}
+    \ncarc[arcangle=-20]{v4}{v1}
+    %
+    \hspace{0.25in}
+    \psmatrix
+    \Tcircle[name=w1]{$a$}~[tnpos=a]{$G_3$}~{$w_1$}\\
+    \Tcircle[name=w2]{$a$}~{$w_2$}\\
+    \Tcircle[name=w3]{$b$}~{$w_3$} &
+    \endpsmatrix
+    \ncline{w1}{w2}
+    \ncline{w2}{w3}
+    \ncarc[arcangle=-60]{w3}{w1}
+    %
+    \hspace{0.25in}
+    \psmatrix
+    \Tcircle[name=x1]{$b$}~[tnpos=a]{$G_4$}~{$x_1$}\\
+    \Tcircle[name=x2]{$a$}~{$x_2$}\\
+    \Tcircle[name=x3]{$b$}~{$x_3$} &
+    \endpsmatrix
+    \ncline{x1}{x2}
+    \ncline{x2}{x3}
+    \ncarc[arcangle=-60]{x3}{x1}
+   }
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Graph Isomorphism}
+$G_1$
+and $G_2$ are isomorphic graphs. There are several possible
+isomorphisms between $G_1$ and $G_2$. An example of
+an isomorphism $\phi: V_2 \to V_1$ is
+\begin{align*}
+  \phi(v_1) & = u_1 & \phi(v_2) &= u_3 & \phi(v_3) & = u_2 &
+  \phi(v_4) & = u_4
+\end{align*}
+The inverse mapping $\phi^{-1}$ specif\/{i}es the isomorphism from $G_1$
+to $G_2$. For example, $\phi^{-1}(u_1) = v_1$,
+$\phi^{-1}(u_2) = v_3$, and so on.
+
+\bigskip
+The set of all possible isomorphisms from $G_2$ to $G_1$ are as
+follows:
+\begin{center}
+\begin{tabular}{c|cccc}
+  & $v_1$ & $v_2$ & $v_3$ & $v_4$\\
+  \hline
+  $\phi_1$ & $u_1$ & $u_3$ & $u_2$ & $u_4$\\
+  $\phi_2$ & $u_1$ & $u_4$ & $u_2$ & $u_3$\\
+  $\phi_3$ & $u_2$ & $u_3$ & $u_1$ & $u_4$\\
+  $\phi_4$ & $u_2$ & $u_4$ & $u_1$ & $u_3$
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Subgraph Isomorphism}
+The graph $G_3$ is subgraph isomorphic to
+both $G_1$ and $G_2$. The set of all possible subgraph
+isomorphisms from $G_3$ to $G_1$ are as follows:
+\begin{center}
+\begin{tabular}{c|ccc}
+  & $w_1$ & $w_2$ & $w_3$\\
+  \hline
+  $\phi_1$ & $u_1$ & $u_2$ & $u_3$\\
+  $\phi_2$ & $u_1$ & $u_2$ & $u_4$\\
+  $\phi_3$ & $u_2$ & $u_1$ & $u_3$\\
+  $\phi_4$ & $u_2$ & $u_1$ & $u_4$\\
+\end{tabular}
+\end{center}
+
+\medskip
+
+The graph $G_4$ is \textbf{not} subgraph isomorphic to
+either $G_1$ or $G_2$, since $x_1$ and $x_3$ are directly connected, and 
+$u_3$ and $u_4$, from $G_1$, are not. The same applies to $v_2$ and $v_4$ 
+from $G_2$. 
+
+\end{frame}
+
+\begin{frame}{Subgraph Isomorphisms}
+To
+enumerate all the possible isomorphisms from $C$ to each graph $G_i \in
+\bD$ the function \algISO,
+accepts a code $C$ and a graph $G$, and
+returns the set of all isomorphisms between $C$ and $G$.
+
+\medskip
+The set of isomorphisms $\Phi$ is initialized by mapping vertex $0$ in
+$C$ to each vertex $x$ in $G$ that shares the same label as $0$, that is, if
+$L(x) = L(0)$.
+
+\medskip
+The method considers each tuple $t_i$ in $C$ and extends the current set
+of partial isomorphisms. Let $t_i = \tup{u, v, L(u), L(v), L(u,v)}$.
+We have to check if each isomorphism $\phi \in \Phi$ can be extended in
+$G$ using the information from $t_i$
+
+\medskip
+If $t_i$ is a forward edge, then
+we seek a neighbor $x$ of $\phi(u)$ in $G$ such that $x$ has not already
+been mapped to some vertex in $C$, that is,
+$\phi^{-1}(x)$ should not exist, and
+the node and edge labels should match, that is, $L(x) = L(v)$, and
+$L(\phi(u),x) = L(u,v)$. If so, $\phi$ can be extended with the mapping
+$\phi(v) \to x$. The new extended isomorphism, denoted $\phi'$, is added
+to the initially empty set of isomorphisms $\Phi'$. 
+
+\medskip
+If $t_i$ is a
+backward edge, we have to check if $\phi(v)$ is a neighbor of $\phi(u)$
+in $G$. If so, we add the current isomorphism $\phi$ to $\Phi'$. 
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Algorithm \algISO}
+\small{
+\begin{tightalgo}[H]{\textwidth-18pt}
+  \SetKwInOut{ISO}{\algISO($C = \{t_1, t_2, \ldots, t_k\}$, $G$)}
+  \ISO{}
+  $\Phi \gets \{\phi(0) \to x \mid x \in G \text{ and } L(x)=L(0) \}$
+  \nllabel{alg:fpm:graphs:iso:init}\;
+  \ForEach{$t_i \in C$, $i=1,\ldots,k$}{
+  $\tup{u, v, L(u), L(v), L(u, v)} \gets t_i$
+    \tcp{expand extended edge $t_i$}
+    $\Phi' \gets \emptyset$ \tcp{partial isomorphisms including $t_i$}
+    \ForEach{partial isomorphism $\phi \in \Phi$}{
+      \nllabel{alg:fpm:graphs:iso:ifs}
+      \eIf{$v > u$}{
+        \tcp{forward edge}
+        \ForEach{$x \in  N_{G}(\phi(u))$}{
+          \If{$\not\exists \phi^{-1}(x)$ and $L(x) = L(v)$
+              and $L(\phi(u),x) = L(u,v)$}{
+              $\phi' \gets \phi \cup \{\phi(v) \to x\}$\;
+                Add $\phi'$ to $\Phi'$\;
+          }
+        }
+      }{
+      \tcp{backward edge}
+      \lIf{$\phi(v) \in N_{G_{j}}(\phi(u))$}{
+        Add $\phi$ to $\Phi'$ \tcp{valid isomorphism} \nllabel{alg:fpm:graphs:iso:ife}
+        }
+      }
+    }
+    $\Phi \gets \Phi'$ \tcp{update partial isomorphisms}
+  }
+  \Return{$\Phi$}
+\end{tightalgo}
+}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Subgraph Isomorphisms}
+
+\begin{figure}[!t]
+  \psset{unit=1in}
+  \psset{mnode=circle,rowsep=0.3in,colsep=0.2in}
+  \begin{center}
+  \scalebox{0.7}{
+  \begin{tabular}{cp{0.25in}c}
+  \begin{tabular}{c}
+    $G_1$\\
+  \psmatrix[]
+  & [name=v0]$a^{10}$\\
+  [name=v1]$b^{20}$ & &[name=v2]$a^{30}$\\
+  & [name=v3]$b^{40}$
+  \endpsmatrix
+  \ncline[arrows=-]{v0}{v1}
+  \ncline[arrows=-]{v0}{v2}
+  \ncline[arrows=-]{v1}{v2}
+  \ncline[arrows=-]{v2}{v3}
+  \end{tabular}
+  & &
+  \begin{tabular}{c}
+    $G_2$\\
+  \psmatrix[]
+  & [name=v0]$b^{50}$\\
+  [name=v1]$a^{60}$ & &[name=v2]$b^{70}$\\
+  & [name=v3]$a^{80}$
+  \endpsmatrix
+  \ncline[arrows=-]{v0}{v1}
+  \ncline[arrows=-]{v0}{v2}
+  \ncline[arrows=-]{v1}{v2}
+  \ncline[arrows=-]{v1}{v3}
+  \ncline[arrows=-]{v2}{v3}
+  \end{tabular}
+\end{tabular}
+  }
+\end{center}
+\end{figure}
+
+\begin{figure}[!t]
+\small{
+  \centering
+  \scalebox{0.85}{%
+  \begin{tabular}{c||c|c|c}
+    \begin{tabular}{c}
+      $C$\\
+    \psframebox[]{
+    \begin{tabular}{c}
+      $t_1: \tup{0,1,a,a}$\\
+      $t_2: \tup{1,2,a,b}$
+    \end{tabular}
+    }\\[3ex]
+      $G(C)$\\
+      \psmatrix[mnode=circle,rowsep=0.2in]
+      [name=v0]$a^0$\\
+      [name=v1]$a^1$\\
+      [name=v2]$b^2$\\
+      \endpsmatrix
+      \ncline[arrows=-]{v0}{v1}
+      \ncline[arrows=-]{v1}{v2}
+    \end{tabular}
+  &
+    \begin{tabular}{c|c|c}
+      \multicolumn{2}{c}{Initial $\Phi$}\\
+      \hline\hline
+      id &$\phi$ & $0$\\
+      \hline
+      \multirow{2}*{$G_1$}& $\phi_1$ & $10$\\
+      & $\phi_2$& $30$\\
+      \hline\
+      \multirow{2}*{$G_2$}& $\phi_3$ & $60$\\
+      & $\phi_4$& $80$
+    \end{tabular}
+  &
+    \begin{tabular}{c|c|c}
+      \multicolumn{2}{c}{Add $t_1$}\\
+      \hline\hline
+      id &$\phi$ & $0,1$\\
+      \hline
+      \multirow{2}*{$G_1$}&$\phi_1$ &  $10,30$\\
+      & $\phi_2$& $30,10$\\
+      \hline
+      \multirow{2}*{$G_2$}& $\phi_3$ & $60,80$\\
+      & $\phi_4$& $80,60$\\
+    \end{tabular}
+  &
+    \begin{tabular}{c|c|c}
+      \multicolumn{2}{c}{Add $t_2$}\\
+      \hline\hline
+      id & $\phi$& $0,1,2$\\
+      \hline
+      \multirow{3}*{$G_1$} & $\phi_1'$& $10,30,20$\\
+      & $\phi_1''$ & $10,30,40$\\
+      & $\phi_2$& $30,10,20$\\
+      \hline
+      \multirow{3}*{$G_2$} & $\phi_3$ & $60,80,70$\\
+      & $\phi_4'$& $80,60,50$\\
+      & $\phi_4''$& $80,60,70$\\
+    \end{tabular}
+  \end{tabular}
+  }
+}
+\end{figure}
+\end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+
+\begin{frame}[fragile]{Rightmost Path Extensions}
+  \small
+For generating new candidates from a given graph $G$, we extend it
+by adding a new edge to vertices only on the rightmost path.  We can
+either extend $G$ by adding backward edges from the {\em rightmost
+vertex} to some other vertex on the rightmost path (disallowing
+self-loops or multi-edges), or we can extend $G$ by adding forward edges
+from any of the vertices on the rightmost path. A backward extension does
+not add a new vertex, whereas a forward extension adds a new vertex.
+
+\bigskip
+For systematic candidate generation we impose a total order on the
+extensions, as follows:
+F{i}rst, we try all backward extensions from the rightmost
+vertex, and then we try forward extensions from vertices on the
+rightmost path.  
+
+\medskip
+Among the backward edge extensions, if $u_r$ is the
+rightmost vertex, the extension $(u_r,v_i)$ is tried before $(u_r,v_{j})$
+if $i < j$.  In other words, backward extensions closer to the root are
+considered before those farther away from the root along the rightmost
+path.  
+
+\medskip
+Among the forward edge extensions, if $v_x$ is the new vertex to
+be added, the extension $(v_i,v_x)$ is tried before $(v_{j}, v_x)$ if $i >
+j$. In other words, the vertices farther from the root (those at
+greater depth) are extended
+before those closer to the root. Also note that the new vertex will be
+numbered $x=r+1$, as it will become the new rightmost vertex after
+the extension.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Rightmost Path Extensions}
+\begin{figure}
+  \psset{unit=0.4in,tnpos=l,tnsep=2pt}
+  \centerline{
+   \scalebox{0.9}{
+    \psmatrix[rowsep=1.25,colsep=1.5]
+    & & & \Tcircle[name=v1]{$a$}~{$v_1$}\\
+    & \Tcircle[name=v2]{$a$}~{$v_2$} & & \Tcircle[name=v5]{$c$}~{$v_5$}
+    & \TC*[name=x6]~[tnpos=r]{\#6}\\
+    \Tcircle[name=v3]{$b$}~{$v_3$} & \Tcircle[name=v4]{$c$}~{$v_4$} &
+    \Tcircle[name=v6]{$d$}~{$v_6$} & \Tcircle[name=v7]{$a$}~{$v_7$} &
+    \TC*[name=x5]~[tnpos=r]{\#5}\\
+    & & & \Tcircle[doubleline=true,name=v8]{$b$}~{$v_8$} &
+    \TC*[name=x4]~[tnpos=r]{\#4}\\
+    & & & &\TC*[name=x3]~[tnpos=r]{\#3}
+    \endpsmatrix
+    \ncline{v1}{v2}
+    \ncline{v2}{v3}
+    \ncline{v2}{v4}
+    \ncline{v5}{v6}
+    \ncline[linewidth=3pt]{v1}{v5}
+    \ncline[linewidth=3pt]{v5}{v7}
+    \ncline[linewidth=3pt]{v7}{v8}
+    \ncline[linestyle=dashed]{v1}{x6}
+    \ncline[linestyle=dashed]{v5}{x5}
+    \ncline[linestyle=dashed]{v7}{x4}
+    \ncline[linestyle=dashed]{v8}{x3}
+    \ncarc[linecolor=gray,arcangle=-20]{v3}{v1}
+    \ncarc[linecolor=gray,arcangle=-20]{v4}{v1}
+    \ncarc[linecolor=gray,arcangle=-10]{v6}{v1}
+    \ncarc[linestyle=dashed,arcangle=-80]{v8}{v1}\ncput*{\#1}
+    \ncarc[linestyle=dashed,arcangle=-40]{v8}{v5}\ncput*{\#2}
+   }
+  }
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Extension and Support Computation}
+The support computation task is
+to f\/{i}nd the number of graphs in the
+database $\bD$ that contain a candidate subgraph, which is very
+expensive because it involves subgraph isomorphism checks.
+gSpan combines the tasks of enumerating candidate extensions and support
+computation.
+
+\medskip
+Assume that $\bD = \{G_1, G_2, \ldots, G_n\}$ comprises $n$
+graphs.  Let $C=\{t_1,t_2,\ldots,t_k\}$ denote a frequent
+canonical DFS code comprising $k$ edges, and let $G(C)$ denote the
+graph corresponding to code $C$.  The task is to compute the set
+of possible rightmost path extensions from $C$, along with their
+support values.
+
+\medskip
+Given code $C$, gSpan f\/{i}rst records the nodes on the rightmost path
+($R$), and the rightmost child ($u_r$).  Next, gSpan considers each
+graph $G_i \in \bD$. If $C=\emptyset$, then each distinct label tuple of
+the form $\tup{L(x), L(y), L(x,y)}$ for adjacent nodes $x$ and $y$ in
+$G_i$ contributes a forward extension $\tup{0,1,L(x),L(y),L(x,y)}$
+On
+the other hand, if $C$ is not empty, then gSpan enumerates all possible
+subgraph isomorphisms $\Phi_i$ between the code $C$ and graph $G_i$. 
+Given
+subgraph
+isomorphism $\phi \in \Phi_i$, gSpan f\/{i}nds all possible forward and
+backward edge extensions, and stores them in the extension set $\cE$.
+\end{frame}
+
+\begin{frame}{Forward and Backward Extensions}
+  \small
+Backward extensions are
+allowed only from the rightmost
+child $u_r$ in $C$ to some other node on the rightmost path $R$.
+
+\medskip The method considers each neighbor $x$ of $\phi(u_r)$ in $G_i$
+and checks whether it is a mapping for some vertex $v = \phi^{-1}(x)$
+along the rightmost path $R$ in $C$. If the edge $(u_r,v)$ does not
+already exist in $C$, it is a new extension, and the extended tuple $b =
+\tup{u_r, v, L(u_r), L(v), L(u_r,v)}$ is added to the set of extensions
+$\cE$, along with the graph id $i$ that contributed to that extension.
+
+\bigskip Forward extensions are allowed only from nodes on the rightmost
+path $R$ to new nodes.  For each node $u$ in $R$, the algorithm
+f\/{i}nds a neighbor $x$ in $G_i$ that is not in a mapping from some
+node in $C$. For each such node $x$, the forward extension $f=\tup{u,
+u_{r+1}, L(\phi(u)), L(x), L(\phi(u),x)}$ is added to $\cE$, along with
+the graph id $i$.  Because a forward extension adds a new vertex to the
+	graph $G(C)$, the id of the new node in $C$ must be $u_{r+1}$, that is,
+one more than the highest numbered node in $C$, which by def\/{i}nition
+is the rightmost child $u_r$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm \algRMPE}
+\begin{scriptsize}
+\begin{tightalgo}[H]{\textwidth-18pt}
+  \SetKwInOut{RMPE}{\algRMPE($C$, $\bD$)}
+  \RMPE{}
+  $R \gets$ nodes on the rightmost path in $C$\;
+  $u_r \gets$ rightmost child in $C$ \tcp{dfs number}
+  $\cE \gets \emptyset$ \tcp{set of extensions from $C$}
+  \ForEach{$G_i \in \bD$, $i=1,\ldots, n$}{
+    \eIf{$C = \emptyset$}{
+      \ForEach{distinct $\tup{L(x),L(y),L(x,y)} \in G_i$}{
+        \nllabel{alg:fpm:graphs:rmpe:ls}
+        $f = \ltup{\big}{0, 1, L(x), L(y), L(x,y)}$\;
+        Add tuple $f$ to $\cE$ along with graph id $i$
+        \nllabel{alg:fpm:graphs:rmpe:le}\;
+      }
+    }{
+    $\Phi_i = \algISO(C, G_i)$ \label{alg:fpm:graphs:rmpe:iso}\;
+    \ForEach{isomorphism $\phi \in \Phi_i$}{
+      \ForEach{$x \in N_{G_i}(\phi(u_r))$ such that $\exists v \gets \phi^{-1}(x)$}{
+        \nllabel{alg:fpm:graphs:rmpe:bs}
+        \If{$v \in R$ and $(u_r,v) \not\in G(C)$}{
+        $b = \ltup{\big}{u_r, v, L(u_r), L(v), L(u_r,v)}$\;
+          Add tuple $b$ to $\cE$ along with graph id $i$
+          \nllabel{alg:fpm:graphs:rmpe:be}\;
+        }
+      }
+      \ForEach{$u \in R$}{
+        \nllabel{alg:fpm:graphs:rmpe:fs}
+      \ForEach{$x \in N_{G_i}(\phi(u))$ and $\not\exists \phi^{-1}(x)$}{
+	      $f = \ltup{\big}{u, u_{r+1}, L(\phi(u)), L(x), L(\phi(u),x)}$\;
+          Add tuple $f$ to $\cE$ along with graph id $i$
+          \nllabel{alg:fpm:graphs:rmpe:fe} \;
+        }
+      }
+    }
+    }
+  }
+  \ForEach{distinct extension $s \in \cE$}{
+    $\supp(s) = $ number of distinct graph ids that support tuple
+    $s$\;
+  }
+  \Return{set of pairs $\tup{s, sup(s)}$ for extensions $s \in \cE$, in
+  tuple sorted order}
+\end{tightalgo}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Righmost Path Extensions}
+\setcounter{subfigure}{0}
+\begin{figure}
+
+  \centerline{
+  \subfloat[$G_1$, $G_2$, Code $C$ and graph $G(C)$]{
+  \label{fig:fpm:graphs:frmpe:C}
+  \begin{minipage}{1in}
+  \psset{unit=1in}
+  \psset{mnode=circle,rowsep=0.3in,colsep=0.2in}
+  \begin{center}
+  \scalebox{0.45}{
+  \begin{tabular}{c}
+  \begin{tabular}{c}
+    $G_1$\\
+  \psmatrix[]
+  & [name=v0]$a^{10}$\\
+  [name=v1]$b^{20}$ & &[name=v2]$a^{30}$\\
+  & [name=v3]$b^{40}$
+  \endpsmatrix
+  \ncline[arrows=-]{v0}{v1}
+  \ncline[arrows=-]{v0}{v2}
+  \ncline[arrows=-]{v1}{v2}
+  \ncline[arrows=-]{v2}{v3}
+  \end{tabular} \\
+  \begin{tabular}{c}
+    $G_2$\\
+  \psmatrix[]
+  & [name=v0]$b^{50}$\\
+  [name=v1]$a^{60}$ & &[name=v2]$b^{70}$\\
+  & [name=v3]$a^{80}$
+  \endpsmatrix
+  \ncline[arrows=-]{v0}{v1}
+  \ncline[arrows=-]{v0}{v2}
+  \ncline[arrows=-]{v1}{v2}
+  \ncline[arrows=-]{v1}{v3}
+  \ncline[arrows=-]{v2}{v3}
+  \end{tabular}
+\end{tabular}
+  }
+\end{center}
+    \end{minipage}
+    \begin{minipage}{1in}
+      \centering
+    \scalebox{0.6}{
+    \begin{tabular}{c}
+      $C$\\
+    \psframebox[]{
+    \begin{tabular}{c}
+      $t_1: \tup{0,1,a,a}$\\
+      $t_2: \tup{1,2,a,b}$
+    \end{tabular}
+    }\\[3ex]
+      $G(C)$\\
+      \psmatrix[mnode=circle,rowsep=0.2in]
+      [name=v0]$a^0$\\
+      [name=v1]$a^1$\\
+      [name=v2]$b^2$\\
+      \endpsmatrix
+      \ncline[arrows=-]{v0}{v1}
+      \ncline[arrows=-]{v1}{v2}
+    \end{tabular}
+    }
+    \end{minipage}
+    }
+   %\\
+    \subfloat[Subgraph isomorphisms]{
+  \label{fig:fpm:graphs:frmpe:iso}
+    \begin{minipage}{2in}
+      \centering
+    \scalebox{0.8}{
+    \begin{tabular}{c|c|ccc}
+      \hline
+      $\Phi$& $\phi$& $0$ & $1$ & $2$\\
+      \hline
+      \multirow{3}*{$\Phi_1$} & $\phi_1$ & $10$ & $30$& $20$\\
+      & $\phi_2$&$10$& $30$& $40$\\
+      & $\phi_3$&$30$& $10$& $20$\\
+      \hline
+      \multirow{3}*{$\Phi_2$} & $\phi_4$&$60$ & $80$& $70$\\
+      & $\phi_5$&$80$& $60$& $50$\\
+      & $\phi_6$&$80$& $60$& $70$\\
+    \end{tabular}
+    }
+    \end{minipage}
+    }
+    }
+    \vspace{0.25in}
+    \centerline{\hspace*{30pt}
+    \subfloat[Edge extensions]{
+  \label{fig:fpm:graphs:frmpe:ext}
+    \begin{minipage}{2.0in}
+      \centering
+    \scalebox{0.8}{
+    \begin{tabular}{c|c|l}
+      \hline
+      Id & $\phi$ & Extensions\\
+      \hline
+      \multirow{3}*{$G_1$} & $\phi_1$ &  $\{\tup{2,0,b,a}, \tup{1,3,a,b}\}$\\
+       & $\phi_2$&  $\{\tup{1,3,a,b}, \tup{0,3,a,b}\}$\\
+       & $\phi_3$&  $\{\tup{2,0,b,a}, \tup{0,3,a,b}\}$\\
+      \hline
+      \multirow{3}*{$G_2$} & $\phi_4$&  $\{\tup{2,0,b,a}, \tup{2,3,b,b}, \tup{0,3,a,b}\}$\\
+       & $\phi_5$&  $\{\tup{2,3,b,b}, \tup{1,3,a,b}\}$\\
+       & $\phi_6$&  $\{\tup{2,0,b,a},  \tup{2,3,b,b}, \tup{1,3,a,b}\}$
+    \end{tabular}
+    }
+  \end{minipage}
+  }
+  \subfloat[Extensions (sorted) and supports]{
+  \label{fig:fpm:graphs:frmpe:extsup}
+  \begin{minipage}{3in}
+    \centering
+    \scalebox{0.8}{
+    \begin{tabular}{c|c}
+      \hline
+      Extension & Support\\
+      \hline\hline
+      $\tup{2,0,b,a}$ & 2\\
+      $\tup{2,3,b,b}$ & 1\\
+      $\tup{1,3,a,b}$ & 2\\
+      $\tup{0,3,a,b}$ & 2\\
+    \end{tabular}
+    }
+  \end{minipage}
+  }
+  }
+\end{figure}
+\end{frame}
+
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 \begin{frame}{gSpan Graph Mining Algorithm}
 gSpan enumerates patterns in a depth-f\/{i}rst manner, starting with the
 empty code.  Given a canonical and frequent code $C$, gSpan f\/{i}rst
@@ -742,13 +1287,6 @@ The
 algorithm stops when there are no more frequent and canonical extensions
 possible.
 \end{frame}
-
-
-
-\newcommand{\alggspan}{\textsc{gSpan}\xspace}
-\newcommand{\algRMPE}{\textsc{RightMostPath-Extensions}\xspace}
-\newcommand{\algISO}{\textsc{SubgraphIsomorphisms}\xspace}
-\newcommand{\algcanonical}{\textsc{IsCanonical}\xspace}
 
 \begin{frame}[fragile]{Algorithm \alggspan}
 \begin{tightalgo}[H]{\textwidth-18pt}
@@ -3088,465 +3626,3 @@ linewidth=2pt]} \vspace{-0.2in}
 }
 \end{frame}
 
-
-\begin{frame}{Extension and Support Computation}
-The support computation task is
-to f\/{i}nd the number of graphs in the
-database $\bD$ that contain a candidate subgraph, which is very
-expensive because it involves subgraph isomorphism checks.
-gSpan combines the tasks of enumerating candidate extensions and support
-computation.
-
-\medskip
-Assume that $\bD = \{G_1, G_2, \ldots, G_n\}$ comprises $n$
-graphs.  Let $C=\{t_1,t_2,\ldots,t_k\}$ denote a frequent
-canonical DFS code comprising $k$ edges, and let $G(C)$ denote the
-graph corresponding to code $C$.  The task is to compute the set
-of possible rightmost path extensions from $C$, along with their
-support values.
-
-\medskip
-Given code $C$, gSpan f\/{i}rst records the nodes on the rightmost path
-($R$), and the rightmost child ($u_r$).  Next, gSpan considers each
-graph $G_i \in \bD$. If $C=\emptyset$, then each distinct label tuple of
-the form $\tup{L(x), L(y), L(x,y)}$ for adjacent nodes $x$ and $y$ in
-$G_i$ contributes a forward extension $\tup{0,1,L(x),L(y),L(x,y)}$
-On
-the other hand, if $C$ is not empty, then gSpan enumerates all possible
-subgraph isomorphisms $\Phi_i$ between the code $C$ and graph $G_i$. 
-Given
-subgraph
-isomorphism $\phi \in \Phi_i$, gSpan f\/{i}nds all possible forward and
-backward edge extensions, and stores them in the extension set $\cE$.
-\end{frame}
-
-\begin{frame}{Forward and Backward Extensions}
-  \small
-Backward extensions are
-allowed only from the rightmost
-child $u_r$ in $C$ to some other node on the rightmost path $R$.
-
-\medskip The method considers each neighbor $x$ of $\phi(u_r)$ in $G_i$
-and checks whether it is a mapping for some vertex $v = \phi^{-1}(x)$
-along the rightmost path $R$ in $C$. If the edge $(u_r,v)$ does not
-already exist in $C$, it is a new extension, and the extended tuple $b =
-\tup{u_r, v, L(u_r), L(v), L(u_r,v)}$ is added to the set of extensions
-$\cE$, along with the graph id $i$ that contributed to that extension.
-
-\bigskip Forward extensions are allowed only from nodes on the rightmost
-path $R$ to new nodes.  For each node $u$ in $R$, the algorithm
-f\/{i}nds a neighbor $x$ in $G_i$ that is not in a mapping from some
-node in $C$. For each such node $x$, the forward extension $f=\tup{u,
-u_r+1, L(\phi(u)), L(x), L(\phi(u),x)}$ is added to $\cE$, along with
-the graph id $i$.  Because a forward extension adds a new vertex to the
-graph $G(C)$, the id of the new node in $C$ must be $u_r+1$, that is,
-one more than the highest numbered node in $C$, which by def\/{i}nition
-is the rightmost child $u_r$.
-
-\end{frame}
-
-
-\begin{frame}[fragile]{Algorithm \algRMPE}
-\begin{scriptsize}
-\begin{tightalgo}[H]{\textwidth-18pt}
-  \SetKwInOut{RMPE}{\algRMPE($C$, $\bD$)}
-  \RMPE{}
-  $R \gets$ nodes on the rightmost path in $C$\;
-  $u_r \gets$ rightmost child in $C$ \tcp{dfs number}
-  $\cE \gets \emptyset$ \tcp{set of extensions from $C$}
-  \ForEach{$G_i \in \bD$, $i=1,\ldots, n$}{
-    \eIf{$C = \emptyset$}{
-      \ForEach{distinct $\tup{L(x),L(y),L(x,y)} \in G_i$}{
-        \nllabel{alg:fpm:graphs:rmpe:ls}
-        $f = \ltup{\big}{0, 1, L(x), L(y), L(x,y)}$\;
-        Add tuple $f$ to $\cE$ along with graph id $i$
-        \nllabel{alg:fpm:graphs:rmpe:le}\;
-      }
-    }{
-    $\Phi_i = \algISO(C, G_i)$ \label{alg:fpm:graphs:rmpe:iso}\;
-    \ForEach{isomorphism $\phi \in \Phi_i$}{
-      \ForEach{$x \in N_{G_i}(\phi(u_r))$ such that $\exists v \gets \phi^{-1}(x)$}{
-        \nllabel{alg:fpm:graphs:rmpe:bs}
-        \If{$v \in R$ and $(u_r,v) \not\in G(C)$}{
-        $b = \ltup{\big}{u_r, v, L(u_r), L(v), L(u_r,v)}$\;
-          Add tuple $b$ to $\cE$ along with graph id $i$
-          \nllabel{alg:fpm:graphs:rmpe:be}\;
-        }
-      }
-      \ForEach{$u \in R$}{
-        \nllabel{alg:fpm:graphs:rmpe:fs}
-      \ForEach{$x \in N_{G_i}(\phi(u))$ and $\not\exists \phi^{-1}(x)$}{
-      $f = \ltup{\big}{u, u_r+1, L(\phi(u)), L(x), L(\phi(u),x)}$\;
-          Add tuple $f$ to $\cE$ along with graph id $i$
-          \nllabel{alg:fpm:graphs:rmpe:fe} \;
-        }
-      }
-    }
-    }
-  }
-  \ForEach{distinct extension $s \in \cE$}{
-    $\supp(s) = $ number of distinct graph ids that support tuple
-    $s$\;
-  }
-  \Return{set of pairs $\tup{s, sup(s)}$ for extensions $s \in \cE$, in
-  tuple sorted order}
-\end{tightalgo}
-\end{scriptsize}
-\end{frame}
-
-
-\begin{frame}[fragile]{Righmost Path Extensions}
-\setcounter{subfigure}{0}
-\begin{figure}
-  \centerline{
-  \subfloat[Code $C$ and graph $G(C)$]{
-  \label{fig:fpm:graphs:frmpe:C}
-    \begin{minipage}{2in}
-      \centering
-    \scalebox{0.6}{
-    \begin{tabular}{c}
-      $C$\\
-    \psframebox[]{
-    \begin{tabular}{c}
-      $t_1: \tup{0,1,a,a}$\\
-      $t_2: \tup{1,2,a,b}$
-    \end{tabular}
-    }\\[3ex]
-      $G(C)$\\
-      \psmatrix[mnode=circle,rowsep=0.2in]
-      [name=v0]$a^0$\\
-      [name=v1]$a^1$\\
-      [name=v2]$b^2$\\
-      \endpsmatrix
-      \ncline[arrows=-]{v0}{v1}
-      \ncline[arrows=-]{v1}{v2}
-    \end{tabular}
-    }
-    \end{minipage}
-    }
-   %\\
-    \subfloat[Subgraph isomorphisms]{
-  \label{fig:fpm:graphs:frmpe:iso}
-    \begin{minipage}{2in}
-      \centering
-    \scalebox{0.8}{
-    \begin{tabular}{c|c|ccc}
-      \hline
-      $\Phi$& $\phi$& $0$ & $1$ & $2$\\
-      \hline
-      \multirow{3}*{$\Phi_1$} & $\phi_1$ & $10$ & $30$& $20$\\
-      & $\phi_2$&$10$& $30$& $40$\\
-      & $\phi_3$&$30$& $10$& $20$\\
-      \hline
-      \multirow{3}*{$\Phi_2$} & $\phi_4$&$60$ & $80$& $70$\\
-      & $\phi_5$&$80$& $60$& $50$\\
-      & $\phi_6$&$80$& $60$& $70$\\
-    \end{tabular}
-    }
-    \end{minipage}
-    }
-    }
-    \vspace{0.25in}
-    \centerline{\hspace*{30pt}
-    \subfloat[Edge extensions]{
-  \label{fig:fpm:graphs:frmpe:ext}
-    \begin{minipage}{2.0in}
-      \centering
-    \scalebox{0.8}{
-    \begin{tabular}{c|c|l}
-      \hline
-      Id & $\phi$ & Extensions\\
-      \hline
-      \multirow{3}*{$G_1$} & $\phi_1$ &  $\{\tup{2,0,b,a}, \tup{1,3,a,b}\}$\\
-       & $\phi_2$&  $\{\tup{1,3,a,b}, \tup{0,3,a,b}\}$\\
-       & $\phi_3$&  $\{\tup{2,0,b,a}, \tup{0,3,a,b}\}$\\
-      \hline
-      \multirow{3}*{$G_2$} & $\phi_4$&  $\{\tup{2,0,b,a}, \tup{2,3,b,b}, \tup{0,3,a,b}\}$\\
-       & $\phi_5$&  $\{\tup{2,3,b,b}, \tup{1,3,a,b}\}$\\
-       & $\phi_6$&  $\{\tup{2,0,b,a},  \tup{2,3,b,b}, \tup{1,3,a,b}\}$
-    \end{tabular}
-    }
-  \end{minipage}
-  }
-  \subfloat[Extensions (sorted) and supports]{
-  \label{fig:fpm:graphs:frmpe:extsup}
-  \begin{minipage}{3in}
-    \centering
-    \scalebox{0.8}{
-    \begin{tabular}{c|c}
-      \hline
-      Extension & Support\\
-      \hline\hline
-      $\tup{2,0,b,a}$ & 2\\
-      $\tup{2,3,b,b}$ & 1\\
-      $\tup{1,3,a,b}$ & 2\\
-      $\tup{0,3,a,b}$ & 2\\
-    \end{tabular}
-    }
-  \end{minipage}
-  }
-  }
-\end{figure}
-\end{frame}
-
-
-
-
-\begin{frame}[fragile]{Algorithm \algISO}
-\small{
-\begin{tightalgo}[H]{\textwidth-18pt}
-  \SetKwInOut{ISO}{\algISO($C = \{t_1, t_2, \ldots, t_k\}$, $G$)}
-  \ISO{}
-  $\Phi \gets \{\phi(0) \to x \mid x \in G \text{ and } L(x)=L(0) \}$
-  \nllabel{alg:fpm:graphs:iso:init}\;
-  \ForEach{$t_i \in C$, $i=1,\ldots,k$}{
-  $\tup{u, v, L(u), L(v), L(u, v)} \gets t_i$
-    \tcp{expand extended edge $t_i$}
-    $\Phi' \gets \emptyset$ \tcp{partial isomorphisms including $t_i$}
-    \ForEach{partial isomorphism $\phi \in \Phi$}{
-      \nllabel{alg:fpm:graphs:iso:ifs}
-      \eIf{$v > u$}{
-        \tcp{forward edge}
-        \ForEach{$x \in  N_{G}(\phi(u))$}{
-          \If{$\not\exists \phi^{-1}(x)$ and $L(x) = L(v)$
-              and $L(\phi(u),x) = L(u,v)$}{
-              $\phi' \gets \phi \cup \{\phi(v) \to x\}$\;
-                Add $\phi'$ to $\Phi'$\;
-          }
-        }
-      }{
-      \tcp{backward edge}
-      \lIf{$\phi(v) \in N_{G_{j}}(\phi(u))$}{
-        Add $\phi$ to $\Phi'$ \tcp{valid isomorphism} \nllabel{alg:fpm:graphs:iso:ife}
-        }
-      }
-    }
-    $\Phi \gets \Phi'$ \tcp{update partial isomorphisms}
-  }
-  \Return{$\Phi$}
-\end{tightalgo}
-}
-\end{frame}
-
-
-\begin{frame}{Subgraph Isomorphisms}
-To
-enumerate all the possible isomorphisms from $C$ to each graph $G_i \in
-\bD$ the function \algISO,
-accepts a code $C$ and a graph $G$, and
-returns the set of all isomorphisms between $C$ and $G$.
-
-\medskip
-The set of isomorphisms $\Phi$ is initialized by mapping vertex $0$ in
-$C$ to each vertex $x$ in $G$ that shares the same label as $0$, that is, if
-$L(x) = L(0)$.
-
-\medskip
-The method considers each tuple $t_i$ in $C$ and extends the current set
-of partial isomorphisms. Let $t_i = \tup{u, v, L(u), L(v), L(u,v)}$.
-We have to check if each isomorphism $\phi \in \Phi$ can be extended in
-$G$ using the information from $t_i$
-
-\medskip
-If $t_i$ is a forward edge, then
-we seek a neighbor $x$ of $\phi(u)$ in $G$ such that $x$ has not already
-been mapped to some vertex in $C$, that is,
-$\phi^{-1}(x)$ should not exist, and
-the node and edge labels should match, that is, $L(x) = L(v)$, and
-$L(\phi(u),x) = L(u,v)$. If so, $\phi$ can be extended with the mapping
-$\phi(v) \to x$. The new extended isomorphism, denoted $\phi'$, is added
-to the initially empty set of isomorphisms $\Phi'$. 
-
-\medskip
-If $t_i$ is a
-backward edge, we have to check if $\phi(v)$ is a neighbor of $\phi(u)$
-in $G$. If so, we add the current isomorphism $\phi$ to $\Phi'$. 
-
-\end{frame}
-
-
-
-\begin{frame}[fragile]{Subgraph Isomorphisms}
-\begin{figure}[!t]
-\small{
-  \centering
-  \scalebox{0.9}{%
-  \begin{tabular}{c||c|c|c}
-    \begin{tabular}{c}
-      $C$\\
-    \psframebox[]{
-    \begin{tabular}{c}
-      $t_1: \tup{0,1,a,a}$\\
-      $t_2: \tup{1,2,a,b}$
-    \end{tabular}
-    }\\[3ex]
-      $G(C)$\\
-      \psmatrix[mnode=circle,rowsep=0.2in]
-      [name=v0]$a^0$\\
-      [name=v1]$a^1$\\
-      [name=v2]$b^2$\\
-      \endpsmatrix
-      \ncline[arrows=-]{v0}{v1}
-      \ncline[arrows=-]{v1}{v2}
-    \end{tabular}
-  &
-    \begin{tabular}{c|c|c}
-      \multicolumn{2}{c}{Initial $\Phi$}\\
-      \hline\hline
-      id &$\phi$ & $0$\\
-      \hline
-      \multirow{2}*{$G_1$}& $\phi_1$ & $10$\\
-      & $\phi_2$& $30$\\
-      \hline\
-      \multirow{2}*{$G_2$}& $\phi_3$ & $60$\\
-      & $\phi_4$& $80$
-    \end{tabular}
-  &
-    \begin{tabular}{c|c|c}
-      \multicolumn{2}{c}{Add $t_1$}\\
-      \hline\hline
-      id &$\phi$ & $0,1$\\
-      \hline
-      \multirow{2}*{$G_1$}&$\phi_1$ &  $10,30$\\
-      & $\phi_2$& $30,10$\\
-      \hline
-      \multirow{2}*{$G_2$}& $\phi_3$ & $60,80$\\
-      & $\phi_4$& $80,60$\\
-    \end{tabular}
-  &
-    \begin{tabular}{c|c|c}
-      \multicolumn{2}{c}{Add $t_2$}\\
-      \hline\hline
-      id & $\phi$& $0,1,2$\\
-      \hline
-      \multirow{3}*{$G_1$} & $\phi_1'$& $10,30,20$\\
-      & $\phi_1''$ & $10,30,40$\\
-      & $\phi_2$& $30,10,20$\\
-      \hline
-      \multirow{3}*{$G_2$} & $\phi_3$ & $60,80,70$\\
-      & $\phi_4'$& $80,60,50$\\
-      & $\phi_4''$& $80,60,70$\\
-    \end{tabular}
-  \end{tabular}
-  }
-}
-\end{figure}
-\end{frame}
-
-
-
-\begin{frame}{Canonicality Checking}
-Given a DFS code $C
-= \{t_1, t_2, \ldots, t_k\}$ comprising $k$ extended edge tuples
-and the corresponding graph $G(C)$, the task is to check whether
-the code $C$ is canonical. 
-
-\medskip
-This can be accomplished by trying to
-reconstruct the canonical code $C^*$ for $G(C)$ in an iterative
-manner starting from the empty code and selecting the least
-rightmost path extension at each step, where the least edge
-extension is based on the extended tuple comparison operator.
-
-\medskip
-If at any step the current
-(partial) canonical DFS code $C^*$ is smaller than $C$, then we
-know that $C$ cannot be canonical and can thus be pruned. On the
-other hand, if no smaller code is found after $k$ extensions then
-$C$ must be canonical. 
-\end{frame}
-
-
-
-\begin{frame}[fragile]{Algorithm \algcanonical: Canonicality Checking}
-\begin{tightalgo}[H]{\textwidth-18pt}
-  \SetKwInOut{iscanonical}{\algcanonical ($C$)}
-  \iscanonical{}
-  $\bD_C \gets \{G(C)\}$ \tcp{graph corresponding to code $C$}
-  $C^* \gets \emptyset$ \tcp{initialize canonical DFScode}
-  \For{$i=1\cdots k$}{
-  $\cE = \algRMPE(C^*, \bD_C)$ \tcp{extensions of $C^*$}
-    $(s_i, sup(s_i)) \gets \min\{\cE\}$ \tcp{least rightmost edge
-    extension of $C^*$}
-    \If{$s_i < t_i$}{\Return{false} \tcp{$C^*$ is smaller, thus
-    $C$ is not canonical}}
-    $C^* \gets C^* \cup s_i$\;
-  }
-  \Return{true} \tcp{no smaller code exists; $C$ is canonical}
-\end{tightalgo}
-\end{frame}
-
-
-
-\begin{frame}[fragile]{Canonicality Checking}
-\begin{figure}[!t]
-  \centering
-  \psset{unit=0.3in}
-  \psset{tnpos=l,rowsep=1,colsep=1,tnsep=0}
-  \scalebox{0.9}{%
-  \begin{tabular}{c|ccc}
-    $G$ & Step 1 & Step 2 & Step 3\\
-    \psmatrix
-    \Tcircle[name=a0]{$a^0$}\\
-    \Tcircle[name=a1]{$a^1$}\\
-    \Tcircle[name=b2]{$b^2$} &
-    \Tcircle[name=b3]{$b^3$}
-    \endpsmatrix
-    \ncline{a0}{a1}
-    \ncline{a1}{b2}
-    \ncline{a1}{b3}
-    \ncarc[arcangle=-30]{b3}{a0}
-      &
-    \psmatrix
-    \Tcircle[name=a0]{$a$}~[tnpos=a]{$G^*$}\\
-    \Tcircle[name=a1]{$a$}
-    \endpsmatrix
-    \ncline[linewidth=2pt]{a0}{a1}
-      &
-    \psmatrix
-    \Tcircle[name=v0]{$a$}~[tnpos=a]{$G^*$}\\
-    \Tcircle[name=v1]{$a$}\\
-    \Tcircle[name=v2]{$b$}\\
-    \endpsmatrix
-    \ncline[linewidth=2pt]{v0}{v1}
-    \ncline[linewidth=2pt]{v1}{v2}
-  &
-    \psmatrix
-    \Tcircle[name=v0]{$a$}~[tnpos=a]{$G^*$}\\
-    \Tcircle[name=v1]{$a$}\\
-    \Tcircle[name=v2]{$b$}
-    \endpsmatrix
-    \ncline[linewidth=2pt]{v0}{v1}
-    \ncline[linewidth=2pt]{v1}{v2}
-    \ncarc[arcangle=-45]{v2}{v0}
-  ~\\[3ex]
-    \psframebox[linewidth=1pt]{
-      \begin{tabular}{c}
-        $C$\\
-        $t_{1} = \tup{0,1,a,a}$\\
-        $t_{2} = \tup{1,2,a,b}$\\
-        $t_{3} = \tup{1,3,a,b}$\\
-        $t_{4} = \tup{3,0,b,a}$\\
-      \end{tabular}} &
-    \psframebox[]{
-      \begin{tabular}{c}
-        $C^*$\\
-        $s_{1} = \tup{0,1,a,a}$
-      \end{tabular}} &
-    \psframebox[]{
-      \begin{tabular}{c}
-        $C^*$\\
-        $s_{1} = \tup{0,1,a,a}$\\
-        $s_{2} = \tup{1,2,a,b}$
-      \end{tabular}} &
-    \psframebox[]{
-      \begin{tabular}{c}
-        $C^*$\\
-        $s_{1} = \tup{0,1,a,a}$\\
-        $s_{2} = \tup{1,2,a,b}$\\
-        $s_{3} = \tup{2,0,b,a}$\\
-      \end{tabular}}
-  \end{tabular}
-  }
-\end{figure}
-\end{frame}
