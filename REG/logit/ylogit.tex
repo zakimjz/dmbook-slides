@@ -27,7 +27,7 @@
 %\index{logistic regression}
 %% \index{logistic regression!Bernoulli variable}
 \begin{frame}{Binary Logistic Regression}
-In logistic regression, we are given a set of $d$ 
+Given a set of $d$ 
 predictor or independent variables $X_1, X_2, \cdots, X_d$, 
 and a {\em binary} or {\em Bernoulli} response variable $Y$ 
 that takes on only two values, namely, $0$ and $1$. 
@@ -46,13 +46,24 @@ that takes on only two values, namely, $0$ and $1$.
 
 \medskip
 
-Since there are only two outcomes for the response variable $Y$, its 
-probability mass function for $\abX=\abx$ is given as:
+Since there are only two outcomes for $Y$, its PMF
+for $\abX=\abx$ is:
 \begin{align*}
     P(Y=1 | \abX=\abx) & = \pi(\abx) & P(Y=0 | \abX=\abx) = 1 - \pi(\abx)
 \end{align*}
-where $\pi(\abx)$ is the unknown true parameter value, 
-denoting the probability of $Y=1$ given $\abX=\abx$. 
+where $\pi(\abx)$ denotes the probability of $Y=1$ given $\abX=\abx$. 
+
+\medskip
+
+Instead of directly 
+predicting the response value, the goal is to learn
+the probability, $P(Y=1|\abX=\abx)$, which is also the expected value of
+$Y$ given $\abX=\abx$.
+
+\medskip
+
+Since $P(Y=1|\abX=\abx)$ is a probability, it is not
+appropriate to directly use the linear regression model.
 
 \end{frame}
 
@@ -66,17 +77,7 @@ denoting the probability of $Y=1$ given $\abX=\abx$.
 %    & = P(Y=1|\abX=\abx)
 %    = \pi(\abx)
 %\end{align*}
-\begin{frame}{Binary Logistic Regression}
 %Therefore, in logistic regression, 
-Instead of directly 
-predicting the response value, the goal is to learn
-the probability, $P(Y=1|\abX=\abx)$, which is also the expected value of
-$Y$ given $\abX=\abx$.
-
-\medskip
-
-Since $P(Y=1|\abX=\abx)$ is a probability, it is not
-appropriate to directly use the linear regression model.
 %
 %\begin{align*}
 %    f(\abx) 
@@ -89,45 +90,42 @@ appropriate to directly use the linear regression model.
 %$\truew_0=\trueb$ the true unknown bias term, and $\truew_i$ the true unknown regression
 %coefficient or weight for attribute $X_i$.
 
-\medskip
+%\medskip
 
-The reason we cannot simply use $P(Y=1|\abX=\abx) = f(\abx)$ 
-is due to the fact that $f(\abx)$ can be arbitrarily large or arbitrarily
-small, whereas for logistic regression, we require that the output
-represents a probability value.
+%The reason we cannot simply use $P(Y=1|\abX=\abx) = f(\abx)$ 
+%is due to the fact that $f(\abx)$ can be arbitrarily large or arbitrarily
+%small, whereas for logistic regression, we require that the output
+%represents a probability value.
 %, and thus we need a model that results in an
 %output that lies in the interval $[0,1]$. 
 
 
-\medskip
-
-The name ``logistic regression'' comes from the {\em logistic} function
-(also called the {\em
+\begin{frame}{Logistic Function}
+\textit{Logistic regression} comes from the {\em logistic} function
+(aka {\em
 sigmoid} function) that %meets this requirement. 
 %The logistic function 
-``squashes'' the output to be between $0$ and $1$ for any scalar input.
-$z$ %(see \cref{fig:reg:logit:logit})
+``squashes'' the output to be between $0$ and $1$ for any scalar input
+$z$. %(see \cref{fig:reg:logit:logit})
 %It is defined as
 %follows:
 %\index{logistic function}
 %\index{sigmoid function|see{logistic function}}
 %\index{logistic regression!logistic function}
 %\index{logistic regression!sigmoid function}
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \theta(z) = \frac{1}{1+\exp\{-z\}} = \frac{\exp\{z\}}{1+\exp\{z\}}
-    \label{eq:reg:logit:logit}
+    %\label{eq:reg:logit:logit}
 \end{empheq}
-\end{frame}
 %The logistic function ``squashes'' the output to be between $0$ and $1$ for any scalar input
 %z$ %(see \cref{fig:reg:logit:logit})
 %. The output $\theta(z)$ can therefore be interpreted as a probability.
 %
-\begin{frame}{Logistic Function}
 %\begin{figure}[b!]
 %    % \vspace{0.2in}
     \def\logit{1/(1 + EXP(-x))}
     \centering
-    \scalebox{0.8}{%
+    \scalebox{0.6}{%
     \psset{xAxisLabel=$z$,yAxisLabel=$\theta(z)$,%
     xAxisLabelPos={c,-0.15},yAxisLabelPos={-1.5,c} }
     \psset{labels=y,ticks=y}
@@ -153,10 +151,7 @@ $z$ %(see \cref{fig:reg:logit:logit})
 \framesubtitle{Example}
 %\begin{example}[Logistic Function]
 %    \cref{fig:reg:logit:logit} 
-Figure shows the plot for the logistic function
-    for $z$ ranging from $-\infty$ to $+\infty$. In particular
-    consider what happens when $z$ is $-\infty$, $+\infty$ and $0$; we
-    have
+    Consider what happens when $z$ is $-\infty$, $+\infty$ and $0$:
     \begin{align*}
         \theta(-\infty) & = \frac{1}{1+\exp\{\infty\}} = \frac{1}{\infty} =
         0\\
@@ -164,37 +159,42 @@ Figure shows the plot for the logistic function
         \frac{1}{1} = 1\\
         \theta(0) & = \frac{1}{1+\exp\{0\}} = \frac{1}{2} = 0.5
     \end{align*}
-    As desired, $\theta(z)$ lies in the range $[0,1]$, and $z=0$ is
-    the ``threshold'' value in the sense that for $z > 0$ we have
-    $\theta(z) > 0.5$, and for $z < 0$, we have $\theta(z) < 0.5$. 
-    Thus, interpreting $\theta(z)$ as a probability, the larger the $z$
+    $z=0$ acts as
+    a threshold, since, for $z > 0$,
+    $\theta(z) > 0.5$, and, for $z < 0$, $\theta(z) < 0.5$. 
+
+	\medskip
+
+    Interpreting $\theta(z)$ as a probability, the larger the $z$
     value, the higher the probability.
+
+	\medskip
     
     Another interesting property of the logistic function is that
-    \begin{align}
+    \begin{align*}
         1 - \theta(z) & = 1 - \frac{\exp\{z\}}{1 + \exp\{z\}} =
         \frac{1+\exp\{z\} - \exp\{z\}}{1+\exp\{z\}} =
         \frac{1}{1+\exp\{z\}} = \theta(-z) 
         \label{eq:reg:logit:logit_neg}
-    \end{align}
+    \end{align*}
 \end{frame}
 %\end{example}
 %
 \begin{frame}{Binary Logistic Regression}
 %
-Using the logistic function, we define the logistic regression
+We define the logistic regression
 model as follows:
-\begin{equation}
+\begin{equation*}
     P(Y=1 | \; \abX = \abx) = \pi(\abx) = \theta(f(\abx)) =
     \theta(\trueabw^T\abx) = \frac{\exp\{\trueabw^T\abx\}}{1
     + \exp\{\trueabw^T\abx\}}
     \label{eq:reg:logit:f}
-\end{equation}
-Thus, the probability that the response is $Y=1$ is the output of the
+\end{equation*}
+The probability that $Y=1$ is the output of the
 logistic function for the input $\trueabw^T\abx$.
 %which in turn is linear in
 %$\abX$. 
-On the other hand, the probability for $Y=0$ is given as
+The probability for $Y=0$ is given as
 \begin{equation*}
     P(Y=0|\;\abX=\abx)  = 1-P(Y=1 | \; \abX=\abx) =
     \theta(-\trueabw^T\abx) 
@@ -203,16 +203,17 @@ On the other hand, the probability for $Y=0$ is given as
 %where we used \cref{eq:reg:logit:logit_neg}, 
 that is, $1-\theta(z) = \theta(-z)$ for $z= \trueabw^T\abx$.
 
+\medskip
+
 Combining these two cases the full logistic regression model is given as
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     P(Y | \;\abX=\abx) = \theta(\trueabw^T\abx)^Y \cdot
     \theta(-\trueabw^T\abx)^{1-Y}
-     \label{eq:reg:logit:logistic_regression}
+     %\label{eq:reg:logit:logistic_regression}
 \end{empheq}
-since $Y$ is a Bernoulli random variable that takes on either the value
-$1$ or $0$. 
-We can observe that $P(Y|\;\abX=\abx) = \theta(\trueabw^T\abx)$ when $Y=1$ and 
-$P(Y|\;\abX=\abx) = \theta(-\trueabw^T\abx)$ when $Y=0$, as desired.
+Since $Y$ is a Bernoulli binary random variable,
+$P(Y|\;\abX=\abx) = \theta(\trueabw^T\abx)$ when $Y=1$ and 
+$P(Y|\;\abX=\abx) = \theta(-\trueabw^T\abx)$ when $Y=0$.
 \end{frame}
 %
 %% %We will estimate the unknown weight vector $\abw$ using the method
@@ -248,13 +249,13 @@ $P(Y|\;\abX=\abx) = \theta(-\trueabw^T\abx)$ when $Y=0$, as desired.
 \begin{frame}{Log-Odds Ratio}
 %
 Define the {\em odds ratio} for the occurrence of $Y=1$ as follows:
-\begin{align}
+\begin{align*}
     \odds(Y=1|\abX=\abx) & = \frac{P(Y=1|\abX=\abx)}{P(Y=0|\abX=\abx)}
     = \frac{\theta(\trueabw^T\abx)}{\theta(-\trueabw^T\abx)}\notag\\
     & =  \frac{\exp\{\trueabw^T\abx\}}{1 + \exp\{\trueabw^T\abx\}} \cdot
     \bigl(1+\exp\{\trueabw^T\abx\}\bigr)\notag\\
     & = \tcbhighmath{\exp\{\trueabw^T\abx\}}
-\end{align}
+\end{align*}
 %% This implies
 %% \begin{align}
 %%     \tcbhighmath{
@@ -262,15 +263,15 @@ Define the {\em odds ratio} for the occurrence of $Y=1$ as follows:
 %% \end{align}
 The logarithm of the odds ratio, called the {\em log-odds ratio}, is
 therefore given as:
-\begin{align}
+\begin{align*}
     \ln\bigl(\odds(Y=1|\abX=\abx)\bigr) & = \ln
     \lB(\frac{P(Y=1|\abX=\abx)}{1-P(Y=1|\abX=\abx)}\rB) \notag   = \ln
     \lB(\exp\{\trueabw^T\abx\}\rB) 
     = \trueabw^T\abx\notag\\
     & = \truew_0 \cdot x_0 + \truew_1 \cdot x_1 + \cdots + \truew_d
     \cdot x_d
-    \label{eq:reg:logit:logodds}
-\end{align}
+    %\label{eq:reg:logit:logodds}
+\end{align*}
 The log-odds ratio function is also called the {\em
 logit} function, defined as 
 \begin{align*}    
@@ -290,9 +291,10 @@ We can see that
 The logistic regression model is therefore based on the assumption that
 the log-odds ratio for $Y=1$ given  $\abX=\abx$ is a linear function (or a
 weighted sum) of the independent attributes. 
-In particular, let us consider the effect of attribute $X_i$ by fixing
-the values for all other attributes,% in \cref{eq:reg:logit:logodds}; 
-we get
+\medskip
+
+Consider the effect of attribute $X_i$ by fixing
+the values for all other attributes:% in \cref{eq:reg:logit:logodds}; 
 \begin{align*}
     & \ln(\odds(Y=1|\abX=\abx)) = \truew_i \cdot x_i + C\\
     \implies & \odds(Y=1|\abX=\abx) = \exp\lB\{\truew_i \cdot x_i + C\rB\} =
@@ -300,18 +302,18 @@ we get
     \exp\{C\} \; \propto \; \exp\{\truew_i \cdot x_i\}
 \end{align*}
 where $C$ is a constant comprising the fixed attributes.
-The regression coefficient $\truew_i$ can therefore be interpreted as the change
-in the log-odds ratio for $Y=1$ for a unit change in $X_i$, or equivalently the
-odds ratio for $Y=1$ increases exponentially per unit change in
-$X_i$.
+
+\medskip
+
+$\truew_i$ can be interpreted as the change in the log-odds ratio for $Y=1$ for
+a unit change in $X_i$, or, equivalently, the odds ratio for $Y=1$ increases
+exponentially per unit change in $X_i$.  
 \end{frame}
 %
-%\subsection{Maximum Likelihood Estimation}
-%\label{sec:reg:logit:MLE}
+%\subsection{Maximum Likelihood Estimation} \label{sec:reg:logit:MLE}
 %
-%\index{MLE|see{maximum likelihood estimation}}
-%\index{maximum likelihood estimation}
-%\index{logistic regression!maximum likelihood estimation}
+%\index{MLE|see{maximum likelihood estimation}} \index{maximum likelihood
+%estimation} \index{logistic regression!maximum likelihood estimation}
 
 \begin{frame}{Maximum Likelihood Estimation}
 %
@@ -324,8 +326,11 @@ $X_i$.
 %estimated weight for attribute $X_i$.
 We will use the maximum likelihood approach to learn
 the weight vector $\abw$.
+
+\medskip
+
 {\em Likelihood} is defined as the probability of the observed 
-data given the estimated parameters $\abw$.
+data given $\abw$.
 %We assume that the binary response variables $y_i$ are all independent.
 %Therefore, the likelihood of the observed responses
 %is given as 
@@ -334,16 +339,15 @@ data given the estimated parameters $\abw$.
  = \prod_{i=1}^n \theta(\abw^T\abx_i)^{y_i} \cdot
     \theta(-\abw^T\abx_i)^{1-y_i}
 \end{align*}
-Instead of trying to maximize the likelihood, we can maximize the
-logarithm
-of the likelihood, called {\em log-likelihood}, to convert the product into a summation as follows:
+Instead of maximizing the likelihood, we can maximize the
+{\em log-likelihood}, to convert the product into a summation:
 %\index{logistic regression!log-likelihood}
 %\index{log-likelihood}
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \ln\left( L(\abw) \right) = 
     \sum_{i=1}^n y_i \cdot \ln \lB( \theta(\abw^T\abx_i) \rB) +
     (1-y_i) \cdot \ln \lB( \theta(-\abw^T\abx_i) \rB)
-    \label{eq:reg:logit:loglikelihood}
+    %\label{eq:reg:logit:loglikelihood}
 \end{empheq}
 
 \end{frame}
@@ -351,18 +355,17 @@ of the likelihood, called {\em log-likelihood}, to convert the product into a su
 
 \begin{frame}{Maximum Likelihood Estimation}
 The negative of the log-likelihood can also be considered as an error
-function, the {\em cross-entropy error function}, given as
-follows:
+function, the {\em cross-entropy error function}:
 %\index{cross-entropy error}
 %\index{log-likelihood!cross-entropy error}
 %\index{logistic regression!cross-entropy error}
 %\index{maximum likelihood estimation!cross-entropy error}
 %\enlargethispage{1\baselineskip}
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     E(\abw) & = - \ln\left( L(\abw) \right) = 
     \sum_{i=1}^n y_i \cdot \ln \lB( \frac{1}{\theta(\abw^T\abx_i)} \rB) +
     (1-y_i) \cdot \ln \lB( \frac{1}{1-\theta(\abw^T\abx_i)} \rB)
-    \label{eq:reg:logit:crossentropy}
+    %\label{eq:reg:logit:crossentropy}
 \end{empheq}
 The task of maximizing the log-likelihood is therefore equivalent to
 minimizing the cross-entropy error.
@@ -372,14 +375,20 @@ minimizing the cross-entropy error.
 %% function.
 %
 \begin{frame}{Maximum Likelihood Estimation}
-Typically, to obtain the optimal weight vector $\abw$,
+To obtain the optimal weight vector $\abw$,
 we would differentiate the log-likelihood function
 with respect to $\abw$, set the
 result to $\bzero$, and then solve for $\abw$.
-However, for the log-likelihood formulation %in
+
+\medskip
+
+However, for the log-likelihood formulation presented,%in
 %\cref{eq:reg:logit:loglikelihood} 
 there is no closed form solution to
 compute the weight vector $\abw$.
+
+\medskip
+
 Instead, we use an iterative {\em gradient ascent} method to
 compute the optimal value.
 %, since \cref{eq:reg:logit:loglikelihood} is a 
@@ -392,17 +401,16 @@ compute the optimal value.
 The gradient ascent method relies on the gradient of the log-likelihood
 function, which can be obtained by taking its partial derivative 
 with respect to $\abw$, as follows:
-\begin{align}
+\begin{align*}
     \grad(\abw) = 
     \frac{\partial}{\partial \abw} \Bigl\{\ln\left( L(\abw)
     \right)\Bigr\}
     = 
 \frac{\partial}{\partial \abw} \Bigl\{\sum_{i=1}^n y_i \cdot \ln \lB( \theta(z_i) \rB) +
 (1-y_i) \cdot \ln \lB( \theta(-z_i) \rB) \Bigr\}
-    \label{eq:reg:logit:derivLL}
-\end{align}
+    %\label{eq:reg:logit:derivLL}
+\end{align*}
 where $z_i = \abw^T\abx_i$.
-\end{frame}
 %We use the chain rule to obtain the derivative of $\ln(\theta(z_i))$ with respect to $\abw$. 
 %We note the following facts:
 %\begin{align*}
@@ -441,33 +449,49 @@ where $z_i = \abw^T\abx_i$.
 %
 %\enlargethispage{1\baselineskip}
 %Substituting the above into \cref{eq:reg:logit:derivLL} we get
-%\begin{align}
-%    \grad(\abw) & = 
+
+\medskip
+
+After solving the derivative:
+\begin{align*}
+    \grad(\abw) & = 
 %     \sum_{i=1}^n y_i \cdot \theta(-z_i) \cdot \abx_i
 %     - (1-y_i) \cdot \theta(z_i) \cdot \abx_i \notag\\
 %     & = \sum_{i=1}^n y_i \cdot \bigl( \theta(-z_i)+\theta(z_i) \bigr) \cdot \abx_i -
 %     \theta(z_i) \cdot \abx_i \notag\\
 %     & = \sum_{i=1}^n \bigl(y_i - \theta(z_i)\bigr) \cdot \abx_i, 
 %     \qquad \text{since } \theta(-z_i)+\theta(z_i) = 1 \notag\\
-%     & = \sum_{i=1}^n \bigl(y_i - \theta(\abw^T\abx_i)\bigr) \cdot \abx_i
+     \sum_{i=1}^n \bigl(y_i - \theta(\abw^T\abx_i)\bigr) \cdot \abx_i
 %    \label{eq:reg:logit:wLL}
-%\end{align}
+\end{align*}
+\end{frame}
 
 \begin{frame}{Maximum Likelihood Estimation}
 %
-The gradient ascent method starts at some initial estimate for $\abw$,
-denoted $\abw^{\;0}$. At each step $t$, the method moves in the direction of 
-steepest ascent, which is given by the gradient vector. Thus, given the
-current estimate $\abw^{\;t}$, we can obtain the next estimate as
-follows:
-\begin{empheq}[box=\tcbhighmath]{align}
+The gradient ascent method starts at 
+$\abw^{\;0}$. 
+
+\medskip
+
+At each step $t$, the method moves in the direction of 
+steepest ascent, which is given by the gradient vector. 
+
+\medskip
+
+Given the
+current $\abw^{\;t}$, the next estimate is:
+\begin{empheq}[box=\tcbhighmath]{align*}
     \abw^{\;t+1} = \abw^{\;t} + \eta \cdot \grad(\abw^{\;t})
     \label{eq:reg:logit:update_w} 
 \end{empheq}
-Here, $\eta > 0$ is a user-specified parameter called the {\em learning
+$\eta > 0$ is the {\em learning
 rate}. It should not be too large, otherwise the estimates will vary
 wildly from one iteration to the next, and it should not be too small,
-otherwise it  will take a long time to converge. At the optimal value of
+otherwise it  will take a long time to converge. 
+
+\medskip
+
+	At the optimal value of
 $\abw$, the gradient will be zero, i.e., $\grad(\abw) = \bzero$, as
 desired. 
 \end{frame}
@@ -500,47 +524,42 @@ desired.
 \begin{frame}{Stochastic Gradient Ascent}
 The gradient ascent method computes the gradient by considering all the
 data points, and it is therefore called {\em batch} gradient ascent. 
+
+\medskip
+
 For large datasets, it is typically much faster to compute
-the gradient by considering only one (randomly chosen) point at a time.
-The weight vector is updated after each such partial gradient step,
-giving rise to {\em stochastic gradient ascent} (SGA) for computing
-the optimal weight vector $\abw$. 
+the gradient by considering only one (randomly chosen) point at a time, which is called {\em stochastic gradient ascent} (SGA).
 %\index{stochastic gradient ascent}
 %\index{SGA|see{stochastic gradient ascent}}
 %\index{logistic regression!stochastic gradient ascent}
 %
 %The pseudo-code for SGA based logistic
 %regression is shown in \cref{alg:reg:logit:logistic_regression_SGA}.
-Given a randomly chosen point $\abx_i$, the
-point-specific gradient %(see \cref{eq:reg:logit:wLL}) 
-is given as
-\begin{align}
+%Given a randomly chosen point $\abx_i$, the
+%point-specific gradient %(see \cref{eq:reg:logit:wLL}) 
+%is given as
+\begin{align*}
     \tcbhighmath{
     \grad(\abw, \abx_i) = \bigl(y_i - \theta(\abw^T\abx_i)\bigr) \cdot
 \abx_i}
-\end{align}
+\end{align*}
 %% As in the batch approach, in stochastic gradient ascent we update the
 %% weight vector as follows:
 %% \begin{align}
 %%     \abw^{t+1} = \abw^{t} + \eta \cdot \grad(\abw^{t}, \abx_i)
 %%     \label{eq:reg:logit:update_w}
 %% \end{align}
-Unlike batch gradient ascent that updates $\abw$ by considering all the
-points, in stochastic gradient ascent the weight vector is updated after
-observing each point, and the updated values are used immediately in the
-next update. Computing the full gradient in the batch approach can be
-very expensive. In contrast, computing the partial gradient at each
-point is very fast, and due to the stochastic updates to $\abw$,
-typically SGA is much faster than the batch
-approach for very large datasets.
-
-\end{frame}
-
-\begin{frame}{Binary Logistic Regression}
-
+%Unlike batch gradient ascent that updates $\abw$ by considering all the
+%points, in stochastic gradient ascent the weight vector is updated after
+%observing each point, and the updated values are used immediately in the
+%next update. Computing the full gradient in the batch approach can be
+%very expensive. In contrast, computing the partial gradient at each
+%point is very fast, and due to the stochastic updates to $\abw$,
+%typically SGA is much faster than the batch
+%approach for very large datasets.
 Once the model has been trained, we can predict the response for any new
 augmented test point $\abz$ as follows:
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \hy = 
 \begin{cases}
     1 & \text{if } \theta(\abw^T\abz) \ge 0.5\\
@@ -563,7 +582,7 @@ $\abw^{\;0} \assign (0, \ldots, 0)^T \in \setR^{d+1}$ \tcp*[h]{initial weight ve
     \ForEach{$\abx_i \in \abD$ in random order}{%
         $\grad(\abw, \abx_i) \assign \bigl(y_i -
         \theta(\abw^T\abx_i)\bigr) \cdot \abx_i$
-        \tcp*[h]{compute gradient at $\abx_i$}\;
+        \tcp*[h]{gradient at $\abx_i$}\;
         $\abw \assign \abw + \eta \cdot \grad(\abw, \abx_i)$
         \tcp*[h]{update estimate for $\abw$}
     }
@@ -659,11 +678,20 @@ $\abw^{\;0} \assign (0, \ldots, 0)^T \in \setR^{d+1}$ \tcp*[h]{initial weight ve
 %%     \label{fig:reg:logit:virginica-logit}
 %% \end{figure}
 %
+
 \begin{frame}{Logistic Regression}
-Iris principal components
-data. Misclassified point are shown in dark gray color. Circles denote
-{\tt Iris-virginica} and triangles denote the other two Iris types.
-\vspace*{1cm}
+\framesubtitle{Example}
+Figure shows the Iris principal components data. 
+
+\medskip
+
+$X_1$ and $X_2$ are the independent attributes and represent the first two
+principal components. 
+
+\medskip
+
+$Y$ is the binary response variable and represents the type of Iris flower; $Y=1$ corresponds to {\tt Iris-virginica}, whereas $Y=0$ corresponds to the two other Iris types, namely {\tt Iris-setosa} and {\tt Iris-versicolor}.
+\vspace*{1.5cm}
 
 %\begin{figure}[t!]
 %    \vspace*{0.3in}
@@ -675,33 +703,26 @@ data. Misclassified point are shown in dark gray color. Circles denote
 \def\PsEuler{2.71828182846}
 \psset{transform={1.0 1.0 1.5 scaleOpoint3d}}
 \psset{axisnames={X_1, X_2, Y}}
-%%\readdata{\dataVIR}{REG/logit/figs/iris-PC-virginica.txt}
 \centerline{
-%\subfloat[Logistic Regression]{ 
-    \scalebox{1}{%
-%\label{fig:reg:logit:iris-vir:logit}
+    \scalebox{0.9}{%
 \begin{pspicture}(-6,-2.5)(6,3)
-%    %\gridIIID[Zmin=0,Zmax=1,stepZ=2](-4,4)(-2,2)
 \psset{viewpoint=30 95 12 rtp2xyz,Decran=60}
     \axesIIID[](-4,-2,0)(4.5,3,2.0)
-%%\pstThreeDCoor[Alpha=-10,Beta=10]
 \psset{linewidth=0.5pt, dotsize=0.3}
-%%\dataplotThreeD[fillcolor=black,plotstyle=dots,showpoints=true,dotscale=1.5]{\dataVIR}
-%%\psset{color1=black!50,color2=black!20,hue=(color1) (color2)}
 \psset{showAxes=false, fillcolor=gray}
 \psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
-    \psSurface[ngrid=.2 .2,incolor=white,axesboxed=false,
-        linewidth=0.5\pslinewidth,
-       color1 = {[rgb]{0 0 0}},
-        color2 = {[rgb]{1 1 1}},
-        hue=(color1) (color2), lightintensity=5,
-algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
-        (1/(1 + \PsEuler^((5.06652752*x)+(3.28608846*y)+6.78873402)))}
+    %\psSurface[ngrid=.2 .2,incolor=white,axesboxed=false,
+        %linewidth=0.5\pslinewidth,
+       %color1 = {[rgb]{0 0 0}},
+        %color2 = {[rgb]{1 1 1}},
+        %hue=(color1) (color2), lightintensity=5,
+%algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+        %(1/(1 + \PsEuler^((5.06652752*x)+(3.28608846*y)+6.78873402)))}
 \psset{dotstyle=Bo,fillcolor=white}
 \input{REG/logit/figs/iris-vir-3dC1.tex}
 \psset{dotstyle=Btriangle,fillcolor=white}
 \input{REG/logit/figs/iris-vir-3dC0.tex}
-\input{REG/logit/figs/wrong_logistic.tex}
+\input{REG/logit/figs/wrong_logistic_white.tex}
 \end{pspicture}
 }}%}
 \end{frame}
@@ -710,10 +731,20 @@ algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
 %\subfloat[Linear Regression]{ \label{fig:reg:logit:iris-vir:linear}
 
 \begin{frame}{Linear Regression}
-Iris principal components
-data. Misclassified point are shown in dark gray color. Circles denote
-{\tt Iris-virginica} and triangles denote the other two Iris types.
-\vspace*{1cm}
+	\framesubtitle{Example}
+
+The plane of best fit in linear regression has the weight vector:
+    \begin{align*}
+        \abw & = (0.333, -0.167, 0.074)^T\\
+        \hy & = f(\abx) = 0.333 - 0.167\cdot x_1 + 0.074 \cdot x_2
+    \end{align*}
+Since $Y$ is binary, we predict $y=1$ if $f(\abx) \ge 0.5$, and $y=0$ otherwise.
+
+\medskip
+
+Linear regression misclassifies 17 points, achieving $88.7\%$ accuracy. 
+    
+\vspace*{1.5cm}
 
 \psset{unit=0.25in}
 \psset{lightsrc=viewpoint}
@@ -723,7 +754,7 @@ data. Misclassified point are shown in dark gray color. Circles denote
 \psset{transform={1.0 1.0 1.5 scaleOpoint3d}}
 \psset{axisnames={X_1, X_2, Y}}
 \centerline{
-    \scalebox{1}{%
+    \scalebox{0.9}{%
         \begin{pspicture}(-6,-2.5)(6,3)
 \psset{viewpoint=30 95 18 rtp2xyz,Decran=60}
             \axesIIID[](-4,-2,0)(4.5,3,2)
@@ -755,71 +786,100 @@ data. Misclassified point are shown in dark gray color. Circles denote
 %\end{figure}
 %
 \begin{frame}{Logistic Regression}
-\framesubtitle{Example}
-%\begin{example}[Logistic Regression]
-%    \label{ex:reg:logit:logit}
-%    \cref{fig:reg:logit:iris-vir:logit} 
-Figure shows the output of logistic
-    regression modeling on the Iris principal components data, where the
-    independent attributes $X_1$ and $X_2$ represent the first two
-    principal components, and the binary response variable $Y$
-    represents the type of Iris flower; $Y=1$ corresponds to {\tt
-    Iris-virginica}, whereas $Y=0$ corresponds to the two other Iris
-    types, namely {\tt Iris-setosa} and {\tt Iris-versicolor}.
-   
-
-\medskip
-
     The fitted logistic model is given as
     \begin{align*}
         \abw & = (w_0, w_1, w_2)^T = (-6.79, -5.07, -3.29)^T\\
         P(Y=1|\abx) & = \theta(\abw^T\abx) = 
         \frac{1}{1 + \exp\{ 6.79 + 5.07\cdot x_1 + 3.29 \cdot x_2\}}
     \end{align*}
-%    \cref{fig:reg:logit:iris-vir:logit} 
-Figure plots $P(Y=1|\abx)$ for various
-    values of $\abx$. 
+%Figure plots $P(Y=1|\abx)$ for various
+    %values of $\abx$. 
 %    
-    Given $\abx$, if $P(Y=1|\abx) \ge 0.5$, then we predict $\hy=1$,
-    otherwise we predict $\hy=0$. %\cref{fig:reg:logit:iris-vir:logit}
+Given $\abx$, if $P(Y=1|\abx) \ge 0.5$, then we predict $\hy=1$,
+    otherwise we predict $\hy=0$. 
+
+\medskip
+
+Logistic regression misclassifies only 5 points, achieving $96.7\%$ accuracy.
+\vspace*{1.5cm}
+
+%\begin{figure}[t!]
+%    \vspace*{0.3in}
+%\captionsetup[subfloat]{captionskip=5pt}
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\def\PsEuler{2.71828182846}
+\psset{transform={1.0 1.0 1.5 scaleOpoint3d}}
+\psset{axisnames={X_1, X_2, Y}}
+%%\readdata{\dataVIR}{REG/logit/figs/iris-PC-virginica.txt}
+\centerline{
+%\subfloat[Logistic Regression]{ 
+    \scalebox{0.9}{%
+%\label{fig:reg:logit:iris-vir:logit}
+\begin{pspicture}(-6,-2.5)(6,3)
+%    %\gridIIID[Zmin=0,Zmax=1,stepZ=2](-4,4)(-2,2)
+\psset{viewpoint=30 95 12 rtp2xyz,Decran=60}
+    \axesIIID[](-4,-2,0)(4.5,3,2.0)
+%%\pstThreeDCoor[Alpha=-10,Beta=10]
+\psset{linewidth=0.5pt, dotsize=0.3}
+%%\dataplotThreeD[fillcolor=black,plotstyle=dots,showpoints=true,dotscale=1.5]{\dataVIR}
+%%\psset{color1=black!50,color2=black!20,hue=(color1) (color2)}
+\psset{showAxes=false, fillcolor=gray}
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+    \psSurface[ngrid=.2 .2,incolor=white,axesboxed=false,
+        linewidth=0.5\pslinewidth,
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+        (1/(1 + \PsEuler^((5.06652752*x)+(3.28608846*y)+6.78873402)))}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/logit/figs/iris-vir-3dC1.tex}
+\psset{dotstyle=Btriangle,fillcolor=white}
+\input{REG/logit/figs/iris-vir-3dC0.tex}
+\input{REG/logit/figs/wrong_logistic.tex}
+\end{pspicture}
+}}%}
 \end{frame}
 
-\begin{frame}{Logistic Regression}
-\framesubtitle{Example}
-
-Figure 
-    shows that five points (shown in dark gray) are misclassified. For
-    example, for $\abx = (1,-0.52,-1.19)^T$ we have:
-        \begin{align*}
-            P(Y=1|\abx) & = \theta(\abw^T\abx) = \theta(-0.24) = 0.44\\
-            P(Y=0|\abx) & = 1 - P(Y=1|\abx) = 0.54
-        \end{align*}
-    Thus, the predicted response for $\abx$ is $\hy = 0$, whereas the
-    true class is $y=1$.
+%\begin{frame}{Logistic Regression}
+%\framesubtitle{Example}
 %
-%    \cref{fig:reg:logit:iris-vir-logistic} also contrasts logistic
-%    versus linear regression. 
-The plane of best fit in linear regression
-    is shown in the figure,
-%\cref{fig:reg:logit:iris-vir:linear}, 
-with the weight
-    vector:
-    \begin{align*}
-        \abw & = (0.333, -0.167, 0.074)^T\\
-        \hy & = f(\abx) = 0.333 - 0.167\cdot x_1 + 0.074 \cdot x_2
-    \end{align*}
-    Since the response vector $Y$ is binary, we predict the response
-    class as $y=1$ if $f(\abx) \ge 0.5$, and $y=0$ otherwise.
-    The linear regression model results in 17 points being misclassified
-    (dark gray points).%, as shown in
-%    \cref{fig:reg:logit:iris-vir:linear}. 
-    
-    Since there are $n=150$ points in total, this results in a training
-    set or in-sample accuracy of $88.7\%$ for linear regression,
- while logistic regression misclassifies only 5 points,
-    an accuracy of $96.7\%$, which is a much better fit.%, as
-%    is also apparent in \cref{fig:reg:logit:iris-vir-logistic}.
-\end{frame}
+%Figure 
+%    shows that five points (shown in dark gray) are misclassified. For
+%    example, for $\abx = (1,-0.52,-1.19)^T$ we have:
+%        \begin{align*}
+%            P(Y=1|\abx) & = \theta(\abw^T\abx) = \theta(-0.24) = 0.44\\
+%            P(Y=0|\abx) & = 1 - P(Y=1|\abx) = 0.54
+%        \end{align*}
+%    Thus, the predicted response for $\abx$ is $\hy = 0$, whereas the
+%    true class is $y=1$.
+%%
+%%    \cref{fig:reg:logit:iris-vir-logistic} also contrasts logistic
+%%    versus linear regression. 
+%The plane of best fit in linear regression
+%    is shown in the figure,
+%%\cref{fig:reg:logit:iris-vir:linear}, 
+%with the weight
+%    vector:
+%    \begin{align*}
+%        \abw & = (0.333, -0.167, 0.074)^T\\
+%        \hy & = f(\abx) = 0.333 - 0.167\cdot x_1 + 0.074 \cdot x_2
+%    \end{align*}
+%    Since the response vector $Y$ is binary, we predict the response
+%    class as $y=1$ if $f(\abx) \ge 0.5$, and $y=0$ otherwise.
+%    The linear regression model results in 17 points being misclassified
+%    (dark gray points).%, as shown in
+%%    \cref{fig:reg:logit:iris-vir:linear}. 
+%    
+%    Since there are $n=150$ points in total, this results in a training
+%    set or in-sample accuracy of $88.7\%$ for linear regression,
+% while logistic regression misclassifies only 5 points,
+%    an accuracy of $96.7\%$, which is a much better fit.%, as
+%%    is also apparent in \cref{fig:reg:logit:iris-vir-logistic}.
+%\end{frame}
 %\end{example}
 %
 %
@@ -832,12 +892,18 @@ with the weight
 %\index{one-hot encoding}
 %\index{logistic regression!one-hot encoding}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+
 \begin{frame}{Multiclass Logistic Regression}
 
-We now generalize logistic regression to the case when the response
-variable $Y$ can take on $K$ distinct nominal categorical values called
-{\em classes}, i.e.,
-$Y \in \{c_1, c_2, \cdots, c_K\}$. We model $Y$ as a $K$-dimensional
+We now generalize logistic regression to the case when 
+$Y$ can take on $K$ distinct nominal categorical values called
+{\em classes}, i.e., $Y \in \{c_1, c_2, \cdots, c_K\}$. 
+
+\medskip
+
+We model $Y$ as a $K$-dimensional
 multivariate Bernoulli random variable. %(see \cref{sec:eda:cat:multivarBernoulli}). 
 Since $Y$ can assume only one of
 the $K$ values, we use the {\em one-hot encoding} approach to map each
@@ -851,13 +917,15 @@ $e_{ij} = 0$, so that $\sum_{j=1}^K e_{ij} = 1$.
 %$\bY \in \{\be_1, \be_2, \cdots, \be_K\}$, with $Y_{\!\!j}$ referring 
 %to the $j$th component of $\bY$. 
 %
+\medskip
+
 The probability mass function for $\bY$ given $\abX=\abx$ is
 \begin{align*}
     P(\bY=\be_i|\abX = \abx) = \pi_i(\abx), \text{ for } i=1,2,\ldots,K
 \end{align*}
-where $\pi_i(\abx)$ is the (unknown) probability of observing class $c_i$ 
-given $\abX = \abx$.
-Thus, there are $K$ unknown parameters, which must satisfy the following
+%where $\pi_i(\abx)$ is the (unknown) probability of observing class $c_i$ 
+%given $\abX = \abx$.
+There are $K$ unknown parameters, which must satisfy the following
 constraint:
 \begin{align*}
     \sum^{K}_{i=1} \pi_i(\abx) = \sum^{K}_{i=1} P(\bY=\be_i|\abX=\abx) = 1
@@ -868,25 +936,27 @@ constraint:
 
 \begin{frame}{Multiclass Logistic Regression}
 
-Given that only one element of $\bY$ is 1, 
-the probability mass function of $\bY$ can be written compactly as
-\begin{align}
+Given that only one element of $\bY$ is 1, the PMF of $\bY$ is:
+\begin{align*}
     \tcbhighmath{
     P(\bY|\abX=\abx) = \prod_{j=1}^{K} \lB(\pi_{\!j}(\abx)
     \rB)^{Y_{\!\!j}}
 }
-\end{align}
-Note that if $\bY=\be_i$, only $Y_{\!i}=1$ and the rest of the elements
-$Y_{\!\!j}=0$ for $j\ne i$.
-
-In multiclass logistic regression, we select one of the values, say
-$c_K$, as a reference or base class, and consider the log-odds ratio of
+\end{align*}
+%Note that if $\bY=\be_i$, only $Y_{\!i}=1$ and the rest of the elements
+%$Y_{\!\!j}=0$ for $j\ne i$.
+%
+We select %one of the values, say
+$c_K$ as a reference or base class, and consider the log-odds ratio of
 the
-other classes with respect to $c_K$; we assume that each of these log-odd
-ratios are linear in $\abX$, but with a different augmented 
-weight vector $\trueabw_i$,
-for class $c_i$. That is, the log-odds ratio of class $c_i$ with respect to
-class $c_K$ is assumed to satisfy
+other classes w.r.t. $c_K$. 
+
+	\medskip
+
+We assume these log-odd
+ratios are linear in $\abX$, but 
+$\trueabw_i$ is specific to
+for class $c_i$:
 \begin{align*}
     \ln(\odds(\bY=\be_i|\abX=\abx)) & = \ln\left(
     \frac{P(\bY=\be_i|\abX=\abx)}{P(\bY=\be_K|\abX=\abx)} \right) = 
@@ -928,7 +998,7 @@ where $\truew_{i0} = \trueb_i$ is the true bias value for class $c_i$.
 Setting $\trueabw_K = \bzero$, we have $\exp\{\trueabw_K^T\abx\} = 1$, and
 thus we can write the full model for multiclass logistic regression as
 follows:
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \pi_i(\abx) = \frac{\exp\{\trueabw_i^T\abx\}}{\sum_{j=1}^K
     \exp\{\trueabw_{\!j}^T\abx\} }, \qquad
     \text{ for all } i = 1, 2, \cdots, K
@@ -938,13 +1008,18 @@ follows:
 %\index{softmax function}
 %\index{logistic regression!softmax function}
 This function is also called the {\em softmax} function.
+
+\medskip
+
 When $K=2$, this formulation yields exactly the same model as in 
 binary logistic regression.
+
+\medskip
+
+Note that the choice of the reference class is
+not important, since we can derive the log-odds ratio for any two
+classes $c_i$ and $c_{\!j}$.
 \end{frame}
-%
-%It is also interesting to note that the choice of the reference class is
-%not important, since we can derive the log-odds ratio for any two
-%classes $c_i$ and $c_{\!j}$ as follows:
 %\begin{align*}
 %    \ln\lB(\frac{\pi_i(\abx)}{\pi_{\!j}(\abx)}\rB) & = 
 %    \ln\lB(\frac{\pi_i(\abx)}{\pi_K(\abx)} \cdot
@@ -988,8 +1063,11 @@ The likelihood of the data is given as
 \end{align*}
 where $\abW = \{\abw_1, \abw_2, \cdots, \abw_K\}$ is the set of $K$
 weight vectors.
+
+\medskip
+
 The log-likelihood is then given as:
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \ln\left( L(\abW) \right) = 
     \sum_{i=1}^n \sum_{j=1}^{K} y_{ij} \cdot \ln(\pi_{\!j}(\abx_i))
     =\sum_{i=1}^n \sum_{j=1}^{K} y_{ij} \cdot 
@@ -1039,6 +1117,8 @@ an error function, commonly known as {\em cross-entropy error}.
 %The last step follows from the fact that $\sum_{j=1}^K y_{ij} = 1$,
 %since only one element of $\by_i$ can be $1$.
 %
+\medskip
+
 For stochastic gradient ascent, we update the weight vectors by
 considering only one point at a time. 
 
@@ -1047,12 +1127,12 @@ considering only one point at a time.
 \begin{frame}{Maximum Likelihood Estimation}
 
 The gradient of the log-likelihood
-function with respect to $\abw_{\!j}$ at a given point $\abx_i$ is given as
-\begin{empheq}[box=\tcbhighmath]{align}
+function w.r.t. $\abw_{\!j}$ at a given point $\abx_i$ is:
+\begin{empheq}[box=\tcbhighmath]{align*}
     \grad(\abw_{\!j}, \abx_i) = \bigl(y_{ij} - \pi_j(\abx_i)\bigr) \cdot \abx_i
 \end{empheq}
 which results in the following update rule for the $j$th weight vector:
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
 \abw_{\!j}^{\;t+1} = \abw_{\!j}^{\;t} + \eta \cdot
 \grad(\abw_{\!j}^{\;t}, \; \abx_i)
 \end{empheq}
@@ -1068,16 +1148,19 @@ $t$, and $\eta$ is the learning rate.
 %\index{logistic regression!learning rate}
 %
 %
-Once the model has been trained, we can predict the class for any new
-augmented test point $\abz$ as follows:
-\begin{empheq}[box=\tcbhighmath]{align}
+
+\medskip
+
+Once the model has been trained, we can predict $\hy$ for any new
+$\abz$ as:
+\begin{empheq}[box=\tcbhighmath]{align*}
     \hy = \argmax_{c_i} \bigl\{ \pi_i(\abz) \bigr\} 
     = \argmax_{c_i} \lB\{
     \frac{\exp\{\abw_i^T\abz\}}{\sum_{j=1}^K \exp\{\abw_j^T\abz\} }
     \rB\}
 \end{empheq}
-That is, we evalute the softmax function, and then predict the
-class of $\abz$ as the one with the highest probability.
+We evalute the softmax function and the predicted 
+$\hy$ has the highest probability.
 \end{frame}
 %
 %
@@ -1098,7 +1181,7 @@ $t \assign 0$ \tcp*[h]{step/iteration counter}\;
 \Repeat{$\sum_{j=1}^{K-1} \norm{\abw_{\!j}^{\;t}-\abw_{\!j}^{\;t-1}} \le \epsilon$}
 {%
     \lForEach{$j = 1, 2, \cdots, K-1$}{
-        $\abw_{\!j} \gets \abw^{\;t}_{\!j}$ \tcp*[h]{make a copy of
+        $\abw_{\!j} \gets \abw^{\;t}_{\!j}$ \tcp*[h]{copy 
         $\abw^{\;t}_{\!j}$}
     }
     \ForEach{$\abx_i \in \abD$ in random order}{%
@@ -1181,12 +1264,24 @@ $t \assign 0$ \tcp*[h]{step/iteration counter}\;
 %% data. Misclassified point are shown in dark gray color.}
 %% \label{fig:reg:logit:iris-3K-multiclass}
 %% \end{figure}
-\begin{frame}{Multiclass logistic regression}
+\begin{frame}{Multiclass Logistic Regression}
+\framesubtitle{Example}
 
-Iris principal components
-data. Misclassified point are shown in dark gray color. All the points
-actually lie in the $(X_1,X_2)$ plane, but $c_1$ and $c_2$ are shown
-displaced along $Y$ with respect to the base class $c_3$ purely for
+Consider the 2D Iris PCA dataset, $n=150$.
+
+\medskip
+
+$Y$ takes on three values: $Y=c_1$: {\tt Iris-setosa} ($\square$),
+$Y=c_2$: {\tt Iris-versicolor} ($\bigcirc$) and $Y=c_3$: 
+{\tt Iris-virginica} ($\bigtriangleup$).
+
+\medskip
+
+$Y=c_1$ to $\be_1 = (1,0,0)^T$, $Y=c_2$ to $\be_2 = (0,1,0)^T$ and $Y=c_3$ to $\be_3 = (0,0,1)^T$. 
+
+    \medskip
+
+All the points actually lie in the $(X_1,X_2)$ plane, but $c_1$ and $c_2$ are shown displaced along $Y$ with respect to the base class $c_3$ purely for
 illustration purposes.
 %\begin{figure}[t!]
 %\vspace{-0.1in}
@@ -1198,7 +1293,261 @@ illustration purposes.
 \psset{viewpoint=30 120 10 rtp2xyz,Decran=60}
 \psset{axisnames={X_1, X_2, Y}}
 \centerline{
-\scalebox{1}{%
+\scalebox{0.8}{%
+\begin{pspicture}(-6,-2)(6,6)
+    \axesIIID[](-4,-2,0)(4.5,2.5,2.5)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{showAxes=false, fillcolor=gray}
+\psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+\psset{dotstyle=Bsquare,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C0.tex}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C1.tex}
+\psset{dotstyle=Btriangle,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C2.tex}
+%%misclassified points
+\psset{dotstyle=Bo, fillcolor=white}
+\psPoint(-0.52,-1.19,2.0){x0}
+\psdot(x0)
+\psPoint(-1.17,-0.16,2.0){x1}
+\psdot(x1)
+\psset{dotstyle=Btriangle, fillcolor=white}
+\psPoint(-1.55,0.26,0){x2}
+\psdot(x2)
+\psPoint(-1.296,-0.33,0){x3}
+\psdot(x3)
+\psPoint(-1.38,-0.42,0){x4}
+\psdot(x4)
+\end{pspicture}
+}}
+\end{frame}
+\begin{frame}{Multiclass Logistic Regression}
+	\framesubtitle{Example}
+
+    We use $Y=c_3$ as the reference or base
+    class. The fitted model is:
+    \begin{align*}
+    \abw_1 & = (-3.52, 3.62, 2.61)^T &
+    \abw_2 & = (-6.95, -5.18, -3.40)^T &
+    \abw_3 & = (0, 0, 0)^T
+    \end{align*}
+
+    The decision surface corresponding to $c_1$ is:
+    \begin{align*}
+	    \pi_1(\abx) & = \frac{\exp\{ \abw_1^T\abx \}}{1 + \exp\{ \abw_1^T\abx \} + \exp\{\abw_2^T\abx \}} \\
+    \end{align*}
+
+%\begin{figure}[t!]
+%\vspace{-0.1in}
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\def\PsEuler{2.71828182846}
+\psset{viewpoint=30 120 10 rtp2xyz,Decran=60}
+\psset{axisnames={X_1, X_2, Y}}
+\centerline{
+\scalebox{0.8}{%
+\begin{pspicture}(-6,-2)(6,6)
+    \axesIIID[](-4,-2,0)(4.5,2.5,2.5)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{showAxes=false, fillcolor=gray}
+\psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\rput(-4,5.1){$\pi_1(\abx)$}
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+\psSurface[ngrid=.2 .2,fillcolor=white,axesboxed=false,
+    linewidth=0.5\pslinewidth, 
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+        ((\PsEuler^((3.618*x)+(2.609*y)-3.52))/%
+        (1 + \PsEuler^((3.618*x)+(2.609*y)-3.52) +%
+            \PsEuler^((-5.178*x)-(3.398*y)-6.95)))}
+            \psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\psset{dotstyle=Bsquare,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C0.tex}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C1.tex}
+\psset{dotstyle=Btriangle,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C2.tex}
+%%misclassified points
+\psset{dotstyle=Bo, fillcolor=white}
+\psPoint(-0.52,-1.19,2.0){x0}
+\psdot(x0)
+\psPoint(-1.17,-0.16,2.0){x1}
+\psdot(x1)
+\psset{dotstyle=Btriangle, fillcolor=white}
+\psPoint(-1.55,0.26,0){x2}
+\psdot(x2)
+\psPoint(-1.296,-0.33,0){x3}
+\psdot(x3)
+\psPoint(-1.38,-0.42,0){x4}
+\psdot(x4)
+\end{pspicture}
+}}
+\end{frame}
+\begin{frame}{Multiclass Logistic Regression}
+	\framesubtitle{Example}
+
+    We use $Y=c_3$ as the reference or base
+    class. The fitted model is:
+    \begin{align*}
+    \abw_1 & = (-3.52, 3.62, 2.61)^T &
+    \abw_2 & = (-6.95, -5.18, -3.40)^T &
+    \abw_3 & = (0, 0, 0)^T
+    \end{align*}
+
+    The decision surface corresponding to $c_2$ is:
+    \begin{align*}
+        \pi_2(\abx) & = \frac{\exp\{ \abw_2^T\abx \}}{1 + \exp\{ \abw_1^T\abx \} + 
+            \exp\{\abw_2^T\abx \}}\\
+    \end{align*}
+
+%\begin{figure}[t!]
+%\vspace{-0.1in}
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\def\PsEuler{2.71828182846}
+\psset{viewpoint=30 120 10 rtp2xyz,Decran=60}
+\psset{axisnames={X_1, X_2, Y}}
+\centerline{
+\scalebox{0.8}{%
+\begin{pspicture}(-6,-2)(6,6)
+    \axesIIID[](-4,-2,0)(4.5,2.5,2.5)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{showAxes=false, fillcolor=gray}
+\psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\rput(5,4.75){$\pi_2(\abx)$}
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+\psSurface[ngrid=.2 .2,fillcolor=gray,axesboxed=false,
+    linewidth=0.5\pslinewidth, 
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+    ((\PsEuler^((-5.178*x)-(3.398*y)-6.95))/%
+    (1 + \PsEuler^((3.618*x)+(2.609*y)-3.52) +
+        \PsEuler^((-5.178*x)-(3.398*y)-6.95)))}
+        \psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\psset{dotstyle=Bsquare,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C0.tex}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C1.tex}
+\psset{dotstyle=Btriangle,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C2.tex}
+%%misclassified points
+\psset{dotstyle=Bo, fillcolor=darkgray}
+\psPoint(-0.52,-1.19,2.0){x0}
+\psdot(x0)
+\psPoint(-1.17,-0.16,2.0){x1}
+\psdot(x1)
+\psset{dotstyle=Btriangle, fillcolor=white}
+\psPoint(-1.55,0.26,0){x2}
+\psdot(x2)
+\psPoint(-1.296,-0.33,0){x3}
+\psdot(x3)
+\psPoint(-1.38,-0.42,0){x4}
+\psdot(x4)
+\end{pspicture}
+}}
+\end{frame}
+\begin{frame}{Multiclass Logistic Regression}
+	\framesubtitle{Example}
+
+    We use $Y=c_3$ as the reference or base
+    class. The fitted model is:
+    \begin{align*}
+    \abw_1 & = (-3.52, 3.62, 2.61)^T &
+    \abw_2 & = (-6.95, -5.18, -3.40)^T &
+    \abw_3 & = (0, 0, 0)^T
+    \end{align*}
+
+    The decision surface corresponding to $c_3$ is:
+    \begin{align*}
+        \pi_3(\abx) & = \frac{1}{1 + \exp\{ \abw_1^T\abx \} + 
+            \exp\{\abw_2^T\abx \}}
+    \end{align*}
+
+%\begin{figure}[t!]
+%\vspace{-0.1in}
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\def\PsEuler{2.71828182846}
+\psset{viewpoint=30 120 10 rtp2xyz,Decran=60}
+\psset{axisnames={X_1, X_2, Y}}
+\centerline{
+\scalebox{0.8}{%
+\begin{pspicture}(-6,-2)(6,6)
+    \axesIIID[](-4,-2,0)(4.5,2.5,2.5)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{showAxes=false, fillcolor=gray}
+\psset{transform={1.0 1.0 2.0 scaleOpoint3d}}
+\rput(-0.75,4.95){$\pi_3(\abx)$}
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+\psSurface[ngrid=.2 .2,fillcolor=darkgray,axesboxed=false,
+    linewidth=0.5\pslinewidth, 
+       color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
+    (1/(1 + \PsEuler^((3.618*x)+(2.609*y)-3.52) +
+        \PsEuler^((-5.178*x)-(3.398*y)-6.95)))}
+\psset{dotstyle=Bsquare,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C0.tex}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C1.tex}
+\psset{dotstyle=Btriangle,fillcolor=white}
+\input{REG/logit/figs/iris-3K-C2.tex}
+%%misclassified points
+\psset{dotstyle=Bo, fillcolor=white}
+\psPoint(-0.52,-1.19,2.0){x0}
+\psdot(x0)
+\psPoint(-1.17,-0.16,2.0){x1}
+\psdot(x1)
+\psset{dotstyle=Btriangle, fillcolor=darkgray}
+\psPoint(-1.55,0.26,0){x2}
+\psdot(x2)
+\psPoint(-1.296,-0.33,0){x3}
+\psdot(x3)
+\psPoint(-1.38,-0.42,0){x4}
+\psdot(x4)
+\end{pspicture}
+}}
+\end{frame}
+\begin{frame}{Multiclass Logistic Regression}
+	\framesubtitle{Example}
+
+
+The training set accuracy is $96.7\%$, since it misclassifies only five points (shown in dark gray). 
+
+\medskip
+
+    For
+    example, for the point $\abx = (1, -0.52, -1.19)^T$, we have:
+    \begin{align*}
+        \pi_1(\abx) & = 0 & \pi_2(\abx) & = 0.448 & \pi_3(\abx) & = 0.552
+    \end{align*}
+    $\hy = \arg\max_{c_i} \{ \pi_i(\abx) \} = c_3$, whereas the true class is
+    $y=c_2$. 
+
+
+%\begin{figure}[t!]
+%\vspace{-0.1in}
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\def\PsEuler{2.71828182846}
+\psset{viewpoint=30 120 10 rtp2xyz,Decran=60}
+\psset{axisnames={X_1, X_2, Y}}
+\centerline{
+\scalebox{0.8}{%
 \begin{pspicture}(-6,-2)(6,6)
     \axesIIID[](-4,-2,0)(4.5,2.5,2.5)
 \psset{linewidth=0.5pt, dotsize=0.3}
@@ -1207,15 +1556,6 @@ illustration purposes.
 \rput(-4,5.1){$\pi_1(\abx)$}
 \rput(-0.75,4.95){$\pi_3(\abx)$}
 \rput(5,4.75){$\pi_2(\abx)$}
-%%\psPoint(0.75,0.5,2.6){p1}
-%%\uput[l](p1){$\pi_1$}
-%%\psPoint(-3,-3,2.6){p2}
-%%\uput[l](p2){$\pi_2$}
-%%\psPoint(-0.5,-0.5,1.5){p3}
-%%\uput[l](p3){$\pi_3$}
-%%% \rput(-4,4.5){$\pi_1$}
-%%%\rput(-0.5,4.25){$\pi_3$}
-%%%\rput(5,4){$\pi_2$}
 \psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
 \psSurface[ngrid=.2 .2,fillcolor=white,axesboxed=false,
     linewidth=0.5\pslinewidth, 
@@ -1245,9 +1585,6 @@ illustration purposes.
     algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){%
     (1/(1 + \PsEuler^((3.618*x)+(2.609*y)-3.52) +
         \PsEuler^((-5.178*x)-(3.398*y)-6.95)))}
-%% \psSurface[ngrid=.2 .2,incolor=white,axesboxed,
-%%     linewidth=0.5\pslinewidth, 
-%% algebraic,Zmin=0,Zmax=1](-4,-3)(4,2){0.5}
 \psset{dotstyle=Bsquare,fillcolor=white}
 \input{REG/logit/figs/iris-3K-C0.tex}
 \psset{dotstyle=Bo,fillcolor=white}
@@ -1287,63 +1624,7 @@ illustration purposes.
 %
 %\begin{example}
 %    \label{ex:reg:logit:multi-logit}
-\begin{frame}{Multiclass logistic regression}
-\framesubtitle{Example}
-    Consider the Iris dataset, with $n=150$ points
-    in a 2D space spanned by the first two principal components, as
-    shown in the figure.
-%\cref{fig:reg:logit:iris-3K-multiclass}. 
-Here, the response
-    variable takes on three values: $Y=c_1$ corresponds to {\tt
-    Iris-setosa} (shown as squares), $Y=c_2$ corresponds to {\tt Iris-versicolor}
-    (as circles) 
-    and $Y=c_3$ corresponds to {\tt Iris-virginica} (as triangles).
-    Thus, we map $Y=c_1$ to $\be_1 = (1,0,0)^T$, $Y=c_2$ to $\be_2 =
-    (0,1,0)^T$ and $Y=c_3$ to $\be_3 = (0,0,1)^T$. 
 
-
-\medskip
-
-    The multiclass logistic model uses $Y=c_3$ ({\tt Iris-virginica};
-    triangles) as the reference or base
-    class. The fitted model is given as:
-    \begin{align*}
-        \abw_1 & = (-3.52, 3.62, 2.61)^T\\
-        \abw_2 & = (-6.95, -5.18, -3.40)^T\\
-        \abw_3 & = (0, 0, 0)^T
-    \end{align*}
-%    \cref{fig:reg:logit:iris-3K-multiclass} 
-\end{frame}
-
-\begin{frame}{Multiclass logistic regression}
-\framesubtitle{Example}
-Figure plots the decision surfaces
-    corresponding to the softmax functions:
-    \begin{align*}
-        \pi_1(\abx) & = \frac{\exp\{ \abw_1^T\abx \}}{1 + \exp\{ \abw_1^T\abx \} + 
-            \exp\{\abw_2^T\abx \}}\\
-        \pi_2(\abx) & = \frac{\exp\{ \abw_2^T\abx \}}{1 + \exp\{ \abw_1^T\abx \} + 
-            \exp\{\abw_2^T\abx \}}\\
-        \pi_3(\abx) & = \frac{1}{1 + \exp\{ \abw_1^T\abx \} + 
-            \exp\{\abw_2^T\abx \}}
-    \end{align*}
-    The surfaces indicate regions where one class dominates over the
-    others. It is important to note that the points for $c_1$ and $c_2$
-    are shown displaced along $Y$ to emphasize the contrast with $c_3$, which is
-    the reference class.
-    
-    Overall, 
-    the training set accuracy for the multiclass logistic classifier is
-    $96.7\%$, since it misclassifies only five points (shown in dark gray). 
-    For
-    example, for the point $\abx = (1, -0.52, -1.19)^T$, we have:
-    \begin{align*}
-        \pi_1(\abx) & = 0 & \pi_2(\abx) & = 0.448 & \pi_3(\abx) & = 0.552
-    \end{align*}
-    Thus, the predicted class is $\hy = \arg\max_{c_i} \{ \pi_i(\abx) \} =
-    c_3$, whereas the true class is
-    $y=c_2$. 
-\end{frame}
 %\end{example}
 %
 %

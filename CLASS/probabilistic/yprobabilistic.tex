@@ -8,7 +8,7 @@
 
 
 \begin{frame}{Bayes Classif\/{i}er}
-Let the training dataset $\bD$ consist of $n$ points $\bx_i$ in a
+Let the training dataset $\bD$ consists of $n$ points $\bx_i$ in a
 $d$-dimensional space, and let $y_i$ denote the class for each
 point, with $y_i \in \{c_1,c_2,\ldots,c_k\}$. 
 
@@ -122,9 +122,41 @@ $\hcov_i  \assign {1\over n_i}\bZ_i^T\bZ_i$ \tcp{covariance matrix}
 \BlankLine
 \SetKwInOut{AlgorithmT}{\BCT($\bx$ \text{and} $\hP(c_i)$, $\hbmu_i$, $\hcov_i$, for all $i\in[1,k]$)} 
 \AlgorithmT{} 
-$\hy \assign \displaystyle \arg\max_{c_i} \bigl\{ f(\bx | \hbmu_i, \hcov_i) \cdot P(c_i) \bigr\}$ 
+$\hy \assign \displaystyle \arg\max_{c_i} \bigl\{ f(\bx | \hbmu_i, \hcov_i) \cdot P(c_i) \bigr\}$ \;
 \Return{$\hy$} 
 \end{tightalgo}
+\end{frame}
+
+\begin{frame}{Bayes Classifier: Iris Data}
+
+	Consider the 2D Iris data ({\tt sepal
+	length} and {\tt sepal width}).
+Class $c_1$, which
+    corresponds to
+    {\tt iris-setosa} (circles), has $n_1=50$ points,
+    whereas the other
+    class $c_2$ (triangles) has $n_2=100$ points.
+
+    \begin{align*}
+    \hP(c_1) & = {n_1\over n} = {50 \over 150} = 0.33
+    & \hP(c_2) & = {n_2 \over n} = {100 \over 150} = 0.67
+    \end{align*}
+
+    \begin{align*}
+    \hbmu_1 & = \matr{5.006\\3.418}
+    & \hbmu_2 & = \matr{6.262\\2.872}
+    \end{align*}
+
+    \begin{align*}
+        \hcov_1 & = \matr{0.1218 & 0.0983 \\ 0.0983 & 0.1423 }
+        & \hcov_2 & = \matr{0.435 & 0.1209 \\ 0.1209 & 0.1096} 
+    \end{align*}
+
+    Plot shows the contour or level
+    curve (corresponding to 1\% of the peak density) for the
+    multivariate normal distribution modeling the probability density
+    for both classes.
+
 \end{frame}
 
 
@@ -174,6 +206,25 @@ $\hy \assign \displaystyle \arg\max_{c_i} \bigl\{ f(\bx | \hbmu_i, \hcov_i) \cdo
 \end{figure}
 \end{frame}
 
+\begin{frame}{Bayes Classifier: Iris Data}
+
+    Let $\bx = (6.75,4.25)^T$ be a test point (shown as white square).
+    The posterior
+    probabilities for $c_1$ and $c_2$ can be computed as:
+    \begin{align*}
+        \hP(c_1|\bx) & \propto \hf(\bx|\hbmu_1,\hcov_1) \hP(c_1) =
+        (4.951 \times 10^{-7}) \times 0.33 = 1.634 \times
+        10^{-7}\\
+        \hP(c_2|\bx) & \propto \hf(\bx|\hbmu_2,\hcov_2) \hP(c_2) =
+        (2.589 \times 10^{-5}) \times 0.67 = 1.735 \times
+        10^{-5}\
+    \end{align*}
+    Because\ $\hP(c_2|\bx) > \hP(c_1|\bx)$ the class for $\bx$ is predicted
+    as $\hy
+    = c_2$.
+
+
+\end{frame}
 
 
 \begin{frame}{Bayes Classifier}
@@ -233,7 +284,13 @@ However, to avoid zero probabilities we add a
 
 
 \begin{frame}{Discretized Iris Data}
-\framesubtitle{\texttt{sepal} {\tt length} and \texttt{sepal} {\tt width}}
+
+ Assume that the \texttt{sepal length} and \texttt{sepal
+    width} attributes in the Iris dataset have been discretized
+    as shown below.
+
+    \medskip
+
 
   {\begin{tabular}{c}
 %\centerline
@@ -268,11 +325,17 @@ $(7.0, 7.9]$ & Very Long ($a_{14}$)\\ \hline
 \end{tabular}
     }}
 \end{tabular}}
+
+\medskip
+
+    We have $\card{dom(X_1)}= m_1=4$ and $\card{dom(X_2)}=m_2=3$.
+
 \end{frame}
 
 
 
-\begin{frame}{Class-specif\/{i}c Empirical Joint Probability Mass Function}
+\begin{frame}{Discretized Iris Data}
+\framesubtitle{Class-specif\/{i}c Empirical Joint Probability Mass Function}
 \label{tab:class:prob:jepmf}%}
 \footnotesize{
 {\begin{tabular}{c}
@@ -325,7 +388,7 @@ $(7.0, 7.9]$ & Very Long ($a_{14}$)\\ \hline
 
 
 
-\begin{frame}{Iris Data: Test Case}
+\begin{frame}{Discretized Iris Data: Test Case}
  Consider a test point $\bx=(5.3,3.0)^T$ corresponding to
     the categorical
     point $(\texttt{Short, Medium})$, which is represented as
@@ -346,7 +409,7 @@ The prior probabilities of the classes are $\hP(c_1) = 0.33$ and $\hP(c_2) = 0.6
 \end{frame}
 
 
-\begin{frame}{Iris Data: Test Case with Pseudo-counts}
+\begin{frame}{Discretized Iris Data: Test Case with Pseudo-counts}
     The test point $\bx=(6.75,4.25)^T$
     corresponds to the categorical
     point $(\texttt{Long, Long})$, and it is represented as
@@ -399,6 +462,7 @@ values for $\bv$, most of the counts will be zero.
 Naive Bayes classifier addresses these concerns.
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Naive Bayes Classif\/{i}er}
 \framesubtitle{Numeric Attributes}
@@ -462,33 +526,63 @@ dimension $X_{j}$.
 \SetKwInOut{Algorithm}{\NB($\bD = \{(\bx_{j}, y_{j})\}_{j=1}^n$)}
 \Algorithm{} 
 \For{$i=1,\ldots,k$}{
-  $\bD_i \assign \bigl\{\bx_{j} \mid y_{j}=c_i, j=1,\ldots,n\bigr\}$
-  \tcp{class-specif\/{i}c subsets}\;
-  $n_i \assign \card{\bD_i}$ \tcp{cardinality}\;
-  $\hP(c_i) \assign n_i/n$ \tcp{prior probability}\;
-  $\hbmu_i \assign {1\over n_i} \sum_{\bx_{j} \in \bD_i} \bx_{j}$ \tcp{mean}\;
-  $\bZ_i = \bD_i - \bone \cdot \hbmu_i^T$\tcp{centered data for class
-  $c_i$}\;
-  \For(\tcp*[h]{class-specif\/{i}c variance for $X_{j}$}){$j=1,..,d$}{
-    %$Z_{j} = X_{j}  - \bone_n \cdot \hmu_{ij}$ \tcp{centered attribute}\;
-    %$\hsigma_{ij}^2 \assign {1\over n_i} Z_{j}^TZ_{j}$ \tcp{variance}\;
+  $\bD_i \assign \bigl\{\bx_{\!j}^T \mid y_{\!j}=c_i, j=1,\ldots,n\bigr\}$
+  \tcp{class-specif\/{i}c subsets}
+  $n_i \assign \card{\bD_i}$ \tcp{cardinality}
+  $\hP(c_i) \assign n_i/n$ \tcp{prior probability}
+  $\hbmu_i \assign {1\over n_i} \sum_{\bx_{\!j} \in \bD_i} \bx_{\!j}$ \tcp{mean}
+  $\mbD_{\;i} = \bD_i - \bone \cdot \hbmu_i^T$\tcp{centered data for class
+  $c_i$}
+  \For(\tcp*[h]{class-specif\/{i}c var for $j$th attribute}){$j=1,..,d$}{
+    %$Z_{\!j} = X_{\!j}  - \bone_n \cdot \hmu_{ij}$ \tcp{centered attribute}\;
+    %$\hsigma_{ij}^2 \assign {1\over n_i} Z_{\!j}^TZ_{\!j}$ \tcp{variance}\;
     %$\hsigma_{ij}^2 \assign {1\over n_i}
-    %  \sum_{\bx_{j} \in \bD_i} (\bx_{j} - \hbmu_i)^2$ \tcp{variance}\;
-    $\hsigma_{ij}^2 \assign {1\over n_i} Z_{ij}^TZ_{ij}$
-    \tcp{variance}\;
+    %  \sum_{\bx_{\!j} \in \bD_i} (\bx_{\!j} - \hbmu_i)^2$ \tcp{variance}\;
+      $\hsigma_{ij}^2 \assign {1\over n_i} (\mX_{\!\!\!j}^i)^T\;
+      (\mX_{\!\!\!j}^i)$
+    \tcp{variance}
   }
-  $\hbsigma_i = \matr{\hsigma_{i1}^2, \ldots, \hsigma_{id}^2}^T$
-  \tcp*[h]{class-specif\/{i}c attribute variances}\;
+  $\hbsigma_i \gets \matr{\hsigma_{i1}^2, \ldots, \hsigma_{id}^2}^T$
+  \tcp*[h]{class-specif\/{i}c attribute variances}
 } \Return\ {$\hP(c_i), \hbmu_i, \hbsigma_i$ for all $i=1,\ldots,k$}
-\BlankLine \BlankLine 
-\SetKwInOut{AlgorithmT}{\NBT($\bx$ \text{and}\ $\hP(c_i)$, $\hbmu_i$, $\hbsigma_i$, for all $i\in[1,k]$)} 
-\AlgorithmT{} $\hy \assign \displaystyle \arg\max_{c_i}
-\biggl\{ \hP(c_i) \prod_{j=1}^d f(x_{j} | \hmu_{ij}, \hsigma^2_{ij})
+\BlankLine \BlankLine \SetKwInOut{AlgorithmT}{\NBT($\bx$
+\text{and}\ $\hP(c_i)$, $\hbmu_i$, $\hbsigma_i$, for all
+$i\in[1,k]$)} \AlgorithmT{} $\hy \assign \displaystyle \arg\max_{c_i}
+\biggl\{ \hP(c_i) \prod_{j=1}^d f(x_{\!j} | \hmu_{ij}, \hsigma^2_{ij})
 \biggr\}$\; \Return{$\hy$} 
 \end{tightalgo}
 \end{frame}
 
+\begin{frame}{Iris Data: Naive Bayes}
 
+Consider 2D Iris Data consisting of \texttt{sepal length} and \texttt{sepal width}.  $\hP(c_i)$ and $\hbmu_i$ remain unchanged.  $\hcov$ are assumed to be diagonal: 
+
+    \begin{align*}
+        \hcov_1 & = \matr{0.1218 & 0 \\ 0 & 0.1423 }
+        & \hcov_2 & = \matr{0.435 & 0 \\ 0 & 0.1096 }
+    \end{align*}
+
+    F{i}gure shows the contour or level
+    curve (corresponding to 1\% of the peak density) of the
+    multivariate normal distribution for both classes. 
+    The diagonal assumption leads to contours that
+    are axis-parallel ellipses.
+
+\medskip
+
+    For the test point $\bx = (6.75,4.25)^T$, the posterior
+    probabilities for $c_1$ and $c_2$ are as follows:
+    \begin{align*}
+        \hP(c_1|\bx) & \propto \hf(\bx|\hbmu_1,\hcov_1) \hP(c_1) =
+        (4.014 \times 10^{-7}) \times 0.33 = 1.325 \times
+        10^{-7}\\
+        \hP(c_2|\bx) & \propto \hf(\bx|\hbmu_2,\hcov_2) \hP(c_2) =
+        (9.585 \times 10^{-5}) \times 0.67 = 6.422 \times
+        10^{-5}\
+    \end{align*}
+    Because $\hP(c_2|\bx) > \hP(c_1|\bx)$, it predicted $\hy = c_2$ to $\bx$.
+
+\end{frame}
 
 \begin{frame}[fragile]{Naive Bayes versus Full Bayes Classifier}
 \framesubtitle{Iris 2D Data}
@@ -585,9 +679,7 @@ dimension $X_{j}$.
 
 \begin{frame}{Naive Bayes}
 \framesubtitle{Categorical Attributes}
-The
-independence assumption leads to a simplif\/{i}cation of the joint
-probability mass function 
+The independence assumption leads to a simplif\/{i}cation:
 \begin{align*}
 \tcbhighmath{
     P(\bx|c_i) = \prod_{j=1}^d P(x_{j} | c_i) =
@@ -603,7 +695,6 @@ where $n_i(\bv_{j})$ is the observed frequency of the value
 $\bv_{j}=\be_{j}r_{j}$ corresponding to the $r_{j}$th categorical value
 $a_{jr_{j}}$ for the attribute $X_{j}$ for class $c_i$. 
 
-\bigskip
 If the count is zero, we can use the pseudo-count
 method to obtain a prior probability. The adjusted estimates with
 pseudo-counts are given as
@@ -615,6 +706,79 @@ pseudo-counts are given as
 where $m_{j} = |dom(X_{j})|$.
 \end{frame}
 
+\begin{frame}{Discretized Iris Data: Naive Bayes}
+\framesubtitle{Class-specif\/{i}c Empirical Joint Probability Mass Function}
+\label{tab:class:prob:jepmf}%}
+\footnotesize{
+{\begin{tabular}{c}
+  \tabcolsep6pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|l||c|c|c||c|}
+    \hline
+    & \multirow{2}{*}{Class: $c_1$}&\multicolumn{3}{c||}{$X_2$} &
+    \multirow{2}{*}{$\hf_{\!X_1}$}\\
+    \cline{3-5}
+        & & {\tt Short} ($\be_{21}$) & {\tt Medium} ($\be_{22}$) &
+        {\tt Long} ($\be_{23}$) & \\
+        \hline\hline
+        \multirow{4}{*}{$X_1$}
+        & {\tt Very Short ($\be_{11}$)} &  ${1/50}$  &
+        ${33/50}$  & ${5/50}$ & 39/50\\
+        &{\tt Short ($\be_{12}$)} & $0$
+        &${3/50}$  & ${8/50}$ & 13/50\\
+        &{\tt Long ($\be_{13}$)} & $0$  &
+        $0$   & $0$ & 0\\
+        &{\tt Very Long ($\be_{14}$)} & $0$  &
+        $0$ & $0$ & 0\\
+    \hline
+    \multicolumn{2}{|r||}{$\hf_{\!X_2}$} & 1/50 & 36/50 & 13/50 & \\
+    \hline
+  \end{tabular}\\[12pt]\\
+ \tabcolsep6pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c|l||c|c|c||c|}
+    \hline
+    & \multirow{2}{*}{Class: $c_2$}&\multicolumn{3}{c||}{$X_2$} &
+    \multirow{2}{*}{$\hf_{\!X_1}$}\\
+    \cline{3-5}
+        & & {\tt Short} ($\be_{21}$) & {\tt Medium} ($\be_{22}$) &
+        {\tt Long} ($\be_{23}$) & \\
+        \hline\hline
+        \multirow{4}{*}{$X_1$}
+        & {\tt Very Short ($\be_{11}$)} &  ${6/100}$  &
+        ${0}$  & $0$ & 6/100\\
+        &{\tt Short ($\be_{12}$)} & ${24/100}$
+        &${15/100}$  &      ${0}$ & 39/100\\
+        &{\tt Long ($\be_{13}$)} & ${13/100}$  &
+        ${30/100}$   &      ${0}$ & 43/100\\
+        &{\tt Very Long ($\be_{14}$)} & ${3/100}$  &
+        ${7/100}$       & ${2/100}$ & 12/100\\
+    \hline
+    \multicolumn{2}{|r||}{$\hf_{\!X_2}$} & 46/100 & 52/100 & 2/100 &\\
+    \hline
+  \end{tabular}\\
+\end{tabular}}{}
+}
+\end{frame}
+
+\begin{frame}{Discretized Iris Data: Naive Bayes}
+
+    The test point $\bx=(6.75,4.25)$, corresponding to
+    $(\texttt{Long, Long})$ or $\bv = (\be_{13}, \be_{23})$,
+    is classif\/{i}ed as follows:
+
+    \begin{align*}
+        \hP(\bv|c_1) & = \hP(\be_{13}|c_1)\cdot \hP(\be_{23}|c_1)
+        = \lB({0+1\over 50+4}\rB) \cdot \lB({13 \over 50}\rB) = 4.81
+        \times 10^{-3}\\
+        \hP(\bv|c_2) & = \hP(\be_{13}|c_2)\cdot \hP(\be_{23}|c_2)
+        = \lB({43\over 100}\rB) \cdot \lB({2 \over 100}\rB) = 8.60
+        \times 10^{-3}\\
+        \hP(c_1|\bv) & \propto (4.81 \times 10^{-3}) \times 0.33 =
+        1.59 \times 10^{-3}\\
+        \hP(c_2|\bv) & \propto (8.6 \times 10^{-3}) \times 0.67 =
+        5.76 \times 10^{-3}
+    \end{align*}
+
+    Thus, the predicted class is $\hy = c_2$.
+
+\end{frame}
 
 
 \begin{frame}{Nonparametric Approach}
@@ -700,12 +864,45 @@ Because $K$ is f\/{i}xed, the KNN classif\/{i}er predicts the class of $\bx$ as
 the majority class among its $K$ nearest neighbors.
 \end{frame}
 
+\begin{frame}{Iris Data}
+\framesubtitle{$K$ Nearest Neighbors Classif\/{i}er }
+
+ Consider the 2D Iris dataset.
+  Class $c_1$ (circles) has $n_1=50$ points
+  and $c_2$ (triangles) has $n_2 = 100$ points.
+
+	\medskip
+
+We use KNN ($K=5$) to classify the test point $\bx = (6.75, 4.25)^T$.
+
+
+\medskip
+
+The distance from $\bx$ to its 5th
+  nearest neighbor, namely $(6.2,3.4)^T$, is given as
+  $r = \sqrt{1.025} = 1.012$. 
+
+
+	\medskip
+
+The enclosing ball or circle of radius $r$
+encompasses $K_1 = 1$ point from 
+  $c_1$ and $K_2 = 4$ points from $c_2$. 
+
+
+	\medskip
+
+	Therefore, the predicted
+  class for $\bx$ is $\hy = c_2$.
+
+
+\end{frame}
 
 \begin{frame}{Iris Data}
 \framesubtitle{$K$ Nearest Neighbors Classif\/{i}er }
 \begin{figure}[!b]
     \centering
-  \scalebox{0.7}{
+  \scalebox{0.65}{
     \psset{dotscale=1.5,fillcolor=lightgray,
         arrowscale=2,PointName=none}
         \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}

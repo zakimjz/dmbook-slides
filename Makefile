@@ -139,4 +139,4 @@ ychap27.pdf: REG/eval/yeval.tex
 
 clean:
 	rm -f tmpyslides.*
-
+	find . -iname "*.aux" -print | xargs rm

@@ -41,11 +41,10 @@ typically do not know.
 
 \begin{frame}{Classif\/{i}cation Performance Measures}
 
-Let $\bD$ be the testing set comprising $n$ points in a $d$
-dimensional space, let $\{c_1, c_2, \ldots, c_k\}$ denote the set
-of $k$ class labels, and let $M$ be a classif\/{i}er. For $\bx_i \in
-\bD$, let $y_i$ denote its true class, and let $\hy_i = M(\bx_i)$
-denote its predicted class.
+Let $\bD$ be the testing set comprising $n$ points in a $d$-dimensional space,
+let $\{c_1, c_2, \ldots, c_k\}$ denote the set of $k$ class labels,
+and let $M$ be a classif\/{i}er. For $\bx_i \in \bD$, let $y_i$ denote
+its true class, and let $\hy_i = M(\bx_i)$ denote its predicted class.
 
 \medskip{\bf Error Rate:} 
 The error rate is the fraction
@@ -140,8 +139,8 @@ Ox=4,Oy=2]{->}(4.0,2.0)(8.5,4.5){4in}{3in}%
   The classif\/{i}er
   misclassif\/{i}es 8 out of the 30 test cases. Thus, we have
   \begin{align*}
-    \textit{Error\ Rate} &= {8/30} = 0.27\\
-    \textit{Accuracy}  & ={22/30} = 0.73
+	  \textit{Error\ Rate} &= \frac{08}{30} = 0.27\\
+	  \textit{Accuracy}  & =\frac{22}{30} = 0.73
   \end{align*}
 \end{columns}
 \end{frame}
@@ -265,15 +264,17 @@ For a perfect classif\/{i}er, the maximum value of the F-measure is 1.
 \end{footnotesize}
 \end{center}
 \small
-The class-specif\/{i}c
-  precison and recall values are:
+The class-specif\/{i}c precison, recall and F-measure values are:
   \begin{align*}
-    \textit{prec}_1 &= {n_{11} \over m_1}  = {10/10} = 1.0 &
-    \textit{recall}_1 &= {n_{11} \over n_1}  = {10/10} = 1.0\\[4.5pt]
-    \textit{prec}_2 &= {n_{22} \over m_2}  = {7/12} = 0.583 & 
-    \textit{recall}_2 &= {n_{22} \over n_2}  = {7/10} = 0.7\\[4.5pt]
-    \textit{prec}_3 &= {n_{33} \over m_3}  = {5/8} = 0.625 &
-    \textit{recall}_3 &= {n_{33} \over n_3}  = {5/10} = 0.5
+  \textit{prec}_1 &= {n_{11} \over m_1}  = \frac{10}{10} = 1.0 &
+  \textit{recall}_1 &= {n_{11} \over n_1}  = \frac{10}{10} = 1.0 &
+  F_1 &= {2\cdot n_{11} \over (n_1+m_1)}  = \frac{20}{20} = 1.0\\[4.5pt]
+  \textit{prec}_2 &= {n_{22} \over m_2}  = \frac{7}{12} = 0.583 & 
+  \textit{recall}_2 &= {n_{22} \over n_2}  = \frac{7}{10} = 0.7 &
+  F_2 &= {2\cdot n_{22} \over (n_2+m_2)}  = \frac{14}{22} = 0.636\\[4.5pt]
+  \textit{prec}_3 &= {n_{33} \over m_3}  = \frac{5}{8} = 0.625 &
+  \textit{recall}_3 &= {n_{33} \over n_3}  = \frac{5}{10} = 0.5 &
+  F_3 &= {2\cdot n_{33} \over (n_3+m_3)}  = \frac{10}{18} = 0.556
   \end{align*}
   The overall accuracy and F-measure is
   \begin{align*}
@@ -381,7 +382,7 @@ to all points in the positive class, i.e., the
 recall for the positive class
 \begin{align*}
 \tcbhighmath{
-  \mathit{TPR} = \textit{sensitivity} = \textit{recall}_P = \frac{\mathit{TP}}{\mathit{TP}+\mathit{FN}} = \frac{\mathit{TP}}{n_1}
+  \mathit{TPR} =  \textit{sensitivity} = \textit{recall}_P = \frac{\mathit{TP}}{\mathit{TP}+\mathit{FN}} = \frac{\mathit{TP}}{n_1}
 }
 \end{align*}
 where $n_1$ is the size of the positive class.
@@ -416,13 +417,19 @@ where $n_2$ is the size of the negative class.
 
 \readdata{\dataPC}{CLASS/eval/figs/iris-PC.txt}
 \readdata{\dataPCte}{CLASS/eval/figs/iris-PC-te.txt}
-\begin{frame}{Iris Principal Components Data: Naive Bayes Classifier}
-  \framesubtitle{{\tt Iris-versicolor} (class $c_1$; in circles) and
-  other two Irises (class $c_2$; in triangles). Training data in grey
-  and testing data in black. Class means in white and density contours.}
-\begin{figure}[!t]
+\begin{frame}[fragile]{Iris Principal Components Data: Naive Bayes Classifier}
+\framesubtitle{{\tt Iris-versicolor} ($c_1$ - circles) and other two Irises ($c_2$ - triangles).}
+
+Training data ($80\%$) in grey and testing data ($20\%$) in black.
+
+\medskip
+
+\begin{columns}
+\column{0.5\textwidth}
+%\begin{figure}[!t]
 %    \vspace{0.2in}
-  \scalebox{0.7}{
+\hspace*{1.0cm}
+  \scalebox{0.5}{
     \centering
     \psset{dotscale=1.5,fillcolor=lightgray,
         arrowscale=2,PointName=none}
@@ -472,13 +479,32 @@ where $n_2$ is the size of the negative class.
         \end{psclip}
     \endpsgraph
 }
-\end{figure}
+%\end{figure}
+\column{0.5\textwidth}
+\begin{small}
+  \begin{align*}
+    \hP(c_1) & = {40/120} = 0.33 \\
+    \hmu_1 & = \matr{-0.641 & -0.204}^T \\
+    \hcov_1 &= \matr{0.29 & 0\\ 0 & 0.18} \\
+    \hP(c_2) & = {80/120} = 0.67\\
+    \hmu_2 & = \matr{0.27 & 0.14}^T\\
+    \hcov_2 & = \matr{6.14 & 0\\0& 0.206}
+  \end{align*}
+\end{small}
+\end{columns}
+
+\medskip
+
+The mean (in white) and the contour plot of the normal distribution for each
+class are shown; the contours are shown for
+one and two standard deviations along each axis.
 \end{frame}
 
 
 
-\begin{frame}{Iris Principal Components Data: Assessment Measures}
+\begin{frame}{Iris PC Data: Assessment Measures}
 \renewcommand{\arraystretch}{1.1}
+\begin{small}
 \begin{center}
 \begin{tabular}{|l||c|c||l|}
     \hline
@@ -507,18 +533,17 @@ The
     \textit{prec}_P & = {\mathit{TP} \over \mathit{TP}+\mathit{FP}} = {7
 	\over 14} = 0.5 & 
     \textit{prec}_N & = {\mathit{TN} \over \mathit{TN}+\mathit{FN}} = {13 \over 16} = 0.8125\\
-    \textit{sensitivity}
+	  \textit{recall}_P (\textit{sensitivity})
     & = {\mathit{TP} \over \mathit{TP}+\mathit{FN}} = {7 \over 10} = 0.7 &
-    \specificity
+	  \textit{recall}_N = \specificity
     & = {\mathit{TN} \over \mathit{TN}+\mathit{FP}} = {13 \over 20} = 0.65\\
     \mathit{FNR} & = 1 - \textit{sensitivity} = 0.3 & 
     \mathit{FPR} & = 1 - \specificity = 0.35
   \end{align*}
-
+\end{small}
 \end{frame}
 
-
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{ROC Analysis}
 
@@ -983,6 +1008,9 @@ AUC for naive Bayes is 0.775, whereas the AUC for the random classifier
 Algorithm yields the following points that
   are added to the ROC plot, along with the running AUC:
 
+\medskip
+
+\begin{center}
 \begin{tabular}{|c|c|c|c|c|}
     \hline
   $\rho$ & $\mathit{FP}$ & $\mathit{TP}$ & $(\mathit{FPR}, \mathit{TPR})$ & AUC\\
@@ -993,6 +1021,7 @@ Algorithm yields the following points that
   0.1 & 2 & 3 & $(1, 1)$ & 0.833\\
   \hline
   \end{tabular}
+\end{center}
 
 \end{frame}
 
@@ -1021,7 +1050,7 @@ Algorithm yields the following points that
 \end{figure}
 \end{frame}
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Classif\/{i}er Evaluation}
 
@@ -1104,9 +1133,9 @@ $\hsigma^2_\theta  = {1\over K} \sum_{i=1}^K (\theta_i - \hmu_\theta)^2$\;
 \end{tightalgo}
 \end{frame}
 
-\begin{frame}[fragile]{$K$-fold Cross-Validation}
+\begin{frame}[fragile]{2D Iris Dataset: $K$-fold Cross-Validation}
 
-Consider the 2-dimensional Iris dataset 
+Consider the 2D Iris dataset 
 with $k=3$ classes. We assess
 the error rate of the full Bayes classif\/{i}er via 5-fold
 cross-validation, obtaining the following error rates when testing
@@ -1348,10 +1377,9 @@ conf\/{i}dence interval $\lB(\hmu - z_{\alpha/2}{\sigma \over
 
 
 \begin{frame}{Confidence Intervals: Unknown Variance}
-In general we do not know the 
-  true variance
-$\sigma^2$. However, we can replace $\sigma^2$ by
-the sample variance
+The true variance
+$\sigma^2$ is usually unknown, but we may use
+the sample variance:
 \begin{align*}
   \hsigma^2 = {1 \over K} \sum_{i=1}^K (\theta_i - \hmu)^2
 \end{align*}
@@ -1383,46 +1411,42 @@ $\lB(\hmu - z_{\alpha/2}{\hsigma \over \sqrt{K}},\;
 \end{frame}
 
 
+\begin{frame}{2D Iris Data: Confidence Intervals}
+Consider the 5-fold
+cross-validation ($K=5$) to assess the full
+Bayes classif\/{i}er:  
+\begin{align*}
+  \hmu_\theta &= 0.233 & \hsigma^2_\theta & = 0.00833 &
+  \hsigma_\theta & =
+  \sqrt{0.00833} = 0.0913
+\end{align*}
+Let $1-\alpha = 0.95$ be the conf\/{i}dence level and $\alpha=0.05$ the significance level. 
 
-%\begin{example}
-%Consider Example~\ref{ex:class:eval:cv}, where we applied 5-fold
-%cross-validation ($K=5$) to assess the error rate of the full
-%Bayes classif\/{i}er. The estimated expected value and variance for
-%the error rate were as follows:
-%\begin{align*}
-%  \hmu_\theta &= 0.233 & \hsigma^2_\theta & = 0.00833 &
-%  \hsigma_\theta & =
-%  \sqrt{0.00833} = 0.0913
-%\end{align*}
-%Let $\alpha = 0.95$ be the conf\/{i}dence value. It is known that the
-%standard normal distribution has 95\% of the probability density within
-%$z_{\alpha/2}=1.96$ standard deviations from the mean.
-%Thus, in the limit of large sample size, we have
-%\begin{align*}
-%  P\Biggl( \mu \in \lB(\hmu_\theta - z_{\alpha/2}{\hsigma_\theta \over
-%  \sqrt{K}}, \hmu_\theta +
-%  z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}}\rB) \Biggr) = 0.95
-%\end{align*}
-%Because $z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {1.96
-%\times 0.0913 \over \sqrt{5}} = 0.08$, we have
-%\begin{align*}
-%  P\Bigl( \mu \in (0.233 - 0.08, 0.233 + 0.08) \Bigr) =
-%  P\Bigl( \mu \in (0.153, 0.313) \Bigr) = 0.95
-%\end{align*}
-%Put differently, with 95\% conf\/{i}dence, the true expected error rate lies
-%in the interval $(0.153,0.313)$.
-%
-%If we want greater conf\/{i}dence, for example, for $\alpha=0.99$,
-%then the corresponding $z$-score value is $z_{\alpha/2} = 2.58$,
-%and thus $z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {2.58
-%\times 0.0913 \over \sqrt{5}} = 0.105$. The $99\%$ conf\/{i}dence
-%interval for $\mu$ is therefore wider $(0.128,0.338)$.
+The standard normal distribution has 95\% of the probability density within
+$z_{\alpha/2}=1.96$ standard deviations from the mean.
+\begin{align*}
+  P\Biggl( \mu \in \lB(\hmu_\theta - z_{\alpha/2}{\hsigma_\theta \over
+  \sqrt{K}}, \hmu_\theta +
+  z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}}\rB) \Biggr) = 0.95
+\end{align*}
+Because $z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {1.96
+\times 0.0913 \over \sqrt{5}} = 0.08$, we have
+\begin{align*}
+  P\Bigl( \mu \in (0.233 - 0.08, 0.233 + 0.08) \Bigr) =
+  P\Bigl( \mu \in (0.153, 0.313) \Bigr) = 0.95
+\end{align*}
+With 95\% conf\/{i}dence, the true expected error rate lies
+in the interval $(0.153,0.313)$.
+If $\alpha=0.01$, then $z_{\alpha/2} = 2.58$,
+$z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {2.58
+\times 0.0913 \over \sqrt{5}} = 0.105$, and the interval 
+becomes $(0.128,0.338)$.
 %
 %Nevertheless, $K=5$ is not a large sample size, and thus
 %the above conf\/{i}dence intervals are not that reliable.
 %\label{ex:class:eval:conflarge}
 %\end{example}
-%
+\end{frame}
 
 
 \begin{frame}{Confidence Intervals: Small Sample Size}
@@ -1489,30 +1513,6 @@ $K$.
 \end{frame}
 
 
-\begin{frame}{Iris 2D Data: Confidence Intervals}
-We apply 5-fold
-cross-validation ($K=5$) to assess the error rate of the full
-Bayes classif\/{i}er on the Iris 2D data. 
-The estimated expected value and variance for
-the error rate are as follows:
-\begin{align*}
-  \hmu_\theta &= 0.233 & \hsigma^2_\theta & = 0.00833 &
-  \hsigma_\theta & =
-  \sqrt{0.00833} = 0.0913
-\end{align*}
-Let $\alpha = 0.95$ be the conf\/{i}dence value. 
-It is known that the
-standard normal distribution has 95\% of the probability density within
-$z_{\alpha/2}=1.96$ standard deviations from the mean.
-Thus, we have $z_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = {1.96
-\times 0.0913 \over \sqrt{5}} = 0.08$, and the confidence interval is
-\begin{align*}
-  P\Bigl( \mu \in (0.233 - 0.08, 0.233 + 0.08) \Bigr) =
-  P\Bigl( \mu \in (0.153, 0.313) \Bigr) = 0.95
-\end{align*}
-\end{frame}
-
-
 \begin{frame}{Iris 2D Data: Small Sample Confidence Intervals}
 Due to the small sample
 size ($K=5$), we can get a better conf\/{i}dence interval by using the $t$
@@ -1526,9 +1526,20 @@ The 95\% conf\/{i}dence interval is therefore $$(0.233-0.113,0.233+0.113) =
 which is much wider than the overly optimistic
 conf\/{i}dence interval $(0.153,0.313)$
 obtained for the large sample case.
+
+For $1-\alpha=0.99$, $t_{\alpha/2} = 4.604$, 
+$t_{\alpha/2}{\hsigma_\theta \over \sqrt{K}} = 4.604 \times {0.0913
+\over \sqrt{5}}  = 0.188$ and the 99\%
+conf\/{i}dence interval is $$(0.233-0.188,0.233+0.188) = (0.045, 0.421)$$ 
+
+This is also much wider than the
+99\% conf\/{i}dence interval $(0.128,0.338)$ obtained
+for the large sample case.
+%Example~\ref{ex:class:eval:conflarge}.
+
 \end{frame}
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Comparing Classif\/{i}ers: Paired $t$-Test}
 How can we test for a signif\/{i}cant
@@ -1632,12 +1643,10 @@ $Z^*_\delta = {\sqrt{K} \hmu_\delta \over \hsigma_\delta}$\;
 \end{frame}
 
 
-\begin{frame}[fragile]{Paired $t$-Test}
-Consider the 2-dimensional Iris dataset 
-  with $k=3$ classes. We compare
+\begin{frame}[fragile]{2D Iris Dataset: Paired $t$-Test}
+  We compare, via error rate,
   the naive Bayes ($M^A$) with the full Bayes ($M^B$) classif\/{i}er via
-  cross-validation using $K=5$ folds. Using error rate as the performance
-  measure:
+  cross-validation using $K=5$. 
   \begin{align*}
     \matr{
      i  & \vline & 1 & 2 & 3 & 4 & 5\\
@@ -1656,13 +1665,15 @@ The estimated expected difference and variance of the differences are
   The $\zscore$ value is given as
   $ Z^*_\delta = {\sqrt{K} \hmu_\delta \over \hsigma_\delta} =
     {\sqrt{5} \times 0.033 \over 0.0577 } = 1.28 $
-
   For $1-\alpha=0.95$ (or
   $\alpha=0.05$) and
-  $K-1=4$ degrees of freedom, we have
+	$4 (K-1)$ degrees of freedom, 
   $t_{\alpha/2} = 2.776$.
+
+\medskip
+
   Because $Z^*_\delta = 1.28 \in (-2.776, 2.776) =
-  \bigl(-t_{\alpha/2}, t_{\alpha/2}\bigr)$ we cannot reject the null
+  \bigl(-t_{\alpha/2}, t_{\alpha/2}\bigr)$, we cannot reject the null
   hypothesis, that  is,
 there is no signif\/{i}cant difference
   between the naive and full Bayes classif\/{i}er for this dataset.
@@ -1728,11 +1739,14 @@ c_i$, then we have
    = \sum_{y \ne c_i} P(y|\bx)
    = 1 - P(c_i | \bx)
 \end{align*}
-Thus, to minimize the expected loss we should choose $c_i$ as the
-class that maximizes the posterior probability, that is, $c_i =
-\mathop{\arg\max}_{y} P(y|\bx)$. By def\/{i}nition
-the error rate is simply an
-estimate of the expected zero--one loss; this choice thus
+To minimize $E_y$, we should choose 
+$c_i =
+\mathop{\arg\max}_{y} P(y|\bx)$. 
+
+\medskip
+
+The error rate is an
+estimate of the expected zero--one loss, which
 minimizes the error rate.
 \end{frame}
 
@@ -1837,7 +1851,10 @@ high variance.
 
 \medskip
 In general, the expected loss can be attributed to high bias or
-high variance, with typically a trade-off between the two.
+high variance, typically a trade-off between the two.
+We prefer a classif\/{i}er with an acceptable bias
+and as low a variance as possible.
+
 \end{frame}
 
 
@@ -1847,11 +1864,10 @@ high variance, with typically a trade-off between the two.
 \begin{frame}[fragile]{Bias-variance Decomposition: SVM Quadratic Kernels}
   \small
   Iris PC Data: 
-{\tt Iris-versicolor} (class $c_1$; in circles) and
-  other two Irises (class $c_2$; in triangles). $K=10$ Bootstrap
+{\tt Iris-versicolor} ($c_1$ -circles) and
+  other two Irises ($c_2$ - triangles). $K=10$ Bootstrap
   samples, trained via SVMs, varying the regularization constant 
-  $C$ from $10^{-2}$ to $10^2$. A small value of $C$ emphasizes the
-  margin, whereas a large value of $C$ tries to minimize the slack terms.
+  $C$ from $10^{-2}$ to $10^2$. 
   The decision boundaries over the 10 samples were as follows:\\
   \normalsize
 \begin{figure}[!t]\vspace*{4pt}
@@ -1921,6 +1937,9 @@ high variance, with typically a trade-off between the two.
     }}
     }
 \end{figure}
+\small
+A small value of $C$ emphasizes the
+  margin, whereas a large value of $C$ tries to minimize the slack terms.
 \end{frame}
 
 
@@ -1992,15 +2011,19 @@ plotNo=6]{\dataC}
 \end{figure}
 
 \small
-Variance of the SVM model increases as we increase $C$, as seen
-from the varying decision boundaries. The figure on the right plots
-average variance and average bias for different values of $C$, as well
-as the expected loss. The bias-variance tradeoff is clearly visible,
-since as the bias reduces, the variance increases.  The lowest expected
-loss is obtained when $C=1$.
+Variance of the SVM model increases as we increase $C$.
+
+\medskip
+
+The bias-variance tradeoff is visible,
+since as the bias reduces, the variance increases.  
+
+\medskip
+
+The lowest expected loss is obtained when $C=1$.
 \end{frame}
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Ensemble Classif\/{i}ers}
 A classif\/{i}er is called {\em unstable} if small perturbations in the
@@ -2059,10 +2082,11 @@ voting. It does not, in general, have much effect on the bias.
 
 \begin{frame}[fragile]{Bagging: Combined SVM Classif\/{i}ers}
 
-  SVM classifiers are trained on $K=10$ bootstrap samples using $C=1$. 
+  SVM classifiers are trained on $K=10$ bootstrap samples of the Iris PCA dataset using $C=1$. 
 
 \medskip
 
+\begin{center}
     \begin{tabular}{|c|c|c|}
           \hline
       $K$ & \text{Zero--one loss} & \text{Squared loss}\\
@@ -2073,6 +2097,7 @@ voting. It does not, in general, have much effect on the bias.
      10 & 0.027 & 0.113\\
      15 & 0.027 & 0.107\\ \hline
     \end{tabular}
+\end{center}
 \end{frame}
 
 
@@ -2153,35 +2178,29 @@ The worst training
 \end{frame}
 
 
-
 \begin{frame}[fragile]{Random Forest}
 
-A {\em random forest} is an ensemble of $K$ classifiers, $M_1$, \ldots $M_K$, where
-each classifier is a decision tree created from a different bootstrap
-sample, and 
-by sampling a random subset
-of the attributes at each internal node in the decision tree. 
+A {\em random forest} is an ensemble of $K$ classifiers, $M_1$, \ldots $M_K$,
+where each classifier is a decision tree created from a different
+bootstrap sample, and by sampling a random subset of the attributes at
+each internal node in the decision tree, typically $\sqrt(d)$.
+
+\medskip
 
 Bagging only would generate similar decision trees.
-The random sampling of the
-attributes results in reducing the correlation between the trees in the
-ensemble.
+The attribute sampling reduces the trees correlation.
 
-The random forest algorithm uses the $t$th bootstrap sample to learn a
-decision tree model $M_t$, but it evaluates just $p$ random attributes 
-per split point. 
-A typical value $p$ is $\sqrt{d}$.
+\medskip
 
 The $K$ decision trees $M_1, M_2, \cdots, M_K$ 
-predict the class of a
-test point $\bx$ by majority voting:
-
+predict the class of $\bx$ by majority voting:
 \begin{align*}
   \bM^K(\bx) = \mathop{\arg\max}_{c_{\!j}} \Bigl\{ v_{\!j}(\bx) \;\bigl| j=1,\ldots,k \Bigr\}
 \end{align*}
-
 where $v_{\!j}$ is the
 number of trees that predict the class of $\bx$ as $c_{\!j}$. 
+
+\medskip
 
 Notice that if $p=d$ then the random forest approach is equivalent to
 bagging over decision tree models.
@@ -2217,9 +2236,13 @@ $\epsilon_{oob} = \frac{1}{n} \cdot \sum_{i=1}^n I\Bigl(y_i \ne
 Given $\bD_t$, any point in $\bD\setminus \bD_t$ is
 called an {\em out-of-bag} point for $M_t$.
 
+\medskip
+
 The {\em out-of-bag} error rate for each $M_t$ may be calculated 
 by considering the prediction over its out-of-bag
 points.
+
+\medskip
 
 The out-of-bag (OOB) error for the random forest is given as:
 \begin{align*}
@@ -2228,54 +2251,56 @@ The out-of-bag (OOB) error for the random forest is given as:
 (\bx_i, y_i) \in \bD\bigr\}\Bigr)
 \end{align*}
 
-Here $I$ is an indicator function that takes on value $1$ if is arument
+$I$ is an indicator function that returns $1$ if its argument
 is true, and $0$ otherwise. 
-We compute the majority out-of-bag class for each point $\bx_i \in
-\bD$ and check whether it matches the true class $y_i$. 
-The out-of-bag error rate is simply the fraction of points where the
-out-of-bag majority class does not match the true class $y_i$.
 
+\medskip
+
+We check whether the majority OOB class for $\bx_i \in
+\bD$ matches $y_i$. 
+
+\medskip
+The out-of-bag error rate is the fraction of mismatched points w.r.t.
+$y_i$.
+
+\medskip
 The out-of-bag error rate approximates the cross-validation error rate
 quite well.
 \end{frame}
 
-\begin{frame}{Random Forest}
-    Consider the Iris principal
-    components dataset comprising $n=150$ points in 2-dimensional space.
-    The task is to separate {\tt Iris-versicolor} (class $c_1$; in circles) from the other two
-  Irises (class $c_2$; in triangles). 
+\begin{frame}{Iris PC Dataset: Random Forest}
+The task is to separate {\tt Iris-versicolor} ($c_1$ - circles) from the other two Irises ($c_2$ - triangles). 
 
 \medskip
   
-  Since there are only two attributes in this dataset, we pick $p=1$
-  attribute at random for each split-point evaluation in a decision
-  tree. 
+Since $d=2$, we pick $p=1$ attribute for each split-point evaluation.
+
+\medskip
+
+We use $\eta=3$ (maximum leaf size) and minimum purity $\pi=1.0$.
 
 \medskip
   
-
-Each decision tree is grown using $\eta=3$, that is the
-  maximum leaf size is 3 (with default minimum purity $\pi=1.0$).
-
-\medskip
-  
-
-  We grow $K=5$ decision trees on different bootstrap samples. The
-  decision boundary of the random forest is shown in bold in the
-  figure. The error rate on the training data is 2.0\%. However, the
-  out-of-bag error rate is 49.33\%, which is overly pessimistic in this
-  case, since the dataset has only two attributes, and we use only one
-  attribute to evaluate each split point. 
+We grow $K=5$ decision trees on different bootstrap samples. 
 \end{frame}
 
-\begin{frame}[fragile]{Random Forest}
+\begin{frame}[fragile]{Iris PC Dataset: Random Forest}
+\framesubtitle{ Decision boundary is shown in bold.}
+
+The training error rate is 2.0\%, but OOB error rate is 49.33\%, which is
+overly pessimistic in this case, since the dataset has only two
+attributes, and we use only one attribute to evaluate each split
+point. 
+
+\vspace*{1cm}
 
 \readdata{\dataPC}{CLASS/eval/figs/iris-PC.txt}
 \readdata{\dataB}{CLASS/eval/figs/rf_boundary_irisPC_K5.txt}
 \psset{dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
 \psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
- \centerline{
-     \psgraph[tickstyle=bottom,Ox=-4,Oy=-1.4,Dx=1,Dy=1]{->}(-4.0,-1.4)(4.0,1.4){3.5in}{2in}%
+\centerline{
+\scalebox{0.8}{
+\psgraph[tickstyle=bottom,Ox=-4,Oy=-1.4,Dx=1,Dy=1]{->}(-4.0,-1.4)(4.0,1.4){3.5in}{2in}%
 \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
           nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
 \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
@@ -2283,6 +2308,7 @@ Each decision tree is grown using $\eta=3$, that is the
 \psset{dotscale=0.5,fillcolor=black}
 \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true]{\dataB}
 \endpsgraph
+}
 }
 \end{frame}
 
@@ -2302,8 +2328,10 @@ Each decision tree is grown using $\eta=3$, that is the
 
 
 We used the full Iris dataset
- which has four attributes ($d=4$), and has three classes ($k=3$), 
- $p=\sqrt{d} = 2$, $\eta=3$ and $\pi=1.0$.
+ which has four attributes ($d=4$), and three classes ($k=3$).
+ 
+\medskip
+We employed $p=\sqrt{d} = 2$, $\eta=3$ and $\pi=1.0$.
 
 \begin{center}
 \begin{footnotesize}
@@ -2327,7 +2355,7 @@ We used the full Iris dataset
 \end{center}
 
 We can see that the
- out-of-bag error decreases rapidly as we increase the number of trees.
+ OOB error decreases as we increase the number of trees.
 \end{frame}
 
 \begin{frame}{Boosting}
@@ -2387,7 +2415,7 @@ different regions of the input space.
 
 \begin{frame}{Adaptive Boosting: AdaBoost}
 
-The boosting process is repeated $K$ times.
+AdaBoost repeats the boosting process $K$ times.
 Let $t$ denote the iteration and let $\alpha_t$ denote the weight
 for the $t$th classif\/{i}er $M_t$. 
 
@@ -2403,7 +2431,6 @@ Initially all points have equal weights, that is,
   \bw^0 = \lB(\frac{1}{n}, \frac{1}{n}, \ldots, \frac{1}{n}\rB)^T =
   \frac{1}{n}\bone
 \end{align*}
-
 
 \medskip
 During iteration $t$, the
@@ -2534,41 +2561,31 @@ $\bD_t \assign$ weighted resampling with replacement from $\bD$ using $\bw^{t-1}
 
 
 
-
-
 \begin{frame}[fragile]{Boosting SVMs: Linear Kernel ($C=1$)}
 \setcounter{subfigure}{0}
 
-\begin{figure}[!b]%\vspace*{14pt}
-  \captionsetup[subfloat]{captionskip=0.25in}
+\begin{columns}
+\column{0.5\textwidth}
   \def\pshlabel#1{ {\footnotesize {$#1$}}}
   \def\psvlabel#1{ {\footnotesize {$#1$}}}
   \centerline{
-  \subfloat[$K=4$ Iterations]{
-  \label{fig:class:eval:BoostSvm}
   \scalebox{0.75}{%
     \psset{dotscale=1.5,fillcolor=lightgray,
             arrowscale=2,PointName=none}
-\psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
-  \psgraph[tickstyle=bottom,Ox=-4,Oy=-2,Dx=1,Dy=1]{->}(-4.0,-2)(4.0,
-2){2.5in}{2in}%
+    \psset{xAxisLabel=$\bu_1$, yAxisLabel= $\bu_2$}
+    \psgraph[tickstyle=bottom,Ox=-4,Oy=-2,Dx=1,Dy=1]{->}(-4.0,-2)(4.0,2){2.5in}{2in}%
     \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true,
           nEnd=50,plotNo=1,plotNoMax=2]{\dataPC}
-\listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
+    \listplot[plotstyle=dots,dotstyle=Btriangle,showpoints=true,
           nStart=51,plotNo=1,plotNoMax=2]{\dataPC}
-\begin{psclip}{%
+    \begin{psclip}{%
       \psline[](-4,-2)(-4,2)(4,2)(4,-2)(-4,-2)}
-      %\psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
-      %-0.00*x-0.00*y-1.00}
       \psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
       0.18*x+2.01*y+0.18}
       \psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
       0.51*x+0.43*y+-0.48}
       \psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
       1.03*x+0.89*y+1.60}
-      %\psplotImp[algebraic](-4.1,-2.1)(4.1,2.1){%
-      %-0.51*x+0.04*y+0.31}
-      %the above line is the same as the one below
       \psline[](0.451,-2)(0.765,2)
     \end{psclip}
     \uput[r](4,-0.45){$h_1$}
@@ -2576,11 +2593,56 @@ $\bD_t \assign$ weighted resampling with replacement from $\bD$ using $\bw^{t-1}
     \uput[u](-3.3,2){$h_3$}
     \uput[u](0.765,2){$h_4$}
     \endpsgraph
-    }}
-    \hspace{0.55in}
-    \subfloat[Effect of $K$: Avg.\ error; 5-fold CV]{
-\label{fig:class:eval:Boost5CV}
-    \scalebox{0.75}{%
+    }
+  }
+\column{0.5\textwidth}
+ The regularization constant $C=1$ .
+
+\medskip
+
+  $h_t$ is learned in iteration $t$.
+
+	\medskip
+
+No $h_t$ discriminates between classes  well:
+
+\medskip
+
+	\begin{tabular}{r|rr}
+	$M_t$ & $\epsilon_t$ & $\alpha_t$ \\ \hline
+         $h_1$ & 0.280 & 0.944 \\ 
+         $h_2$ & 0.305 & 0.826 \\ 
+         $h_3$ & 0.174 & 1.559 \\ 
+         $h_4$ & 0.282 & 0.935 \\ 
+	\end{tabular}
+	
+\end{columns}
+
+	\vspace*{0.7cm}
+
+When we combine the decisions from hyperplanes
+  weighted by $\alpha_t$, we
+  observe a marked drop in the error rate:
+ \begin{align*}
+    \tabcolsep12pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{c|cccc}
+      combined model & $\bM^1$ & $\bM^2$ & $\bM^3$ & $\bM^4$\\
+    \hline
+    training error rate & 0.280 & 0.253 & 0.073 & 0.047\\
+    \end{tabular}
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}[fragile]{Boosting SVMs: Linear Kernel ($C=1$)}
+	
+  Five-fold cross-validation using independent testing data.
+
+	\medskip
+
+\begin{columns}
+\column{0.5\textwidth}
+\hspace*{0.5cm}
+\scalebox{0.75}{%
 \readdata{\dataBoost}{CLASS/eval/figs/boosting_results_K.txt}
 \psset{dotscale=1.5,fillcolor=lightgray}
 \psset{xAxisLabel=$K$,yAxisLabel=}
@@ -2595,19 +2657,36 @@ plotNo=1,nEnd=27,nStep=1]{\dataBoost}
 \listplot[showpoints=true,
 dotstyle=Btriangle,plotNoMax=3,plotNo=2,nEnd=27,nStep=1]{\dataBoost}
 \end{psgraph}
-    }
-    }
-    }
-\end{figure}
+}
+\column{0.5\textwidth}
+  As the number of
+  base classif\/{i}ers $K$ increases, both error
+  rates reduce. 
 
-\small
-Iris PC Data: Hyperplane learnt in $t$th iteration is $h_t$. 
-We can observe that the first three hyperplanes $h_1$, $h_2$ and $h_3$
-already capture the essential features of
-  the nonlinear decision
-  boundary.
-  Further reduction in the training error is obtained by increasing the
-  number of boosting steps $K$.
+	\medskip
+
+  However, while the training error essentially
+  goes to $0$, the
+	testing error does not reduce beyond $0.02$ ($K=110$).
+
+
+\end{columns}
+
+	\vspace*{0.7cm}
+
+  This example illustrates the effectiveness of boosting in
+  reducing the bias.
+
+	\medskip
+Bagging can be considered as a special case of AdaBoost, where
+$w^t = \tfrac{1}{n} \bone$, and $\alpha_t = 1$
+for all $K$ iterations. 
+
+\medskip
+
+The weighted resampling defaults
+to regular resampling with replacement, and majority voting predicts the class.
+
 \end{frame}
 
 
@@ -2674,11 +2753,14 @@ $C \assign $ train combiner classifier on $\bZ$\;
 
 
 
-\begin{frame}{Stacking}
-    We apply stacking on the Iris principal components dataset.
-    We use three base classifiers, namely SVM with a linear kernel
-    (with regularization constant $C=1$), random forests (with number of
-    trees $K=5$ and number of random attributes $p=1$), and naive Bayes. 
+\begin{frame}{Iris 2D PCA - Stacking}
+    
+    We use three base classifiers:
+	\begin{itemize}
+	\item SVM with a linear kernel (with regularization constant $C=1$), 
+	\item random forests (with $K=5$ trees and $p=1$ random attributes), and 
+	\item naive Bayes. 
+	\end{itemize}
 
 \medskip
 
@@ -2688,8 +2770,11 @@ $C \assign $ train combiner classifier on $\bZ$\;
 
 \medskip
 
-    We trained the data on a random subset of 100 points, and tested
-    on the remaining 50 points. 
+    Training uses an 100-point random subset.
+
+    \medskip
+
+Testing uses the remaining 50 points. 
 
 \begin{center}
 \begin{tabular}{|l|c|}
@@ -2703,13 +2788,18 @@ Stacking & 0.92 \\ \hline
 \end{center}
 \end{frame}
 
-\begin{frame}[fragile]{Stacking}
+\begin{frame}[fragile]{Iris 2D PCA - Stacking}
+
 \readdata{\dataN}{CLASS/eval/figs/stacking_svc_trained.txt}
 \readdata{\dataB}{CLASS/eval/figs/stacking_svc_boundary.txt}
 \readdata{\dataBo}{CLASS/eval/figs/linearSVC_C1_stacking_boundary.txt}
 \readdata{\dataBi}{CLASS/eval/figs/nb_s_stacking_boundary.txt}
 \readdata{\dataBii}{CLASS/eval/figs/rf_mf1_stacking_boundary.txt}
 
+\begin{columns}
+\column{0.5\textwidth}
+\hspace*{1cm}
+\scalebox{0.6}{
 \psset{dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
 \centerline{
 \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
@@ -2727,6 +2817,21 @@ Stacking & 0.92 \\ \hline
 \listplot[plotstyle=dots,dotstyle=Bo,showpoints=true]{\dataB}
 \endpsgraph
 }
+}
+\column{0.5\textwidth}
+Plot shows the decision
+boundaries for each of the three base classifiers:
+
+\begin{itemize}
+\item linear SVM boundary is the line in light gray, 
+\item naive Bayes boundary is the ellipse comprising the gray
+circles, and
+\item random forest boundary is shown via plusses (`+').
+\end{itemize}
+
+The boundary of the stacking classifier is shown as the thicker black
+lines. 
+\end{columns}
 \end{frame}
 
 

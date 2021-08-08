@@ -77,7 +77,7 @@ $d$-dimensional space to a 1-dimensional space (along $\bw$).
 
 
 
-\begin{frame}{Optimal Linear Discriminant Direction}
+\begin{frame}{Iris 2D Data: Optimal Linear Discriminant Direction}
 \begin{figure}[!t]\vspace*{-14pt}
     \centering
     %\vspace{0.2in}
@@ -296,7 +296,29 @@ We can finally normalize $\bw$ to be a unit vector.
 \end{frame}
 
 
+\begin{frame}{Linear Discriminant Direction: Iris 2D Data}
 
+We can directly compute $\bw$ as follows:
+    \begin{align*}
+        \bw & = \bS^{-1}(\bmu_1-\bmu_2)\\
+        & =
+        \amatr{r}{0.066 & -0.029\\-0.100 & 0.044}
+        \amatr{r}{-1.246\\ 0.546} = \amatr{r}{-0.0527 \\ 0.0798}
+    \end{align*}
+    After normalizing, we have
+    \begin{align*}
+        \bw = {\bw \over \norm{\bw}} =
+        {1 \over 0.0956} \amatr{r}{-0.0527 \\ 0.0798} =
+        \amatr{r}{-0.551\\0.834}
+    \end{align*}
+    Note that even though the sign is reversed for $\bw$,
+    they represent the same direction; only the scalar multiplier is
+    different.
+
+\end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+ 
 \begin{frame}{Kernel Discriminant Analysis} 
 The goal of kernel LDA is to f\/{i}nd the direction vector $\bw$ in
 feature space that maximizes
@@ -472,17 +494,21 @@ $\ba \assign {\ba \over \sqrt{\ba^T \bK \ba}}$ \tcp{normalize $\bw$ to be unit v
 \readdata{\dataPC}{CLASS/lda/figs/iris-PC.txt}
 \readdata{\dataW}{CLASS/lda/figs/projw.dat} 
 
-\begin{frame}[fragile]{Kernel Discriminant Analysis: Quadratic Homogeneous Kernel}
+\begin{frame}[fragile]{Kernel Discriminant Analysis}
+\framesubtitle{Quadratic Homogeneous Kernel}
 
-\begin{center}
-\begin{small}
 Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and
-  $c_2$ (triangles; other two Iris types).\\
-  Kernel Function: $K(\bx_i, \bx_j) = (\bx_i^T\bx_j)^2$. \\
-  Contours of constant projection onto optimal kernel
-  discriminant. 
-\end{small}
-\end{center}
+  $c_2$ (triangles; other two types).
+ 
+\smallskip
+
+  Kernel Function: $K(\bx_i, \bx_j) = (\bx_i^T\bx_j)^2$.
+
+\smallskip
+
+Contours of constant projection onto optimal kernel
+discriminant, i.e., points along both the curves have the
+same value when projected onto $\bw$.
 
 
 \begin{figure}
@@ -525,17 +551,27 @@ Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and
 
 
 
-\begin{frame}{Kernel Discriminant Analysis: Quadratic Homogeneous Kernel}
+\begin{frame}[fragile]{Kernel Discriminant Analysis}
+\framesubtitle{Quadratic Homogeneous Kernel}
 
-\begin{center}
-\begin{small}
-Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and $c_2$ (triangles; other two Iris types).\\
-  Kernel Function: $K(\bx_i, \bx_j) = (\bx_i^T\bx_j)^2$.\\
-  Projection onto Optimal Kernel Discriminant.
-\end{small}
-\end{center}
+Projecting $\bx_i \in \bD$  onto $\bw$, which separates the two classes.
 
-  \begin{figure}
+\smallskip
+
+The projected scatters and means for both classes are as follows:
+    \begin{align*}
+        m_1 & = 0.338 & m_2 & = 4.476\\
+        s_1^2 & = 13.862 & s_2^2 & = 320.934
+    \end{align*}
+    The value of $J(\bw)$ is given as
+    \begin{align*}
+        J(\bw) = {(m_1-m_2)^2 \over s_1^2+s_2^2} =
+        {(0.338-4.476)^2 \over 13.862+320.934} = {17.123 \over
+        334.796} = 0.0511
+    \end{align*}
+    which,  as expected, matches $\lambda_1 = 0.0511$ from above.
+
+\begin{figure}
 \scalebox{0.8}{
 \psset{dotscale=1.8, arrowscale=2,PointName=none} 
 \psset{xAxisLabel=$\bw$, yAxisLabel=$~$}
@@ -566,16 +602,23 @@ Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and $c_2$ (triangles; other 
 \readdata{\dataMcb}{CLASS/lda/figs/kdamappedPoints-c2.dat}
 \begin{frame}{Kernel Feature Space and Optimal Discriminant}
 
-\begin{center}
-\begin{small}
-Iris 2D Data: $c_1$ (circles; {\tt iris-virginica}) and
-  $c_2$ (triangles; other two Iris types).\\ Kernel Function: 
-  $K(\bx_i, \bx_j) = (\bx_i^T\bx_j)^2$.
-\end{small}
-\end{center}
+It is not desirable or possible to obtain an explicit discriminant vector
+$\bw$. 
+
+\smallskip
+
+$\bx=(x_1,x_2)^T \in \setR^2$ is mapped
+to $\phi(\bx) = (\sqrt{2}x_1x_2, x_1^2, x_2^2)^T \in \setR^3$.
+
+\smallskip
+
+The projection of $\phi(\bx_i)$ onto $\bw$ is also shown, where
+\begin{align*}
+\bw = 0.511x_1x_2 + 0.761x_1^2 - 0.4 x_2^2
+\end{align*}
 
 \begin{figure}[!t]
-\scalebox{0.7}{
+\scalebox{0.6}{
 \centering 
 \psset{unit=0.4in} \psset{arrowscale=2}
 \psset{Alpha=120,Beta=-150}

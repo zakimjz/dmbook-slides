@@ -9,23 +9,32 @@
 %\chapter{Deep Learning}
 %\label{ch:reg:deep}
 %
-%In this chapter, we first look at deep neural networks that include
-%feedback from one layer to another. Such network are called {\em
-%recurrent neural networks} (RNNs), and they can typically be trained by
-%unfolding (or unrolling) the recurrent connections, resulting in deep
-%networks whose parameters can be learned via the backpropagation
-%algorithm. Since RNNs are prone to the vanishing and exploding gradients
-%problem, we next consider {\em gated RNNs} that introduce a new type of
-%layer that endows the network with the ability to selectively read,
-%store, and write the hidden state via an internal {\em memory layer}.
-%Gated RNNs are highly effective for prediction tasks on sequence inputs.
-%Finally, we consider {\em convolutional neural networks} (CNNs) that are
-%deep MLPs that exploit spatial or temporal relationships between
-%different elements of each layer to construct a hierarchy of {\em
-%features} that can be used for regression or classification tasks.
-%Unlike regular MLPs whose layers are fully connected, CNNs have layers
-%that are localized and sparse. In particular, CNNs are highly effective
-%for image inputs.
+\begin{frame}{Overview}
+
+Recurrent Neural Networks (RNNs) include feedback from one layer to another and
+they can typically be trained by unfolding (or unrolling) the recurrent
+connections, resulting in deep networks whose parameters can be learned
+via the backpropagation algorithm. 
+
+\medskip
+
+Since RNNs are prone to the vanishing and exploding gradients
+problem, we next consider {\em gated RNNs} that introduce a new type of
+layer that endows the network with the ability to selectively read,
+store, and write the hidden state via an internal {\em memory layer}.
+Gated RNNs are highly effective for prediction tasks on sequence inputs.
+
+\medskip
+
+%Finally, we consider 
+Convolutional Neural Networks (CNNs) that are
+deep MLPs that exploit spatial or temporal relationships between
+different elements of each layer to construct a hierarchy of {\em
+features} that can be used for regression or classification tasks.
+Unlike regular MLPs whose layers are fully connected, CNNs have layers
+that are localized and sparse. In particular, CNNs are highly effective
+for image inputs.
+\end{frame}
 %
 %% Deep MLPs can be trained via the 
 %% backpropagation algorithm which computes the net gradients at the output
@@ -45,7 +54,11 @@
 %
 Multilayer perceptrons are feed-forward networks in which the
 information flows in only one direction, namely from the input layer to
-the output layer via the hidden layers. In contrast, recurrent neural
+the output layer via the hidden layers. 
+
+	\medskip
+
+In contrast, recurrent neural
 networks (RNNs) are dynamically driven (e.g., temporal), with a {\em
 feedback} loop between two (or more) layers, which makes them %such networks
 ideal for learning from  sequence data. %For example,
@@ -79,9 +92,9 @@ function that predicts the target sequence $\cY$ given the input sequence
 $\cX$. That is, the predicted output $\bo_t$ on input $\bx_t$ should be
 similar or close to the target response $\by_t$, for each time point $t$.
 
+\end{frame}
 
-\medskip
-
+\begin{frame}{Recurrent Neural Network}
 To learn dependencies between elements of the input sequence, an RNN maintains
 a sequence of $m$-dimensional hidden state vectors $\bh_t \in \setR^m$, where
 $\bh_t$ captures the essential features of the input sequences up to time
@@ -89,14 +102,13 @@ $t$.%, as illustrated in \cref{fig:reg:deep:rnn}.
 The hidden vector $\bh_t$
 at time $t$ depends on the input vector $\bx_t$ at time $t$ and the previous
 hidden state vector $\bh_{t-1}$ from time $t-1$, and it is computed as follows:
-\begin{align}
-    \tcbhighmath{
-    \bh_t = f^h(\bW_{\!i}^T \bx_t + \bW_{\!h}^T
+\begin{align*}
+   \tcbhighmath{
+   \bh_t = f^h(\bW_{\!i}^T \bx_t + \bW_{\!h}^T
 \bh_{t-1} + \bb_{h})}
-    \label{eq:reg:deep:hidden_t}
-\end{align}
+   %\label{eq:reg:deep:hidden_t}
+\end{align*}
 Here, $f^h$ is the hidden state activation function, typically tanh or ReLU. 
-\end{frame}
 %Also,
 %we need an initial hidden state vector $\bh_0$ that serves as the prior
 %state to compute $\bh_1$. This is usually set to the zero vector, or
@@ -124,11 +136,10 @@ Here, $f^h$ is the hidden state activation function, typically tanh or ReLU.
 %activation, or a softmax activation for one-hot encoded categorical
 %output values. 
 
-\begin{frame}{Recurrent Neural Network}
-\psset{tnpos=l,tnsep=2pt,colsep=2,rowsep=1.5,mcol=c,
-arrowscale=1.5, arrows=->}
-\vspace{0.4in}
+\psset{tnpos=l,tnsep=2pt,colsep=2,rowsep=1.5,mcol=c, arrowscale=1.5, arrows=->}
+\vspace{0.7in}
 \centerline{
+\scalebox{0.8}{
 \psmatrix
 \TR[name=x]{\myfbox{$\bx_t$}} &
 \TR[name=h]{\myfbox{$\bh_t$}} &
@@ -141,7 +152,7 @@ arrowscale=1.5, arrows=->}
 \nccircle[linecolor=gray]{->}{h}{0.3in}\nbput[npos=0.5]{$\bW_{\!h},\bb_{h}$}%
 \ncput*{\scalebox{0.7}{$-1$}}
 \endpsmatrix
-}
+}}
 \end{frame}
 %
 %\index{recurrent neural networks!parameter sharing}
@@ -196,36 +207,42 @@ parameters.
 % \captionsetup[subfloat]{captionskip=12pt}
 %    \hspace{0.25in}
 \begin{frame}{RNN unfolded in time.}
+We can observe that the feed-back loop has been unfolded  for $\tau$ time steps.
+We can also explicitly observe the parameter sharing across
+time, since all weight matrices and bias vectors are independent of $t$.
+
+\medskip
+
     \psset{tnpos=l,tnsep=2pt,colsep=1.5,rowsep=1.5,mcol=c,
     arrowscale=1.5, arrows=->}
 \centerline{
-%\hspace{-0.2in}
+\hspace{-0.5in}
 %    \subfloat[RNN]{%
 %        \label{fig:reg:deep:rnn_vert}
-%        \scalebox{0.7}{%
-%\begin{minipage}{0.6in}
-%\psmatrix
-%\\[-3em]
-%\TR[name=o]{\myfbox{$\bo_t$}}\\
-%\TR[name=h]{\myfbox{$\bh_t$}}\\
-%\TR[name=x]{\myfbox{$\bx_t$}}
+\scalebox{0.6}{%
+\begin{minipage}{0.6in}
+\psmatrix
+\\[-3em]
+\TR[name=o]{\myfbox{$\bo_t$}}\\
+\TR[name=h]{\myfbox{$\bh_t$}}\\
+\TR[name=x]{\myfbox{$\bx_t$}}
 %%bias to next layer
-%\psset{linewidth=2pt}
-%\ncline{x}{h}\nbput[npos=0.2]{$\bW_{\!i}$}
-%\ncline{h}{o}\nbput[npos=0.7]{$\bW_{\!o}, \bb_{o}$}
+\psset{linewidth=2pt}
+\ncline{x}{h}\nbput[npos=0.2]{$\bW_{\!i}$}
+\ncline{h}{o}\nbput[npos=0.7]{$\bW_{\!o}, \bb_{o}$}
 %% \nccircle[angleA=90]{->}{h}{0.3in}\nbput[npos=0.5]{$\bW_{\!h},\bb_{h}$}%
-%\ncloop[linecolor=gray,loopsize=1.2,angleA=0,angleB=180,arm=0.6,linearc=0.2]{->}{h}{h}%
-%\nbput[npos=3.5]{$\bW_h, \bb_h$}%
-%\ncput*[npos=1.5]{\scalebox{0.7}{$-1$}}
-%\endpsmatrix
-%\end{minipage}
-%}}
-%\hspace{0.3in}
+\ncloop[linecolor=gray,loopsize=1.2,angleA=0,angleB=180,arm=0.6,linearc=0.2]{->}{h}{h}%
+\nbput[npos=3.5]{$\bW_h, \bb_h$}%
+\ncput*[npos=1.5]{\scalebox{0.7}{$-1$}}
+\endpsmatrix
+\end{minipage}
+}%}
+\hspace{0.3in}
 %\subfloat[RNN: unfolded in time]{%
 %    \label{fig:reg:deep:rnn_unfolded_t}
-\hspace*{-1in}
-    \scalebox{0.75}{%
-        \begin{minipage}{4.9in}
+%\hspace*{-1in}
+\scalebox{0.6}{%
+\begin{minipage}{4.9in}
 \psmatrix
 [mnode=none]{$t=0$} 
     & [mnode=none]{$t=1$} 
@@ -279,33 +296,6 @@ parameters.
 %\end{figure}
 %
 %%\subsection{Training an RNN}
-\begin{frame}{Training an RNN}
-%
-%The training data for the RNN is given as $\bD = \{\cX_i, \cY_i\}_{i=1}^{n}$,
-%comprising $n$ input sequences $\cX_i$ and the corresponding target response
-%sequences $\cY_i$, with sequence length $\tau_i$.  Given each pair $(\cX, \cY)
-%\in \bD$, with $\cX = \tup{\bx_1, \bx_2, \cdots, \bx_\tau}$ and 
-%$\cY = \tup{\by_1, \by_2,
-%\cdots, \by_\tau}$, the RNN has to update the model parameters $\bW_{\!i},
-% \bW_{\!h}, \bb_{h}, \bW_{\!o}, \bb_{o}$ for the
-% input, hidden and output layers, to learn the corresponding output sequence
-%$\cO=\tup{\bo_1, \bo_2, \cdots, \bo_\tau}$.  
-For training the network, we compute
-the error or {\em loss} between the predicted and response vectors over
-all time steps. For example, the squared error loss is given as
-\begin{align*}
-    \cE_{\!\cX} = \sum_{t=1}^\tau \cE_{\bx_t} = \frac{1}{2} \cdot
-    \sum^{\tau}_{t=1} \norm{\by_t - \bo_t}^2
-\end{align*}
-On the other hand, if we use a softmax activation at the output layer,
-then we use the cross-entropy loss, given as
-\begin{align*}
-    \cE_{\!\cX} = \sum_{t=1}^\tau \cE_{\bx_t} =
-    - \sum^{\tau}_{t=1} \sum^{p}_{i=1} y_{ti} \cdot \ln(o_{ti})
-\end{align*}
-where $\by_t = (y_{t1}, y_{t2}, \cdots, y_{tp})^T \in \setR^p$ and
-$\bo_t = (o_{t1}, o_{t2}, \cdots, o_{tp})^T \in \setR^p$.
-\end{frame}
 %On training input of length $\tau$ we first unfold the RNN for $\tau$ steps,
 %following which the parameters can be learned via the standard feed-forward
 %and backpropagation steps, keeping in mind the connections between the layers.
@@ -317,7 +307,11 @@ $\bo_t = (o_{t1}, o_{t2}, \cdots, o_{tp})^T \in \setR^p$.
 %
 The feed-forward process starts at time $t=0$, taking as input the initial
 hidden state vector $\bh_0$, which is usually set to $\bzero$ or it can be
-user-specified, say from a previous prediction step. Given the current set
+user-specified, say from a previous prediction step. 
+
+	\medskip
+
+Given the current set
 of parameters, we predict the output $\bo_t$ at each time step $t=1,2,\cdots,
 \tau$.% via \cref{eq:reg:deep:hidden_t} and \cref{eq:reg:deep:output_t}:
 %%\begin{samepage}
@@ -344,110 +338,7 @@ the input sequence, since $\bo_t$ depends on all the previous input vectors
 $\bx_1, \bx_2, \cdots, \bx_t$, but not on any future inputs $\bx_{t+1},
 \cdots, \bx_\tau$.
 \end{frame}
-%
-%
-%\subsection{Backpropagation in Time}
-\begin{frame}{Backpropagation in Time}
-%\index{recurrent neural networks!backpropagation phase}
-%\index{backpropagation!RNN}
-%\index{backpropagation!recurrent neural networks}
-%\label{sec:reg:deep:rnn_bpt}
-Once the the output sequence $\cO = \tup{\bo_1,
-\bo_2, \cdots, \bo_\tau}$ is generated, we can compute the error in the predictions 
-using the squared error
-(or cross-entropy) loss function, which can in turn be used to compute the
-net gradient vectors that are backpropagated from the output layers to the
-input layers for each time step.
 
-
-\medskip
-
-%For the backpropagation step it is easier to view the RNN in terms
-%of the distinct layers based on the dependencies, as opposed to
-%unfolding in time. %\cref{fig:reg:deep:rnn_unfolded_l_ff} shows the RNN
-%unfolded using this layer view as opposed to the time view shown in
-%\cref{fig:reg:deep:rnn_unfolded_t}. The first layer is $l=0$ comprising the
-%hidden states $\bh_0$ and the input vector $\bx_1$, both of which are required
-%to compute $\bh_1$ in layer $l=1$, which also includes the input vector
-%$\bx_2$. In turn, both $\bh_1$ and $\bx_2$ are required to compute
-%$\bh_2$ in layer $l=2$, and so on for other layers. Note
-%also that $\bo_1$ is not output until layer $l=2$ since we can compute the
-%output only once $\bh_1$ has been computed in the previous layer. The layer
-%view is essentially indexed by the hidden state vector index, except the
-%final layer $l=\tau+1$ that outputs $\bo_{\tau}$ that depends on $\bh_\tau$
-%from layer $l=\tau$. 
-
-Let $\cE_{\bx_t}$ denote the loss on input vector $\bx_t$ from the input
-sequence $\cX = \tup{\bx_1, \bx_2, \cdots, \bx_\tau}$.
-%The unfolded feed-forward RNN for $\cX$  has $l=\tau+1$ layers.%, as
-%shown in \cref{fig:reg:deep:rnn_unfolded_l_ff}. 
-
-
-\medskip
-
-Define $\bdelta^o_t$ as the net gradient vector for the output vector
-$\bo_t$, i.e., the
-derivative of the error function $\cE_{\bx_t}$
-with respect to the net value at each neuron in $\bo_t$, given as
-\begin{align*}
-    \bdelta^o_t = \lB(
-        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;o}_{t1}},
-        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;o}_{t2}},
-                \cdots,
-                \frac{\partial \cE_{\bx_t}}{\partial \net^{\;o}_{tp}}
-    \rB)^T
-\end{align*}
-where $\bo_t = (o_{t1}, o_{t2}, \cdots, o_{tp})^T \in \setR^p$ is the
-$p$-dimensional output vector at time $t$, and $\net^{\;o}_{ti}$ is
-the net value at output neuron $o_{ti}$ at time $t$.
-\end{frame}
-
-\begin{frame}{Backpropagation in Time}
-Likewise, let $\bdelta^h_t$ denote the net gradient vector for the
-hidden state neurons $\bh_t$ at time $t$
-
-\begin{align*}
-    \bdelta^h_t = \lB(
-        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;h}_{t1}},
-        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;h}_{t2}},
-                \cdots,
-                \frac{\partial \cE_{\bx_t}}{\partial \net^{\;h}_{tm}}
-    \rB)^T
-\end{align*}
-where $\bh_t = (h_{t1}, h_{t2}, \cdots, h_{tm})^T \in \setR^m$ is the
-$m$-dimensional hidden state vector at time $t$, and $\net^{\;h}_{ti}$ is
-the net value at hidden neuron $h_{ti}$ at time $t$.
-\end{frame}
-%Let $f^h$ and $f^o$ denote the
-%activation functions for the hidden state and output neurons, and
-%let $\partial\bff^{\;h}_t$ and $\partial\bff^{\;o}_t$ 
-%denote the vector of the derivatives of the activation
-%function with respect to the net signal (that is, its argument) 
-%for the hidden and output
-%neurons at time $t$, given as
-%\begin{align*}
-%    \partial\bff^{\;h}_t & = \lB(
-%        \frac{\partial f^h(\net^{\;h}_{t1})}{\partial\net^{\;h}_{t1}},
-%        \frac{\partial f^h(\net^{\;h}_{t2})}{\partial\net^{\;h}_{t2}},
-%        \cdots, \frac{\partial f^h(\net^{\;h}_{tm})}{\partial
-%    \net^{\;h}_{tm}}\rB)^T\\
-%\partial\bff^{\;o}_t & = \lB(
-%    \frac{\partial f^o(\net^{\;o}_{t1})}{\partial\net^{\;o}_{t1}},
-%    \frac{\partial f^o(\net^{\;o}_{t2})}{\partial\net^{\;o}_{t2}},
-%\cdots, \frac{\partial f^o(\net^{\;o}_{tp})}{\partial \net^{\;o}_{tp}}\rB)^T
-%\end{align*}
-%Finally, let $\partial\bcE_{\bx_t}$ denote the vector of partial
-%derivatives of the error function with respect to $\bo_t$:
-%\begin{align*}
-%    \partial\bcE_{\bx_t} = 
-%    \lB(\frac{\partial \cE_{\bx_t}}{\partial o_{t1}},
-%        \frac{\partial \cE_{\bx_t}}{\partial o_{t2}},
-%    \;\cdots,\; \frac{\partial \cE_{\bx_t}}{\partial o_{tp}}\rB)^T
-%\end{align*}
-%
-%\begin{figure}[!t]
-%    \large
-%\captionsetup[subfloat]{captionskip=12pt}
 \begin{frame}{RNN: Feed-forward step}
 \centerline{
     \psset{tnpos=l,tnsep=2pt,colsep=1.5,rowsep=1.75,mcol=c,
@@ -513,6 +404,144 @@ the net value at hidden neuron $h_{ti}$ at time $t$.
 \endpsmatrix
 }}%}
 \end{frame}
+
+\begin{frame}{Training an RNN}
+%
+%The training data for the RNN is given as $\bD = \{\cX_i, \cY_i\}_{i=1}^{n}$,
+%comprising $n$ input sequences $\cX_i$ and the corresponding target response
+%sequences $\cY_i$, with sequence length $\tau_i$.  Given each pair $(\cX, \cY)
+%\in \bD$, with $\cX = \tup{\bx_1, \bx_2, \cdots, \bx_\tau}$ and 
+%$\cY = \tup{\by_1, \by_2,
+%\cdots, \by_\tau}$, the RNN has to update the model parameters $\bW_{\!i},
+% \bW_{\!h}, \bb_{h}, \bW_{\!o}, \bb_{o}$ for the
+% input, hidden and output layers, to learn the corresponding output sequence
+%$\cO=\tup{\bo_1, \bo_2, \cdots, \bo_\tau}$.  
+For training the network, we compute
+the error or {\em loss} between the predicted and response vectors over
+all time steps. For example, the squared error loss is given as
+\begin{align*}
+    \cE_{\!\cX} = \sum_{t=1}^\tau \cE_{\bx_t} = \frac{1}{2} \cdot
+    \sum^{\tau}_{t=1} \norm{\by_t - \bo_t}^2
+\end{align*}
+On the other hand, if we use a softmax activation at the output layer,
+then we use the cross-entropy loss, given as
+\begin{align*}
+    \cE_{\!\cX} = \sum_{t=1}^\tau \cE_{\bx_t} =
+    - \sum^{\tau}_{t=1} \sum^{p}_{i=1} y_{ti} \cdot \ln(o_{ti})
+\end{align*}
+where $\by_t = (y_{t1}, y_{t2}, \cdots, y_{tp})^T \in \setR^p$ and
+$\bo_t = (o_{t1}, o_{t2}, \cdots, o_{tp})^T \in \setR^p$.
+\end{frame}
+%
+%
+%\subsection{Backpropagation in Time}
+\begin{frame}{Backpropagation in Time}
+%\index{recurrent neural networks!backpropagation phase}
+%\index{backpropagation!RNN}
+%\index{backpropagation!recurrent neural networks}
+%\label{sec:reg:deep:rnn_bpt}
+Once the the output sequence $\cO = \tup{\bo_1,
+\bo_2, \cdots, \bo_\tau}$ is generated, we can compute the error in the predictions 
+using the squared error
+(or cross-entropy) loss function, which can in turn be used to compute the
+net gradient vectors that are backpropagated from the output layers to the
+input layers for each time step.
+
+
+\medskip
+
+%For the backpropagation step it is easier to view the RNN in terms
+%of the distinct layers based on the dependencies, as opposed to
+%unfolding in time. %\cref{fig:reg:deep:rnn_unfolded_l_ff} shows the RNN
+%unfolded using this layer view as opposed to the time view shown in
+%\cref{fig:reg:deep:rnn_unfolded_t}. The first layer is $l=0$ comprising the
+%hidden states $\bh_0$ and the input vector $\bx_1$, both of which are required
+%to compute $\bh_1$ in layer $l=1$, which also includes the input vector
+%$\bx_2$. In turn, both $\bh_1$ and $\bx_2$ are required to compute
+%$\bh_2$ in layer $l=2$, and so on for other layers. Note
+%also that $\bo_1$ is not output until layer $l=2$ since we can compute the
+%output only once $\bh_1$ has been computed in the previous layer. The layer
+%view is essentially indexed by the hidden state vector index, except the
+%final layer $l=\tau+1$ that outputs $\bo_{\tau}$ that depends on $\bh_\tau$
+%from layer $l=\tau$. 
+
+Let $\cE_{\bx_t}$ denote the loss on $\bx_t$ from the input
+sequence $\cX = \tup{\bx_1, \bx_2, \cdots, \bx_\tau}$.
+%The unfolded feed-forward RNN for $\cX$  has $l=\tau+1$ layers.%, as
+%shown in \cref{fig:reg:deep:rnn_unfolded_l_ff}. 
+
+
+\medskip
+
+Define $\bdelta^o_t$ as the net gradient vector for the output vector
+$\bo_t$, i.e., the
+derivative of the error function $\cE_{\bx_t}$
+with respect to the net value at each neuron in $\bo_t$, given as
+\begin{align*}
+    \bdelta^o_t = \lB(
+        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;o}_{t1}},
+        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;o}_{t2}},
+                \cdots,
+                \frac{\partial \cE_{\bx_t}}{\partial \net^{\;o}_{tp}}
+    \rB)^T
+\end{align*}
+where $\bo_t = (o_{t1}, o_{t2}, \cdots, o_{tp})^T \in \setR^p$ is the
+$p$-dimensional output vector at time $t$, and $\net^{\;o}_{ti}$ is
+the net value at output neuron $o_{ti}$ at time $t$.
+\end{frame}
+
+\begin{frame}{Backpropagation in Time}
+Likewise, let $\bdelta^h_t$ denote the net gradient vector for the
+hidden state neurons $\bh_t$ at time $t$
+
+\begin{align*}
+    \bdelta^h_t = \lB(
+        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;h}_{t1}},
+        \frac{\partial \cE_{\bx_t}}{\partial \net^{\;h}_{t2}},
+                \cdots,
+                \frac{\partial \cE_{\bx_t}}{\partial \net^{\;h}_{tm}}
+    \rB)^T
+\end{align*}
+where $\bh_t = (h_{t1}, h_{t2}, \cdots, h_{tm})^T \in \setR^m$ is the
+$m$-dimensional hidden state vector at time $t$, and $\net^{\;h}_{ti}$ is
+the net value at hidden neuron $h_{ti}$ at time $t$.
+
+\medskip
+
+The key step in backpropagation is to compute the net gradients in
+reverse order, starting from the output neurons to the input neurons via
+the hidden neurons. 
+\end{frame}
+%Let $f^h$ and $f^o$ denote the
+%activation functions for the hidden state and output neurons, and
+%let $\partial\bff^{\;h}_t$ and $\partial\bff^{\;o}_t$ 
+%denote the vector of the derivatives of the activation
+%function with respect to the net signal (that is, its argument) 
+%for the hidden and output
+%neurons at time $t$, given as
+%\begin{align*}
+%    \partial\bff^{\;h}_t & = \lB(
+%        \frac{\partial f^h(\net^{\;h}_{t1})}{\partial\net^{\;h}_{t1}},
+%        \frac{\partial f^h(\net^{\;h}_{t2})}{\partial\net^{\;h}_{t2}},
+%        \cdots, \frac{\partial f^h(\net^{\;h}_{tm})}{\partial
+%    \net^{\;h}_{tm}}\rB)^T\\
+%\partial\bff^{\;o}_t & = \lB(
+%    \frac{\partial f^o(\net^{\;o}_{t1})}{\partial\net^{\;o}_{t1}},
+%    \frac{\partial f^o(\net^{\;o}_{t2})}{\partial\net^{\;o}_{t2}},
+%\cdots, \frac{\partial f^o(\net^{\;o}_{tp})}{\partial \net^{\;o}_{tp}}\rB)^T
+%\end{align*}
+%Finally, let $\partial\bcE_{\bx_t}$ denote the vector of partial
+%derivatives of the error function with respect to $\bo_t$:
+%\begin{align*}
+%    \partial\bcE_{\bx_t} = 
+%    \lB(\frac{\partial \cE_{\bx_t}}{\partial o_{t1}},
+%        \frac{\partial \cE_{\bx_t}}{\partial o_{t2}},
+%    \;\cdots,\; \frac{\partial \cE_{\bx_t}}{\partial o_{tp}}\rB)^T
+%\end{align*}
+%
+%\begin{figure}[!t]
+%    \large
+%\captionsetup[subfloat]{captionskip=12pt}
 
 \begin{frame}{RNN:Backpropagation step}
 %\vspace{0.2in}
@@ -589,21 +618,22 @@ the net value at hidden neuron $h_{ti}$ at time $t$.
 %\subsubsection{Computing Net Gradients}
 \begin{frame}{Computing Net Gradients}
 %\index{recurrent neural networks!net gradients}
-The key step in backpropagation is to compute the net gradients in
-reverse order, starting from the output neurons to the input neurons via
-the hidden neurons. %Given the layer view in
+%The key step in backpropagation is to compute the net gradients in
+%reverse order, starting from the output neurons to the input neurons via
+%the hidden neurons. %Given the layer view in
 %\cref{fig:reg:deep:rnn_unfolded_l_ff}, 
 The backpropagation step reverses
 the flow direction for computing the net gradients $\bdelta^o_t$ and
-$\bdelta^h_t$, as shown in the backpropagation graph.% in 
+$\bdelta^h_t$.%, as shown in the backpropagation graph.% in 
 %\cref{fig:reg:deep:rnn_unfolded_l_bp}.
 %
-In particular, the net gradient vector at the output $\bo_t$ can be
+%In particular, 
+The net gradient vector at the output $\bo_t$ can be
 computed as follows:
-\begin{align}
+\begin{align*}
     \tcbhighmath{
 \bdelta^o_t = \partial\bff^{\;o}_t \;\odot\; \partial\bcE_{\bx_t}}
-\end{align}
+\end{align*}
 where $\odot$ is the element-wise or Hadamard product.
 %For example, if $\cE_{\bx_t}$ is the squared error function, and the output
 %layer uses the identity function, then via
@@ -615,16 +645,16 @@ where $\odot$ is the element-wise or Hadamard product.
 On the other hand, the net gradients at each of the hidden layers
 need to account for the incoming net gradients from $\bo_t$ and from
 $\bh_{t+1}$.% as seen in \cref{fig:reg:deep:rnn_unfolded_l_bp}. 
-Thus,
+%Thus,
 %generalizing \cref{eq:reg:neural:bdelta_l}, 
-the net gradient vector for $\bh_t$ (for $t=1,2,\ldots,\tau-1$) is given as
-\begin{align}
+%the net gradient vector for $\bh_t$ (for $t=1,2,\ldots,\tau-1$) is given as
+\begin{align*}
     \tcbhighmath{
     \bdelta^h_t = \partial\bff^{\;h}_t \;\odot\; 
     \Bigl( \bigl(\bW_{\!o} \cdot \bdelta^o_t \bigr) + 
         \bigl(\bW_{\!h} \cdot \bdelta^h_{t+1}  \bigr)
 \Bigr)}
-\end{align}
+\end{align*}
 Note that for $\bh_\tau$, it depends only on $\bo_\tau$.% (see
 %\cref{fig:reg:deep:rnn_unfolded_l_bp}), therefore
 %\begin{align*}
@@ -638,11 +668,11 @@ Note that for $\bh_\tau$, it depends only on $\bo_\tau$.% (see
 %\begin{align*}
 %    \partial\bff^{\;h}_t = (\bone - \bh_t \odot \bh_t)
 %\end{align*}
-Finally, note that the net gradients do not have to be computed for $\bh_0$
-or for any
+%Finally, note that 
+The net gradients do not have to be computed for $\bh_0$ or for any
 of the input neurons $\bx_t$, since these are leaf nodes in the
-backpropagation graph, and thus do not backpropagate the gradients beyond
-those neurons.
+backpropagation graph.%, and thus do not backpropagate the gradients beyond
+%those neurons.
 \end{frame}
 %
 %\subsubsection{Stochastic Gradient Descent}
@@ -822,9 +852,56 @@ those neurons.
 %vectorized operations.
 %
 %\begin{figure}[t!]
-\begin{frame}{Reber grammar automata.}
+%\vspace{0.1in}
+%\caption{Reber grammar automata.}
+%\label{fig:reg:deep:reber}
+%\vspace{-0.1in}
+%\end{figure}
+%
+%%see rnn-output.txt for results
+%
+%%\vspace*{-0.1in}
+%%\enlargethispage{3\baselineskip}
+\begin{frame}{RNN}
+\framesubtitle{Reber grammar automata}
+%\begin{example}[RNN]
+%    \label{ex:reg:deep:rnn}
+%    \enlargethispage{0.2in}
+    We use an RNN to learn the Reber grammar, which is generated
+    according to the automata.% shown in \cref{fig:reg:deep:reber}. 
+Let
+    $\Sigma = \{\texttt{B}, \texttt{E}, \texttt{P}, \texttt{S},
+    \texttt{T}, \texttt{V}, \texttt{X}\}$ denote the alphabet comprising
+    the seven symbols. Further, let \texttt{\$} denote a terminal symbol.
+
+\medskip
+
+    Starting from the initial node, we can generate strings that follow
+    the Reber grammar by emitting the symbols on the edges. If there are
+    two transitions out of a node, each one can be chosen with equal
+    probability. 
+
+\medskip
+
+    The task of the RNN is to learn to predict the next symbol for each
+    of the positions in a given Reber sequence. For training, we
+    generate Reber sequences from the automata.
+
+\end{frame}
+
+\begin{frame}{RNN}
+\framesubtitle{Reber grammar automata.}
+The sequence $\tup{\texttt{B}, \texttt{T}, \texttt{S},
+        \texttt{S}, \texttt{X}, \texttt{X}, \texttt{T}, \texttt{V},
+    \texttt{V}, \texttt{E}}$ is a valid Reber sequence (with the
+    corresponding state sequence $\tup{0,1,2,2,2,4,3,3,5,6,7}$). On the
+    other hand, the sequence
+    $\tup{\texttt{B},\texttt{P},\texttt{T},\texttt{X},\texttt{S},\texttt{E}}$
+    is not a valid Reber sequence, since there is no edge out of state
+    $3$ with the symbol \texttt{X}.
+
 \special{ps: /XC@. {0 setgray } def }
-\vspace{-0.2in}
+%\vspace{-0.2in}
 \centering
 \scalebox{0.85}{
     \tikzset{initial text={}}
@@ -858,52 +935,9 @@ those neurons.
 \end{tikzpicture}
 }
 \end{frame}
-%\vspace{0.1in}
-%\caption{Reber grammar automata.}
-%\label{fig:reg:deep:reber}
-%\vspace{-0.1in}
-%\end{figure}
-%
-%%see rnn-output.txt for results
-%
-%%\vspace*{-0.1in}
-%%\enlargethispage{3\baselineskip}
-\begin{frame}{RNN}
-\framesubtitle{Reber grammar automata}
-%\begin{example}[RNN]
-%    \label{ex:reg:deep:rnn}
-%    \enlargethispage{0.2in}
-    We use an RNN to learn the Reber grammar, which is generated
-    according to the automata.% shown in \cref{fig:reg:deep:reber}. 
-Let
-    $\Sigma = \{\texttt{B}, \texttt{E}, \texttt{P}, \texttt{S},
-    \texttt{T}, \texttt{V}, \texttt{X}\}$ denote the alphabet comprising
-    the seven symbols. Further, let \texttt{\$} denote a terminal symbol.
-
-\medskip
-
-    Starting from the initial node, we can generate strings that follow
-    the Reber grammar by emitting the symbols on the edges. If there are
-    two transitions out of a node, each one can be chosen with equal
-    probability. 
-
-\medskip
-
-The sequence $\tup{\texttt{B}, \texttt{T}, \texttt{S},
-        \texttt{S}, \texttt{X}, \texttt{X}, \texttt{T}, \texttt{V},
-    \texttt{V}, \texttt{E}}$ is a valid Reber sequence (with the
-    corresponding state sequence $\tup{0,1,2,2,2,4,3,3,5,6,7}$). On the
-    other hand, the sequence
-    $\tup{\texttt{B},\texttt{P},\texttt{T},\texttt{X},\texttt{S},\texttt{E}}$
-    is not a valid Reber sequence, since there is no edge out of state
-    $3$ with the symbol \texttt{X}.
-\end{frame}
 
 \begin{frame}{RNN}
 \framesubtitle{Reber grammar automata}
-    The task of the RNN is to learn to predict the next symbol for each
-    of the positions in a given Reber sequence. For training, we
-    generate Reber sequences from the automata.
 
 \medskip
 
@@ -936,8 +970,11 @@ For example, consider the
 \framesubtitle{Reber grammar automata}
 
     To generate the training data for the RNN, we have to convert the
-    symbolic Reber strings into numeric vectors. We do this via a binary
-    encoding of the symbols, as follows:
+    symbolic Reber strings into numeric vectors through%. We do this via a 
+binary encoding:% of the symbols, as follows:
+
+\medskip
+
     \begin{center}
         \vspace*{-0.1in}
         \begin{tabular}{|c|c|}
@@ -953,10 +990,17 @@ For example, consider the
             \hline
         \end{tabular}
     \end{center} 
-    That is, each symbol is encoded by a 7-dimensional binary vector,
-    with a $1$ in the column corresponding to its position in the
-    ordering of symbols in $\Sigma$. The terminal symbol $\texttt{\$}$
-    is not part of the alphabet, and therefore its encoding is all 0's.
+%    That is, each symbol is encoded by a 7-dimensional binary vector,
+%    with a $1$ in the column corresponding to its position in the
+%    ordering of symbols in $\Sigma$. 
+
+	\medskip
+
+	The terminal symbol $\texttt{\$}$
+    is not part of the alphabet, and its encoding is all 0's.
+
+	\medskip
+
     Finally, to encode the possible next symbols, we follow a similar
     binary encoding with a $1$ in the column corresponding to the
     allowed symbols. 
@@ -1029,7 +1073,11 @@ The RNN is trained for $r=10000$ epochs,
 
     We test the RNN model on $100$ previously unseen Reber
     sequences (with minimum length 30, as before). The RNN makes no
-    errors on the test sequences. On the other hand, we also trained an
+    errors on the test sequences. 
+
+	\medskip
+
+	On the other hand, we also trained an
     MLP with a single hidden layer, with size $m$ varying between $4$
     and $100$. 
 
@@ -1037,9 +1085,17 @@ The RNN is trained for $r=10000$ epochs,
 
 
 Even after $r=10000$ epochs, the MLP is not able to
-    correctly predict any of the output sequences perfectly. It makes
+    correctly predict any of the output sequences perfectly.
+
+	\medskip
+
+	It makes
     2.62 mistakes on average per sequence for both the training and
-    testing data. Increasing the number of epochs or the number of
+    testing data.
+
+	\medskip
+
+	Increasing the number of epochs or the number of
     hidden layers does not improve the MLP performance.
 \end{frame}
 %\end{example}
@@ -1056,7 +1112,7 @@ time $t$. In other words, it only looks at information from the past.
 \medskip
 
 
-A bidirectional RNN (BRNN)%, as shown in \cref{fig:reg:deep:brnn}, 
+A bidirectional RNN (BRNN) %, as shown in \cref{fig:reg:deep:brnn}, 
 extends the RNN model to also include
 information from the future. 
 
@@ -1067,7 +1123,7 @@ hidden state vector $\bb_t \in \setR^m$ that depends on the next backward hidden
 state $\bb_{t+1}$ and the current input $\bx_t$. The output at time $t$
 is a function of both $\bh_t$ and $\bb_t$. In particular, we compute the
 forward and backward hidden state vectors as follows:
-\begin{empheq}[box=\tcbhighmath]{equation}
+\begin{empheq}[box=\tcbhighmath]{equation*}
     \begin{aligned}    
     \bh_t  & = f^h(\bW_{\!ih}^T \bx_t + \bW_{\!h}^T
     \bh_{t-1} + \bb_{h})\\
@@ -1102,7 +1158,11 @@ We can also view a BRNN as having two sets of input sequences, namely
 the forward input sequence $\cX = \tup{\bx_1, \bx_2, \cdots, \bx_\tau}$ and the
 reversed input sequence $\cX^r = \tup{\bx_\tau, \bx_{\tau-1}, \ldots,
 \bx_1}$, with the corresponding hidden states $\bh_t$ and $\bb_t$, which
-together determine the output $\bo_t$. Thus, a BRNN is comprised of two
+together determine the output $\bo_t$. 
+
+\medskip
+
+Thus, a BRNN is comprised of two
 ``stacked'' RNNs with independent hidden layers 
 that jointly determine the output. 
 \end{frame}
@@ -1182,6 +1242,11 @@ that jointly determine the output.
 %\end{figure}
 %
 %\section{Gated RNN\textsc{s}: Long Short-Term Memory Networks}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+
+
 \begin{frame}{Gated RNN\textsc{s}: Long Short-Term Memory Networks}
 %\label{sec:reg:deep:LSTM} 
 %
@@ -1216,20 +1281,20 @@ length $\tau$, we have
     \bdelta_{t+2}^h
     = \cdots = \bW_{\!h}^{\tau-t} \cdot \bdelta_{\tau}^h
 \end{align*}
+We can observe that the net gradient from time $\tau$ affects the
+net gradient vector at time $t$ as a function of $\bW_{\!h}^{\tau-t}$,
+i.e., as powers of the hidden weight matrix $\bW_{\!h}$. 
 %In particular, for example, at  time $t=1$, we have $\bdelta^h_1 =
 %\bW_{\!h}^{\tau-1} \cdot \bdelta_\tau^h$.
 \end{frame}
 
 \begin{frame}{Gated RNN\textsc{s}: Long Short-Term Memory Networks}
-We can observe that the net gradient from time $\tau$ affects the
-net gradient vector at time $t$ as a function of $\bW_{\!h}^{\tau-t}$,
-i.e., as powers of the hidden weight matrix $\bW_{\!h}$. Let the {\em
+Let the {\em
 spectral radius} of $\bW_{\!h}$, defined as the absolute value of its largest
 eigenvalue, be
 given as $\abs{\lambda_1}$. 
 
 \medskip
-
 
 It turns out that if $\abs{\lambda_1} < 1$,
 then $\norm{\bW_{\!h}^{k}} \to 0$ as $k \to
@@ -1272,6 +1337,9 @@ $\bW_{\!h}$. Therefore, if $|\lambda_1| < 1$, then $|\lambda_1|^{k} \to 0$
 as $k \to \infty$, and since $|\lambda_1| \ge |\lambda_i|$ for all
 $i=1,2,\cdots,m$, then necessarily $|\lambda_i|^{k} \to 0$ as well.
 That is, the gradients vanish.
+
+\medskip
+
 On the other hand, if $|\lambda_1| > 1$, then $|\lambda_1|^{k} \to
 \infty$
 as $k \to \infty$, and the gradients explode.
@@ -1288,6 +1356,9 @@ remain $1$ or very close to it.
 Long short-term memory (LSTM) networks alleviate the vanishing gradients
 problem by using {\em
 gate neurons} to control access to the hidden states.
+
+\medskip
+
 Consider the $m$-dimensional hidden state vector $\bh_{t} \in \setR^m$ 
 at time $t$. In a regular RNN, we update the hidden state as follows: % (as
 %per \cref{eq:reg:deep:hidden_t}):
@@ -1301,13 +1372,14 @@ Let $\bg \in \{0,1\}^m$ be a binary vector. If we take the element-wise
 product of $\bg$ and $\bh_t$, namely, $\bg \odot \bh_{t}$, 
 then elements of $\bg$ act as gates that 
 either allow the corresponding element of $\bh_t$ to be retained or set
-to zero. 
-
+to zero, that is, select elements of $\bh_t$ to be remembered or forgotten. 
 
 \medskip
 
-The vector $\bg$ thus acts as logical gate that allows selected
-elements of $\bh_t$ to be remembered or forgotten. However, for
+%The vector $\bg$ thus acts as logical gate that allows selected
+%elements of $\bh_t$ to be remembered or forgotten. 
+
+However, for
 backpropagation we need {\em differentiable gates}, for which we use
 sigmoid activation on the gate neurons so that their value lies in the
 range $[0,1]$. 
@@ -1317,19 +1389,23 @@ range $[0,1]$.
 
 Like a logical gate, such neurons allow the inputs to be
 completely remembered if the value is $1$, or forgotten if the value is
-$0$. In addition, they allow a weighted memory, allowing partial
+$0$. 
+
+\medskip
+
+In addition, they allow a weighted memory, allowing partial
 remembrance of the elements of $\bh_t$, for values between $0$
 and $1$.
 \end{frame}
 %
 %\begin{example}[Differentiable Gates]
-\begin{frame}{Differentiable Gates}
+\begin{frame}{Gated RNNs: Differentiable Gates}
 
-    As an example, consider a hidden state vector
+    Consider a hidden state vector
     \begin{align*}
         \bh_t = \matr{-0.94 & 1.05 & 0.39 & 0.97 & 0.90}^T
     \end{align*}
-    First consider a logical gate vector
+    and a logical gate vector $\bg$:
     \begin{align*}
         \bg = \matr{0 & 1 & 1 & 0 & 1}^T
     \end{align*}
@@ -1337,9 +1413,8 @@ and $1$.
     \begin{align*}
         \bg \odot \bh_{t} = \matr{0 & 1.05 & 0.39 & 0 & 0.90}^T
     \end{align*}
-    We can see that the first and fourth elements have been
+    The first and fourth elements have been
     ``forgotten.''
-
     Now consider a differentiable gate vector
     \begin{align*}
         \bg = \matr{0.1 & 0 & 1 & 0.9 & 0.5}^T
@@ -1348,8 +1423,8 @@ and $1$.
     \begin{align*}
         \bg \odot \bh_{t} = \matr{-0.094 & 0 & 0.39 & 0.873 & 0.45}^T
     \end{align*}
-    Now, only a fraction specified by an element of $\bg$ is
-    retained as a memory after the element-wise product.
+    Only a fraction specified by an element of $\bg$ is
+    retained as a memory.
 \end{frame}
 %\end{example}
 %
@@ -1357,6 +1432,7 @@ and $1$.
 %\subsection{Forget Gate}
 %\index{recurrent neural networks!forget gate}
 \begin{frame}{Gated RNN\textsc{s}: Long Short-Term Memory Networks}
+	\framesubtitle{Forget Gate}
 To see how gated neurons work, we consider an RNN with a {\em forget
 gate}. 
 %Let $\bh_t \in \setR^m$ be the hidden state vector, and let
@@ -1366,6 +1442,9 @@ gate}.
 %of neurons, $m$. 
 %
 %
+
+\medskip
+
 In a regular RNN, assuming tanh activation, the hidden state vector is updated unconditionally, as
 follows:
 \begin{align*}
@@ -1381,31 +1460,38 @@ light of the new input $\bx_t$.
 %
 %\cref{fig:reg:deep:forgetRNN} shows the architecture of an RNN with a
 %forget gate. 
+
+\medskip
+
 Given input $\bx_t$ and previous hidden state
 $\bh_{t-1}$, we first compute a candidate update
 vector $\bu_t$, as follows:
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \bu_t  = \tanh\lB( \bW_{\!u}^T \bx_t + \bW_{\!hu}^T \bh_{t-1} +
 \bb_{u} \rB)}
-\end{align}
-%The candidate update vector $\bu_t$ is essentially the unmodified hidden state vector, as
-%in a regular RNN.
+\end{align*}
+%The candidate update vector 
+$\bu_t$ is essentially the unmodified hidden state vector, as in a regular RNN.
 %
 \end{frame}
 
 \begin{frame}{Gated RNN\textsc{s}: Long Short-Term Memory Networks}
+	\framesubtitle{Forget Gate}
 Using the forget gate, we can compute the new hidden state vector as follows:
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \bh_t  = \bphi_t \odot \bh_{t-1} + (\bone -\bphi_t) \odot
 \bu_t}
-\end{align}
+\end{align*}
 %Here $\odot$ is the element-wise product operation. 
 We can
 see that the new hidden state vector retains a fraction of the previous
 hidden state values, and a (complementary) fraction of
 the candidate update values.
+
+\medskip
+
 Observe that if $\bphi_t = \bzero$, i.e., if we want to entirely
 forget the previous hidden state, then $\bone-\bphi_t = \bone$, which
 means that the hidden state will be updated completely at each time step
@@ -1422,11 +1508,21 @@ just like in a regular RNN.
 %    \large
 %    \hspace{-0.1in}
 \begin{frame}{RNN with a forget gate $\bphi_t$}
-\framesubtitle{Recurrent connections shown in gray,
-forget gate shown doublelined. $\odot$ denotes element-wise product.}
+
+	\begin{minipage}{3.5cm}
+Recurrent connections shown in gray,
+forget gate shown doublelined. 
+
+\medskip
+
+
+		$\odot$ denotes element wise product.
+
+\end{minipage}
+\hspace{0.7in}
+\begin{minipage}{5cm}
 \centerline{
 \scalebox{0.75}{%
-    \hspace{0.9in}
     \psset{tnpos=l,tnsep=2pt,colsep=0.5,rowsep=1,mcol=c,
     arrowscale=1.5, arrows=->}
 \psmatrix
@@ -1469,6 +1565,7 @@ forget gate shown doublelined. $\odot$ denotes element-wise product.}
 \ncput*[npos=1.2]{\scalebox{0.7}{$-1$}}
 \endpsmatrix
 }}
+\end{minipage}
 \end{frame}
 %\vspace{0.2in}
 %\caption{RNN with a forget gate $\bphi_t$. Recurrent connections shown in gray,
@@ -1494,14 +1591,18 @@ forget gate shown doublelined. $\odot$ denotes element-wise product.}
 %
 \begin{frame}{Gated RNN\textsc{s}: Long Short-Term Memory Networks}
 %To summarize, 
-A forget gate vector $\bphi_t$ is a layer that
-depends on the previous hidden state layer $\bh_{t-1}$ and 
-the current input layer $\bx_t$;
+$\bphi_t$ is a layer that
+$\bh_{t-1}$ and 
+$\bx_t$;
 these connections are fully connected, and are specified by the
-corresponding weight matrices $\bW_{h\phi}$ and $\bW_{\phi}$, 
-and the bias vector $\bb_\phi$. On the other hand, the output of the
-forget gate layer $\bphi_t$ 
-needs to modify the previous hidden state layer $\bh_{t-1}$, and
+corresponding  $\bW_{h\phi}$ and $\bW_{\phi}$, 
+and  $\bb_\phi$. %On the other hand, the output of the
+%forget gate layer 
+
+\medskip
+
+
+$\bphi_t$ needs to modify the previous hidden state layer $\bh_{t-1}$, and
 therefore, both $\bphi_t$ and $\bh_{t-1}$ feed into what is essentially a new {\em
 element-wise} product layer, denoted by $\odot$.% in
 %\cref{fig:reg:deep:forgetRNN}. 
@@ -1512,8 +1613,7 @@ element-wise} product layer, denoted by $\odot$.% in
 Finally, the output of this element-wise
 product layer is used as input to the new hidden layer $\bh_t$ that
 also takes input from another element-wise gate that computes the output
-from the candidate update vector $\bu_t$ and the complemented forget
-gate, $\bone-\bphi_t$.
+from $\bu_t$ and  $\bone-\bphi_t$.
 
 
 \medskip
@@ -1534,12 +1634,12 @@ bias at 0.
     Let $m=5$. Assume that the previous hidden state vector and the 
     candidate update vector are given as follows:
     \begin{align*}
-        \bh_{t-1} &= \matr{-0.94 & 1.05 & 0.39 & 0.97 & 0.9}^T\\
+	    \bh_{t-1} &= \matr{-0.94 & 1.05 & 0.39 & 0.97 & 0.9}^T &
         \bu_t & = \matr{0.5 & 2.5 & -1.0 & -0.5 & 0.8}^T
     \end{align*}
     Let the forget gate and its complement be given as follows:
     \begin{align*}
-        \bphi_t& =  \matr{0.9 & 1& 0 & 0.1 & 0.5}^T\\
+	    \bphi_t& =  \matr{0.9 & 1& 0 & 0.1 & 0.5}^T & 
         \bone-\bphi_t& =  \matr{0.1 & 0& 1 & 0.9 & 0.5}^T
     \end{align*}
     The new hidden state vector is then computed as the weighted sum of
@@ -1602,7 +1702,7 @@ dependencies between the layers.
 %$\bdelta^{u}_{t}$, notice that in backpropagation it has
 %only one incoming edge from $\bh_t$ via 
 %the element-wise product $(\bone - \bphi_t) \odot \bu_t$.
-The net gradient $\delta_{ti}^u$ at update layer neuron $i$ at time $t$ is given as
+The net gradient $\delta_{ti}^u$ at update layer neuron $i$ at time $t$ is:
 \begin{align*}
     \delta_{ti}^u = 
     \frac{\partial \cE_\bx}{\partial \net^{\;u}_{ti}}  = 
@@ -1616,8 +1716,9 @@ $\frac{\partial \net^{\;h}_{ti}}{\partial u_{ti}} =
      \frac{\partial}{\partial
     u_{ti}} \lB\{ \phi_{ti} \cdot h_{t-1,i} +  (1-\phi_{ti}) \cdot
     u_{ti}\rB\} = 1 - \phi_{ti}$, and 
-we use the fact that the update layer uses a $\tanh$ activation
-function.
+the update layer uses a $\tanh$ activation function.
+
+\medskip
 
 Across all neurons, we obtain the net gradient at
 $\bu_t$ as follows:
@@ -1868,6 +1969,20 @@ time step. However, the content of the hidden vector is selectively
 copied from the internal memory vector via the output gate, with the
 internal memory being updated via the input gate and parts of
 it forgotten via the forget gate.
+
+\medskip
+
+Each of the gate vectors conceptually plays a different role in an LSTM network. The
+input gate vector $\bkappa_{\!t}$ controls how much of the input vector,
+via the candidate update vector $\bu_t$, is allowed to
+influence the memory vector $\bc_t$. 
+
+\medskip
+
+The forget gate vector $\bphi_t$
+controls how much of the previous memory vector to forget, and finally
+the output gate vector $\bomega_t$ controls how much of the memory state
+is retained for the hidden state. 
 \end{frame}
 %
 %\begin{figure}[!t]
@@ -1875,8 +1990,24 @@ it forgotten via the forget gate.
 %    \hspace{-0.3in}
 \begin{frame}{LSTM neural network}
 \framesubtitle{Recurrent connections shown in gray, gate layers shown doublelined.}
+\begin{minipage}{5cm}
+At each time step $t$, the three gate vectors are updated as follows:
+\begin{empheq}[box=\tcbhighmath]{equation*}
+    \begin{aligned}
+        \bkappa_{\!t} & = \sigma\lB( \bW_{\!\kappa}^T \bx_t + \bW_{\!h\kappa}^T \bh_{t-1} +
+    \bb_{\kappa} \rB)\\
+    \bphi_t & = \sigma\lB( \bW_{\!\phi}^T \bx_t + \bW_{\!h\phi}^T \bh_{t-1} +
+    \bb_{\phi} \rB)\\
+    \bomega_t & = \sigma\lB( \bW_{\!\omega}^T \bx_t + \bW_{\!h\omega}^T \bh_{t-1} +
+    \bb_{\omega} \rB)
+\end{aligned}
+\label{eq:reg:deep:lstm_ff_gates}
+\end{empheq}
+\end{minipage}
+\hspace*{0.1cm}
+\begin{minipage}{6cm}
 \centerline{
-\scalebox{0.45}{%
+\scalebox{0.50}{%
     \hspace{0.9in}
     \psset{tnpos=l,tnsep=2pt,colsep=1,rowsep=1,mcol=c,
     arrowscale=1.5, arrows=->}
@@ -1937,6 +2068,7 @@ it forgotten via the forget gate.
 \ncput*[npos=1.5]{\scalebox{0.7}{$-1$}}
 \endpsmatrix
 }}
+\end{minipage}
 \end{frame}
 %\vspace{0.2in}
 %\caption{LSTM neural network. Recurrent connections shown in gray,
@@ -1952,20 +2084,19 @@ it forgotten via the forget gate.
 %the sequence of $p$-dimensional response vectors, 
 %and $\cO = \tup{\bo_1, \bo_2,
 %\cdots, \bo_\tau}$ the $p$-dimensional output sequence from
-\begin{frame}{LSTM neural network}
 %an LSTM. 
-At each time step $t$, the three gate vectors are updated as follows:
-\begin{empheq}[box=\tcbhighmath]{equation}
-    \begin{aligned}
-        \bkappa_{\!t} & = \sigma\lB( \bW_{\!\kappa}^T \bx_t + \bW_{\!h\kappa}^T \bh_{t-1} +
-    \bb_{\kappa} \rB)\\
-    \bphi_t & = \sigma\lB( \bW_{\!\phi}^T \bx_t + \bW_{\!h\phi}^T \bh_{t-1} +
-    \bb_{\phi} \rB)\\
-    \bomega_t & = \sigma\lB( \bW_{\!\omega}^T \bx_t + \bW_{\!h\omega}^T \bh_{t-1} +
-    \bb_{\omega} \rB)
-\end{aligned}
-\label{eq:reg:deep:lstm_ff_gates}
-\end{empheq}
+%At each time step $t$, the three gate vectors are updated as follows:
+%\begin{empheq}[box=\tcbhighmath]{equation}
+    %\begin{aligned}
+        %\bkappa_{\!t} & = \sigma\lB( \bW_{\!\kappa}^T \bx_t + \bW_{\!h\kappa}^T \bh_{t-1} +
+    %\bb_{\kappa} \rB)\\
+    %\bphi_t & = \sigma\lB( \bW_{\!\phi}^T \bx_t + \bW_{\!h\phi}^T \bh_{t-1} +
+    %\bb_{\phi} \rB)\\
+    %\bomega_t & = \sigma\lB( \bW_{\!\omega}^T \bx_t + \bW_{\!h\omega}^T \bh_{t-1} +
+    %\bb_{\omega} \rB)
+%\end{aligned}
+%\label{eq:reg:deep:lstm_ff_gates}
+%\end{empheq}
 %Here $\sigma(\cdot)$ denotes the sigmoid activation function.
 %We can observe that each gate is a function of the input vector $\bx_t$
 %at time $t$, as well as the hidden state $\bh_{t-1}$ from the previous
@@ -1973,49 +2104,35 @@ At each time step $t$, the three gate vectors are updated as follows:
 %neurons to the gate neurons, and from the hidden state neurons to the
 %gate neurons, as well as a corresponding bias vector.
 
-Each of the gate vectors conceptually plays a different role in an LSTM network. The
-input gate vector $\bkappa_{\!t}$ controls how much of the input vector,
-via the candidate update vector $\bu_t$, is allowed to
-influence the memory vector $\bc_t$. 
-
-\medskip
-
-The forget gate vector $\bphi_t$
-controls how much of the previous memory vector to forget, and finally
-the output gate vector $\bomega_t$ controls how much of the memory state
-is retained for the hidden state. 
-\end{frame}
 %
 \begin{frame}{LSTM neural network}
-Given the current input $\bx_t$ and the previous hidden state
-$\bh_{t-1}$, an LSTM first computes a candidate update vector $\bu_t$
+Given $\bx_t$ and 
+$\bh_{t-1}$, an LSTM computes $\bu_t$
 after applying the $\tanh$ activation:
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \bu_t  = \tanh\lB( \bW_{\!u}^T \bx_t + \bW_{\!hu}^T \bh_{t-1} +
 \bb_{u} \rB)}
-\end{align}
+\end{align*}
 It 
-then applies the different gates to compute the internal memory and
+then computes the internal memory and
 hidden state vectors:
-\begin{empheq}[box=\tcbhighmath]{equation}
+\begin{empheq}[box=\tcbhighmath]{equation*}
     \begin{aligned}
     \bc_t & = \bkappa_{\!t} \odot \bu_t + \bphi_t \odot \bc_{t-1}\\
     \bh_t & = \bomega_t \odot \tanh(\bc_t)
 \end{aligned}
 \label{eq:reg:deep:lstm_ff}
 \end{empheq}
-The memory vector $\bc_t$ at time
-$t$ depends on the current update vector $\bu_t$ and the previous memory
-$\bc_{t-1}$. However, the input gate $\bkappa_{\!t}$ controls the extent to
+$\bc_t$ depends on $\bu_t$ and 
+$\bc_{t-1}$. However, $\bkappa_{\!t}$ controls the extent to
 which $\bu_t$ influences $\bc_t$, and the forget gate $\bphi_t$ controls
 how much of the previous memory is forgotten.
 
 \medskip
 
-On the other hand, the hidden state
-$\bh_t$ depends on a tanh activated internal memory vector $\bc_{t}$, but the 
-output gate $\bomega_{t}$ controls how much of the internal memory is
+$\bh_t$ depends on a tanh activated internal memory vector $\bc_{t}$, but 
+$\bomega_{t}$ controls how much of the internal memory is
 reflected in the hidden state. 
 %%Note that, implicitly the biases elements are zero and weight matrix
 %%entries are one, whenever these are not not specified. 
@@ -2038,6 +2155,9 @@ the internal memory states do not vanish over long time steps. This is
 because, by design, the memory state $\bc_{t-1}$ at time $t-1$ is linked
 to the memory state $\bc_t$ at time $t$ via implicit weights fixed at 1
 and biases fixed at 0, with linear activation. 
+
+\medskip
+
 This allows the error to flow across
 time steps without vanishing or exploding.
 \end{frame}
@@ -2269,7 +2389,7 @@ The input gate also has only one incoming edge in backpropagation, from
 $\bc_t$, via the element-wise multiplication $\bkappa_{\!t} \odot
 \bu_{t}$, with sigmoid activation. In a similar manner, as outlined above
 for $\bdelta_t^\phi$, the net gradient $\bdelta_t^\kappa$ at the input
-gate $\bkappa_{\!t}$ is given as: 
+gate $\bkappa_{\!t}$ is:
 \begin{align*}
     \bdelta_t^\kappa = \bdelta_t^c \odot \bu_t \odot  (\bone -
     \bkappa_{\!t}) \odot \bkappa_{\!t}
@@ -2366,7 +2486,15 @@ the net gradient vector at the hidden state vector $\bdelta_t^h$ is given as
 %\begin{figure}[!t]
 %    \large
 %\vspace{-0.3in}
-\begin{frame}{Embedded Reber grammar automata}
+	\begin{frame}{LSTM}
+		\framesubtitle{Example -- Embedded Reber grammar automata}
+
+    We use an LSTM to learn the embedded Reber grammar, which is generated
+    according to the automata.% shown in \cref{fig:reg:deep:embedded_reber}. 
+    This automata has two copies of the Reber automata% from
+
+	\medskip
+
 % \tikzsetnextfilename{reg_deep_embedded_reber}
 \special{ps: /XC@. {0 setgray } def }
 \centering
@@ -2452,11 +2580,8 @@ the net gradient vector at the hidden state vector $\bdelta_t^h$ is given as
 %%see rnn-output.txt for results
 %% \vspace{-0.3in}
 \begin{frame}{LSTM}
-\framesubtitle{Example}
+\framesubtitle{Example -- Embedded Reber grammar automata}
 %\begin{example}[LSTM]
-    We use an LSTM to learn the embedded Reber grammar, which is generated
-    according to the automata.% shown in \cref{fig:reg:deep:embedded_reber}. 
-    This automata has two copies of the Reber automata% from
 %    \cref{ex:reg:deep:rnn}. 
 
 \medskip
@@ -2482,13 +2607,16 @@ From the state $s_1$, the top automata
         \texttt{S},
         \texttt{S}, \texttt{X}, \texttt{X}, \texttt{T}, \texttt{V},
     \texttt{V}, \texttt{E}, \texttt{T}, \texttt{E}}$.
+
+	\medskip
+
+    The task of the LSTM is to learn to predict the next symbol for each
+    of the positions in a given embedded Reber sequence. 
 \end{frame}
 
 \begin{frame}{LSTM}
-\framesubtitle{Example}
+\framesubtitle{Example -- Embedded Reber grammar automata}
     
-    The task of the LSTM is to learn to predict the next symbol for each
-    of the positions in a given embedded Reber sequence. 
     For training, we
     generate $n=400$ embedded Reber sequences with a minimum length of
     40, and convert them into
@@ -2516,7 +2644,7 @@ Finally, we use  the binary cross
 \end{frame}
 
 \begin{frame}{LSTM}
-\framesubtitle{Example}
+\framesubtitle{Example -- Embedded Reber grammar automata}
 %
 %    % \enlargethispage{6pt}
     We test the LSTM model on $100$ previously unseen embedded Reber
@@ -2554,6 +2682,8 @@ These results suggest that
 %
 %
 %\section{Convolutional Neural Networks}
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 \begin{frame}{Convolutional Neural Networks}
 %\label{sec:reg:deep:cnn}
 %\index{convolutional neural networks}
@@ -2569,7 +2699,11 @@ input data.
 \medskip
 
 In a regular MLP all of the neurons in layer $l$ are
-connected to all of the neurons in layer $l+1$. In contrast, a CNN 
+connected to all of the neurons in layer $l+1$. 
+
+\medskip
+
+In contrast, a CNN 
 connects a contiguous or adjacent subset of neurons in layer
 $l$ to a single neuron in the next layer $l+1$. 
 
@@ -2589,6 +2723,7 @@ all sliding windows. Finally, different filters are used to
 automatically extract features from layer $l$ for use
 by layer $l+1$.
 \end{frame}
+
 %\index{convolutional neural networks!parameter sharing}
 %\index{parameter sharing}
 %
@@ -2629,7 +2764,7 @@ that adds all the elements of the vector. That is,
 \end{align*}
 
 A {\em 1D convolution} between $\bx$ and $\bw$, denoted by the asterisk symbol
-$\ast$, is defined as
+$\ast$, is:
 \begin{equation*}
     \bx \ast \bw = \matr{&&\\[-1em]
     \summ\bigl(\bx_k(1) \odot \bw\bigr) &
@@ -2638,13 +2773,13 @@ $\ast$, is defined as
 &&}^T
 \end{equation*}
 where $\odot$ is the element-wise product, so that
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \summ\bigl(\bx_k(i) \odot \bw\bigr) = \sum_{j=1}^k x_{i+j-1} \cdot
 w_j }
-\end{align}
+\end{align*}
 for $i=1,2,\cdots,n-k+1$. 
-We can see that the convolution of $\bx \in \setR^n$ and $\bw \in
+The convolution of $\bx \in \setR^n$ and $\bw \in
 \setR^k$ results in a vector of length $n-k+1$.
 \end{frame}
 %
@@ -2677,6 +2812,28 @@ We can see that the convolution of $\bx \in \setR^n$ and $\bw \in
 %\begin{figure}[t!]
 %    \vspace*{-0.2in}
 \begin{frame}{1D Convolution}
+Given $\bx$ with $n=7$ and a
+	filter $\bw = (1,0,2)^T$ ($k=3$). The first window of
+    $\bx$ is $\bx_3(1) = (1, 3, -1)^T$.% Therefore, %as seen in
+%    \cref{fig:reg:deep:1dconv:a}, 
+%we have
+    \begin{align*}
+        \summ\lB(\bx_3(1) \odot \bw\rB) = \summ\lB(
+        (1,3,-1)^T \odot (1,0,2)^T \rB) = 
+        \summ\lB( (1,0,-2)^T\rB)  = -1
+    \end{align*}
+    % \looseness=-1\relax
+%    The convolution steps for different sliding windows of $\bx$ with the
+%    filter $\bw$ are shown in  the figure.
+%    \cref{fig:reg:deep:1dconv}\protect\subref{fig:reg:deep:1dconv:a}--\protect\subref{fig:reg:deep:1dconv:e}.
+    The convolution $\bx \ast \bw$ has size $n-k+1 = 7-3+1 = 5$, and is
+    given as 
+    % \begin{align*}
+    \[    \bx \ast \bw = (-1, 7, 5, 4 ,-1)^T \]
+    % \end{align*}
+
+	\medskip
+
     \centering
     \centerline{
 %        \subfloat[\scriptsize $\summ(\bx_3(1)\odot\bw)$]{
@@ -2826,30 +2983,30 @@ We can see that the convolution of $\bx \in \setR^n$ and $\bw \in
 %
 %% \enlargethispage{1\baselineskip}
 %\begin{example}[1D Convolution]
-\begin{frame}{1D Convolution}
-\framesubtitle{Example}
-%    % \enlargethispage*{2cm}
-%    \cref{fig:reg:deep:1dconv} 
-Figure shows a vector $\bx$ with $n=7$ and a
-    filter $\bw = (1,0,2)^T$ with window size $k=3$. The first window of
-    $\bx$ of size 3 is $\bx_3(1) = (1, 3, -1)^T$. Therefore, %as seen in
-%    \cref{fig:reg:deep:1dconv:a}, 
-we have
-    \begin{align*}
-        \summ\lB(\bx_3(1) \odot \bw\rB) = \summ\lB(
-        (1,3,-1)^T \odot (1,0,2)^T \rB) = 
-        \summ\lB( (1,0,-2)^T\rB)  = -1
-    \end{align*}
-    % \looseness=-1\relax
-    The convolution steps for different sliding windows of $\bx$ with the
-    filter $\bw$ are shown in  the figure.
-%    \cref{fig:reg:deep:1dconv}\protect\subref{fig:reg:deep:1dconv:a}--\protect\subref{fig:reg:deep:1dconv:e}.
-    The convolution $\bx \ast \bw$ has size $n-k+1 = 7-3+1 = 5$, and is
-    given as 
-    % \begin{align*}
-    \[    \bx \ast \bw = (-1, 7, 5, 4 ,-1)^T \]
-    % \end{align*}
-\end{frame}
+%\begin{frame}{1D Convolution}
+%\framesubtitle{Example}
+%%    % \enlargethispage*{2cm}
+%%    \cref{fig:reg:deep:1dconv} 
+%Figure shows a vector $\bx$ with $n=7$ and a
+    %filter $\bw = (1,0,2)^T$ with window size $k=3$. The first window of
+    %$\bx$ of size 3 is $\bx_3(1) = (1, 3, -1)^T$. Therefore, %as seen in
+%%    \cref{fig:reg:deep:1dconv:a}, 
+%we have
+    %\begin{align*}
+        %\summ\lB(\bx_3(1) \odot \bw\rB) = \summ\lB(
+        %(1,3,-1)^T \odot (1,0,2)^T \rB) = 
+        %\summ\lB( (1,0,-2)^T\rB)  = -1
+    %\end{align*}
+    %% \looseness=-1\relax
+    %The convolution steps for different sliding windows of $\bx$ with the
+    %filter $\bw$ are shown in  the figure.
+%%    \cref{fig:reg:deep:1dconv}\protect\subref{fig:reg:deep:1dconv:a}--\protect\subref{fig:reg:deep:1dconv:e}.
+    %The convolution $\bx \ast \bw$ has size $n-k+1 = 7-3+1 = 5$, and is
+    %given as 
+    %% \begin{align*}
+    %\[    \bx \ast \bw = (-1, 7, 5, 4 ,-1)^T \]
+    %% \end{align*}
+%\end{frame}
 %\end{example}
 %
 %% \enlargethispage{2\baselineskip}
@@ -2887,7 +3044,7 @@ The {\em 2D convolution} of $\bX$ and $\bW$, denoted $\bX \ast
 %\begin{empheq}[box=\tcbhighmath]{gather}
 %    \scalebox{0.8}{\parbox{\linewidth}{\[
 
-\begin{small}
+\begin{footnotesize}
 \begin{equation*}
         \bX \ast \bW = \matr{ && \\[-1em]
         \summ\bigl(\bX_k(1,1) \odot \bW\bigr) &
@@ -2900,14 +3057,14 @@ The {\em 2D convolution} of $\bX$ and $\bW$, denoted $\bX \ast
         \summ \bigl(\bX_k(n-k+1, n-k+1) \odot \bW\bigr)\\[-1em]
 &&}
 \end{equation*}
-\end{small}
+\end{footnotesize}
 where $\odot$ is the
 element-wise product of $\bX_k(i,j)$ and $\bW$, so that
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \summ\bigl(\bX_k(i,j) \odot \bW\bigr) = \sum_{a=1}^k \sum_{b=1}^k x_{i+a-1, j+b-1}
 \cdot w_{a, b}}
-\end{align}
+\end{align*}
 for $i, j = 1,2,\cdots,n-k+1$.
 The convolution of $\bX \in \setR^{n\times n}$ and
 $\bW \in \setR^{k \times k}$ results in a $(n-k+1) \times (n-k+1)$ matrix.
@@ -2966,6 +3123,37 @@ $\bW \in \setR^{k \times k}$ results in a $(n-k+1) \times (n-k+1)$ matrix.
 %
 %
 %\begin{figure}[t!]
+\begin{frame}{2D Convolution}
+\framesubtitle{Example}
+%    \cref{fig:reg:deep:2dconv} 
+Given  matrix $\bX$ with $n=4$ and a
+    filter $\bW$ with window size $k=2$. The convolution of the 
+    first window of $\bX$, namely $\bX_2(1,1)$, with $\bW$
+    is given as: % (see \cref{fig:reg:deep:2dconv:a})
+    \begin{align*}
+        \summ\bigl(\bX_2(1,1) \odot \bW\bigr) = 
+        \summ\lB(
+            \matr{1 & 2\\3 & 1} \odot \matr{1 & 0\\0 & 1}
+        \rB) = 
+        \summ\lB( \matr{1 & 0\\0& 1}\rB)  = 2
+    \end{align*}
+    The convolution steps for different $2\times 2$ 
+    sliding windows of $\bX$ with the
+    filter $\bW$ are shown.
+%    \cref{fig:reg:deep:2dconv}\protect\subref{fig:reg:deep:2dconv:a}--\protect\subref{fig:reg:deep:2dconv:i}.
+
+	\medskip
+
+    The convolution $\bX \ast \bW$ has size $3 \times 3$, since 
+    $n-k+1 = 4-2+1 = 3$, and is
+    given as 
+    % \begin{align*}
+\[        \bX \ast \bW = \matr{2 & 6 & 4\\
+            4 & 4 & 8\\
+            4 & 4 & 4
+    } \]
+    % \end{align*}
+\end{frame}
 \begin{frame}{2D Convolution}
 \centering
     \tikzset{empty node/.style={draw=none,fill=none}}
@@ -3233,34 +3421,6 @@ $\bW \in \setR^{k \times k}$ results in a $(n-k+1) \times (n-k+1)$ matrix.
 %
 %\enlargethispage{1\baselineskip}
 %\begin{example}[2D Convolution]
-\begin{frame}{2D Convolution}
-\framesubtitle{Example}
-%    \cref{fig:reg:deep:2dconv} 
-Figure shows a matrix $\bX$ with $n=4$ and a
-    filter $\bW$ with window size $k=2$. The convolution of the 
-    first window of $\bX$, namely $\bX_2(1,1)$, with $\bW$
-    is given as: % (see \cref{fig:reg:deep:2dconv:a})
-    \begin{align*}
-        \summ\bigl(\bX_2(1,1) \odot \bW\bigr) = 
-        \summ\lB(
-            \matr{1 & 2\\3 & 1} \odot \matr{1 & 0\\0 & 1}
-        \rB) = 
-        \summ\lB( \matr{1 & 0\\0& 1}\rB)  = 2
-    \end{align*}
-    The convolution steps for different $2\times 2$ 
-    sliding windows of $\bX$ with the
-    filter $\bW$ are shown in  the figure.
-%    \cref{fig:reg:deep:2dconv}\protect\subref{fig:reg:deep:2dconv:a}--\protect\subref{fig:reg:deep:2dconv:i}.
-    The convolution $\bX \ast \bW$ has size $3 \times 3$, since 
-    $n-k+1 = 4-2+1 = 3$, and is
-    given as 
-    % \begin{align*}
-\[        \bX \ast \bW = \matr{2 & 6 & 4\\
-            4 & 4 & 8\\
-            4 & 4 & 4
-    } \]
-    % \end{align*}
-\end{frame}
 %\end{example}
 %
 %
@@ -3287,6 +3447,8 @@ starting at row $i$, column
 $j$ and channel $q$, as illustrated in the figure, %\cref{fig:deep:cnn:Xijq},
 with $1 \le i, j \le n-k+1$, and $1 \le q \le m-r+1$.
 
+\medskip
+
 Given a $k \times k \times r$ tensor $\bA \in \setR^{k \times k \times r}$, 
 define the summation operator as one
 that adds all the elements of the tensor. That is,
@@ -3295,14 +3457,29 @@ that adds all the elements of the tensor. That is,
 \end{align*}
 where $a_{i,j,q}$ is the element of $\bA$ at row $i$, column $j$, and
 channel $q$.
-The {\em 3D convolution} of $\bX$ and $\bW$, denoted $\bX \ast
-\bW$, is defined as:
+\begin{align*}
+    \tcbhighmath{
+    \summ\bigl(\bX_k(i,j,q) \odot \bW\bigr) = \sum_{a=1}^k \sum_{b=1}^k \sum_{c=1}^r
+x_{i+a-1, j+b-1, q+c-1} \cdot w_{a, b, c} }
+\end{align*}
+for $i, j = 1,2,\cdots,n-k+1$ and $q = 1,2,\cdots,m-r+1$.
+
+\medskip
+
+The convolution of $\bX$ and
+$\bW$ results in a $(n-k+1) \times
+(n-k+1) \times (m-r+1)$ tensor.
 
 \end{frame}
 
 \begin{frame}{3D Convolution}
+The {\em 3D convolution} of $\bX$ and $\bW$, denoted $\bX \ast
+\bW$, is defined as:
+
+\medskip
+
 \centerline{
-\begin{small}
+\begin{footnotesize}
    \scalebox{0.85}{\parbox{\linewidth}{\[
                \!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!
     \bX \ast \bW =  
@@ -3350,25 +3527,27 @@ The {\em 3D convolution} of $\bX$ and $\bW$, denoted $\bX \ast
         \summ \bigl(\bX_k(n-k+1, n-k+1,m-r+1) \odot \bW\bigr) &\\
   \end{array}
   \]}}
-\end{small}
+\end{footnotesize}
 }
-\end{frame}
-
-\begin{frame}{3D Convolution}
-
 \noindent where $\odot$ is the
-element-wise product of $\bX_k(i,j,q)$ and $\bW$, so that
-\begin{align}
-    \tcbhighmath{
-    \summ\bigl(\bX_k(i,j,q) \odot \bW\bigr) = \sum_{a=1}^k \sum_{b=1}^k \sum_{c=1}^r
-x_{i+a-1, j+b-1, q+c-1} \cdot w_{a, b, c} }
-\end{align}
-for $i, j = 1,2,\cdots,n-k+1$ and $q = 1,2,\cdots,m-r+1$.
-We can see that the convolution of $\bX \in \setR^{n\times n \times
-m}$ and
-$\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
-(n-k+1) \times (m-r+1)$ tensor.
+element-wise product of $\bX_k(i,j,q)$ and $\bW$.
 \end{frame}
+
+%\begin{frame}{3D Convolution}
+%
+%\noindent where $\odot$ is the
+%element-wise product of $\bX_k(i,j,q)$ and $\bW$, so that
+%\begin{align}
+    %\tcbhighmath{
+    %\summ\bigl(\bX_k(i,j,q) \odot \bW\bigr) = \sum_{a=1}^k \sum_{b=1}^k \sum_{c=1}^r
+%x_{i+a-1, j+b-1, q+c-1} \cdot w_{a, b, c} }
+%\end{align}
+%for $i, j = 1,2,\cdots,n-k+1$ and $q = 1,2,\cdots,m-r+1$.
+%We can see that the convolution of $\bX \in \setR^{n\times n \times
+%m}$ and
+%$\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
+%(n-k+1) \times (m-r+1)$ tensor.
+%\end{frame}
 
 %\begin{align*}
 %    \bX_k(i,j,q) = \quad
@@ -3487,7 +3666,11 @@ $\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
 %\begin{figure}[t!]
 %    \vspace{-0.1in}
 \begin{frame}{3D subtensor $\bX_k(i, j, q)$}
-\framesubtitle{$k \times k \times r$ subtensor of $\bX$ starting at row $i$, column $j$, and channel $q$.}
+
+$k \times k \times r$ subtensor of $\bX$ starting at row $i$, column $j$, and channel $q$.
+
+\medskip
+
     \centering
     \large
 %    \hspace{0.1in}
@@ -3938,6 +4121,38 @@ $\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
 %
 %\begin{figure}[!htbp]
 \begin{frame}{3D Convolution}
+\framesubtitle{Example}
+%    \cref{fig:reg:deep:3dconv} 
+Given a $3 \times 3 \times 3$ tensor 
+    $\bX$ with $n=3$ and $m=3$, and a $2 \times 2 \times 3$
+    filter $\bW$ with window size $k=2$ and $r=3$. 
+
+	\medskip
+
+	The convolution of the 
+    first window of $\bX$, namely $\bX_2(1,1)$, with $\bW$
+    is given as% (see \cref{fig:reg:deep:3dconv:a})
+    \begin{align*}
+        \summ\bigl(\bX_2(1,1) \odot \bW\bigr) & = 
+        \summ\lB(
+            \amatr{r}{1 & -1 \;\vline\; 2 & 1\;\vline\; 1 & -2\\
+                  2 & 1 \;\vline\; 3 & -1\;\vline\; 2 & 1} 
+                  \odot 
+                  \matr{1 & 1 \;\vline\; 1 & 0\;\vline\; 0 & 1\\
+                        2 & 0 \;\vline\; 0 & 1\;\vline\;1 & 0}
+        \rB)\\
+        & = \summ\lB( 
+            \amatr{r}{1 & -1 \;\vline\; 2 & 0\;\vline\; 0 & -2\\
+                        4 & 0 \;\vline\; 0 & -1\;\vline\;2 & 0}
+    \rB)  = 5
+    \end{align*}
+    where we stack the different channels horizontally.
+\end{frame}
+\begin{frame}{3D Convolution}
+Given a $3 \times 3 \times 3$ tensor $\bX$ with $n=3$ and $m=3$, and a $2 \times 2 \times 3$ filter $\bW$ with $k=2$ and $r=3$, the upper-left element is: 
+
+\medskip
+
     \centering
     \large
     \centerline{
@@ -4016,6 +4231,10 @@ $\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
 }%}
 \end{frame}
 \begin{frame}{3D Convolution}
+Given a $3 \times 3 \times 3$ tensor $\bX$ with $n=3$ and $m=3$, and a $2 \times 2 \times 3$ filter $\bW$ with $k=2$ and $r=3$, the upper-right element is: 
+
+\medskip
+
     \centering
     \large
     \centerline{
@@ -4096,6 +4315,10 @@ $\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
 }%}
 \end{frame}
 \begin{frame}{3D Convolution}
+Given a $3 \times 3 \times 3$ tensor $\bX$ with $n=3$ and $m=3$, and a $2 \times 2 \times 3$ filter $\bW$ with $k=2$ and $r=3$, the bottom-left element is: 
+
+\medskip
+
     \centering
     \large
 \centerline{
@@ -4175,7 +4398,7 @@ $\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
 \end{frame}
 \begin{frame}{3D Convolution}
     \centering
-    \large
+	{\large
     \centerline{
 %\subfloat[$\summ(\bX_2(2,2) \odot \bW)$]{
 %        \label{fig:reg:deep:3dconv:d}
@@ -4251,7 +4474,18 @@ $\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
         \node[draw=none] at ([xshift={24mm},yshift={4mm}]mWb.east) {\scalebox{1}{$=$}}; 
         \end{tikzpicture}%
 \endinput}}
-}%}
+}}
+
+\medskip
+
+    The convolution $\bX \ast \bW$ has size $2 \times 2$, since 
+    $n-k+1 = 3-2+1 = 2$ and $r=m=3$; it is
+    given as 
+    \begin{align*}
+        \bX \ast \bW = \matr{5 &11\\
+            15 & 5
+        }
+    \end{align*}
 \end{frame}
 %\vspace{0.2in}
 %\caption{3D Convolution:
@@ -4347,42 +4581,42 @@ $\bW \in \setR^{k \times k \times r}$ results in a $(n-k+1) \times
 %specify $\bW$ is the window size $k$.
 %
 %\begin{example}[3D Convolution]
-\begin{frame}{3D Convolution}
-\framesubtitle{Example}
-%    \cref{fig:reg:deep:3dconv} 
-Figures show a $3 \times 3 \times 3$ tensor 
-    $\bX$ with $n=3$ and $m=3$, and a $2 \times 2 \times 3$
-    filter $\bW$ with window size $k=2$ and $r=3$. The convolution of the 
-    first window of $\bX$, namely $\bX_2(1,1)$, with $\bW$
-    is given as% (see \cref{fig:reg:deep:3dconv:a})
-    \begin{align*}
-        \summ\bigl(\bX_2(1,1) \odot \bW\bigr) & = 
-        \summ\lB(
-            \amatr{r}{1 & -1 \;\vline\; 2 & 1\;\vline\; 1 & -2\\
-                  2 & 1 \;\vline\; 3 & -1\;\vline\; 2 & 1} 
-                  \odot 
-                  \matr{1 & 1 \;\vline\; 1 & 0\;\vline\; 0 & 1\\
-                        2 & 0 \;\vline\; 0 & 1\;\vline\;1 & 0}
-        \rB)\\
-        & = \summ\lB( 
-            \amatr{r}{1 & -1 \;\vline\; 2 & 0\;\vline\; 0 & -2\\
-                        4 & 0 \;\vline\; 0 & -1\;\vline\;2 & 0}
-    \rB)  = 5
-    \end{align*}
-    where we stack the different channels horizontally.
-    The convolution steps for different $2\times 2 \times 3$ 
-    sliding windows of $\bX$ with the
-    filter $\bW$ are shown in figure.
-    %\cref{fig:reg:deep:3dconv}\protect\subref{fig:reg:deep:3dconv:a}--\protect\subref{fig:reg:deep:3dconv:d}.
-    The convolution $\bX \ast \bW$ has size $2 \times 2$, since 
-    $n-k+1 = 3-2+1 = 2$ and $r=m=3$; it is
-    given as 
-    \begin{align*}
-        \bX \ast \bW = \matr{5 &11\\
-            15 & 5
-        }
-    \end{align*}
-\end{frame}
+%\begin{frame}{3D Convolution}
+%\framesubtitle{Example}
+%%    \cref{fig:reg:deep:3dconv} 
+%Figures show a $3 \times 3 \times 3$ tensor 
+%    $\bX$ with $n=3$ and $m=3$, and a $2 \times 2 \times 3$
+%    filter $\bW$ with window size $k=2$ and $r=3$. The convolution of the 
+%    first window of $\bX$, namely $\bX_2(1,1)$, with $\bW$
+%    is given as% (see \cref{fig:reg:deep:3dconv:a})
+%    \begin{align*}
+%        \summ\bigl(\bX_2(1,1) \odot \bW\bigr) & = 
+%        \summ\lB(
+%            \amatr{r}{1 & -1 \;\vline\; 2 & 1\;\vline\; 1 & -2\\
+%                  2 & 1 \;\vline\; 3 & -1\;\vline\; 2 & 1} 
+%                  \odot 
+%                  \matr{1 & 1 \;\vline\; 1 & 0\;\vline\; 0 & 1\\
+%                        2 & 0 \;\vline\; 0 & 1\;\vline\;1 & 0}
+%        \rB)\\
+%        & = \summ\lB( 
+%            \amatr{r}{1 & -1 \;\vline\; 2 & 0\;\vline\; 0 & -2\\
+%                        4 & 0 \;\vline\; 0 & -1\;\vline\;2 & 0}
+%    \rB)  = 5
+%    \end{align*}
+%    where we stack the different channels horizontally.
+%    The convolution steps for different $2\times 2 \times 3$ 
+%    sliding windows of $\bX$ with the
+%    filter $\bW$ are shown in figure.
+%    %\cref{fig:reg:deep:3dconv}\protect\subref{fig:reg:deep:3dconv:a}--\protect\subref{fig:reg:deep:3dconv:d}.
+%    The convolution $\bX \ast \bW$ has size $2 \times 2$, since 
+%    $n-k+1 = 3-2+1 = 2$ and $r=m=3$; it is
+%    given as 
+%    \begin{align*}
+%        \bX \ast \bW = \matr{5 &11\\
+%            15 & 5
+%        }
+%    \end{align*}
+%\end{frame}
 %\end{example}
 %
 %
@@ -4398,22 +4632,26 @@ Figures show a $3 \times 3 \times 3$ tensor
 %
 %\index{convolutional neural networks!filter bias}
 %\subsubsection{Filter Bias}
-\begin{frame}{Filter Bias}
+\begin{frame}{Bias and Activation Functions}
+	\framesubtitle{Filter Bias}
 Let $\bW$ be a $k \times k \times m_l$ 3D filter.
 Recall that when we convolve $\bZ^l$ and $\bW$, we get a $(n_l-k+1)
 \times (n_l-k+1)$ matrix at layer $l+1$. 
+
+\medskip
+
 However, so far, we have ignored the role of the bias term in the
 convolution. Let $b \in \setR$ be a scalar bias value for $\bW$, and
 let $\bZ^l_k(i,j)$ denote the $k \times k \times m_l$ subtensor of
 $\bZ^l$ at position $(i,j)$.
-Then, the net signal at neuron
-$z^{l+1}_{i,j}$ in layer $l+1$ is given as
+%Then, the net signal at neuron
+%$z^{l+1}_{i,j}$ in layer $l+1$ is given as
 \begin{align*}
     \net^{\;l+1}_{i,j} = \summ\lB( \bZ^l_k(i,j) \odot \bW \rB) +
     b
 \end{align*}
 and the value of the neuron $z^{l+1}_{i,j}$ is obtained by applying some
-activation function $f$ to the net signal
+$f$%activation function $f$ to the net signal
 \begin{align*}
     z^{l+1}_{i,j} = f\Bigl(\summ\bigl( \bZ^l_k(i,j) \odot \bW \bigr) +
         b \Bigr)
@@ -4436,14 +4674,19 @@ networks, for example, identity, sigmoid, tanh, ReLU and so on.
 %
 %
 %\subsubsection{Multiple 3D Filters}
-\begin{frame}{Multiple 3D Filters}
+\begin{frame}{Bias and Activation Functions}
+\framesubtitle{Multiple 3D Filters}
 We can observe that one 3D filter $\bW$ with a corresponding bias
 term $b$ results in a $(n_l-k+1) \times (n_l-k+1)$ matrix of
-neurons in layer $l+1$. Therefore, if we desire $m_{l+1}$ channels
+in layer $l+1$. 
+
+\medskip
+
+If we desire $m_{l+1}$ channels
 in layer $l+1$, then we need $m_{l+1}$ different $k \times k \times m_l$ 
-filters $\bW_q$ with a corresponding bias term $b_q$, to
-obtain the $(n_l-k+1) \times (n_l-k+1) \times m_{l+1}$ tensor of neuron
-values at layer $l+1$, given as
+filters $\bW_q$ with a corresponding $b_q$, to
+obtain the $(n_l-k+1) \times (n_l-k+1) \times m_{l+1}$ tensor 
+at layer $l+1$:
 \begin{align*}
     \bZ^{l+1} & = \biggl\{ z^{l+1}_{i,j,q} 
     = f\Bigl(\summ\bigl( \bZ^l_k(i,j) \odot \bW_q \bigr)
@@ -4467,7 +4710,11 @@ $\bZ^{l+1}$ of
 neurons for the next layer $l+1$ via
 the convolution of $\bZ^l$ with a set of $m_{l+1}$ different 3D filters of size $k
 \times k \times m_l$, followed by adding the bias and applying some
-non-linear activation function $f$. Note that each 3D filter applied to
+non-linear activation function $f$. 
+
+	\medskip
+
+	Note that each 3D filter applied to
 $\bZ^l$ results in a new channel in layer $l+1$. Therefore, $m_{l+1}$
 filters are used to yield $m_{l+1}$ channels at layer $l+1$.
 \end{frame}
@@ -4476,6 +4723,28 @@ filters are used to yield $m_{l+1}$ channels at layer $l+1$.
 %\begin{figure}[!t]
 %    \vspace*{-0.1in}
 \begin{frame}{Multiple 3D filters.}
+
+Example shows a $4 \times 4 \times
+    2$ tensor $\bZ^l$ with $n=4$ and $m=2$. It also shows two different $2
+    \times 2 \times 2$ 
+    filters $\bW_1$ and $\bW_2$ with $k=2$ and $r=2$. 
+
+\medskip
+
+Since $r=m=2$, the
+    convolution of $\bZ^l$ and $\bW_i$ (for $i=1,2$) results in a $3
+    \times 3$ matrix since $n-k+1 = 4-2+1 = 3$. 
+
+\medskip
+
+However, $\bW_1$ yields
+    one channel and $\bW_2$ yields a second channel, so that the tensor
+    for the next layer $\bZ^{l+1}$ has size $3 \times 3 \times 2$, with two
+    channels (one per filter).
+
+	\medskip
+
+\scalebox{0.8}{
     \centering
     \tikzset{every node/.style={draw,fill=none}}
  \tikzstyle{edge from parent}=[-{Stealth[length=2mm]},thick,draw]
@@ -4557,6 +4826,7 @@ filters are used to yield $m_{l+1}$ channels at layer $l+1$.
 \draw[dashed](t1nw.north west)--(t2nw.north west);
 \draw[dashed](t1sw.south west)--(t2sw.south west);
 \end{tikzpicture}
+}
 \end{frame}
 %% \vspace{0.1in}
 %\caption{Multiple 3D filters.}
@@ -4634,35 +4904,39 @@ filters are used to yield $m_{l+1}$ channels at layer $l+1$.
 %
 %% \vspace*{-0.1in}
 %\begin{example}[Multiple 3D Filters]
-\begin{frame}{Multiple 3D Filters}
-%    \cref{fig:reg:deep:multiple_filters} 
-Figure shows how applying different filters
-    yield the channels for the next layer. 
-
-\medskip
-
-It shows a $4 \times 4 \times
-    2$ tensor $\bZ^l$ with $n=4$ and $m=2$. It also shows two different $2
-    \times 2 \times 2$ 
-    filters $\bW_1$ and $\bW_2$ with $k=2$ and $r=2$. 
-
-\medskip
-
-Since $r=m=2$, the
-    convolution of $\bZ^l$ and $\bW_i$ (for $i=1,2$) results in a $3
-    \times 3$ matrix since $n-k+1 = 4-2+1 = 3$. 
-
-\medskip
-
-However, $\bW_1$ yields
-    one channel and $\bW_2$ yields a second channel, so that the tensor
-    for the next layer $\bZ^{l+1}$ has size $3 \times 3 \times 2$, with two
-    channels (one per filter).
-\end{frame}
+%\begin{frame}{Multiple 3D Filters}
+%%    \cref{fig:reg:deep:multiple_filters} 
+%Figure shows how applying different filters
+    %yield the channels for the next layer. 
+%
+%\medskip
+%
+%It shows a $4 \times 4 \times
+    %2$ tensor $\bZ^l$ with $n=4$ and $m=2$. It also shows two different $2
+    %\times 2 \times 2$ 
+    %filters $\bW_1$ and $\bW_2$ with $k=2$ and $r=2$. 
+%
+%\medskip
+%
+%Since $r=m=2$, the
+    %convolution of $\bZ^l$ and $\bW_i$ (for $i=1,2$) results in a $3
+    %\times 3$ matrix since $n-k+1 = 4-2+1 = 3$. 
+%
+%\medskip
+%
+%However, $\bW_1$ yields
+    %one channel and $\bW_2$ yields a second channel, so that the tensor
+    %for the next layer $\bZ^{l+1}$ has size $3 \times 3 \times 2$, with two
+    %channels (one per filter).
+%\end{frame}
 %\end{example}
 %
 %% \vspace*{-0.1in}
 %\subsection{Padding and Striding}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+
 \begin{frame}{Padding and Striding}
 One of the issues with the convolution operation is
 that the size of the tensors will necessarily decrease in each
@@ -4703,11 +4977,11 @@ the bottom, and likewise the same number of columns on the left and on the right
 
 \medskip
 
-With padding $p$, the implicit size of layer $l$ tensor is then $(n_l+2p) \times
+With padding $p$, the size of layer $l$ tensor is then $(n_l+2p) \times
 (n_l+2p) \times m_l$. Assume that each filter is of size $k \times k \times
 m_l$, and assume there are $m_{l+1}$ filters, then the size of the layer $l+1$ tensor will be
 $(n_l+2p -k +1) \times (n_l+2p -k +1) \times m_{l+1}$. Since we want to
-preserve the size of the resulting tensor, we need to have
+preserve the size of the resulting tensor:
 \begin{align*}
     n_l+2p -k +1  \ge n_l, \text{which implies}, 
     p = \lB\lceil \frac{k-1}{2} \rB\rceil
@@ -4720,12 +4994,32 @@ deep convolutional layers in a CNN.
 %\begin{figure}[!t]
 \begin{frame}{Padding 2D Convolution}
 \framesubtitle{$p=0$ e $p=1$}
+
+\begin{minipage}{4cm}
+\begin{small}
+Example shows a 2D convolution without and with
+    padding. 
+It starts with a convolution of a $5
+    \times 5$ matrix $\bZ^l$ ($n=5$) with a $3 \times 3$ filter $\bW$
+    ($k=3$), which results in a $3 \times 3$ matrix since $n-k+1 = 5-3+1
+    = 3$. Thus, the size of the next layer $\bZ^{l+1}$ has
+    decreased.
+
+\medskip
+    
+    This way, we can
+    chain together as many convolution layers as desired, without decrease in the
+    size of the layers.
+\end{small}
+\end{minipage}
+\hspace*{1.5cm}
+\begin{minipage}{5cm}
 \centering
     \tikzset{empty node/.style={draw=none,fill=none}}
     \centerline{
 %        \subfloat[No padding: $p=0$]{
 %        \label{fig:reg:deep:padding:a}
-    \scalebox{0.45}{\LARGE
+    \scalebox{0.4}{\LARGE
         \scantokens{
     % \tikzsetnextfilename{reg_deep_padding_a}
 \begin{tikzpicture}[every node/.style={draw, minimum size=1cm}]
@@ -4792,6 +5086,7 @@ deep convolutional layers in a CNN.
 \node[draw=none] at ([xshift={4mm},yshift={1mm}]w1.0) {\scalebox{1}{$=$}}; 
 \end{tikzpicture}
 \endinput}}}
+\end{minipage}
 \end{frame}
 %}
 %\vspace{0.2in}
@@ -4806,41 +5101,41 @@ deep convolutional layers in a CNN.
 %
 %
 %\begin{example}[Padding]
-\begin{frame}{Padding}
-\framesubtitle{Example}
-%    \cref{fig:reg:deep:padding} 
-Figure shows a 2D convolution without and with
-    padding. %\cref{fig:reg:deep:padding:a} 
-It starts with a convolution of a $5
-    \times 5$ matrix $\bZ^l$ ($n=5$) with a $3 \times 3$ filter $\bW$
-    ($k=3$), which results in a $3 \times 3$ matrix since $n-k+1 = 5-3+1
-    = 3$. Thus, the size of the next layer $\bZ^{l+1}$ has
-    decreased.
-
-
-\medskip
-
-
-    On the other hand, zero padding $\bZ^l$ using $p=1$ results in a $7 \times
-    7$ matrix as shown in the figure %\cref{fig:reg:deep:padding:b}. 
-Since $p=1$, we
-    have an extra row of zeros on the top and bottom, and an extra
-    column of zeros on the left and right. The convolution of the
-    zero-padded $\bX$ with $\bW$ now results in a $5 \times 5$ matrix
-    $\bZ^{l+1}$
-    (since $7-3+1 = 5$), which preserves the size. 
-
-
-\medskip
-
-    
-    If we wanted to apply another convolution layer, we could
-    zero pad the resulting matrix $\bZ^{l+1}$ with $p=1$, which would again yield a
-    $5 \times 5$ matrix for the next layer, using a $3 \times 3$ filter. 
-    This way, we can
-    chain together as many convolution layers as desired, without decrease in the
-    size of the layers.
-\end{frame}
+%\begin{frame}{Padding}
+%\framesubtitle{Example}
+%%    \cref{fig:reg:deep:padding} 
+%Figure shows a 2D convolution without and with
+    %padding. %\cref{fig:reg:deep:padding:a} 
+%It starts with a convolution of a $5
+    %\times 5$ matrix $\bZ^l$ ($n=5$) with a $3 \times 3$ filter $\bW$
+    %($k=3$), which results in a $3 \times 3$ matrix since $n-k+1 = 5-3+1
+    %= 3$. Thus, the size of the next layer $\bZ^{l+1}$ has
+    %decreased.
+%
+%
+%\medskip
+%
+%
+    %On the other hand, zero padding $\bZ^l$ using $p=1$ results in a $7 \times
+    %7$ matrix as shown in the figure %\cref{fig:reg:deep:padding:b}. 
+%Since $p=1$, we
+    %have an extra row of zeros on the top and bottom, and an extra
+    %column of zeros on the left and right. The convolution of the
+    %zero-padded $\bX$ with $\bW$ now results in a $5 \times 5$ matrix
+    %$\bZ^{l+1}$
+    %(since $7-3+1 = 5$), which preserves the size. 
+%
+%
+%\medskip
+%
+    %
+    %If we wanted to apply another convolution layer, we could
+    %zero pad the resulting matrix $\bZ^{l+1}$ with $p=1$, which would again yield a
+    %$5 \times 5$ matrix for the next layer, using a $3 \times 3$ filter. 
+    %This way, we can
+    %chain together as many convolution layers as desired, without decrease in the
+    %size of the layers.
+%\end{frame}
 %\end{example}
 %
 %
@@ -4851,15 +5146,22 @@ Since $p=1$, we
 %\subsubsection{Striding}
 \begin{frame}{Striding}
 Striding is often used to sparsify the number of sliding windows used
-in the convolutions. That is, instead of considering all possible windows
+in the convolutions.% That is, 
+
+\medskip
+
+Instead of considering all possible windows
 we increment the index along both rows and columns by an integer value
-$s \ge 1$ called the {\em stride}. A 3D convolution of $\bZ^l$ of size
-$n_l \times n_l \times m_l$ with a
-filter $\bW$ of size $k \times k \times m_l$, using stride $s$, is given
-as:
+$s \ge 1$ called the {\em stride}. 
+
+\medskip
+
+A 3D convolution of $\bZ^l$ % of size
+	($n_l \times n_l \times m_l$) with a
+	$\bW$ ($k \times k \times m_l$), using stride $s$:
 
 \centerline{
-\begin{small}
+\begin{footnotesize}
    \scalebox{0.9}{\parbox{\linewidth}{\[
                \!\!\!\!\!\!
                \!\!\!\!\!\!
@@ -4880,7 +5182,7 @@ as:
         \bW\bigr)\\[-1em]
         &&&}%
 \]}}
-\end{small}
+\end{footnotesize}
 }
 %% \begin{align*}
 %%     \bZ^l \ast_s \bW = 
@@ -4908,6 +5210,9 @@ as:
 %% }%
 %% \end{align*}
 \noindent where $t = \lB\lfloor \frac{n_l-k}{s} \rB\rfloor$.
+
+\medskip
+
 We can observe that using stride $s$, the convolution of $\bZ^l \in
 \setR^{n_l \times n_l \times m_l}$ with
 $\bW \in \setR^{k \times k \times m_l}$ results in a $(t+1) \times (t+1)$ matrix.
@@ -4932,7 +5237,41 @@ $\bW \in \setR^{k \times k \times m_l}$ results in a $(t+1) \times (t+1)$ matrix
 %\begin{figure}[!t]
 %    \vspace{-0.3in}
 \begin{frame}{Striding}
-\framesubtitle{$s=2$}
+\framesubtitle{Example}
+%    \cref{fig:reg:deep:striding} 
+Example shows 2D convolution using stride $s=2$
+    on a $5 \times 5$ matrix $\bZ^l$ ($n_l=5$) with a filter $\bW$ of size $3
+    \times 3$ ($k=3$).
+
+	\medskip
+
+    Instead of the default stride of one, which would result in a $3
+    \times 3$ matrix, we get a $(t+1) \times (t+1) = 2 \times 2$ matrix
+    $\bZ^{l+1}$, since
+    \begin{align*}
+        t=\floor[\Big]{\frac{n_l-k}{s}} = \floor[\Big]{\frac{5-3}{2}} = 1
+    \end{align*}
+
+    We can see that the next window index increases by $s$ along the rows
+    and columns. 
+
+	\medskip
+
+	For example, the first window is $\bZ^l_3(1,1)$ and
+    thus the second window is $\bZ^l_3(1,1+s) = \bZ^l_3(1,3)$.
+%    (see \cref{fig:reg:deep:striding:a,fig:reg:deep:striding:b}). 
+%    % (see \cref{fig:reg:deep:striding}\subref{fig:reg:deep:striding:a}
+%    % --\subref{fig:reg:deep:striding:b}). 
+    Next, we move down by a stride of
+    $s=2$, so that the third window is $\bZ^l_3(1+s,1) = \bZ^l_3(3,1)$,
+    and the final window is $\bZ^l_3(3,1+s)
+    = \bZ^l_3(3,3)$ %(see
+%        \cref{fig:reg:deep:striding:c,fig:reg:deep:striding:d}).
+%        % \cref{fig:reg:deep:striding}\subref{fig:reg:deep:striding:c}
+%    % and \subref{fig:reg:deep:striding:d}).
+\end{frame}
+\begin{frame}{Striding}
+\framesubtitle{Example: $s=2$}
 \centering
     \tikzset{empty node/.style={draw=none,fill=none}}
     \centerline{
@@ -5080,33 +5419,6 @@ $\bW \in \setR^{k \times k \times m_l}$ results in a $(t+1) \times (t+1)$ matrix
 %
 %% \vspace*{-0.1in}
 %\begin{example}[Striding]
-\begin{frame}{Striding}
-\framesubtitle{Example}
-%    \cref{fig:reg:deep:striding} 
-Figure shows 2D convolution using stride $s=2$
-    on a $5 \times 5$ matrix $\bZ^l$ ($n_l=5$) with a filter $\bW$ of size $3
-    \times 3$ ($k=3$).
-    Instead of the default stride of one, which would result in a $3
-    \times 3$ matrix, we get a $(t+1) \times (t+1) = 2 \times 2$ matrix
-    $\bZ^{l+1}$, since
-    \begin{align*}
-        t=\floor[\Big]{\frac{n_l-k}{s}} = \floor[\Big]{\frac{5-3}{2}} = 1
-    \end{align*}
-
-    We can see that the next window index increases by $s$ along the rows
-    and columns. For example, the first window is $\bZ^l_3(1,1)$ and
-    thus the second window is $\bZ^l_3(1,1+s) = \bZ^l_3(1,3)$.
-%    (see \cref{fig:reg:deep:striding:a,fig:reg:deep:striding:b}). 
-%    % (see \cref{fig:reg:deep:striding}\subref{fig:reg:deep:striding:a}
-%    % --\subref{fig:reg:deep:striding:b}). 
-    Next, we move down by a stride of
-    $s=2$, so that the third window is $\bZ^l_3(1+s,1) = \bZ^l_3(3,1)$,
-    and the final window is $\bZ^l_3(3,1+s)
-    = \bZ^l_3(3,3)$ %(see
-%        \cref{fig:reg:deep:striding:c,fig:reg:deep:striding:d}).
-%        % \cref{fig:reg:deep:striding}\subref{fig:reg:deep:striding:c}
-%    % and \subref{fig:reg:deep:striding:d}).
-\end{frame}
 %\end{example}
 %
 %
@@ -5123,6 +5435,9 @@ Figure shows 2D convolution using stride $s=2$
 CNNs also use
 other types of aggregation functions in addition to summation, such as
 average and maximum.
+
+\medskip
+
 %
 %
 %% \vspace*{-0.1in}
@@ -5130,8 +5445,8 @@ average and maximum.
 %\index{pooling!avg-pooling}
 %\subsubsection{Avg-Pooling}
 \textbf{Avg-Pooling}
-If we replace the summation with the average value over the
-element-wise product of $\bZ^l_k(i,j,q)$ and $\bW$, we get
+average over the
+element-wise product of $\bZ^l_k(i,j,q)$ and $\bW$:
 \begin{align*}
     \avg\bigl(\bZ^l_k(i,j,q) \odot \bW\bigr) & = 
    \displaystyle \avg_{\substack{a = 1,2,\cdots,k\\
@@ -5147,15 +5462,15 @@ element-wise product of $\bZ^l_k(i,j,q)$ and $\bW$, we get
 %\index{pooling!max-pooling}
 %\subsubsection{Max-Pooling}
 \textbf{Max-Pooling} 
-If we replace the summation with the maximum value over the
-element-wise product of $\bZ^l_k(i,j,q)$ and $\bW$, we get
-\begin{align}
+maximum over the
+element-wise product of $\bZ^l_k(i,j,q)$ and $\bW$:
+\begin{align*}
     \tcbhighmath{
     \max\bigl(\bZ^l_k(i,j,q) \odot \bW\bigr) = 
    \displaystyle \max_{\substack{a =
    1,2,\cdots,k\\b=1,2,\cdots,k\\c=1,2,\cdots,r}}
     \lB\{z^l_{i+a-1, j+b-1, q+c-1} \cdot w_{a, b, c} \rB\} }
-\end{align}
+\end{align*}
 \end{frame}
 %The 3D convolution of $\bZ^l \in \setR^{n_l \times n_l \times m_l}$ with filter
 %$\bW \in \setR^{k \times k \times r}$ using max-pooling,
@@ -5339,7 +5654,11 @@ $\bZ^l$.
 
 More importantly, in pooling, the filter $\bW$ is by default taken to be a 
 $k \times k \times 1$ tensor all of whose weights are fixed as $1$, so
-that $\bW = \bone_{k \times k \times 1}$. In other words, the filter
+that $\bW = \bone_{k \times k \times 1}$. 
+
+	\medskip
+
+	In other words, the filter
 weights are fixed at 1 and are not updated during backpropagation.
 Further, the filter uses a fixed zero bias 
 (that is, $b = 0$).
@@ -5358,8 +5677,35 @@ of size $\lB\lfloor\frac{n_l}{s}\rB\rfloor
 %
 %
 %\begin{figure}[!b]
+\begin{frame}{Max-Pooling}
+\framesubtitle{Example}
+%    \cref{fig:reg:deep:maxpooling} 
+Example shows max-pooling on a $4 \times 4$ matrix
+    $\bZ^l$ ($n_l=4$), using window size $k=2$ and stride $s=2$ that
+    equals the window size. 
+
+	\medskip
+
+	The resulting layer $\bZ^{l+1}$ thus has
+    size $2 \times 2$, since $\floor{\tfrac{n_l}{s}} = \floor{\tfrac{4}{2}} = 2$. 
+    We can see that the filter $\bW$ has fixed weights equal to 1. 
+
+	\medskip
+
+     The convolution of the 
+    first window of $\bZ^l$, namely $\bZ^l_2(1,1)$, with $\bW$
+    is given as %(see \cref{fig:reg:deep:maxpooling:a})
+    \begin{align*}
+        \max\bigl(\bZ^l_2(1,1) \odot \bW\bigr) = 
+        \max\lB(
+            \matr{1 & 2\\3 & 1} \odot \matr{1 & 1\\1 & 1}
+        \rB) = 
+        \max\lB( \matr{1 & 2\\3& 1}\rB)  = 3
+    \end{align*}
+    %The other convolution steps are shown in the Figure.
+\end{frame}
 \begin{frame}{Max-pooling}
-\framesubtitle{Stride: $s=2$}
+\framesubtitle{Example -- Stride: $s=2$}
 \centering
     \tikzset{empty node/.style={draw=none,fill=none}}
     \centerline{
@@ -5486,6 +5832,9 @@ of size $\lB\lfloor\frac{n_l}{s}\rB\rfloor
 \end{tikzpicture}
 \endinput}}}
 \end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 %}
 %\vspace{0.2in}
 %\caption{Max-pooling: Stride $s=2$.}
@@ -5493,27 +5842,6 @@ of size $\lB\lfloor\frac{n_l}{s}\rB\rfloor
 %\end{figure}
 %
 %\begin{example}[Max-pooling]
-\begin{frame}{Max-Pooling}
-\framesubtitle{Example}
-%    \cref{fig:reg:deep:maxpooling} 
-Figure shows max-pooling on a $4 \times 4$ matrix
-    $\bZ^l$ ($n_l=4$), using window size $k=2$ and stride $s=2$ that
-    equals the window size. The resulting layer $\bZ^{l+1}$ thus has
-    size $2 \times 2$, since $\floor{\tfrac{n_l}{s}} = \floor{\tfrac{4}{2}} = 2$. 
-    We can see that the filter $\bW$ has fixed weights equal to 1. 
-
-     The convolution of the 
-    first window of $\bZ^l$, namely $\bZ^l_2(1,1)$, with $\bW$
-    is given as %(see \cref{fig:reg:deep:maxpooling:a})
-    \begin{align*}
-        \max\bigl(\bZ^l_2(1,1) \odot \bW\bigr) = 
-        \max\lB(
-            \matr{1 & 2\\3 & 1} \odot \matr{1 & 1\\1 & 1}
-        \rB) = 
-        \max\lB( \matr{1 & 2\\3& 1}\rB)  = 3
-    \end{align*}
-    The other convolution steps are shown in the Figure.
-\end{frame}
 %    \cref{fig:reg:deep:maxpooling:b,fig:reg:deep:maxpooling:c,fig:reg:deep:maxpooling:d}.
 %    % \cref{fig:reg:deep:maxpooling}\subref{fig:reg:deep:maxpooling:b}--\subref{fig:reg:deep:maxpooling:d}.
 %\end{example}
@@ -5672,6 +6000,9 @@ consider.
 To see how to train CNNs we will consider a network with
 a single convolution layer and a max-pooling layer, followed by a fully
 connected layer.% as shown in \cref{fig:reg:deep:cnn_training}. 
+
+\medskip
+
 For simplicity, we assume that there is only one channel for the
 input $\bX$, and further, we use only one filter. 
 
@@ -5771,6 +6102,9 @@ Let $\bD = \{\bX_i, \by_i\}_{i=1}^n$ denote the training data,
 comprising $n$ tensors $\bX_i \in \setR^{n_0 \times n_0 \times m_0}$ (with
 $m_0 = 1$ for ease of explanation) and
 the corresponding response vector $\by_i \in \setR^p$.
+
+\medskip
+
 Given a training pair $(\bX, \by) \in \bD$, 
 in the feed-forward phase, the predicted output $\bo$ is given via the
 following equations:
@@ -5988,7 +6322,7 @@ activation function.
 \medskip
 
 The $n_1 \times n_1$ matrix of net
-gradients $\bdelta^1$ comprises the net graidents $\delta^1_{ij}$ for
+gradients $\bdelta^1$ comprises the net gradients $\delta^1_{ij}$ for
 all $i,j = 1,2,\cdots,n_1$.
 \end{frame}
 %
@@ -6039,7 +6373,29 @@ all $i,j = 1,2,\cdots,n_1$.
 %would be learned from the corresponding channel $j$ in layer $l=1$.
 %
 %\begin{figure}[!b]
-\begin{frame}{Convolutional neural network}
+\begin{frame}{Convolutional Neural Network}
+\framesubtitle{Example}
+
+\vspace*{-0.5cm}
+
+Example shows a CNN for handwritten digit
+    recognition. This CNN is trained and tested on the MNIST dataset,
+    that contains 60,000 training images and 10,000 test images. 
+    %Some examples of handwritten digits from MNIST are shown in
+%figure.
+
+\medskip
+
+    Each input image is a $ 28
+    \times 28$ matrix of pixel values between 0 to 255, which are
+    divided by 255, so that each pixel lies in the interval $[0,1]$.
+    The corresponding (true)
+    output $\by_i$ is a one-hot encoded binary vector that denotes a
+    digit from 0 to 9;  the digit 0 is encoded as
+    $\be_1 = (1,0,0,0,0,0,0,0,0,0)^T$, the digit 1 as $\be_2 =
+    (0,1,0,0,0,0,0,0,0,0)^T$,
+    and so on. 
+
     \large
 \def\myCube####1####2####3####4{
     \psSolid[object=parallelepiped,a=####1,b=####2,c=####3]####4
@@ -6342,32 +6698,10 @@ all $i,j = 1,2,\cdots,n_1$.
 %% \enlargethispage{6pt}
 %% \vspace*{-0.1in}
 %\begin{example}[CNN]
-\begin{frame}{CNN}
+\begin{frame}{Convolutional Neural Network}
 \framesubtitle{Example}
-%    \cref{fig:reg:deep:cnn} 
-Figure shows a CNN for handwritten digit
-    recognition. This CNN is trained and tested on the MNIST dataset,
-    that contains 60,000 training images and 10,000 test images. 
-    Some examples of handwritten digits from MNIST are shown in
-figure.
-%    \cref{fig:reg:deep:mnist_ex}.
 
-
-\medskip
-
-    Each input image is a $ 28
-    \times 28$ matrix of pixel values between 0 to 255, which are
-    divided by 255, so that each pixel lies in the interval $[0,1]$.
-    The corresponding (true)
-    output $\by_i$ is a one-hot encoded binary vector that denotes a
-    digit from 0 to 9;  the digit 0 is encoded as
-    $\be_1 = (1,0,0,0,0,0,0,0,0,0)^T$, the digit 1 as $\be_2 =
-    (0,1,0,0,0,0,0,0,0,0)^T$,
-    and so on. 
-    
-
-
-\medskip
+\vspace*{-0.5cm}
 
     In our CNN model, all the convolution layers use stride equal to one,
     and do not use any padding, whereas all of the max-pooling layers
@@ -6379,18 +6713,101 @@ figure.
     \times 1$ tensor. 
     The first convolution
     layer uses $m_1=6$ filters, with $k_1=5$ and stride $s_1=1$, without padding. 
-\end{frame}
 
-\begin{frame}{CNN}
+    \medskip
+
+    \large
+\def\myCube####1####2####3####4{
+    \psSolid[object=parallelepiped,a=####1,b=####2,c=####3]####4
+}
+\psset{arrowscale=1, arrows=->}
+\psset{viewpoint=90 5 15 rtp2xyz, Decran=50}
+\psset{lightsrc=100 10 20 rtp2xyz, lightintensity=2}
+\vspace{0.6in}
+\centerline{
+%\axesIIID[showOrigin=true](1,1,1)(5,5,5)
+    \hspace{0.25in}
+    \scalebox{0.50}{%
+    \begin{tabular}{p{0.65in}%
+                    p{1in}%
+                    p{0.65in}%
+                    p{0.8in}%
+                    p{0.4in}%
+                    p{0.65in}%
+                    p{0.35in}%
+                    p{0.55in}%
+                    p{0.2in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                }
+    \myCube{3}{6}{6}{(0,0,0)}
+    \psPoint(0,1,4.5){O}\uput[l](O){Input}
+    \psPoint(0,0.5,0){O}\uput[l](O){$\bX$}
+    \psPoint(0,1.7,-4.1){O} \uput[l](O){%
+    \scalebox{1}{$28 \times 28 \times 1$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{5}{6}{6}{(0,0,0)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Convolution}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^1$}
+    \psPoint(0,2,-5){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{24 \times 24 \times 6\\k_1=5}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{5}{4}{4}{(0,0,0.5)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Max-pooling}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^2$}
+    \psPoint(0,1.8,-3.8){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{12 \times 12 \times 6\\k_2=s_2=2}$}} &
+        \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{7}{3}{3}{(0,0,1)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Convolution}
+    \psPoint(0,0.5,0){O}  \uput[l](O){$\bZ^3$}
+    \psPoint(0,1.7,-2.9){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{8 \times 8 \times 16\\k_3=5}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{7}{2}{2}{(0,0,1)}
+    \psPoint(0,2,4.5){O}\uput[l](O){Max-pooling}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^4$}
+    \psPoint(0,1.5,-2.7){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{4 \times 4 \times 16\\k_4=s_4=2}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{7}{(0,0,0)}
+    \psPoint(0,0.7,0){O} \uput[l](O){$\bZ^5$}
+    \psPoint(0,0.8,-4.25){O} \uput[l](O){\scalebox{1}{$120$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{6}{(0,0,0)}
+    \psPoint(0,3.5,4.5){O}\uput[l](O){Fully Connected Layers}
+    \psPoint(0,0.7,0){O}  \uput[l](O){$\bZ^6$}
+    \psPoint(0,0.8,-3.8){O} \uput[l](O){\scalebox{1}{$84$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{1}{(0,0,0)}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\Large\bo$}
+    \psPoint(0,0.6,-1.1){O} \uput[l](O){\scalebox{1}{$10$}}
+    \end{tabular}
+}}
+\end{frame}
+\begin{frame}{Convolutional Neural Network}
 \framesubtitle{Example}
 
-    Thus, each filter
+\vspace*{-0.3cm}
+
+    Each filter
     is a $5 \times 5 \times 1$ tensor of weights, and across the six
     filters the resulting
     layer $l=1$ tensor $\bZ^1$ has size $24 \times 24 \times 6$, with $n_1 = n_0
     - k_1 +1 = 28-5+1 = 24$ and $m_1 = 6$.
-    The second hidden layer is a max-pooling layer that uses $k_2=2$ with
-    a stride of $s_2=2$. 
+	The second hidden layer is a max-pooling ($k_2=2$ and 
+	$s_2=2$). 
 
 
 \medskip
@@ -6407,8 +6824,91 @@ figure.
     tensor $\bZ^3$ of size $8 \times 8 \times 16$, where $n_3 = n_2 -
     k_3 + 1 = 12-5+1 = 8$.
 
+    \large
+\def\myCube####1####2####3####4{
+    \psSolid[object=parallelepiped,a=####1,b=####2,c=####3]####4
+}
+\psset{arrowscale=1, arrows=->}
+\psset{viewpoint=90 5 15 rtp2xyz, Decran=50}
+\psset{lightsrc=100 10 20 rtp2xyz, lightintensity=2}
+\vspace{0.6in}
+\centerline{
+%\axesIIID[showOrigin=true](1,1,1)(5,5,5)
+    \hspace{0.25in}
+    \scalebox{0.50}{%
+    \begin{tabular}{p{0.65in}%
+                    p{1in}%
+                    p{0.65in}%
+                    p{0.8in}%
+                    p{0.4in}%
+                    p{0.65in}%
+                    p{0.35in}%
+                    p{0.55in}%
+                    p{0.2in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                }
+    \myCube{3}{6}{6}{(0,0,0)}
+    \psPoint(0,1,4.5){O}\uput[l](O){Input}
+    \psPoint(0,0.5,0){O}\uput[l](O){$\bX$}
+    \psPoint(0,1.7,-4.1){O} \uput[l](O){%
+    \scalebox{1}{$28 \times 28 \times 1$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{5}{6}{6}{(0,0,0)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Convolution}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^1$}
+    \psPoint(0,2,-5){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{24 \times 24 \times 6\\k_1=5}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{5}{4}{4}{(0,0,0.5)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Max-pooling}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^2$}
+    \psPoint(0,1.8,-3.8){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{12 \times 12 \times 6\\k_2=s_2=2}$}} &
+        \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{7}{3}{3}{(0,0,1)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Convolution}
+    \psPoint(0,0.5,0){O}  \uput[l](O){$\bZ^3$}
+    \psPoint(0,1.7,-2.9){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{8 \times 8 \times 16\\k_3=5}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{7}{2}{2}{(0,0,1)}
+    \psPoint(0,2,4.5){O}\uput[l](O){Max-pooling}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^4$}
+    \psPoint(0,1.5,-2.7){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{4 \times 4 \times 16\\k_4=s_4=2}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{7}{(0,0,0)}
+    \psPoint(0,0.7,0){O} \uput[l](O){$\bZ^5$}
+    \psPoint(0,0.8,-4.25){O} \uput[l](O){\scalebox{1}{$120$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{6}{(0,0,0)}
+    \psPoint(0,3.5,4.5){O}\uput[l](O){Fully Connected Layers}
+    \psPoint(0,0.7,0){O}  \uput[l](O){$\bZ^6$}
+    \psPoint(0,0.8,-3.8){O} \uput[l](O){\scalebox{1}{$84$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{1}{(0,0,0)}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\Large\bo$}
+    \psPoint(0,0.6,-1.1){O} \uput[l](O){\scalebox{1}{$10$}}
+    \end{tabular}
+}}
+\end{frame}
 
-\medskip
+\begin{frame}{Convolutional Neural Network}
+\framesubtitle{Example}
+
+\vspace*{-0.5cm}
 
     This is followed
     by another max-pooling layer that uses $k_4=2$ and $s_4=2$, which
@@ -6416,31 +6916,106 @@ figure.
     $n_4 = \lB\lfloor \tfrac{n_3}{k_4} \rB\rfloor = 
     \lB\lfloor\tfrac{8}{2}\rB\rfloor = 4$, and $m_4 = 16$.
 
-
-
 \medskip
 
     The next three layers are fully connected as in a regular MLP. All
     of the $4\times 4\times 16 = 256$ neurons in layer $l=4$ are
-    connected to layer $l=5$, which has 120 neurons. Thus, $\bZ^5$ is
-    simply a vector of length $120$, or it can be considered a
+    connected to $l=5$ $\bZ^5$ is
+    simply a vector and it can be considered a
     degenerate tensor of size $120 \times 1 \times 1$. 
-\end{frame}
 
-\begin{frame}{CNN}
-\framesubtitle{Example}
+	\medskip
 
 Layer $l=5$ is
-    also fully connected to layer $l=6$ with $84$ neurons, which is the
-    last hidden layer. Since there are 10 digits, the output layer $\bo$
-    comprises 10 neurons, with softmax activation function. The
-    convolution layers $\bZ^1$ and
-    $\bZ^3$, and the fully connected layers $\bZ^5$ and $\bZ^6$, all use
+    also fully connected to layer $l=6$ with $84$ neurons.
+$\bo$
+    has 10 neurons and uses softmax.
+    $\bZ^1$, $\bZ^3$, $\bZ^5$, and $\bZ^6$ use
     ReLU activation.
 
+    \large
+\def\myCube####1####2####3####4{
+    \psSolid[object=parallelepiped,a=####1,b=####2,c=####3]####4
+}
+\psset{arrowscale=1, arrows=->}
+\psset{viewpoint=90 5 15 rtp2xyz, Decran=50}
+\psset{lightsrc=100 10 20 rtp2xyz, lightintensity=2}
+\vspace{0.6in}
+\centerline{
+%\axesIIID[showOrigin=true](1,1,1)(5,5,5)
+    \hspace{0.25in}
+    \scalebox{0.50}{%
+    \begin{tabular}{p{0.65in}%
+                    p{1in}%
+                    p{0.65in}%
+                    p{0.8in}%
+                    p{0.4in}%
+                    p{0.65in}%
+                    p{0.35in}%
+                    p{0.55in}%
+                    p{0.2in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                    p{0.35in}%
+                    p{0.08in}%
+                }
+    \myCube{3}{6}{6}{(0,0,0)}
+    \psPoint(0,1,4.5){O}\uput[l](O){Input}
+    \psPoint(0,0.5,0){O}\uput[l](O){$\bX$}
+    \psPoint(0,1.7,-4.1){O} \uput[l](O){%
+    \scalebox{1}{$28 \times 28 \times 1$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{5}{6}{6}{(0,0,0)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Convolution}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^1$}
+    \psPoint(0,2,-5){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{24 \times 24 \times 6\\k_1=5}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{5}{4}{4}{(0,0,0.5)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Max-pooling}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^2$}
+    \psPoint(0,1.8,-3.8){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{12 \times 12 \times 6\\k_2=s_2=2}$}} &
+        \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{7}{3}{3}{(0,0,1)} 
+    \psPoint(0,2,4.5){O}\uput[l](O){Convolution}
+    \psPoint(0,0.5,0){O}  \uput[l](O){$\bZ^3$}
+    \psPoint(0,1.7,-2.9){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{8 \times 8 \times 16\\k_3=5}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{7}{2}{2}{(0,0,1)}
+    \psPoint(0,2,4.5){O}\uput[l](O){Max-pooling}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\bZ^4$}
+    \psPoint(0,1.5,-2.7){O} \uput[l](O){%
+    \scalebox{1.3}{$\substack{4 \times 4 \times 16\\k_4=s_4=2}$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{7}{(0,0,0)}
+    \psPoint(0,0.7,0){O} \uput[l](O){$\bZ^5$}
+    \psPoint(0,0.8,-4.25){O} \uput[l](O){\scalebox{1}{$120$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{6}{(0,0,0)}
+    \psPoint(0,3.5,4.5){O}\uput[l](O){Fully Connected Layers}
+    \psPoint(0,0.7,0){O}  \uput[l](O){$\bZ^6$}
+    \psPoint(0,0.8,-3.8){O} \uput[l](O){\scalebox{1}{$84$}} &
+    \psPoint(0,0,0){O1}\psPoint(0,1.5,0){O2}%
+    \psline[linecolor=black,linewidth=3pt]{->}(O1)(O2)&
+    \myCube{1}{1}{1}{(0,0,0)}
+    \psPoint(0,0.5,0){O} \uput[l](O){$\Large\bo$}
+    \psPoint(0,0.6,-1.1){O} \uput[l](O){\scalebox{1}{$10$}}
+    \end{tabular}
+}}
+\end{frame}
 
-\medskip
-
+\begin{frame}{Convolutional Neural Network}
+\framesubtitle{Example}
 
     We train the CNN model on $n=60000$ training images from the
     MNIST dataset; we train for $15$ epochs using step size
@@ -6458,54 +7033,37 @@ Layer $l=5$ is
     %\cref{fig:reg:deep:mnist_incorrect} 
 
 
-\medskip
+%\medskip
 
-Figure shows examples of images that
-    are misclassified by the CNN. We show the true label $y$ for each
-    image and the predicted label $o$ (converted back from the one-hot
-    encoding to the digit label). We show three examples for each
-    of the labels. For example, the first three images on the first row
-    are for the case when the true label is $y=0$, and the next three
-    examples are for true label $y=1$, and so on. We can see that
-    several of the misclassified images are noisy, 
-    incomplete or erroneous, and hard to classify correctly even by
-    a human.
+%Figure shows examples of images that are misclassified by the CNN. 
+%We show the true label $y$ for each
+%image and the predicted label $o$ (converted back from the one-hot
+%encoding to the digit label). We show three examples for each
+%of the labels. For example, the first three images on the first row
+%are for the case when the true label is $y=0$, and the next three
+%examples are for true label $y=1$, and so on. 
+%We can see that several of the misclassified images are noisy, 
+%incomplete or erroneous, and hard to classify correctly even by
+%a human.
 \end{frame}
 
-\begin{frame}{CNN}
-\framesubtitle{Example}
-    
-    For comparison, we also train a deep MLP with two (fully
-    connected) hidden layers with the same sizes as the two fully
-    connected layers before the output layer in the CNN shown in
-    %\cref{fig:reg:deep:cnn}. 
-    figure. 
-
-\medskip
-
-Therefore, the MLP comprises the layers
-    $\bX$, $\bZ^5$, $\bZ^6$, and $\bo$, with the input $28\times28$
-    images viewed as a vector of size $d=784$. The first hidden layer
-    has size $n_1 = 120$, the second hidden layer has size $n_2=84$, and
-    the output layer has size $p=10$. We use ReLU activation function
-    for all layers, except the output, which uses softmax. We train the
-    MLP model for $15$ epochs on the training dataset with $n=60000$
-    images, using step size $\eta=0.5$. On the test dataset, the MLP
-    made 264 errors, for an error rate of 2.64\%.
-%    \cref{fig:reg:deep:mnist_cnn_mlp} 
-
-
-\medskip
-
-Figure shows the number of errors on the
-    test set after each epoch of training for both the CNN and MLP
-    model; the CNN model achieves significantly
-    better accuracy than the MLP.
-\end{frame}
 %\end{example}
 %
 %\begin{figure}[!t]
 \begin{frame}{MNIST: Incorrect predictions}
+Figure shows examples of images that are misclassified by the CNN. 
+%We show the true label $y$ for each
+%image and the predicted label $o$ (converted back from the one-hot
+%encoding to the digit label). We show three examples for each
+%of the labels. For example, the first three images on the first row
+%are for the case when the true label is $y=0$, and the next three
+%examples are for true label $y=1$, and so on. 
+We can see that several of the misclassified images are noisy, 
+incomplete or erroneous, and hard to classify correctly even by
+a human.
+
+\medskip
+
     \newcommand\myplotmnistimg[2]{%
     \begin{tikzpicture}
         \begin{axis}[
@@ -6564,6 +7122,24 @@ Figure shows the number of errors on the
     \myplotmnistimg{REG/deep/figs/test_loss/digit_IM3_2.txt}{$y=3,o=8$}}
 }
 \vspace{0.1in}
+\end{frame}
+\begin{frame}{MNIST: Incorrect predictions}
+    \newcommand\myplotmnistimg[2]{%
+    \begin{tikzpicture}
+        \begin{axis}[
+            colormap/blackwhite,
+            enlargelimits=false,
+            axis on top,
+            title={\scalebox{3.5}{####2}},
+            point meta min=0,
+            point meta max=255,
+        ]
+       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
+            {####1};
+        \end{axis}
+    \end{tikzpicture}
+    }
+\vspace{0.1in}
 \centerline{
     \resizebox{0.75in}{0.75in}{%
     % \tikzsetnextfilename{reg_deep_mnist_incorrect_40}
@@ -6584,23 +7160,6 @@ Figure shows the number of errors on the
     % \tikzsetnextfilename{reg_deep_mnist_incorrect_53}
     \myplotmnistimg{REG/deep/figs/test_loss/digit_IM5_2.txt}{$y=5,o=3$}}
 }
-\end{frame}
-\begin{frame}{MNIST: Incorrect predictions}
-    \newcommand\myplotmnistimg[2]{%
-    \begin{tikzpicture}
-        \begin{axis}[
-            colormap/blackwhite,
-            enlargelimits=false,
-            axis on top,
-            title={\scalebox{3.5}{####2}},
-            point meta min=0,
-            point meta max=255,
-        ]
-       \addplot [matrix plot,point meta=explicit] file [meta=index 2]
-            {####1};
-        \end{axis}
-    \end{tikzpicture}
-    }
 \vspace{0.1in}
 \centerline{
     \resizebox{0.75in}{0.75in}{%
@@ -6649,6 +7208,35 @@ Figure shows the number of errors on the
     %         $\qquad5$ & $\qquad6$ & $\qquad7$ & $\qquad8$ & $\qquad9$\\
     %     \end{tabular}
     % }
+\end{frame}
+
+\begin{frame}{Convolutional Neural Network}
+\framesubtitle{Example}
+    
+    For comparison, we also train a deep MLP with two (fully
+    connected) hidden layers with the same sizes as the two fully
+    connected layers before the output layer in the CNN shown in
+    %\cref{fig:reg:deep:cnn}. 
+    figure. 
+
+\medskip
+
+Therefore, the MLP comprises the layers
+    $\bX$, $\bZ^5$, $\bZ^6$, and $\bo$, with the input $28\times28$
+    images viewed as a vector of size $d=784$. The first hidden layer
+    has size $n_1 = 120$, the second hidden layer has size $n_2=84$, and
+    the output layer has size $p=10$. We use ReLU activation function
+    for all layers, except the output, which uses softmax. 
+
+	\medskip
+
+	We train the
+    MLP model for $15$ epochs on the training dataset with $n=60000$
+    images, using step size $\eta=0.5$. On the test dataset, the MLP
+    made 264 errors, for an error rate of 2.64\%.
+%    \cref{fig:reg:deep:mnist_cnn_mlp} 
+
+
 \end{frame}
 %\vspace{0.2in}
     %\caption{MNIST: Incorrect predictions by the CNN model; $y$
@@ -6707,7 +7295,14 @@ Figure shows the number of errors on the
 %\begin{figure}[!b]
 \begin{frame}{MNIST: CNN versus Deep MLP}
 \framesubtitle{Prediction error as a function of epochs.}
-    \centering
+Graph shows the number of errors on the
+test set after each epoch of training for both the CNN and MLP
+model; the CNN model achieves significantly
+better accuracy than the MLP.
+    
+\medskip
+
+\centering
 \pgfplotscreateplotcyclelist{my black white}{%
 solid, every mark/.append style={solid, fill=gray}, mark=*\\%
 solid, every mark/.append style={solid, fill=gray}, mark=triangle*\\%
@@ -6717,8 +7312,8 @@ solid, every mark/.append style={solid, fill=gray}, mark=triangle*\\%
 % mark=triangle*\\%
 }
 % \tikzsetnextfilename{reg_deep_mnist_cnn_mlp}
-\vspace{-0.2in}
-\scalebox{1}{%
+\vspace{0.4in}
+\scalebox{0.9}{%
 \begin{tikzpicture}
     \begin{axis}[
             width=3in,
@@ -6760,6 +7355,11 @@ solid, every mark/.append style={solid, fill=gray}, mark=triangle*\\%
 %\section{Regularization}
 %\index{regularization}
 %\index{deep learning!regularization}
+
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+
 \begin{frame}{Regularization}
 %
 %Consider the squared error loss function, given as
@@ -6836,23 +7436,25 @@ at the cost of increasing the bias slightly.
 %sparsifies} the model by forcing many of the weights to zero, acting as
 %a feature subset selection method.
 %
+
+\medskip
+
 In general, for any learning model $M$, if $L(\by, \hby)$ is some loss
 function for a given input $\bx$, and $\bTheta$ denotes all the model
-parameters, where $\hby = M(\bx | \bTheta)$.
-The learning objective is to find the parameters that
+parameters, where $\hby = M(\bx | \bTheta)$,
+the objective is to find the parameters that
 minimize the loss over all instances:
 \begin{align*}
     \min_{\bTheta} \; J(\bTheta) =  
    \sum_{i=1}^n L(\by_i, \hby_i) = 
     \sum_{i=1}^n L(\by_i, M(\bx_i|\bTheta))
 \end{align*}
-With regularization, we add a penalty on the parameters $\bTheta$, to
-obtain the regularized objective:
-\begin{align}
+With regularization, we add a penalty on the parameters $\bTheta$:
+\begin{align*}
     \tcbhighmath{
     \min_{\bTheta} \; J(\bTheta) = 
 \sum_{i=1}^n L(\by_i, \hby_i) + \alpha R(\bTheta)}
-\end{align}
+\end{align*}
 where $\alpha \ge 0$ is the regularization constant.
 \end{frame}
 
@@ -6874,7 +7476,7 @@ where $\alpha \ge 0$ is the regularization constant.
 \begin{frame}{L2 Regularization for Deep Learning}
 %We now consider approaches for regularizing the deep learning models.
 We first consider the case of a multilayer perceptron with one hidden
-layer, and then generalize it to multiple hidden layers.
+layer, and then generalize it. % to multiple hidden layers.
 %Note that while our discussion of regularization is in the context of
 %MLPs, since RNNs are trained via unfolding, and CNNs
 %are essentially sparse MLPs, the methods described here can easily be
@@ -6940,7 +7542,7 @@ layer, and then generalize it to multiple hidden layers.
 %MLP with a single hidden layer as shown in \cref{fig:reg:eval:MLP1h}. 
 %Let the input $\bx \in \setR^d$, the
 %hidden layer $\bz \in \setR^m$ and let $\hby = \bo \in \setR^p$. 
-The set of all the parameters of the model are 
+The parameters of the model are 
 \begin{align*}
     \bTheta = \lB\{ \bW_{\!h}, \bb_{h}, \bW_{\!o},
     \bb_{o}\rB\}
@@ -6967,9 +7569,9 @@ The $L_2$ regularized objective is therefore given as
 %\end{align*}
 %where $a_{ij}$ is the $(i,j)$th element of $\bA$.
 The regularized objective tries to minimize the individual weights
-for pairs of neurons between the input and hidden, and hidden and
-output layers. This has the effect of adding some bias to the model, but possibly
-reducing variance, since small weights are more robust to changes in the
+for pairs of neurons. 
+This adds some bias, but 
+reduces variance, since small weights are more robust to changes in the
 input data in terms of the predicted output values.
 %
 %The regularized objective has two separate terms, one for the
@@ -7012,7 +7614,7 @@ input data in terms of the predicted output values.
 %where $\bdelta_{\!o}$ 
 %is the net gradient vector for the output neurons,
 %and $\bz$ is the vector of hidden layer neuron values. 
-The gradient update rule using the regularized weight gradient matrix is
+The gradient update rule is %using the regularized weight gradient matrix is
 given as
 \begin{align*}
     \bW_{\!o} & = \bW_{\!o} - \eta \cdot \bgrad_{\bW_{\!o}}
@@ -7106,30 +7708,33 @@ Given the error function $\cE_{\bx}$, the $L_2$ regularized objective
 function is
 \begin{align*}
     \min_{\bTheta} \; J(\bTheta) & =  \cE_{\bx} + \frac{\alpha}{2} \cdot
-    R_{L_2}\lB(\bW_{\!0}, \bW_{\!1}, \ldots, \bW_{h}\rB)\\
+    R_{L_2}\lB(\bW_{\!0}, \bW_{\!1}, \ldots, \bW_{h}\rB)
     & = \cE_{\bx} +
-    \frac{\alpha}{2} \cdot \lB( \sum_{l=0}^h \norm[\big]{\bW_{\!l}}_{F}^2 \rB)
+    \frac{\alpha}{2} \cdot \lB( \sum_{l=0}^h || \bW_{\!l}||_{F}^2 \rB)
 \end{align*}
-where the set of all the parameters of the model is 
+where the parameters of the model are 
 $\bTheta = \lB\{\bW_{\!0}, \bb_{0}, \bW_{\!1}, \bb_{1}, \cdots, 
 \bW_{\!h}, \bb_{h}\rB\}$.
-Based on the derivation for the one hidden layer MLP from above, the
-regularized gradient is given as:
-\begin{align}
+
+\medskip
+
+Based on the derivation for the one hidden layer, the
+regularized gradient is:
+\begin{align*}
     \tcbhighmath{
         \bgrad_{\bW_{\!l}}  = \bz^{l} \cdot (\bdelta^{l+1})^T + \alpha \cdot
 \bW_{\!l}}
-\end{align}
+\end{align*}
 and the update rule for weight matrices is
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \bW_{\!l} = \bW_{\!l} - \eta \cdot \bgrad_{\bW_{\!l}}
      = (1-\eta\cdot\alpha) \cdot \bW_{\!l} - \eta \cdot \lB(\bz^l \cdot
  (\bdelta^{l+1})^T \rB)}
-\end{align}
+\end{align*}
 for $l=0,1,\cdots,h$, where
 where $\bdelta^{l}$ 
-is the net gradient vector for the hidden neurons in layer $l$.
+is the net gradient vector for the hidden layer $l$.
 \end{frame}
 %We can thus observe that incorporating $L_2$ regularization within deep MLPs
 %is relatively straightforward. Likewise, it is easy to incorporate $L_2$
@@ -7164,7 +7769,11 @@ The net effect is similar to $L_2$ regularization since weight
 spreading leads to smaller weights on the edges. The resulting model
 with dropout is therefore more resilient to small perturbations in the
 input, which can
-reduce overfitting at a small price in increased bias. However, note
+reduce overfitting at a small price in increased bias. 
+
+\medskip
+
+However, note
 that while $L_2$ regularization directly changes the objective function,
 dropout regularization is a form of {\em structural regularization} that
 does not change the objective function, but instead changes the
@@ -7233,13 +7842,17 @@ hidden neuron, its expected output value is
 \end{align*}
 On the other hand, since there is no dropout at test time, the outputs
 of the hidden neurons will be higher at testing time. So one idea is to
-scale the hidden neuron values by $r$ at testing time. On the other
+scale the hidden neuron values by $r$ at testing time. 
+
+	\medskip
+
+	On the other
 hand, there is a simpler approach called {\em inverted dropout} that
 does not need a change at testing time. The idea is to rescale the
 hidden neurons after the dropout step during the training phase, as follows:
 \begin{align*}
-    \bz & = f\lB(\bb_{h} + \bW_{\!h}^T \bx \rB)\\
-    \btz & = \frac{1}{r} \cdot \bigl(\bu \odot \bz\bigr)\\
+	\bz & = f\lB(\bb_{h} + \bW_{\!h}^T \bx \rB) &
+	\btz & = \frac{1}{r} \cdot \bigl(\bu \odot \bz\bigr) &
     \bo & = f\lB(\bb_{o} + \bW_{\!o}^T \btz \rB)
 \end{align*}
 \end{frame}
@@ -7270,7 +7883,7 @@ Define the masking vector for hidden layer $l$, $\bu^l \in
     \end{cases}
 \end{align*}
 The feed-forward step between layer $l$ and $l+1$ is then given as
-\begin{empheq}[box=\tcbhighmath]{align}
+\begin{empheq}[box=\tcbhighmath]{align*}
     \begin{aligned}
     \bz^l & = f\lB(\bb_{l} + \bW_{\!l}^T \; \btz^{l-1} \rB)\\
     \btz^l & = \frac{1}{r_l} \cdot \lB(\bu^l \odot \bz^l\rB)

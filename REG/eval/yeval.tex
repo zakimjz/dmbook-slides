@@ -1,5 +1,3 @@
-%WMJ Missing: Geometry and standardized residuals
-
 \lecture{evalreg}{evalreg}
 
 \date{Chapter 27: Regression Evaluation}
@@ -108,9 +106,16 @@ normal distribution with mean $\mu=0$ and variance $\sigma^2$.
 %
 %
 %\subsubsection{Estimated Parameters}
+\medskip
+
 The true parameters $\trueb$, $\truew$ and $\sigma^2$ are all unknown, and have to
-be estimated from the training data $\bD$ comprising $n$ points $x_i$
-and corresponding response values $y_i$, for $i=1,2,\cdots,n$. Let
+be estimated from %the training data 
+$\bD$ comprising $n$ points $x_i$
+and corresponding response values $y_i$, for $i=1,2,\cdots,n$. 
+
+	\medskip
+
+Let
 $b$ and $w$ denote the estimated bias and weight terms;
 we can then make predictions for
 any given value $x_i$ as follows:
@@ -184,11 +189,11 @@ The estimated variance $\hsigma^2$ is given as
     = \frac{1}{n-2} \cdot \sum_{i=1}^n (y_i - \hy_i)^2
 \end{align*}
 Thus, the estimated variance is
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \hsigma^2 = \frac{SSE}{n-2} }
-    \label{eq:reg:eval:sse_est}
-\end{align}
+%    \label{eq:reg:eval:sse_est}
+\end{align*}
 We divide by $n-2$ to get an unbiased estimate, 
 since $n-2$ is the number of degrees of freedom for
 estimating SSE.% (see \cref{fig:reg:eval:uni_geom}). In other words, out of the $n$ training points, we need
@@ -212,13 +217,17 @@ estimating SSE.% (see \cref{fig:reg:eval:uni_geom}). In other words, out of the 
 %\index{TSS|see{total sum of squares}}
 \begin{frame}{Univariate Regression}
 The SSE value gives an indication of how much of the variation in $Y$
-cannot be explained by our linear model. We can compare this value with
+cannot be explained by our linear model. 
+
+	\medskip
+
+	We can compare this value with
 the {\em total scatter}, also called {\em total sum of squares}, 
 for the dependent variable $Y$, defined as
 \begin{align*}
     TSS = \sum^{n}_{i=1} (y_i - \mu_{Y})^2
 \end{align*}
-Notice that in TSS, we compute the squared deviations of the true
+Notice that, in TSS, we compute the squared deviations of the true
 response from the true mean for $Y$, whereas, in SSE we compute the
 squared deviations of the true response from the predicted response.
 %
@@ -254,8 +263,17 @@ TSS can thus be decomposed into two parts: SSE, which is the
 amount of variation not explained by the model, 
 and RSS, which is the amount of variance explained
 by the model.
-Therefore, the fraction of the variation left unexplained by the model is given
-by the ratio $\frac{SSE}{TSS}$. 
+
+\medskip
+
+
+%Therefore, t
+The fraction of the variation left unexplained by the model is %given
+%by the ratio 
+$\frac{SSE}{TSS}$. 
+
+\medskip
+
 Conversely, the fraction of the
 variation that is explained by the model, called the {\em coefficient
 of determination} or simply the {\em $R^2$ statistic}, is given as
@@ -263,11 +281,11 @@ of determination} or simply the {\em $R^2$ statistic}, is given as
 %\index{regression!R$^2$ statistic}
 %\index{R$^2$ statistic|see{coefficient of determination}}
 %\index{coefficient of determination}
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     R^2 = \frac{TSS - SSE}{TSS} = 1 - \frac{SSE}{TSS} = \frac{RSS}{TSS}}
-    \label{eq:reg:eval:r2_rss}
-\end{align}
+%    \label{eq:reg:eval:r2_rss}
+\end{align*}
 The higher the $R^2$ statistic the better the estimated model, with $R^2 \in
 [0,1]$.
 \end{frame}
@@ -278,11 +296,15 @@ The higher the $R^2$ statistic the better the estimated model, with $R^2 \in
    Consider %\cref{ex:reg:linear:bivariate} that shows 
 the
    regression of {\tt petal length} ($X$; the predictor variable) on 
-    {\tt petal width} ($Y$; the response variable) for the
-   Iris dataset.
+    {\tt petal width} ($Y$; the response vari%able) for the
+   Iris dataset
 %    Figure~\ref{fig:reg:eval:irisplw} 
-Figure shows the scatterplot between
-    the two attributes.  There are a total of $n=150$ data points.
+%Figure shows the scatterplot between
+    %the two attributes.  
+	($n=150$ data points).
+
+	\medskip
+
     The least squares estimates for the bias and regression coefficients
     are as follows
     \begin{align*}
@@ -300,6 +322,31 @@ Figure shows the scatterplot between
         \hsigma & = \sqrt{\frac{SSE}{n-2}} = \sqrt{4.286 \times 10^{-2}} = 0.207
     \end{align*}
 \end{frame}
+
+\begin{frame}{Variance and Goodness of Fit}
+Scatterplot: {\tt petal length} ($X$) versus {\tt petal
+width} ($Y$). Mean point shown as black circle.
+
+\medskip
+
+\readdata{\dataPLW}{REG/eval/figs/iris-plw.dat}
+%\begin{figure}[t!]
+%\vspace*{-0.1in}
+    \centering
+    \scalebox{0.9}{%
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$X$: petal length,yAxisLabel= $Y$: petal width,
+        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.5in,c}}
+    \psgraph[tickstyle=bottom,Dx=1.0,Dy=0.5,Oy=-0.5,subticks=2]{->}(0.0,-0.5)(7.5,3){4in}{2.5in}%
+    \dataplot[plotstyle=dots,showpoints=true]{\dataPLW}
+    \psdot[dotstyle=*,dotscale=2](3.76,1.20)
+    \psplot[plotstyle=line]{0}{7.5}{x 0.4164 mul -0.3665 add}
+    \endpsgraph
+}
+\vspace{0.6in}
+%\caption{Scatterplot: {\tt petal length} ($X$) versus {\tt petal
+%width} ($Y$). Mean point shown as black circle.}
+\end{frame}
     
 \begin{frame}{Variance and Goodness of Fit}
     For the bivariate Iris data, the values of TSS and RSS are given as
@@ -307,6 +354,9 @@ Figure shows the scatterplot between
         TSS & = 86.78 & RSS & = 80.436
     \end{align*}
     We can observe that $TSS = SSE + RSS$.
+
+	\medskip
+
     The fraction of variance explained by the model, that is, the $R^2$
     value, is given as
     \begin{align*}
@@ -317,23 +367,6 @@ Figure shows the scatterplot between
 %\end{example}
 %
 %
-%\readdata{\dataPLW}{REG/eval/figs/iris-plw.dat}
-%\begin{figure}[t!]
-%\vspace*{-0.1in}
-%    \centering
-%    \scalebox{0.9}{%
-%    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
-%    \psset{xAxisLabel=$X$: petal length,yAxisLabel= $Y$: petal width,
-%        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.5in,c}}
-%    \psgraph[tickstyle=bottom,Dx=1.0,Dy=0.5,Oy=-0.5,subticks=2]{->}(0.0,-0.5)(7.5,3){4in}{2.5in}%
-%    \dataplot[plotstyle=dots,showpoints=true]{\dataPLW}
-%    \psdot[dotstyle=*,dotscale=2](3.76,1.20)
-%    \psplot[plotstyle=line]{0}{7.5}{x 0.4164 mul -0.3665 add}
-%    \endpsgraph
-%}
-%\vspace{0.6in}
-%\caption{Scatterplot: {\tt petal length} ($X$) versus {\tt petal
-%width} ($Y$). Mean point shown as black circle.}
 %\label{fig:reg:eval:irisplw}
 %\vspace{-0.2in}
 %\end{figure}%\vspace*{12pt}
@@ -400,158 +433,266 @@ Figure shows the scatterplot between
 %
 %% \vspace*{-0.2in}
 %\subsubsection{Geometry of Goodness of Fit}
+\begin{frame}{Geometry of Goodness of Fit}
 %
-%Recall that $Y$ can be decomposed into two orthogonal parts as
+Recall that $Y$ can be decomposed into two orthogonal parts: %as
 %illustrated in \cref{fig:reg:eval:uni_geom_uc}.
-%\begin{align*}
-%    Y = \hY + \bepsilon
-%\end{align*}
+\begin{align*}
+    Y = \hY + \bepsilon
+\end{align*}
 %where $\hY$ is the projection of $Y$ onto the subspace spanned by
 %$\{\bone, X\}$. Using the fact that this subspace is the same as that
 %spanned by the orthogonal vectors $\{\bone, \mX\}$, with 
-%$\mX = X - \mu_X \cdot \bone$, we can further decompose $\hY$ as follows
-%\begin{align}
-%    \hY & = \proj_\bone(Y) \cdot \bone + \proj_{\mX}(Y) \cdot \mX
-%     = \mu_Y \cdot \bone + \frac{Y^T \mX}{\mX^T \mX} \cdot \mX
-%     = \mu_Y \cdot \bone + w \cdot \mX
+%$\mX = X - \mu_X \cdot \bone$, w
+We can further decompose $\hY$ as follows
+\begin{align*}
+    \hY & = \proj_\bone(Y) \cdot \bone + \proj_{\mX}(Y) \cdot \mX
+     = \mu_Y \cdot \bone + \frac{Y^T \mX}{\mX^T \mX} \cdot \mX
+     = \mu_Y \cdot \bone + w \cdot \mX
 %    \label{eq:reg:eval:hY_uni}
-%\end{align}
+\end{align*}
+%Likewise, 
+The vectors $Y$ and $\hY$ can be centered% by subtracting their
+%projections
+%along the vector $\bone$
+\begin{align*}
+    \mY & = Y - \mu_Y \cdot \bone &
+    \hmY & = \hY - \mu_Y \cdot \bone = w \cdot \mX
+\end{align*}
+%where the last step follows from \cref{eq:reg:eval:hY_uni}.
+The centered vectors $\mY$, $\hmY$ and $\mX$ all lie in the $n-1$
+dimensional subspace orthogonal to the vector $\bone$, where %, as illustrated in
+%\cref{fig:reg:eval:uni_geom_c}.
+%In this subspace, the centered
+%vectors 
+$\mY$ and $\hmY$, and %the error vector 
+$\bepsilon$ 
+form a right triangle.%, since $\hmY$ is the orthogonal projection of
+%$\mY$ onto the vector $\mX$.
+%Noting that $\bepsilon = Y - \hY = \mY - \hmY$,
+%by the Pythagoras theorem, we have
+\begin{align*}
+    ||{\mY}||^2 & = ||{\hmY}||^2 + ||{\bepsilon}||^2
+    = ||{\hmY}||^2 + ||{Y-\hY}||^2
+    %\norm{Z_Y}^2 & = \norm{w \cdot Z}^2 + \norm{Y-\hY}^2
+\end{align*}
+This equation is 
+equivalent to the decomposition of the total scatter,
+TSS, 
+into sum of squared errors, SSE, and residual sum of squares, RSS. 
+
+\end{frame}
+
+\begin{frame}{Geometry of Univariate Regression}
+
+The vector space that is the complement of $\bone$ has
+dimensionality $n-1$. The error space (containing
+the vector $\bepsilon$) is orthogonal to $\mX$, and has
+dimensionality $n-2$, which also specifies the degrees of freedom for
+the estimated variance $\hsigma^2$.
+
+%\medskip
+
+    \centering
+%\captionsetup[subfloat]{captionskip=40pt}
+% \vspace{-0.4in}
+    \psset{unit=0.4in}
+    \centerline{
+        \hspace{0.4in}
+%    \subfloat[Uncentered]{
+%    \label{fig:reg:eval:uni_geom_uc}
+    \scalebox{0.65}{
+    \begin{pspicture}(-1.5,-1.5)(4,6)
+   \psset{Alpha=81,Beta=17,arrowscale=1.5}
+    %\psset{nameX={$Z$}, nameY={$\bone$}, nameZ={$~$}}
+    %\pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
+    %    zMin=0, zMax=0, linecolor=black]
+\psset{IIIDxTicksPlane=xy}
+    %\psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
+    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,4.2)
+    \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
+    \pstThreeDCoor[RotZ=-20,xMin=0,xMax=5,yMin=0,yMax=6,zMin=0,zMax=2,
+    linecolor=black,linewidth=0.5pt,linestyle=dashed]
+    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,3.0,4.2)
+    \pstThreeDLine[linewidth=2pt](0,0,0)(0,3.0,0)
+    \pstThreeDLine[linewidth=2pt](0,0,0)(5.9,0,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(0,4.0,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,0,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0,0)(5.9,3.0,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](8,0,0)(8,2.03,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,2.03,0)(8,2.03,0)
+    %\pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(5.9,1.5,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,2.03,0)
+    \pstThreeDSquare(-2.5,-1,0)(12,0,0)(0,6,0)
+    \psset{dotsep=2pt}
+    \pstThreeDLine[linewidth=2pt,arrows=->,linecolor=gray](0,0,0)(5.9,3.0,0)
+    %\pstThreeDPut[origin=rt](3,1.7,2.7){$Y$}
+    \pstThreeDPut[origin=rt](6.4,3.1,4.5){$Y$}
+    %\pstThreeDPut[origin=rt](4,1.6,0){$\hY$}
+    \pstThreeDPut[origin=rt](6.4,3.2,0){$\hY$}
+    \pstThreeDPut[origin=c](8.5,0,0){$\mX$}
+    \pstThreeDPut[origin=r](0,4.2,0){$\bone$}
+    \pstThreeDPut[origin=c](8.5,2.1,0){$X$}
+    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,0)
+    \pstThreeDLine[linewidth=1.5pt,linestyle=dashed,arrows=->,linecolor=gray](5.9,3.0,0)(5.9,3.0,4.2)
+    \pstThreeDPut[origin=rt](5.9,3.9,3.4){$\bepsilon =
+    Y - \hY$}
+    % \pstPlanePut[plane=xz,planecorr=xyrot](5.9,3.0,1){$\overbrace{\hspace{1.1in}}^{\bepsilon}$}
+    % \rput(2.7,0.2){\begin{Rotateleft}$\underbrace{\hspace{1.6in}}_{~}$\end{Rotateleft}}
+    % \rput(2.7,0.2){$\bepsilon$}
+    %right angle
+    \pstThreeDLine[linewidth=1pt](5,2.54,0)(5,2.54,0.5)
+    \pstThreeDLine[linewidth=1pt](5.9,3.0,0.5)(5,2.54,0.5)
+    %%theta
+    %\psset{beginAngle=0,endAngle=90}
+    %\pstThreeDEllipse(0,0,0)(1,0.6,-0.02)(1,0.6,0.84)
+    %\pstThreeDPut[origin=r](1.5,1,0.8){$\theta$}
+    %\pstPlanePut[plane=yz,planecorr=normal](1.2,0.9,0){\scriptsize $\theta$}
+    \end{pspicture}
+    }%}
+    %}
+    %\vspace{0.6in}
+% \caption{Geometry of univariate regression: uncentered vectors}
+% \label{fig:reg:eval:uni_geom_un}
+% \end{figure}
+% \begin{figure}[h!]
+%     \centering
+    % \hspace{1.5in}
+% \captionsetup[subfloat]{captionskip=30pt}
+%\vspace{-0.75in}
+    % \psset{unit=0.4in}
+    \hspace{0.5in}
+    %\centerline{
+    %\subfloat[Centered]{
+    %\label{fig:reg:eval:uni_geom_c}
+    \scalebox{0.65}{
+            \hspace{1in}
+    \begin{pspicture}(-1.5,-1.5)(4,6)
+   \psset{Alpha=70,Beta=17,arrowscale=1.5}
+    %\psset{nameX={$Z$}, nameY={$\bone$}, nameZ={$~$}}
+    %\pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
+    %    zMin=0, zMax=0, linecolor=black]
+\psset{IIIDxTicksPlane=xy}
+    %\psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
+    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,4.2)
+    \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
+    \pstThreeDCoor[RotZ=-20,xMin=0,xMax=6,yMin=0,yMax=4,zMin=0,zMax=3,
+    linecolor=black,linewidth=0.5pt,linestyle=dashed]
+    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,3.0,4.2)
+    %\pstThreeDLine[linewidth=2pt](0,0,0)(0,3.0,0)
+    %\pstThreeDLine[linewidth=2pt](0,0,0)(5.9,0,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(0,4.0,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,0,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0,0)(5.9,3.0,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](8,0,0)(8,2.03,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,2.03,0)(8,2.03,0)
+    %\pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(5.9,1.5,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,2.03,0)
+    \pstThreeDSquare(-1,0,-0.75)(10.5,0,0)(0,0,5.75)
+    \psset{dotsep=2pt}
+    \pstThreeDLine[linewidth=2pt,arrows=->,linecolor=gray](0,0,0)(5.9,0,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->,linecolor=gray](0,0,0)(5.9,3.0,0)
+    %\pstThreeDPut[origin=rt](3,1.7,2.7){$Y$}
+    \pstThreeDPut[origin=rt](6.4,3.2,4.6){$Y$}
+    \pstThreeDPut[origin=rt](6.4,0.1,4.6){$\mY$}
+    %\pstThreeDPut[origin=rt](4,1.6,0){$\hY$}
+    \pstThreeDPut[origin=rt](6.4,3.2,0){$\hY$}
+    \pstThreeDPut[origin=rt](5.8,0,-0.3){$\hmY$}
+    \pstThreeDPut[origin=c](8.5,0,0){$\mX$}
+    \pstThreeDPut[origin=r](0,4.2,0){$\bone$}
+    \pstThreeDPut[origin=c](8.5,2.1,0){$X$}
+    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,0)
+    \pstThreeDLine[linewidth=1.5pt,linestyle=dashed,arrows=->,linecolor=gray](5.9,0,0)(5.9,0,4.2)
+    \pstThreeDPut[origin=rt](7,0,2.5){$\bepsilon$}
+    % \pstPlanePut[plane=xz,planecorr=xyrot](5.9,3.0,1){$\overbrace{\hspace{1.1in}}^{\bepsilon}$}
+    % \rput(2.7,0.2){\begin{Rotateleft}$\underbrace{\hspace{1.6in}}_{~}$\end{Rotateleft}}
+    % \rput(2.7,0.2){$\bepsilon$}
+    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,0.0,4.2)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0.0,4.2)(5.9,3.0,4.2)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,4.2)
+    %right angle
+    \pstThreeDLine[linewidth=1pt](5.9,0,0.5)(5.2,0,0.5)
+    \pstThreeDLine[linewidth=1pt](5.2,0,0.5)(5.2,0,0)
+    %theta
+    \psset{beginAngle=0,endAngle=90}
+    \pstThreeDEllipse(0,0,0)(1,0,0)(1,0,0.78)
+    \pstThreeDPut[origin=r](1.7,0,0.7){$\theta$}
+    %\pstPlanePut[plane=yz,planecorr=normal](1.2,0.9,0){\scriptsize $\theta$}
+    \end{pspicture}
+    }}%}
+    \vspace{0.2in}
+\end{frame}
+
+\begin{frame}{Geometry of Goodness of Fit}
+%To see this, note that 
+The total scatter, TSS, is defined as follows:
+\begin{align*}
+    TSS = \sum_{i=1}^n (y_i - \mu_Y)^2 = ||{Y - \mu_Y \cdot \bone}||^2 =
+    ||{\mY}||^2
+\end{align*}
+The residual sum of squares, RSS, is defined as
+\begin{align*}
+RSS = \sum_{i=1}^n (\hy_i - \mu_Y)^2 = ||{\hY - \mu_Y \cdot \bone}||^2 = ||{\hmY}||^2
+\end{align*}
+Finally, the sum of squared errors, SSE, is defined as
+\begin{align*}
+    SSE = \norm{\bepsilon}^2 = \norm{Y -\hY}^2
+\end{align*}
+Thus, the geometry of univariate regression makes it evident that
+\begin{align*}
+    \norm{\mY}^2 & = \norm{\hmY}^2 + \norm{Y-\hY}^2\\
+    \norm{Y - \mu_Y \cdot \bone}^2 & = \norm{\hY -
+    \mu_Y\cdot\bone}^2 + \norm{Y-\hY}^2\\
+    TSS & = RSS + SSE
+\end{align*}
+%
+%
+%Notice further that since $\mY$, $\hmY$ and $\bepsilon$ form a
+%right triangle, t
+\end{frame}
+
+\begin{frame}{Geometry of Goodness of Fit}
+The cosine of the angle between $\mY$ and
+$\hmY$ is given as the ratio of the base to the hypotenuse and 
+%On the other hand, via \cref{eq:eda:numeric:scorrdot}, 
+the cosine of the
+angle and is also %the correlation between $Y$ and $\hY$, denoted 
+$\rho_{Y\hY}$. %Thus, we have:
+\begin{align*}
+    \rho_{Y\hY} = \cos\theta = \frac{\norm{\hmY}}{\norm{\mY}}
+\end{align*}
+We can observe that
+\begin{align*}
+    \norm{\hmY} = \rho_{Y\hY} \cdot \norm{\mY}
+\end{align*}
+Note that, whereas $\abs{\rho_{Y\hY}} \le 1$, due to the projection
+operation,  the angle between $Y$ and $\hY$ is always less than or equal
+to $90^\circ$, which means that $\rho_{Y\hY} \in [0,1]$.% for univariate
+%regression.
+
+\medskip
+
+Thus, the predicted response vector $\hmY$ is smaller than the
+true response vector $\mY$ by an amount equal to the correlation between them. 
+%Furthermore, by
+%\cref{eq:reg:eval:r2_rss}, 
+%The coefficient of determination is the same
+%as the squared correlation between $Y$ and $\hY$
+\begin{align*}
+    R^2 = \frac{RSS}{TSS} =
+    \frac{\norm{\hmY}^2}{\norm{\mY}^2}
+     = \rho_{Y\hY}^2
+\end{align*}
+
+\end{frame}
 %
 %
 %
 %
 %
 %\begin{figure}[t!]
-%    \centering
-% \captionsetup[subfloat]{captionskip=40pt}
-% \vspace{-0.4in}
-%    \psset{unit=0.4in}
-%    \centerline{
-%        \hspace{0.4in}
-%    \subfloat[Uncentered]{
-%    \label{fig:reg:eval:uni_geom_uc}
-%    \scalebox{0.725}{
-%    \begin{pspicture}(-1.5,-1.5)(4,6)
-%   \psset{Alpha=81,Beta=17,arrowscale=1.5}
-%    %\psset{nameX={$Z$}, nameY={$\bone$}, nameZ={$~$}}
-%    %\pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
-%    %    zMin=0, zMax=0, linecolor=black]
-%\psset{IIIDxTicksPlane=xy}
-%    %\psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
-%    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,4.2)
-%    \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
-%    \pstThreeDCoor[RotZ=-20,xMin=0,xMax=5,yMin=0,yMax=6,zMin=0,zMax=2,
-%    linecolor=black,linewidth=0.5pt,linestyle=dashed]
-%    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,3.0,4.2)
-%    \pstThreeDLine[linewidth=2pt](0,0,0)(0,3.0,0)
-%    \pstThreeDLine[linewidth=2pt](0,0,0)(5.9,0,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(0,4.0,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,0,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0,0)(5.9,3.0,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](8,0,0)(8,2.03,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,2.03,0)(8,2.03,0)
-%    %\pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(5.9,1.5,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,2.03,0)
-%    \pstThreeDSquare(-2.5,-1,0)(12,0,0)(0,6,0)
-%    \psset{dotsep=2pt}
-%    \pstThreeDLine[linewidth=2pt,arrows=->,linecolor=gray](0,0,0)(5.9,3.0,0)
-%    %\pstThreeDPut[origin=rt](3,1.7,2.7){$Y$}
-%    \pstThreeDPut[origin=rt](6.4,3.1,4.5){$Y$}
-%    %\pstThreeDPut[origin=rt](4,1.6,0){$\hY$}
-%    \pstThreeDPut[origin=rt](6.4,3.2,0){$\hY$}
-%    \pstThreeDPut[origin=c](8.5,0,0){$\mX$}
-%    \pstThreeDPut[origin=r](0,4.2,0){$\bone$}
-%    \pstThreeDPut[origin=c](8.5,2.1,0){$X$}
-%    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,0)
-%    \pstThreeDLine[linewidth=1.5pt,linestyle=dashed,arrows=->,linecolor=gray](5.9,3.0,0)(5.9,3.0,4.2)
-%    \pstThreeDPut[origin=rt](5.9,3.9,3.4){$\bepsilon =
-%    Y - \hY$}
-%    % \pstPlanePut[plane=xz,planecorr=xyrot](5.9,3.0,1){$\overbrace{\hspace{1.1in}}^{\bepsilon}$}
-%    % \rput(2.7,0.2){\begin{Rotateleft}$\underbrace{\hspace{1.6in}}_{~}$\end{Rotateleft}}
-%    % \rput(2.7,0.2){$\bepsilon$}
-%    %right angle
-%    \pstThreeDLine[linewidth=1pt](5,2.54,0)(5,2.54,0.5)
-%    \pstThreeDLine[linewidth=1pt](5.9,3.0,0.5)(5,2.54,0.5)
-%    %%theta
-%    %\psset{beginAngle=0,endAngle=90}
-%    %\pstThreeDEllipse(0,0,0)(1,0.6,-0.02)(1,0.6,0.84)
-%    %\pstThreeDPut[origin=r](1.5,1,0.8){$\theta$}
-%    %\pstPlanePut[plane=yz,planecorr=normal](1.2,0.9,0){\scriptsize $\theta$}
-%    \end{pspicture}
-%    }}
-%    %}
-%    %\vspace{0.6in}
-%% \caption{Geometry of univariate regression: uncentered vectors}
-%% \label{fig:reg:eval:uni_geom_un}
-%% \end{figure}
-%% \begin{figure}[h!]
-%%     \centering
-%    % \hspace{1.5in}
-%% \captionsetup[subfloat]{captionskip=30pt}
-%%\vspace{-0.75in}
-%    % \psset{unit=0.4in}
-%    \hspace{0.5in}
-%    %\centerline{
-%    \subfloat[Centered]{
-%    \label{fig:reg:eval:uni_geom_c}
-%    \scalebox{0.725}{
-%            \hspace{1in}
-%    \begin{pspicture}(-1.5,-1.5)(4,6)
-%   \psset{Alpha=70,Beta=17,arrowscale=1.5}
-%    %\psset{nameX={$Z$}, nameY={$\bone$}, nameZ={$~$}}
-%    %\pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
-%    %    zMin=0, zMax=0, linecolor=black]
-%\psset{IIIDxTicksPlane=xy}
-%    %\psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
-%    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,4.2)
-%    \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
-%    \pstThreeDCoor[RotZ=-20,xMin=0,xMax=6,yMin=0,yMax=4,zMin=0,zMax=3,
-%    linecolor=black,linewidth=0.5pt,linestyle=dashed]
-%    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,3.0,4.2)
-%    %\pstThreeDLine[linewidth=2pt](0,0,0)(0,3.0,0)
-%    %\pstThreeDLine[linewidth=2pt](0,0,0)(5.9,0,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(0,4.0,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,0,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0,0)(5.9,3.0,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](8,0,0)(8,2.03,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,2.03,0)(8,2.03,0)
-%    %\pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(5.9,1.5,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,2.03,0)
-%    \pstThreeDSquare(-1,0,-0.75)(10.5,0,0)(0,0,5.75)
-%    \psset{dotsep=2pt}
-%    \pstThreeDLine[linewidth=2pt,arrows=->,linecolor=gray](0,0,0)(5.9,0,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->,linecolor=gray](0,0,0)(5.9,3.0,0)
-%    %\pstThreeDPut[origin=rt](3,1.7,2.7){$Y$}
-%    \pstThreeDPut[origin=rt](6.4,3.2,4.6){$Y$}
-%    \pstThreeDPut[origin=rt](6.4,0.1,4.6){$\mY$}
-%    %\pstThreeDPut[origin=rt](4,1.6,0){$\hY$}
-%    \pstThreeDPut[origin=rt](6.4,3.2,0){$\hY$}
-%    \pstThreeDPut[origin=rt](5.8,0,-0.3){$\hmY$}
-%    \pstThreeDPut[origin=c](8.5,0,0){$\mX$}
-%    \pstThreeDPut[origin=r](0,4.2,0){$\bone$}
-%    \pstThreeDPut[origin=c](8.5,2.1,0){$X$}
-%    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,0)
-%    \pstThreeDLine[linewidth=1.5pt,linestyle=dashed,arrows=->,linecolor=gray](5.9,0,0)(5.9,0,4.2)
-%    \pstThreeDPut[origin=rt](7,0,2.5){$\bepsilon$}
-%    % \pstPlanePut[plane=xz,planecorr=xyrot](5.9,3.0,1){$\overbrace{\hspace{1.1in}}^{\bepsilon}$}
-%    % \rput(2.7,0.2){\begin{Rotateleft}$\underbrace{\hspace{1.6in}}_{~}$\end{Rotateleft}}
-%    % \rput(2.7,0.2){$\bepsilon$}
-%    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,0.0,4.2)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0.0,4.2)(5.9,3.0,4.2)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,4.2)
-%    %right angle
-%    \pstThreeDLine[linewidth=1pt](5.9,0,0.5)(5.2,0,0.5)
-%    \pstThreeDLine[linewidth=1pt](5.2,0,0.5)(5.2,0,0)
-%    %theta
-%    \psset{beginAngle=0,endAngle=90}
-%    \pstThreeDEllipse(0,0,0)(1,0,0)(1,0,0.78)
-%    \pstThreeDPut[origin=r](1.7,0,0.7){$\theta$}
-%    %\pstPlanePut[plane=yz,planecorr=normal](1.2,0.9,0){\scriptsize $\theta$}
-%    \end{pspicture}
-%    }}}
-%    \vspace{0.2in}
 %\caption{Geometry of univariate regression: uncentered and centered
 %vectors. The vector space that is the complement of $\bone$ has
 %dimensionality $n-1$. The error space (containing
@@ -708,21 +849,29 @@ Figure shows the scatterplot between
 %\end{example}
 %
 %\subsection{Inference about Regression Coefficient and Bias Term}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 \begin{frame}{Inference about Regression Coefficient and Bias Term}
 
-The estimated values of the bias and regression coefficient, $b$ and $w$,
+%The estimated values of the bias and regression coefficient, 
+$b$ and $w$
 are only point estimates for the true parameters $\trueb$ and $\truew$. To obtain
 confidence intervals for these parameters, we treat each $y_i$ as a
 random variable for the response given the corresponding fixed value
 $x_i$.
+
+\medskip
+
 These random variables are all independent and identically distributed
 as $Y$, with expected value $\trueb + \truew \cdot x_i$ and variance
 $\sigma^2$. 
-On the other hand, the $x_i$ values are fixed {\em a priori} and
-therefore $\mu_X$ and $\sigma_X^2$ are also fixed values.
+%On the other hand, t
+	The $x_i$ values are fixed {\em a priori} and
+therefore $\mu_X$ and $\sigma_X^2$ are also fixed:% values.
 %
-We can now treat $b$ and $w$ as random variables,
-with
+%We can now treat $b$ and $w$ as random variables,
+%with
 \begin{align*}
     b & = \mu_{Y} - w \cdot \mu_X\\
     w & = \frac{\sum^{n}_{i=1} (x_i - \mu_X)(y_{i}
@@ -731,10 +880,10 @@ with
         = \sum^{n}_{i=1} c_i \cdot y_i
 \end{align*}
 where $c_i$ is a constant (since $x_i$ is fixed), given as
-\begin{align}
-    c_i = \frac{x_i - \mu_X}{ s_X }
-    \label{eq:reg:eval:ci}
-\end{align}
+%\begin{align}
+$    c_i = \frac{x_i - \mu_X}{ s_X }$
+%    \label{eq:reg:eval:ci}
+%\end{align}
 and $s_X = \sum^{n}_{i=1} (x_i - \mu_X)^2$ is the total
 scatter for $X$, defined as the sum of squared deviations of $x_i$ from
 its mean $\mu_X$.
@@ -772,13 +921,13 @@ Thus, $w$ is an unbiased estimator for the true parameter $\truew$.
 Using the fact that the variables $y_i$ are independent and identically
 distributed as $Y$,
 we can compute the variance of $w$ as follows
-\begin{align}
+\begin{align*}
     \var(w) = \var\lB( \sum^{n}_{i=1} c_i \cdot y_i\rB) = \sum^{n}_{i=1}
     c_i^2 \cdot \var(y_i) = 
     \sigma^2 \cdot \sum^{n}_{i=1} c_i^2 = 
     \frac{\sigma^2}{s_X}
-    \label{eq:reg:eval:var_hw}
-\end{align}
+    %\label{eq:reg:eval:var_hw}
+\end{align*}
 since $c_i$ is a constant, $\var(y_i) = \sigma^2$, and further
 \begin{align*}
 \sum_{i=1}^n c_i^2 = \frac{1}{ s_X^2}  \cdot \sum^{n}_{i=1}  (x_i - \mu_X)^2
@@ -786,10 +935,10 @@ since $c_i$ is a constant, $\var(y_i) = \sigma^2$, and further
 \end{align*}
 The standard deviation of $w$, also called the standard error of
 $w$, is given as
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \se(w) = \sqrt{\var(w)} = \frac{\sigma}{\sqrt{s_X}}}
-\end{align}
+\end{align*}
 \end{frame}
 
 %\subsubsection{Mean and Variance of Bias Term}
@@ -805,8 +954,10 @@ The expected value of $b$ is given as
 \end{align*}
 Thus, $b$ is an unbiased estimator for the true parameter $\trueb$.
 
+\medskip
+
 Using the observation that all $y_i$ are independent, 
-the variance of the bias term can be computed as follows
+the variance of the bias term can be computed.
 \end{frame}
 %
 \begin{frame}{Mean and Variance of Bias Term}
@@ -815,21 +966,24 @@ the variance of the bias term can be computed as follows
     & = \var\lB( \frac{1}{n} \sum^{n}_{i=1} y_i \rB) +
     \var(\mu_X \cdot w)\\
    &  = \frac{1}{n^2} \cdot n \sigma^2 + \mu_X^2 \cdot \var(w)
-    = \frac{1}{n} \cdot \sigma^2 + \mu_X^2 \cdot \frac{\sigma^2}{s_X}\\
-  & = \lB(\frac{1}{n} + \frac{\mu_X^2}{s_X}\rB) \cdot \sigma^2 
+    = \frac{1}{n} \cdot \sigma^2 + \mu_X^2 \cdot \frac{\sigma^2}{s_X}
+ = \lB(\frac{1}{n} + \frac{\mu_X^2}{s_X}\rB) \cdot \sigma^2 
 \end{align*}
 % where $\beta = (1/n + \mu_X^2/s_X)$. 
 where we used the
 fact that for any two random variables $A$ and $B$, we have $\var(A-B) =
 \var(A)+\var(B)$. That is, variances of $A$ and $B$ add, even though we
 are computing the variance of $A-B$.
+
+\medskip
+
 The standard deviation of $b$, also called the standard error of
 $b$, is given as
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \se(b) = \sqrt{\var(b)} 
 = \sigma \cdot \sqrt{\frac{1}{n} + \frac{\mu_X^2}{s_X}}}
-\end{align}
+\end{align*}
 \end{frame}
 
 %
@@ -865,11 +1019,16 @@ with mean $\truew$ and variance $\sigma^2/s_X$.
 Likewise, $b$ follows a normal distribution
 with mean $\trueb$ and variance $(1/n + \mu_X^2/s_X) \cdot \sigma^2$.
 
-Since the true variance $\sigma^2$ is unknown, we use the estimated 
+\medskip
+
+
+%Since the true variance $\sigma^2$ is unknown, w
+	We use the estimated 
 variance $\hsigma^2$, % (from \cref{eq:reg:eval:sse_est}), 
 to
-define the standardized variables $Z_{w}$ and $Z_{b}$ as follows
-\begin{empheq}[box=\tcbhighmath]{align}
+define %the standardized variables 
+	$Z_{w}$ and $Z_{b}$: % as follows
+\begin{empheq}[box=\tcbhighmath]{align*}
     Z_{w} & = \frac{w - E[w]}{\se(w)} =
     \frac{w - \truew}{ \frac{\hsigma}{\sqrt{s_X}}} 
     &
@@ -896,7 +1055,7 @@ $n-2$ degrees of freedom.
 %\end{align*}
 Given confidence level $1-\alpha$, i.e., significance level $\alpha \in
 (0,1)$, the $100(1-\alpha)$\% confidence
-interval for the true values, $\truew$ and $\trueb$, are therefore
+interval for the true values, $\truew$ and $\trueb$, are: % therefore
 as follows
 \begin{align*}
     P\lB(w -t_{\alpha/2} \cdot \se(w) \; \le
@@ -1028,10 +1187,10 @@ Now consider the standardized variable $Z_{w}$.% from
 %\cref{eq:reg:eval:TwTb}. 
 Under
 the null hypothesis we have $E[w] = \truew = 0$. Thus,
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     Z_{w} = \frac{w - E[w]}{\se(w)} = \frac{w}{ \hsigma / \sqrt{s_X}} }
-\end{align}
+\end{align*}
 We can therefore compute the $\pvalue$ for the $Z_{w}$ statistic
 using a two-tailed test via the $t$ distribution with $n-2$ degrees of freedom.
 Given significance level $\alpha$ (e.g., $\alpha=0.01$),
@@ -1046,12 +1205,12 @@ We can also define the $f$-statistic, which is the ratio of the
 regression sum of squares, RSS, to
 the estimated variance, given as
 \index{regression!$f$-statistic}
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     f = \frac{RSS}{\hsigma^2} 
     = \frac{\sum_{i=1}^n (\hy_i - \mu_Y)^2}{\sum_{i=1}^n (y_i -
 \hy_i)^2 \Big/ (n-2)}}
-\end{align}
+\end{align*}
 \end{frame}
 
 \begin{frame}{Hypothesis Testing for Regression Effects}
@@ -1103,11 +1262,11 @@ the alternative hypothesis $H_a: \trueb\ne 0$. We then evaluate the
 $Z_{b}$ statistic %(see \cref{eq:reg:eval:TwTb}) 
 under the null
 hypothesis:
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     Z_{b} = \frac{b - E[b]}{\se(b)} =
 \frac{b}{\hsigma\cdot \sqrt{(1/n + \mu_X^2/s_X)}} }
-\end{align}
+\end{align*}
 since, under the null hypothesis $E[b] = \trueb = 0$.
 Using a two-tailed $t$-test with $n-2$ degrees of freedom, we can
 compute the $\pvalue$ of $Z_{b}$. We reject the null hypothesis if
@@ -1176,23 +1335,28 @@ Under the null hypothesis we have $\truew=0$, further
 %
 %\subsection{Standardized Residuals}
 %\index{regression!standardized residuals}
-%Our assumption about the true errors $\varepsilon_i$ is that they are
-%normally distributed with mean $\mu = 0$ and fixed variance $\sigma^2$. 
-%After fitting the linear model, we can examine how well the residual
-%errors $\epsilon_i = y_i - \hy_i$ satisfy the normality assumption.
+\begin{frame}{Standardized Residuals}
+Our assumption about the true errors $\varepsilon_i$ is that they are
+normally distributed with mean $\mu = 0$ and fixed variance $\sigma^2$. 
+
+\medskip
+
+%After fitting the linear model, 
+We can examine how well the residual
+errors $\epsilon_i = y_i - \hy_i$ satisfy the normality assumption.
 %For this, we need to compute the mean and variance of $\epsilon_i$, by
 %treating it as a random variable.
 %
-%The mean of $\epsilon_i$ is given as
-%\begin{align*}
-%    E[\epsilon_i] & = E[y_i - \hy_i] = E[y_i] - E[\hy_i]\\
-%    & = \trueb + \truew \cdot x_i - E[b + w \cdot x_i] = 
-%    \trueb + \truew \cdot x_i - (\trueb + \truew \cdot x_i) = 0 
-%\end{align*}
+The mean of $\epsilon_i$ is given as
+\begin{align*}
+    E[\epsilon_i] & = E[y_i - \hy_i] = E[y_i] - E[\hy_i]\\
+    & = \trueb + \truew \cdot x_i - E[b + w \cdot x_i] = 
+    \trueb + \truew \cdot x_i - (\trueb + \truew \cdot x_i) = 0 
+\end{align*}
 %which follows from the fact that $E[b] = \trueb$ and $E[w] = \truew$.
 %
-%To compute the variance of $\epsilon_i$, we will express it as a linear
-%combination of the $y_{\!j}$ variables, by noting that
+To compute the variance of $\epsilon_i$, we will express it as a linear
+combination of the $y_{\!j}$ variables:%, by noting that
 %\begin{align*}
 %    w & = \frac{1}{s_X} \lB( \sum^{n}_{j=1} x_{\!j} y_{\!j} - n \cdot \mu_X
 %    \cdot \mu_Y \rB)
@@ -1254,77 +1418,147 @@ Under the null hypothesis we have $\truew=0$, further
 %\end{align}
 %Plugging \cref{eq:reg:eval:aj,eq:reg:eval:varei_tmp3} into
 %\cref{eq:reg:eval:varei_tmp2}, we get
-%\begin{align*}
-%    \var(\epsilon_i) & = \sigma^2 \cdot \lB(
-%        1 - \frac{2}{n} - \frac{2\cdot(x_i-\mu_X)^2}{s_X} +
-%    \frac{1}{n} + \frac{(x_i - \mu_X)^2}{s_X}\rB)\\
-%    & = \sigma^2 \cdot \lB(
-%    1 - \frac{1}{n} - \frac{(x_i-\mu_X)^2}{s_X}\rB)
-%\end{align*}
+\begin{align*}
+    \var(\epsilon_i) & = \sigma^2 \cdot \lB(
+        1 - \frac{2}{n} - \frac{2\cdot(x_i-\mu_X)^2}{s_X} +
+    \frac{1}{n} + \frac{(x_i - \mu_X)^2}{s_X}\rB)\\
+    & = \sigma^2 \cdot \lB(
+    1 - \frac{1}{n} - \frac{(x_i-\mu_X)^2}{s_X}\rB)
+\end{align*}
+\end{frame}
 %
-%We can now define the {\em standardized residual} $\epsilon_i^*$ by dividing $\epsilon_i$ by its
-%standard deviation after replacing $\sigma^2$ by its estimated value
-%$\hsigma^2$. That is,
-%\begin{align}
-%    \tcbhighmath{
-%    \epsilon_i^* = \frac{\epsilon_i}{\sqrt{\var(\epsilon_i)}} =
-%    \frac{\epsilon_i}{\displaystyle \hsigma \cdot \sqrt{1 - \frac{1}{n} -
-%    \frac{(x_i-\mu_X)^2}{s_X}}}
-%}
-%\end{align}
-%These standardized residuals should follow a standard normal
-%distribution. We can thus plot the standardized residuals 
-%against the quantiles of a standard
-%normal distribution, and check if the normality assumption holds.
-%Significant deviations would indicate that our model assumptions may not
-%be correct.
+\begin{frame}{Standardized Residuals}
+We can now define the {\em standardized residual} $\epsilon_i^*$ by dividing $\epsilon_i$ by its
+standard deviation after replacing $\sigma^2$ by its estimated value
+$\hsigma^2$. That is,
+\begin{align*}
+    \tcbhighmath{
+    \epsilon_i^* = \frac{\epsilon_i}{\sqrt{\var(\epsilon_i)}} =
+    \frac{\epsilon_i}{\displaystyle \hsigma \cdot \sqrt{1 - \frac{1}{n} -
+    \frac{(x_i-\mu_X)^2}{s_X}}}
+}
+\end{align*}
+These standardized residuals should follow a standard normal
+distribution. 
+
+\medskip
+
+
+	We can thus plot the standardized residuals 
+against the quantiles of a standard
+normal distribution, and check if the normality assumption holds.
+
+\medskip
+
+Significant deviations would indicate that our model assumptions may not
+be correct.
+\end{frame}
+
+\begin{frame}{Standardized Residuals}
+\framesubtitle{Example}
+    Consider the Iris dataset, % from \cref{ex:reg:eval:bi_var_gf}, 
+    with the predictor variable ({\tt petal length}) and response
+    variable ({\tt petal width}), and $n=150$.
+%    \cref{fig:reg:eval:bi_qq} shows 
+
+	\medskip
+
+The quantile-quantile (QQ) plot contains in 
+the $y$-axis the list of standardized residuals sorted from the
+    smallest to the largest. The
+    $x$-axis is the list of the quantiles of the standard 
+    normal distribution for a sample
+    of size $n$, defined as
+    \begin{align*}
+	    Q & = (q_1, q_2, \ldots, q_n)^T &
+        q_i & = F^{-1}\lB(\frac{i-0.5}{n}\rB)
+    \end{align*}
+    where $F$ is the cumulative distribution function (CDF).
+    %and $F^{-1}$ is the inverse CDF or quantile function.
+%    (see \cref{eq:eda:numeric:icdf}) for the normal distribution.
+
+	\medskip
+
+    Thus, the $Q$ values are also sorted in increasing order.% from
+    %smallest to largest. 
+	If the standardized residuals follow a normal
+    distribution, then the QQ plot should follow a straight line.
+%    \cref{fig:reg:eval:bi_qq} plots this perfect line for comparison.
+%    We can observe that the residuals are essentially 
+%    normally distributed.
+%    %except perhaps for a few points
+%    %on the top right of the plot that have slightly larger residuals.
+%
+
+	\medskip
+
+    The plot of the independent variable $X$ versus the standardized
+    residuals is also instructive. %We can see in
+%    \cref{fig:reg:eval:bi_Xe} that 
+%\end{example}
+
+\end{frame}
+
 %
 %%\pgfplotstabletypeset[columns={Q,E}]{REG/eval/figs/QQ-iris.txt}
 %\begin{figure}[!t]
+\begin{frame}{Residual plots}
+    The absense of a particular trend or
+    pattern to the residuals, and the residual values being concentrated
+    along the mean value of $0$, with the majority of the points being
+    within two standard deviations of the mean, is expected if they were
+    sampled from a normal distribution.
+
+\medskip
+
 %\vspace*{-0.1in}
-%    \centerline{
-%    \subfloat[QQ-plot]{%
-%    \label{fig:reg:eval:bi_qq}
-%    \begin{tikzpicture}
-%        \tikzset{every mark/.append style={scale=0.7}}
-%        \begin{axis}[width=2.65in,
-%            label style={font=\small},
-%            every axis y label/.style={
-%            at={(ticklabel cs:0.5)},rotate=90,anchor=center,
-%            font=\small,
-%            },
-%            % y label style={at={(-0.1,0.5)}}, 
-%        xlabel=$Q$,ylabel=$\bepsilon^*$
-%]
-%\addplot [%scatter, draw=black, scatter src=none, 
-%    mark = o,
-%    only marks, mark=o] table [x=Q,y=E] {REG/eval/figs/QQ-iris.txt};
-%\addplot [draw=gray, mark=none,line width=1pt] 
-%table [ x=Q, y=Q]%
-%{REG/eval/figs/QQ-iris.txt};
-%% \addplot+ [draw=black, mark=none] 
-%% table [ x=Q, y={create col/linear regression={y=E}}]%
-%% {REG/eval/figs/QQ-iris.txt};
-%\end{axis}
-%\end{tikzpicture}
-%}
-%\hspace{0.25in}
+
+    \centerline{
+    %\subfloat[QQ-plot]{%
+    %\label{fig:reg:eval:bi_qq}
+\scalebox{0.9}{
+    \begin{tikzpicture}
+        \tikzset{every mark/.append style={scale=0.7}}
+        \begin{axis}[width=2.65in,
+            label style={font=\small},
+            every axis y label/.style={
+            at={(ticklabel cs:0.5)},rotate=90,anchor=center,
+            font=\small,
+            },
+            % y label style={at={(-0.1,0.5)}}, 
+        xlabel=$Q$,ylabel=$\bepsilon^*$
+]
+\addplot [%scatter, draw=black, scatter src=none, 
+    mark = o,
+    only marks, mark=o] table [x=Q,y=E] {REG/eval/figs/QQ-iris.txt};
+\addplot [draw=gray, mark=none,line width=1pt] 
+table [ x=Q, y=Q]%
+{REG/eval/figs/QQ-iris.txt};
+% \addplot+ [draw=black, mark=none] 
+% table [ x=Q, y={create col/linear regression={y=E}}]%
+% {REG/eval/figs/QQ-iris.txt};
+\end{axis}
+\end{tikzpicture}
+}
+\hspace{0.25in}
 %\subfloat[$X$ vs.\ $\bepsilon^*$]{
 %    \label{fig:reg:eval:bi_Xe}
-%    \begin{tikzpicture}
-%        \tikzset{every mark/.append style={scale=0.7}}
-%        \begin{axis}[width=2.65in,
-%            label style={font=\small},
-%            every axis y label/.style={
-%            at={(ticklabel cs:0.5)},rotate=90,anchor=center,
-%            font=\small,
-%            },
-%            xlabel=$X$,ylabel=$\bepsilon^*$ ]
-%\addplot [%scatter, draw=black, scatter src=none, 
-%    only marks, mark=o] table [x=X,y=E] {REG/eval/figs/QQ-iris.txt};
-%\end{axis}
-%\end{tikzpicture}
-%}}
+\scalebox{0.9}{
+    \begin{tikzpicture}
+        \tikzset{every mark/.append style={scale=0.7}}
+        \begin{axis}[width=2.65in,
+            label style={font=\small},
+            every axis y label/.style={
+            at={(ticklabel cs:0.5)},rotate=90,anchor=center,
+            font=\small,
+            },
+            xlabel=$X$,ylabel=$\bepsilon^*$ ]
+\addplot [%scatter, draw=black, scatter src=none, 
+    only marks, mark=o] table [x=X,y=E] {REG/eval/figs/QQ-iris.txt};
+\end{axis}
+\end{tikzpicture}
+}}
+\end{frame}
 %\vspace{0.2in}
 %\caption{Residual plots: \protect\subref{fig:reg:eval:bi_qq} Quantile-Quantile scatter plot of normal quantiles versus
 %standardized residuals. \protect\subref{fig:reg:eval:bi_Xe} Independent variable
@@ -1371,14 +1605,22 @@ Under the null hypothesis we have $\truew=0$, further
 %\vspace*{-0.1in}
 %\section{Multiple Regression}
 %\index{multiple regression}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
+
+\begin{frame}{Multiple Regression}
 %
-%In multiple regression there are multiple independent attributes $X_1,
-%X_2, \cdots, X_d$ and a single dependent or response attribute $Y$, and
-%we assume that the true relationship can be modeled as a linear function
-%\begin{align*}
-%    Y = \trueb + \truew_1 \cdot X_1 + \truew_2 \cdot X_2 + \ldots + \truew_d \cdot X_d +
-%    \varepsilon
-%\end{align*}
+In multiple regression there are multiple independent attributes $X_1,
+X_2, \cdots, X_d$ and a single dependent or response attribute $Y$, and
+we assume that the true relationship can be modeled as a linear function
+\begin{align*}
+    Y = \trueb + \truew_1 \cdot X_1 + \truew_2 \cdot X_2 + \ldots + \truew_d \cdot X_d +
+    \varepsilon
+\end{align*}
+
+\medskip
+
 %where $\trueb$ is the intercept or bias term and $\truew_i$ is the regression
 %coefficient for attribute $X_i$. Recall that $\truew_i$ denotes the expected
 %increase in $Y$ with a unit increase in the value of $X_i$, assuming all
@@ -1427,44 +1669,52 @@ Under the null hypothesis we have $\truew=0$, further
 %
 %Let
 %$b = w_0$ denote the estimated bias term, and let $w_i$
-%denote the estimated regression weights. The augmented vector of estimated
-%weights, including the bias term, is 
-%\begin{align*}
-%    \abw = (w_0, w_1, \cdots, w_d)^T 
-%\end{align*}
-%We then make predictions for
-%any given point $\bx_i$ as follows:
-%\begin{equation*}
-%    \hy_i = b \cdot 1 + w_1 \cdot x_{i1} + \cdots w_d \cdot x_{id}
-%    = \abw^T\abx_i
-%\end{equation*}
-%Recall that these estimates are obtained
-%by minimizing the sum of
-%squared errors (SSE), given as
-%\begin{align*}
-%    SSE = \sum_{i=1}^n (y_i - \hy_i)^2 
-%    = \sum^{n}_{i=1} \lB(y_i - b - \sum_{j=1}^d w_j \cdot x_{ij}\rB)^2 
-%\end{align*}
+%denote the estimated regression weights. 
+The augmented vector of estimated weights, including the bias term, is 
+\begin{align*}
+    \abw = (w_0, w_1, \cdots, w_d)^T 
+\end{align*}
+We then make predictions for
+any given point $\bx_i$ as follows:
+\begin{equation*}
+    \hy_i = b \cdot 1 + w_1 \cdot x_{i1} + \cdots w_d \cdot x_{id}
+    = \abw^T\abx_i
+\end{equation*}
+Recall that these estimates are obtained
+by minimizing the %sum of squared errors (
+SSE:
+\begin{align*}
+    SSE = \sum_{i=1}^n (y_i - \hy_i)^2 
+    = \sum^{n}_{i=1} \lB(y_i - b - \sum_{j=1}^d w_j \cdot x_{ij}\rB)^2 
+\end{align*}
+\end{frame}
+
+\begin{frame}{Multiple Regression}
 %with the least squares estimate [\cref{eq:reg:linear:multiple_w}] 
 %given as
 %\begin{align*}
 %    \abw & = \lB(\abD^T\abD\rB)^{-1} \abD^T Y
 %\end{align*}
 %
-%The estimated variance $\hsigma^2$ is then given as
+The estimated variance $\hsigma^2$ is then given as
 %\index{multiple regression!estimated variance}
-%\begin{align}
-%    \tcbhighmath{
-%    \hsigma^2 = \frac{SSE}{n-(d+1)} = \frac{1}{n-d-1} \cdot \sum_{i=1}^n (y_i
-%- \hy_i)^2}
+\begin{align*}
+    \tcbhighmath{
+    \hsigma^2 = \frac{SSE}{n-(d+1)} = \frac{1}{n-d-1} \cdot \sum_{i=1}^n (y_i
+- \hy_i)^2}
 %    \label{eq:reg:eval:sse_est_multivar}
-%\end{align}
-%We divide by $n-(d+1)$ to get an unbiased estimate, 
-%since $n-(d+1)$ is the number of degrees of freedom for
-%estimating SSE (see \cref{fig:reg:eval:multi_geom}). In other words, out of the $n$ training points, we need
-%to estimate $d+1$ parameters, $\trueb$ and the $\truew_i$'s, 
-%with $n-(d+1)$ remaining degrees of
-%freedom.
+\end{align*}
+We divide by $n-(d+1)$ to get an unbiased estimate, 
+since $n-(d+1)$ is the number of degrees of freedom for
+estimating SSE. %(see \cref{fig:reg:eval:multi_geom}). 
+
+\medskip
+
+In other words, out of the $n$ training points, we need
+to estimate $d+1$ parameters, $\trueb$ and the $\truew_i$'s, 
+with $n-(d+1)$ remaining degrees of
+freedom.
+\end{frame}
 %
 %\paragraph{Estimated Variance is Unbiased}
 %We now show that $\hsigma^2$ is an unbiased estimator of the true (but
@@ -1564,100 +1814,200 @@ Under the null hypothesis we have $\truew=0$, further
 %
 %\index{multiple regression!goodness of fit}
 %\subsection{Goodness of Fit}
+
+\begin{frame}{Goodness of Fit}
 %Following the derivation in \cref{sec:reg:eval:goodness_fit},
-%the decomposition of the total sum of squares, TSS, into the sum of
-%squared errors, SSE, and the residual sum of squares, RSS, holds true
-%for multiple regression as well:
-%\begin{align*}
-%    TSS & = SSE + RSS\\
-%    \sum^{n}_{i=1} (y_i - \mu_Y)^2 = &
-%    \sum^{n}_{i=1} (y_i - \hy_i)^2 +
-%    \sum^{n}_{i=1} (\hy_i - \mu_Y)^2
-%\end{align*}
+The decomposition of the total sum of squares, TSS, into the sum of
+squared errors, SSE, and the residual sum of squares, RSS, holds true
+for multiple regression as well:
+\begin{align*}
+    TSS & = SSE + RSS\\
+    \sum^{n}_{i=1} (y_i - \mu_Y)^2 = &
+    \sum^{n}_{i=1} (y_i - \hy_i)^2 +
+    \sum^{n}_{i=1} (\hy_i - \mu_Y)^2
+\end{align*}
 %
-%The {\em coefficient of multiple determination}, $R^2$, gives the goodness of fit,
-%measured as the fraction of the variation explained by the linear model:
+The {\em coefficient of multiple determination}, $R^2$, gives the goodness of fit,
+measured as the fraction of the variation explained by the linear model:
 %\index{regression!coefficient of multiple determination}
 %\index{regression!R$^2$ statistic}
 %\index{coefficient of multiple determination}
-%\begin{align}
-%    \tcbhighmath{
-%    R^2 = 1 - \frac{SSE}{TSS} = \frac{TSS-SSE}{TSS} =
-%\frac{RSS}{TSS}}
-%\end{align}
+\begin{align*}
+    \tcbhighmath{
+    R^2 = 1 - \frac{SSE}{TSS} = \frac{TSS-SSE}{TSS} =
+\frac{RSS}{TSS}}
+\end{align*}
 %
-%One of the potential problems with the $R^2$ measure is that it is
-%susceptible to increase as the number of attributes increase, even
-%though the additional attributes may be uninformative. To counter this,
-%we can consider the {\em adjusted coefficient of determination}, which
-%takes into account the degrees of freedom in both TSS and SSE
+One of the potential problems with the $R^2$ measure is that it is
+susceptible to increase as the number of attributes increase, even
+though the additional attributes may be uninformative. 
+
+\end{frame}
+
+\begin{frame}{Goodness of Fit}
+
+To counter the impact of the number of attributes,
+we can consider the {\em adjusted coefficient of determination}, which
+takes into account the degrees of freedom in both TSS and SSE
 %\index{regression!adjusted coefficient of determination}
 %\index{regression!adjusted R$^{2}$ statistic}
 %\index{adjusted coefficient of determination}
-%\begin{align}
-%    \tcbhighmath{
-%    R_a^2 = 1 - \frac{SSE \big/ (n-d-1)}{TSS \big/ (n-1)} = 
-%1 - \frac{(n-1) \cdot SSE}{ (n-d-1) \cdot TSS}}
-%\end{align}
-%We can observe that the adjusted $R_a^2$ measure is always less than
-%$R^2$, since the ratio $\tfrac{n-1}{n-d-1} > 1$. If there is too much of
-%a difference between $R^2$ and $R_a^2$, it might indicate that there are
-%potentially many, possibly irrelevant, attributes being used to fit the
-%model.
+\begin{align*}
+    \tcbhighmath{
+    R_a^2 = 1 - \frac{SSE \big/ (n-d-1)}{TSS \big/ (n-1)} = 
+1 - \frac{(n-1) \cdot SSE}{ (n-d-1) \cdot TSS}}
+\end{align*}
+We can observe that the adjusted $R_a^2$ measure is always less than
+$R^2$, since the ratio $\tfrac{n-1}{n-d-1} > 1$. 
+
+\medskip
+
+If there is too much of
+a difference between $R^2$ and $R_a^2$, it might indicate that there are
+potentially many, possibly irrelevant, attributes being used to fit the
+model.
+\end{frame}
+
 %
 %
+\begin{frame}{Multiple Regression: Goodness of Fit}
+%    \label{ex:reg:eval:multiple}
+%    Continuing with multiple regression from
+%    \cref{ex:reg:linear:multiple},
+%    \cref{fig:reg:eval:multi} shows 
+	Consider the multiple regression of 
+{\tt sepal length} ($X_1$) and {\tt petal
+    length} ($X_2$) on the response attribute {\tt petal width} ($Y$)
+for the Iris dataset with $n=150$ points. 
+%We also add an extra attribute $X_0 = \bone_{150}$, which is a vector
+%of all ones in $\setR^{150}$. The augmented dataset $\abD \in
+%\setR^{150\times 3}$ comprises $n=150$ points, and
+%three attributes $X_0$, $X_1$ and $X_2$.
+%
+The uncentered $3 \times 3$ scatter matrix
+$\abD^T\abD$ and its inverse are given as
+\begin{align*}
+    \abD^T\abD & = \matr{
+150.0 & 876.50  & 563.80\\
+876.5 & 5223.85 & 3484.25\\
+563.8 & 3484.25 & 2583.00 }
+&
+(\abD^T\abD)^{-1} & = \amatr{r}{
+0.793 & -0.176 & 0.064\\
+-0.176 &  0.041 & -0.017\\
+0.064 & -0.017 &  0.009}
+\end{align*}
+The augmented estimated weight vector $\abw$ is given as
+\begin{align*}
+    \abw = \matr{w_0\\w_1\\w_2} = (\abD^T\abD)^{-1} \cdot (\abD^T Y) = 
+    \amatr{r}{-0.014\\ -0.082\\ 0.45}
+\end{align*}
+The bias term is therefore $b=w_0=-0.014$, and
+the fitted model is 
+\begin{align*}
+    \hY = -0.014 -0.082 \cdot X_1 + 0.45\cdot X_2
+\end{align*}
+
+\end{frame}
+
+
+
 %
 %\begin{figure}[t!]
 %    \vspace*{-0.3in}
-%\centering
-%\psset{unit=0.25in}
-%\scalebox{0.95}{%
-%%\psset{viewpoint=20 7 7 rtp2xyz,Decran=30}
-%\psset{viewpoint=20 10 10 rtp2xyz,Decran=30}
-%\psset{lightsrc=viewpoint}
-%\psset{incolor=white}
-%\psset{opacity=0.2}
-%\psset{fillcolor=white}
-%\begin{pspicture}(3,-5)(8,7)
-%    \axesIIID[axisnames={X_1, X_2, Y}](0,0,0)(9,8,3)
-%%\psSolid[object=cube, 
-%%    intersectiontype=0,
-%%    intersectionplan={[-0.0819 0.45 -1 -0.0139]},
-%%    intersectioncolor=(black)]
-%% \psSolid[object=plan, 
-%%     definition=equation,
-%%     args={[0.0819 -0.45 1 0.0139]},
-%%     base=0 8.5 0 7.5, 
-%%     fillcolor=lightgray,
-%%     %plangrid,
-%%     action=draw*]
-%\psset{linewidth=0.5pt, dotsize=0.3}
-%\psset{dotstyle=Bo,fillcolor=gray}
-%\input{REG/eval/figs/iris-3d-linesN.tex}
-%\psSurface[showAxes=false,ngrid=.2 .2,fillcolor=lightgray,%axesboxed,
-%        linewidth=0.5\pslinewidth,
-%        color1 = {[rgb]{0 0 0}},
-%        color2 = {[rgb]{1 1 1}},
-%        hue=(color1) (color2), lightintensity=5,
-%    algebraic,Zmin=0,Zmax=3](0,0)(8,7){%
-%    (-0.0819*x) + (0.45*y) - 0.0139 }
-%\psset{dotstyle=Bo,fillcolor=white}
-%\input{REG/eval/figs/iris-3d-linesP.tex}
-%% \multido{\nx=1+1}{8}{%
-%%         \psPoint(\nx\space,0,0){X1}
-%%         \psPoint(\nx\space,-0.1,0){X2}
-%%         \psline(X1)(X2)
-%%     \uput[l](X2){\scalebox{0.8}{\scriptsize \nx}}}
-%% \multido{\ny=1+1}{8}{%
-%%         \psPoint(0,\ny\space,0){Y1}
-%%         \psPoint(0,\ny\space,0.1){Y2}
-%%         \psline(Y1)(Y2)\uput[u](Y2){\scalebox{0.8}{\scriptsize \ny}}}
-%% \multido{\nz=1+1}{2}{%
-%%         \psPoint(0,0,\nz\space){Z1}
-%%         \psPoint(0,-0.1,\nz\space){Z2}
-%%         \psline(Z1)(Z2)\uput[l](Z2){\scalebox{0.8}{\scriptsize \nz}}}
-%\end{pspicture}
-%}
+\begin{frame}{Multiple Regression}
+\framesubtitle{Example}
+{\tt sepal length} ($X_1$) and {\tt petal
+    length} ($X_2$) with response attribute {\tt petal width} ($Y$).
+The vertical bars show the residual errors for the points. Points in
+white are above the plane, whereas points in gray are below the plane.
+
+\vspace*{-1cm}
+
+\centering
+\psset{unit=0.25in}
+\scalebox{0.9}{%
+%\psset{viewpoint=20 7 7 rtp2xyz,Decran=30}
+\psset{viewpoint=20 10 10 rtp2xyz,Decran=30}
+\psset{lightsrc=viewpoint}
+\psset{incolor=white}
+\psset{opacity=0.2}
+\psset{fillcolor=white}
+\begin{pspicture}(3,-5)(8,7)
+    \axesIIID[axisnames={X_1, X_2, Y}](0,0,0)(9,8,3)
+%\psSolid[object=cube, 
+%    intersectiontype=0,
+%    intersectionplan={[-0.0819 0.45 -1 -0.0139]},
+%    intersectioncolor=(black)]
+% \psSolid[object=plan, 
+%     definition=equation,
+%     args={[0.0819 -0.45 1 0.0139]},
+%     base=0 8.5 0 7.5, 
+%     fillcolor=lightgray,
+%     %plangrid,
+%     action=draw*]
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{dotstyle=Bo,fillcolor=gray}
+\input{REG/eval/figs/iris-3d-linesN.tex}
+\psSurface[showAxes=false,ngrid=.2 .2,fillcolor=lightgray,%axesboxed,
+        linewidth=0.5\pslinewidth,
+        color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=3](0,0)(8,7){%
+    (-0.0819*x) + (0.45*y) - 0.0139 }
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/eval/figs/iris-3d-linesP.tex}
+% \multido{\nx=1+1}{8}{%
+%         \psPoint(\nx\space,0,0){X1}
+%         \psPoint(\nx\space,-0.1,0){X2}
+%         \psline(X1)(X2)
+%     \uput[l](X2){\scalebox{0.8}{\scriptsize \nx}}}
+% \multido{\ny=1+1}{8}{%
+%         \psPoint(0,\ny\space,0){Y1}
+%         \psPoint(0,\ny\space,0.1){Y2}
+%         \psline(Y1)(Y2)\uput[u](Y2){\scalebox{0.8}{\scriptsize \ny}}}
+% \multido{\nz=1+1}{2}{%
+%         \psPoint(0,0,\nz\space){Z1}
+%         \psPoint(0,-0.1,\nz\space){Z2}
+%         \psline(Z1)(Z2)\uput[l](Z2){\scalebox{0.8}{\scriptsize \nz}}}
+\end{pspicture}
+}
+\end{frame}
+
+\begin{frame}{Multiple Regression: Goodness of Fit}
+    The SSE value is given as
+    \begin{align*}
+        SSE = \sum_{i=1}^{150} \epsilon_i^2 
+        = \sum_{i=1}^{150} (y_i - \hy_i)^2 = 6.179
+    \end{align*}
+    
+    Thus, standard error of regression is given as
+    \begin{align*}
+        %\hsigma^2 & = \frac{SSE}{n-d-1} = \frac{6.179}{147} = 4.203 \times 10^{-2}\\
+        \hsigma & = \sqrt{\frac{SSE}{n-d-1}} = \sqrt{4.203 \times
+        10^{-2}} = 0.205
+    \end{align*}
+    
+    The values of total and residual sum of squares are given as
+    \begin{align*}
+        TSS & = 86.78 & RSS & = 80.60
+    \end{align*}
+%    We can observe that $TSS = SSE + RSS$.
+    The fraction of variance explained by the model, that is the $R^2$
+    value, is given as
+    \begin{align*}
+        R^2 = \frac{RSS}{TSS} = \frac{80.60}{86.78} = 0.929
+    \end{align*}
+    %This indicates a very good fit of the multiple linear regression model.
+    It makes sense to also consider the adjusted $R_a^2$ value
+    \begin{align*}
+    R_a^2 = 1 - \frac{(n-1) \cdot SSE}{ (n-d-1) \cdot TSS} 
+    =  1 - \frac{149 \times 6.179}{ 147 \times 86.78} = 0.928 
+    \end{align*}
+    The adjusted value is almost the same as the $R^2$ value.
+
+\end{frame}
 %\vspace{0.2in}
 %\caption{Multiple regression: {\tt sepal length} ($X_1$) and {\tt petal
 %    length} ($X_2$) with response attribute {\tt petal width} ($Y$).
@@ -1742,62 +2092,144 @@ Under the null hypothesis we have $\truew=0$, further
 %
 %\end{example}
 %
+%\subsubsection{Geometry of Goodness of Fit}
+\begin{frame}{Geometry of Goodness of Fit}
+In multiple regression there are $d$ predictor attributes $X_1, X_2,
+\cdots, X_d$. We can center them by subtracting their projection along
+the vector $\bone$ to obtain the centered predictor vectors $\mX_{\!i}$. Likewise,
+we can center the response vector $Y$ and the predicted vector $\hY$. Thus, we have 
+\begin{align*}
+    \mX_{\!i} & = X_i - \mu_{X_i} \cdot \bone &
+    \mY & = Y - \mu_Y \cdot \bone &
+    \hmY & = \hY - \mu_Y \cdot \bone
+\end{align*}
+%
+Once $Y$, $\hY$ and $X_{\!i}$'s have been centered, they all lie in the $n-1$
+dimensional subspace orthogonal to the vector $\bone$.
+%\cref{fig:reg:eval:multi_geom} shows this $n-1$ dimensional subspace.
+
+\medskip
+
+In this subspace, we first extract an orthogonal basis $\{U_1, U_2,
+\cdots, U_d\}$ via the Gram-Schmidt orthogonalization process % outlined
+%in \cref{sec:reg:linear:orthogonalization}, 
+and the predicted response
+vector is the sum of the projections of $\mY$ onto each of the new basis
+vectors.
+	%(see \cref{eq:reg:linear:multiple_proj_hY}).
+
+\medskip
+
+The centered
+vectors $\mY$ and $\hmY$, and the error vector $\bepsilon$ 
+form a right triangle.
+
+\end{frame}
+
+
+
+
+%
 %
 %
 %\begin{figure}[t!]
-%    \centering
-%    \vspace*{-1.75in}
-%    \psset{unit=0.4in}
-%    \scalebox{1.2}{%
-%    \begin{pspicture}(-1.5,-1.5)(4,6)
-%   \psset{Alpha=81,Beta=17,arrowscale=1.5}
-%    %\psset{nameX={$Z$}, nameY={$\bone$}, nameZ={$~$}}
-%    %\pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
-%    %    zMin=0, zMax=0, linecolor=black]
-%\psset{IIIDxTicksPlane=xy}
-%    %\psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
-%    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,4.2)
-%    \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
-%    \pstThreeDCoor[RotZ=-20,xMin=0,xMax=7,yMin=0,yMax=7,zMin=0,zMax=2,
-%    linecolor=black,linewidth=0.5pt,linestyle=dashed]
-%    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,3.0,4.2)
-%    \pstThreeDLine[linewidth=2pt](0,0,0)(0,3.0,0)
-%    \pstThreeDLine[linewidth=2pt](0,0,0)(5.9,0,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(0,4.0,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,0,0)
-%    %\pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(5.9,1.5,0)
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(4.8,4,0) %X1
-%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,2.03,0) %X2
-%    \pstThreeDSquare(-2.5,-1,0)(12,0,0)(0,6,0)
-%    \psset{dotsep=2pt}
-%    \pstThreeDLine[linewidth=2pt,arrows=->,linecolor=gray](0,0,0)(5.9,3.0,0)
-%    %\pstThreeDPut[origin=rt](3,1.7,2.7){$Y$}
-%    \pstThreeDPut[origin=rt](6.4,3.1,4.65){$\mY$}
-%    %\pstThreeDPut[origin=rt](4,1.6,0){$\hY$}
-%    \pstThreeDPut[origin=rt](6.45,3.25,0){$\hmY$}
-%    \pstThreeDPut[origin=c](8.6,0,0){$U_2$}
-%    \pstThreeDPut[origin=r](0,4.2,0){$U_1$}
-%    \pstThreeDPut[origin=c](5,4.2,0){$\mX_1$}
-%    \pstThreeDPut[origin=c](8.6,2.2,0){$\mX_2$}
-%    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,0)
-%    \pstThreeDLine[linewidth=1.5pt,linestyle=dashed,arrows=->,linecolor=gray](5.9,3.0,0)(5.9,3.0,4.2)
-%    \pstThreeDPut[origin=rt](6.5,3.3,3.4){$\bepsilon$}
-%    % \pstPlanePut[plane=xz,planecorr=xyrot](5.9,3.0,1){$\overbrace{\hspace{1.1in}}^{\bepsilon}$}
-%    % \rput(2.7,0.2){\begin{Rotateleft}$\underbrace{\hspace{1.6in}}_{~}$\end{Rotateleft}}
-%    % \rput(2.7,0.2){$\bepsilon$}
-%    % dotted lines
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0,0)(5.9,3.0,0)
-%    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,0)
-%    %right angle
-%    \pstThreeDLine[linewidth=1pt](5,2.54,0)(5,2.54,0.5)
-%    \pstThreeDLine[linewidth=1pt](5.9,3.0,0.5)(5,2.54,0.5)
-%    %theta
-%    \psset{beginAngle=0,endAngle=90}
-%    \pstThreeDEllipse(0,0,0)(1,0.6,-0.02)(1,0.6,0.84)
-%    \pstThreeDPut[origin=r](1.5,1,0.8){$\theta$}
-%    %\pstPlanePut[plane=yz,planecorr=normal](1.2,0.9,0){\scriptsize $\theta$}
-%    \end{pspicture}
-%}
+\begin{frame}{Geometry of Multiple Regression}
+
+\vspace*{-1.0cm}
+
+The figure shows two centered predictor
+variables $\mX_1$ and $\mX_2$, along with the corresponding
+orthogonal basis vectors $U_1$ and $U_2$. 
+The dimensionality of the error space, containing the vector
+$\bepsilon$, is $n-d-1$, which also specifies the degrees of freedom for
+the estimated variance $\hsigma^2$.
+
+\vspace*{-3.5cm}
+
+\medskip
+\centerline{
+    \psset{unit=0.4in}
+    \scalebox{1.0}{%
+    \begin{pspicture}(-1.5,-1.5)(4,6)
+   \psset{Alpha=81,Beta=17,arrowscale=1.5}
+    %\psset{nameX={$Z$}, nameY={$\bone$}, nameZ={$~$}}
+    %\pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
+    %    zMin=0, zMax=0, linecolor=black]
+\psset{IIIDxTicksPlane=xy}
+    %\psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
+    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,4.2)
+    \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
+    \pstThreeDCoor[RotZ=-20,xMin=0,xMax=7,yMin=0,yMax=7,zMin=0,zMax=2,
+    linecolor=black,linewidth=0.5pt,linestyle=dashed]
+    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,3.0,4.2)
+    \pstThreeDLine[linewidth=2pt](0,0,0)(0,3.0,0)
+    \pstThreeDLine[linewidth=2pt](0,0,0)(5.9,0,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(0,4.0,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,0,0)
+    %\pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(5.9,1.5,0)
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(4.8,4,0) %X1
+    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,2.03,0) %X2
+    \pstThreeDSquare(-2.5,-1,0)(12,0,0)(0,6,0)
+    \psset{dotsep=2pt}
+    \pstThreeDLine[linewidth=2pt,arrows=->,linecolor=gray](0,0,0)(5.9,3.0,0)
+    %\pstThreeDPut[origin=rt](3,1.7,2.7){$Y$}
+    \pstThreeDPut[origin=rt](6.4,3.1,4.65){$\mY$}
+    %\pstThreeDPut[origin=rt](4,1.6,0){$\hY$}
+    \pstThreeDPut[origin=rt](6.45,3.25,0){$\hmY$}
+    \pstThreeDPut[origin=c](8.6,0,0){$U_2$}
+    \pstThreeDPut[origin=r](0,4.2,0){$U_1$}
+    \pstThreeDPut[origin=c](5,4.2,0){$\mX_1$}
+    \pstThreeDPut[origin=c](8.6,2.2,0){$\mX_2$}
+    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,0)
+    \pstThreeDLine[linewidth=1.5pt,linestyle=dashed,arrows=->,linecolor=gray](5.9,3.0,0)(5.9,3.0,4.2)
+    \pstThreeDPut[origin=rt](6.5,3.3,3.4){$\bepsilon$}
+    % \pstPlanePut[plane=xz,planecorr=xyrot](5.9,3.0,1){$\overbrace{\hspace{1.1in}}^{\bepsilon}$}
+    % \rput(2.7,0.2){\begin{Rotateleft}$\underbrace{\hspace{1.6in}}_{~}$\end{Rotateleft}}
+    % \rput(2.7,0.2){$\bepsilon$}
+    % dotted lines
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](5.9,0,0)(5.9,3.0,0)
+    \pstThreeDLine[linestyle=dotted,linecolor=gray](0,3.0,0)(5.9,3.0,0)
+    %right angle
+    \pstThreeDLine[linewidth=1pt](5,2.54,0)(5,2.54,0.5)
+    \pstThreeDLine[linewidth=1pt](5.9,3.0,0.5)(5,2.54,0.5)
+    %theta
+    \psset{beginAngle=0,endAngle=90}
+    \pstThreeDEllipse(0,0,0)(1,0.6,-0.02)(1,0.6,0.84)
+    \pstThreeDPut[origin=r](1.5,1,0.8){$\theta$}
+    %\pstPlanePut[plane=yz,planecorr=normal](1.2,0.9,0){\scriptsize $\theta$}
+    \end{pspicture}
+}}
+\end{frame}
+
+\begin{frame}{Geometry of Goodness of Fit}
+By the Pythagoras theorem, we have
+\begin{align*}
+    \begin{aligned}
+        \norm{\mY}^2 & = \norm{\hmY}^2 + \norm{\bepsilon}^2
+        = \norm{\hmY}^2 + \norm{Y-\hY}^2\\
+    TSS & = RSS + SSE
+\end{aligned}
+%\label{eq:reg:eval:decomp}
+\end{align*}
+%
+The correlation between $Y$ and $\hY$ is
+the cosine of the angle between $\mY$ and
+$\hmY$, which is also 
+given as the ratio of the base to the hypotenuse
+\begin{align*}
+    \rho_{Y\hY} = \cos\theta = \frac{\norm{\hmY}}{\norm{\mY}}
+\end{align*}
+%
+%Furthermore, by
+%\cref{eq:reg:eval:r2_rss}, 
+	The coefficient of multiple determination is given as
+\begin{align*}
+    R^2 & = \frac{RSS}{TSS} =
+    \frac{\norm{\hmY}^2}{\norm{\mY}^2} = \rho_{Y\hY}^2
+\end{align*}
+
+\end{frame}
+%
 %    \vspace{0.8in}
 %    \caption{Geometry of multiple regression. The figure shows two centered predictor
 %        variables $\mX_1$ and $\mX_2$, along with the corresponding
@@ -1860,28 +2292,36 @@ Under the null hypothesis we have $\truew=0$, further
 %
 %
 %\begin{example}[Geometry of Goodness of Fit]
-%    Continuing  \cref{ex:reg:eval:multiple}, the correlation between
-%    $Y$ and $\hY$ is given as
-%    \begin{align*}
-%        \rho_{Y\hY} = \cos\theta =
-%        \frac{\norm[\big]{\hmY}}{\norm[\big]{\mY}} =
-%        \frac{\sqrt{RSS}}{\sqrt{TSS}}  =
-%        \frac{\sqrt{80.60}}{\sqrt{86.78}} = 0.964
-%    \end{align*}
-%    The angle between $Y$ and $\hY$ is given as
-%    \begin{align*}
-%        \theta = \cos^{-1}(0.964) = 15.5^\circ
-%    \end{align*}
-%    The relatively small angle indicates a good linear fit.
+\begin{frame}{Geometry of Goodness of Fit}
+	\framesubtitle{Example}
+%    Continuing  \cref{ex:reg:eval:multiple}, 
+	The correlation between
+    $Y$ and $\hY$ is given as
+    \begin{align*}
+        \rho_{Y\hY} = \cos\theta =
+        \frac{\norm{\hmY}}{\norm{\mY}} =
+        \frac{\sqrt{RSS}}{\sqrt{TSS}}  =
+        \frac{\sqrt{80.60}}{\sqrt{86.78}} = 0.964
+    \end{align*}
+    The angle between $Y$ and $\hY$ is given as
+    \begin{align*}
+        \theta = \cos^{-1}(0.964) = 15.5^\circ
+    \end{align*}
+    The relatively small angle indicates a good linear fit.
+\end{frame}
 %\end{example}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 %
 %\subsection{Inferences about Regression Coefficients}
-%Let $Y$ be the response vector over all observations.
-%Let $\abw = (w_0, w_1, w_2, \cdots, w_d)^T$ be the estimated vector of 
-%regression coefficients, computed as 
-%\begin{align*}
-%    \abw & = \lB(\abD^T\abD\rB)^{-1} \abD^T Y
-%\end{align*}
+\begin{frame}{Inferences about Regression Coefficients}
+Let $Y$ be the response vector over all observations.
+Let $\abw = (w_0, w_1, w_2, \cdots, w_d)^T$ be the estimated vector of 
+regression coefficients, computed as 
+\begin{align*}
+    \abw & = \lB(\abD^T\abD\rB)^{-1} \abD^T Y
+\end{align*}
 %
 %The expected value of $\abw$ is given as follows:
 %\begin{align*}
@@ -1912,141 +2352,159 @@ Under the null hypothesis we have $\truew=0$, further
 %observed responses  
 %$y_i$'s are all independent and have the same variance $\sigma^2$. 
 %
-%Note that $\abD^T\abD \in \setR^{(d+1) \times (d+1)}$ is the uncentered scatter matrix for the augmented data. Let
-%$\bC$ denote the inverse of $\abD^T\abD$. That is
-%\begin{align*}
-%    (\abD^T\abD)^{-1} = \bC
-%\end{align*}
-%Therefore, the covariance matrix for $\abw$ can be written as
-%\begin{align*}
-%    \ocov(\abw) = \sigma^2 \bC
-%\end{align*}
-%In particular, the diagonal entries $\sigma^2 \cdot c_{ii}$ give the
-%variance for each of the regression coefficient estimates (including for
-%$b = w_0$), and their squared roots specify the standard errors.
+Note that $\abD^T\abD \in \setR^{(d+1) \times (d+1)}$ is the uncentered scatter matrix for the augmented data. Let
+$\bC$ denote the inverse of $\abD^T\abD$. That is
+\begin{align*}
+    (\abD^T\abD)^{-1} = \bC
+\end{align*}
+Therefore, the covariance matrix for $\abw$ can be written as
+\begin{align*}
+    \ocov(\abw) = \sigma^2 \bC
+\end{align*}
+In particular, the diagonal entries $\sigma^2 \cdot c_{ii}$ give the
+variance for each of the regression coefficient estimates (including for
+$b = w_0$), and their squared roots specify the standard errors.
 %That is
-%\begin{align*}
-%    \var(w_i) & = \sigma^2 \cdot c_{ii} & \se(w_i) & =
-%    \sqrt{\var(w_i)} = \sigma \cdot \sqrt{c_{ii}}
-%\end{align*}
+\begin{align*}
+    \var(w_i) & = \sigma^2 \cdot c_{ii} & \se(w_i) & =
+    \sqrt{\var(w_i)} = \sigma \cdot \sqrt{c_{ii}}
+\end{align*}
 %
-%We can now define the standardized variable $Z_{w_{i}}$ that can be
-%used to derive the confidence intervals for $\truew_i$ as follows
-%\begin{align}
-%    \tcbhighmath{
-%    Z_{w_{i}} = \frac{w_i - E[w_i]}{\se(w_i)} = 
-%\frac{w_i - \truew_i}{\hsigma \sqrt{c_{ii}}}}
-%        \label{eq:reg:eval:Twi}
-%\end{align}
-%where we have replaced the unknown true variance $\sigma^2$ by
-%$\hsigma^2$. Each of the variables $Z_{w_i}$ follows a $t$-distribution
-%with $n-d-1$ degrees of freedom, from which we can obtain the
-%$100(1-\alpha)$\% confidence
-%interval of the true value $\truew_i$ as follows:
-%\begin{align*}
-%    P\lB(w_i -t_{\alpha/2} \cdot \se(w_i) \; \le
-%        \; \truew_i \;
-%    \le \; w_i + t_{\alpha/2} \cdot \se(w_i)\rB) =
-%    1-\alpha
-%\end{align*}
-%Here, $t_{\alpha/2}$ is the critical value of the $t$ distribution, with
-%$n-d-1$ degrees of freedom, that encompasses $\alpha/2$ fraction of the
-%probability mass in the right tail, given as
-%\begin{align*}
-%    P(Z \ge t_{\alpha/2}) = \tfrac{\alpha}{2}
-%    \text{ or equivalently }
-%    T_{n-d-1}(t_{\alpha/2}) = 1 - \tfrac{\alpha}{2}
-%\end{align*}
+\end{frame}
+
+
+\begin{frame}{Inferences about Regression Coefficients}
+We can now define the standardized variable $Z_{w_{i}}$ that can be
+used to derive the confidence intervals for $\truew_i$ as follows
+\begin{align*}
+    \tcbhighmath{
+    Z_{w_{i}} = \frac{w_i - E[w_i]}{\se(w_i)} = 
+\frac{w_i - \truew_i}{\hsigma \sqrt{c_{ii}}}}
+        %\label{eq:reg:eval:Twi}
+\end{align*}
+where we have replaced the unknown true variance $\sigma^2$ by
+$\hsigma^2$. Each of the variables $Z_{w_i}$ follows a $t$-distribution
+with $n-d-1$ degrees of freedom, from which we can obtain the
+$100(1-\alpha)$\% confidence
+interval of the true value $\truew_i$ as follows:
+\begin{align*}
+    P\lB(w_i -t_{\alpha/2} \cdot \se(w_i) \; \le
+        \; \truew_i \;
+    \le \; w_i + t_{\alpha/2} \cdot \se(w_i)\rB) =
+    1-\alpha
+\end{align*}
+Here, $t_{\alpha/2}$ is the critical value of the $t$ distribution, with
+$n-d-1$ degrees of freedom, that encompasses $\alpha/2$ fraction of the
+probability mass in the right tail, given as
+\begin{align*}
+    P(Z \ge t_{\alpha/2}) = \tfrac{\alpha}{2}
+    \text{ or equivalently }
+    T_{n-d-1}(t_{\alpha/2}) = 1 - \tfrac{\alpha}{2}
+\end{align*}
+
+\end{frame}
 %
 %
 %\begin{example}[Confidence Intervals]
+\begin{frame}{Confidence Intervals}
+\framesubtitle{Example}
 %    \label{ex:reg:eval:multiple_ci}
-%    Continuing with multiple regression from
-%    \cref{ex:reg:eval:multiple}, we have
-%    \begin{align*}
-%        \hsigma^2 & = 4.203 \times 10^{-2}\\
-%        \bC & = (\abD^T\abD)^{-1} = 
-%        \amatr{r}{
-%        0.793 & -0.176 & 0.064\\
-%        -0.176 &  0.041 & -0.017\\
-%        0.064 & -0.017 &  0.009}
-%    \end{align*}
-%    Therefore, the covariance matrix of the estimated regression
-%    parameters, including the bias term, is given as
-%    \begin{align*}
-%        \ocov(\abw) = \hsigma^2 \cdot \bC =
-%        \amatr{r}{
-%            3.333 \times 10^{-2} & -7.379 \times 10^{-3} & 2.678\times 10^{-3}\\
-%            -7.379 \times 10^{-3} & 1.714 \times 10^{-3} & -7.012\times
-%            10^{-4}\\
-%            2.678 \times 10^{-3} & -7.012 \times 10^{-4} & 3.775\times
-%        10^{-4}}
-%    \end{align*}
-%    The diagonal entries specify the variances and standard errors of
-%    each of the estimated parameters
-%    \begin{align*}
-%        \var(b) & = 3.333 \times 10^{-2} & 
-%        \se(b) & = \sqrt{3.333 \times 10^{-2}} = 0.183\\
-%        \var(w_1) & = 1.714 \times 10^{-3} & 
-%        \se(w_1) & = \sqrt{1.714 \times 10^{-3}} = 0.0414\\
-%        \var(w_2) & = 3.775 \times 10^{-4} &
-%        \se(w_2) & = \sqrt{3.775 \times 10^{-4}} = 0.0194
-%    \end{align*}
-%    where $b = w_0$.
+    Continuing with multiple regression from last example,
+%    \cref{ex:reg:eval:multiple}, 
+we have
+    \begin{align*}
+        \hsigma^2 & = 4.203 \times 10^{-2}\\
+        \bC & = (\abD^T\abD)^{-1} = 
+        \amatr{r}{
+        0.793 & -0.176 & 0.064\\
+        -0.176 &  0.041 & -0.017\\
+        0.064 & -0.017 &  0.009}
+    \end{align*}
+    Therefore, the covariance matrix of the estimated regression
+    parameters is:
+    \begin{align*}
+        \ocov(\abw) = \hsigma^2 \cdot \bC =
+        \amatr{r}{
+            3.333 \times 10^{-2} & -7.379 \times 10^{-3} & 2.678\times 10^{-3}\\
+            -7.379 \times 10^{-3} & 1.714 \times 10^{-3} & -7.012\times
+            10^{-4}\\
+            2.678 \times 10^{-3} & -7.012 \times 10^{-4} & 3.775\times
+        10^{-4}}
+    \end{align*}
+    The diagonal entries give the variances and standard errors:
+    \begin{align*}
+        \var(b) & = 3.333 \times 10^{-2} & 
+        \se(b) & = \sqrt{3.333 \times 10^{-2}} = 0.183\\
+        \var(w_1) & = 1.714 \times 10^{-3} & 
+        \se(w_1) & = \sqrt{1.714 \times 10^{-3}} = 0.0414\\
+        \var(w_2) & = 3.775 \times 10^{-4} &
+        \se(w_2) & = \sqrt{3.775 \times 10^{-4}} = 0.0194
+    \end{align*}
+    where $b = w_0$.
+\end{frame}
+\begin{frame}{Confidence Intervals}
 %
-%    Using confidence level $1-\alpha=0.95$ (or significance level
-%    $\alpha=0.05$), the critical value of the $t$-distribution that
-%    encompasses $\tfrac{\alpha}{2}=0.025$ 
-%    fraction of the probability mass in
-%    the right tail is given as
-%    $t_{\alpha/2} = 1.976$.
-%    Thus, the 95\% confidence intervals for the true bias term $\trueb$, and
-%    the true regression coefficients $\truew_1$ and $\truew_2$, are:
-%    \begin{align*}
-%        \trueb \in \lB(b \pm t_{\alpha/2} \cdot \se(b)\rB)
-%         & = \lB( -0.014-0.074, -0.014+0.074 \rB)\\
-%         & = (-0.088,0.06)\\
-%        \truew_1 \in \lB(w_1 \pm t_{\alpha/2} \cdot \se(w_1)\rB)
-%        & = \lB( -0.082-0.0168, -0.082+0.0168 \rB)\\
-%        & = (-0.099,-0.065)\\
-%        \truew_2 \in \lB(w_2 \pm t_{\alpha/2} \cdot \se(w_2)\rB)
-%         & = \lB( 0.45-0.00787, 0.45+0.00787 \rB)\\
-%         & = (0.442,0.458)
-%    \end{align*}
+    Using confidence level $1-\alpha=0.95$ (or significance level
+    $\alpha=0.05$), the critical value of the $t$-distribution that
+    encompasses $\tfrac{\alpha}{2}=0.025$ 
+    fraction of the probability mass in
+    the right tail is given as
+    $t_{\alpha/2} = 1.976$.
+
+	\medskip
+
+    Thus, the 95\% confidence intervals for the true bias term $\trueb$, and
+    the true regression coefficients $\truew_1$ and $\truew_2$, are:
+    \begin{align*}
+        \trueb \in \lB(b \pm t_{\alpha/2} \cdot \se(b)\rB)
+         & = \lB( -0.014-0.074, -0.014+0.074 \rB)\\
+         & = (-0.088,0.06)\\
+        \truew_1 \in \lB(w_1 \pm t_{\alpha/2} \cdot \se(w_1)\rB)
+        & = \lB( -0.082-0.0168, -0.082+0.0168 \rB)\\
+        & = (-0.099,-0.065)\\
+        \truew_2 \in \lB(w_2 \pm t_{\alpha/2} \cdot \se(w_2)\rB)
+         & = \lB( 0.45-0.00787, 0.45+0.00787 \rB)\\
+         & = (0.442,0.458)
+    \end{align*}
+\end{frame}
 %\end{example}
 %
 %
 %\subsection{Hypothesis Testing}
 %\index{multiple regression!hypothesis testing}
 %\index{hypothesis testing}
-%Once the parameters have been estimated, it is beneficial to test
-%whether the regression coefficients are close to zero or substantially
-%different. 
-%For this we set up the null hypothesis that all the true weights are
-%zero, except for the
-%bias term ($\trueb = \truew_0$). 
+\begin{frame}{Hypothesis Testing}
+Once the parameters have been estimated, it is beneficial to test
+whether the regression coefficients are close to zero or substantially
+different. 
+
+\medskip
+
+For this we set up the null hypothesis that all the true weights are
+zero, except for the
+bias term ($\trueb = \truew_0$). 
 %%We exclude the bias since it simply specifies the
 %%intercept along each dimension, and there is no reason to believe that
 %%it should be zero.
-%We contrast the null hypothesis with the alternative hypothesis that at least one
-%of the weights is not zero
-%\begin{align*}
-%    H_0\!: & \quad \truew_1 = 0, \truew_2 = 0, \ldots, \truew_d = 0 \\
-%    H_a\!: & \quad \exists i, \text{ such that } \truew_i \ne 0
-%\end{align*}
+We contrast the null hypothesis with the alternative hypothesis that at least one
+of the weights is not zero
+\begin{align*}
+	H_0\!: & \quad \truew_1 = 0, \truew_2 = 0, \ldots, \truew_d = 0 & 
+    H_a\!: & \quad \exists i, \text{ such that } \truew_i \ne 0
+\end{align*}
 %The null hypothesis can also be written as $H_0: \truebw = \bzero$,
 %where $\truebw = (\truew_1, \truew_2, \cdots, \truew_d)^T$.
 %
 %
-%We use the $F$-test that compares the ratio of the adjusted RSS value to the
-%estimated variance $\hsigma^2$, defined via the $f$-statistic
+We use the $F$-test that compares the ratio of the adjusted RSS value to the
+estimated variance $\hsigma^2$, defined via the $f$-statistic
 %\index{multiple regression!$f$-statistic}
 %\index{multiple regression!$F$-test}
-%\begin{align}
-%    \tcbhighmath{
-%    f = \frac{RSS/d}{\hsigma^2} = \frac{RSS\big/d}{SSE\big/(n-d-1)}}
+\begin{align*}
+    \tcbhighmath{
+    f = \frac{RSS/d}{\hsigma^2} = \frac{RSS\big/d}{SSE\big/(n-d-1)}}
 %    \label{eq:reg:eval:Ftest}
-%\end{align}
+\end{align*}
 %
 %Under the null hypothesis, we have
 %\begin{align*}
@@ -2128,124 +2586,161 @@ Under the null hypothesis we have $\truew=0$, further
 %and response variables. On the other hand, if the alternative hypothesis
 %is true, then $E[RSS/d] \ge \sigma^2$, resulting in a larger $f$ value.
 %
-%The ratio $f$ follows a $F$-distribution with $d, (n-d-1)$ degrees of
-%freedom for the numerator and denominator, respectively. Therefore,
-%we can reject the null hypothesis if the $\pvalue$ is less than the
-%chosen significance level, say $\alpha=0.01$. 
+\end{frame}
+
+\begin{frame}{Hypothesis Testing}
+The ratio $f$ follows a $F$-distribution with $d, (n-d-1)$ degrees of
+freedom for the numerator and denominator, respectively. Therefore,
+we can reject the null hypothesis if the $\pvalue$ is less than the
+chosen significance level, say $\alpha=0.01$. 
 %% That is, we reject the null
 %% hypothesis if 
 %% $f > F_{\alpha,d,n-d-1}$ for critical value $\alpha$ (e.g.,
 %% $\alpha=0.01$).
 %
-%Notice that, since $R^2 = 1 - \tfrac{SSE}{TSS} = \frac{RSS}{TSS}$, we
-%have 
-%\begin{align*}
-%SSE & = (1-R^2) \cdot TSS & RSS & = R^2 \cdot TSS
-%\end{align*}
-%Therefore, we
-%can rewrite the $f$ ratio as follows
-%\begin{empheq}[box=\tcbhighmath]{align}
-%    f = \frac{RSS\big/d}{SSE\big/(n-d-1)} = \frac{n-d-1}{d} \cdot \frac{R^2}{1-R^2}
-%\end{empheq}
-%In other words, the $F$-test compares the adjusted fraction of explained
-%variation to the unexplained variation. If $R^2$ is high, it means the
-%model can fit the data well, and that is more evidence to reject the null
-%hypothesis.
+Notice that, since $R^2 = 1 - \tfrac{SSE}{TSS} = \frac{RSS}{TSS}$, we
+have 
+\begin{align*}
+SSE & = (1-R^2) \cdot TSS & RSS & = R^2 \cdot TSS
+\end{align*}
+Therefore, we
+can rewrite the $f$ ratio as follows
+\begin{empheq}[box=\tcbhighmath]{align*}
+    f = \frac{RSS\big/d}{SSE\big/(n-d-1)} = \frac{n-d-1}{d} \cdot \frac{R^2}{1-R^2}
+\end{empheq}
+In other words, the $F$-test compares the adjusted fraction of explained
+variation to the unexplained variation. If $R^2$ is high, it means the
+model can fit the data well, and that is more evidence to reject the null
+hypothesis.
+\end{frame}
+
+%\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 %
 %% \vspace*{-0.1in}
 %\subsubsection{Hypothesis Testing for Individual Parameters}
-%We can also test whether each independent attribute $X_i$, 
-%contributes significantly for the prediction of $Y$ or not, assuming
-%that all the attributes are still retained in the model.
+\begin{frame}{Hypothesis Testing for Individual Parameters}
+
+We can also test whether each independent attribute $X_i$, 
+contributes significantly for the prediction of $Y$ or not, assuming
+that all the attributes are still retained in the model.
+
+\medskip
+
 %
-%For attribute $X_i$, we set up the null hypothesis $H_0: \truew_i = 0$ and
-%contrast it with the alternative hypothesis $H_a: \truew_i \ne 0$.
-%Using \cref{eq:reg:eval:Twi}, the standardized variable $Z_{w_{i}}$
-%under the null hypothesis is given as
-%\begin{empheq}[box=\tcbhighmath]{align}
-%    Z_{w_{i}} = \frac{w_i - E[w_i]}{\se(w_i)} = 
-%    \frac{w_i}{\se(w_i)} =
-%        \frac{w_i}{\hsigma \sqrt{c_{ii}}}
-%\end{empheq}
+For attribute $X_i$, we set up the null hypothesis $H_0: \truew_i = 0$ and
+contrast it with the alternative hypothesis $H_a: \truew_i \ne 0$.
+%Using \cref{eq:reg:eval:Twi}, t
+The standardized variable $Z_{w_{i}}$ under the null hypothesis 
+is given as
+\begin{empheq}[box=\tcbhighmath]{align*}
+    Z_{w_{i}} = \frac{w_i - E[w_i]}{\se(w_i)} = 
+    \frac{w_i}{\se(w_i)} =
+        \frac{w_i}{\hsigma \sqrt{c_{ii}}}
+\end{empheq}
 %since $E[w_i] = \truew_i = 0]$.
 %Next, using a two-tailed $t$-test with $n-d-1$ degrees of freedom, we
-%compute $\pvalue(Z_{w_i})$. If this probability is smaller than the
-%significance level $\alpha$ (say 0.01), 
-%we can reject the null hypothesis. 
-%Otherwise, we accept the null hypothesis, which would imply that $X_i$
-%does not add significant value in predicting the response in light of
-%other attributes already used to fit the model. The $t$-test can also be
-%used to test whether the bias term is significantly different from $0$
-%or not.
+%compute $\pvalue(Z_{w_i})$. 
+If this probability is smaller than the
+significance level $\alpha$ (say 0.01), 
+we can reject the null hypothesis. 
+
+\medskip
+
+Otherwise, we accept the null hypothesis, which would imply that $X_i$
+does not add significant value in predicting the response in light of
+other attributes already used to fit the model. The $t$-test can also be
+used to test whether the bias term is significantly different from $0$
+or not.
+\end{frame}
 %
 %\vspace*{-0.1in}
 %\begin{example}[Hypothesis Testing]
+\begin{frame}{Hypothesis Testing}
+\framesubtitle{Example}
 %    We continue with \cref{ex:reg:eval:multiple_ci}, but now we test for the
-%    regression effect. Under the null hypothesis that $\truew_1 = \truew_2 = 0$,
-%    the expected value of RSS is $\sigma^2$. Thus, we expect the
-%    $f$-statistic to be close to 1. Let us check if that is the case; we
-%    have
-%    \begin{align*}
-%        f = \frac{RSS/d}{\hsigma^2} = \frac{80.60/2}{4.203 \times
-%        10^{-2}} = 958.8
-%    \end{align*}
-%    Using the $F$-distribution with $(d,n-d-1) = (2,147)$ degrees of freedom, we
-%    have
-%    \begin{align*}
-%        \pvalue(958.8) \approx 0
-%    \end{align*}
-%    In other words, such a large value of the $f$-statistic is extremely
-%    rare, and therefore, we can reject the null hypothesis. We conclude that $Y$
-%    does indeed depend on at least one of the predictor attributes $X_1$
-%    or $X_2$.
+%    regression effect. 
+
+	Under the null hypothesis that $\truew_1 = \truew_2 = 0$,
+    the expected value of RSS is $\sigma^2$. Thus, we expect the
+    $f$-statistic to be close to 1. Let us check if that is the case; we
+    have
+    \begin{align*}
+        f = \frac{RSS/d}{\hsigma^2} = \frac{80.60/2}{4.203 \times
+        10^{-2}} = 958.8
+    \end{align*}
+    Using the $F$-distribution with $(d,n-d-1) = (2,147)$ degrees of freedom, we
+    have
+    \begin{align*}
+        \pvalue(958.8) \approx 0
+    \end{align*}
+    In other words, such a large value of the $f$-statistic is extremely
+    rare, and therefore, we can reject the null hypothesis. We conclude that $Y$
+    does indeed depend on at least one of the predictor attributes $X_1$
+    or $X_2$.
+
+\end{frame}
 %
-%    We can also test for each of the regression coefficients
-%    individually using the $t$-test. For example, for $\truew_1$, let the
-%    null hypothesis be $H_0: \truew_1 = 0$, so that the alternative
-%    hypothesis is $H_a: \truew_1 \ne 0$. Assuming that the model still has
-%    both $X_1$ and $X_2$ as the predictor variables, we can compute the
-%    $t$-statistic using \cref{eq:reg:eval:Twi}:
-%    \begin{align*}
-%        Z_{w_1} = \frac{w_1}{\se(w_1)}  =
-%        \frac{-0.082}{0.0414} = -1.98
-%    \end{align*}
-%    Using a two-tailed $t$-test with $n-d-1=147$ degrees of freedom, we
-%    find that
-%    \begin{align*}
-%        \pvalue(-1.98) = 0.0496
-%    \end{align*}
-%    Since the $\pvalue$ is only marginally less than a significance
-%    level of $\alpha=0.05$ (i.e., a 95\% confidence level), 
-%    this means that $X_1$ is only weakly 
-%    relevant for predicting $Y$ in the
-%    presence of $X_2$. In fact, if we use the more stringent
-%    significance level $\alpha=0.01$, 
-%    we would conclude that $X_1$ is not significantly
-%    predictive of $Y$, given $X_2$.
-%
-%    On the other hand, individually for $\truew_2$, if we test whether $H_0: \truew_2 = 0$
-%    versus $H_a: \truew_2 \ne 0$, we have:
-%    \begin{align*}
-%        Z_{w_2} = \frac{w_2}{\se(w_2)}  =
-%        \frac{0.45}{0.0194} = 23.2
-%    \end{align*}
-%    Using a two-tailed $t$-test with $n-d-1=147$ degrees of freedom, we
-%    find that
-%    \begin{align*}
-%        \pvalue(23.2) \approx 0
-%    \end{align*}
-%    This means, that individually $X_2$ is significantly predictive of
-%    $Y$ even in the presence of $X_1$. 
-%    
-%    Using the $t$-test, we can also compute the $\pvalue$ for the bias
-%    term:
-%    \begin{align*}
-%        Z_{b} = \frac{b}{\se(b)}  =
-%        \frac{-0.014}{0.183} = -0.077
-%    \end{align*}
-%    which has a $\pvalue=0.94$ for a two-tailed test. This means, we
-%    accept the null hypothesis that $\trueb=0$, and reject the alternative
-%    hypothesis that $\trueb\ne 0$.
+\begin{frame}{Hypothesis Testing for Individual Parameters}
+\framesubtitle{Example}
+    We can also test for each of the regression coefficients
+    individually using the $t$-test. For example, for $\truew_1$, let the
+    null hypothesis be $H_0: \truew_1 = 0$, so that the alternative
+    hypothesis is $H_a: \truew_1 \ne 0$. Assuming that the model still has
+    both $X_1$ and $X_2$ as the predictor variables, we can compute the
+    $t$-statistic as: %using \cref{eq:reg:eval:Twi}:
+    \begin{align*}
+        Z_{w_1} = \frac{w_1}{\se(w_1)}  =
+        \frac{-0.082}{0.0414} = -1.98
+    \end{align*}
+    Using a two-tailed $t$-test with $n-d-1=147$ degrees of freedom, we
+    find that
+    \begin{align*}
+        \pvalue(-1.98) = 0.0496
+    \end{align*}
+    Since the $\pvalue$ is only marginally less than a significance
+    level of $\alpha=0.05$ (i.e., a 95\% confidence level), 
+    this means that $X_1$ is only weakly 
+    relevant for predicting $Y$ in the
+    presence of $X_2$. 
+
+	\medskip
+
+	In fact, if we use the more stringent
+    significance level $\alpha=0.01$, 
+    we would conclude that $X_1$ is not significantly
+    predictive of $Y$, given $X_2$.
+\end{frame}
+
+\begin{frame}{Hypothesis Testing for Individual Parameters}
+\framesubtitle{Example}
+
+    On the other hand, individually for $\truew_2$, if we test whether $H_0: \truew_2 = 0$
+    versus $H_a: \truew_2 \ne 0$, we have:
+    \begin{align*}
+        Z_{w_2} = \frac{w_2}{\se(w_2)}  =
+        \frac{0.45}{0.0194} = 23.2
+    \end{align*}
+    Using a two-tailed $t$-test with $n-d-1=147$ degrees of freedom, we
+    find that
+    \begin{align*}
+        \pvalue(23.2) \approx 0
+    \end{align*}
+    Thus, $X_2$ is significantly predictive of
+    $Y$ even in the presence of $X_1$. 
+
+	\medskip
+    
+    Using the $t$-test, we can also compute the $\pvalue$ for the bias
+    term:
+    \begin{align*}
+        Z_{b} = \frac{b}{\se(b)}  =
+        \frac{-0.014}{0.183} = -0.077
+    \end{align*}
+    which has a $\pvalue=0.94$ for a two-tailed test. This means, we
+    accept the null hypothesis that $\trueb=0$, and reject the alternative
+    hypothesis that $\trueb\ne 0$.
+\end{frame}
 %\end{example}
 %
 %% \enlargethispage{1\baselineskip}
@@ -2290,49 +2785,103 @@ Under the null hypothesis we have $\truew=0$, further
 %
 %
 %\subsection{Geometric Approach to Statistical Testing}
-%The geometry of multiple regression provides further insight into the
-%hypothesis testing approach for the regression effect.
-%Let $\mX_i = X_i - \mu_{X_i} \cdot \bone$ denote the centered attribute
-%vector, and let $\mbX = (\mX_1, \mX_2, \cdots, \mX_d)^T$ denote the
-%multivariate centered vector of predictor variables.
-%The $n$-dimensional
-%space over the points is divided into three mutually orthogonal 
-%subspaces, namely the 1-dimensional {\em mean space} 
-%$\cS_\mu = span(\bone)$, 
-%the $d$ dimensional {\em centered variable space} 
-%$\cS_{\mX} = span(\mbX)$, and the
-%$n-d-1$ dimensional {\em error space} $\cS_\epsilon$, which contains the error
-%vector $\bepsilon$. 
-%The response vector $Y$ can thus be decomposed into three components
+\begin{frame}{Geometric Approach to Statistical Testing}
+The geometry of multiple regression provides further insight into the
+hypothesis testing approach for the regression effect.
+
+\medskip
+
+Let $\mX_i = X_i - \mu_{X_i} \cdot \bone$ denote the centered attribute
+vector, and let $\mX = (\mX_1, \mX_2, \cdots, \mX_d)^T$ denote the
+multivariate centered vector of predictor variables.
+
+\medskip
+
+The $n$-dimensional
+space over the points is divided into three mutually orthogonal 
+subspaces, namely the 1-dimensional {\em mean space} 
+$\cS_\mu = span(\bone)$, 
+the $d$ dimensional {\em centered variable space} 
+$\cS_{\mX} = span(\mX)$, and the
+$n-d-1$ dimensional {\em error space} $\cS_\epsilon$, which contains the error
+vector $\bepsilon$. 
+The response vector $Y$ can thus be decomposed into three components
 %(see \cref{fig:reg:eval:uni_geom,fig:reg:eval:multi_geom})
-%\begin{align*}
-%    Y = \mu_Y \cdot \bone + \hmY + \bepsilon
-%\end{align*}
-%Recall that the {\em degrees of freedom}
-%of a random vector is defined
-%as the dimensionality of its enclosing subspace.
-%Since the original dimensionality of the point space is $n$, we have a
-%total of $n$ degrees of freedom. The mean space has dimensionality $dim(\cS_\mu)=1$,
+\begin{align*}
+    Y = \mu_Y \cdot \bone + \hmY + \bepsilon
+\end{align*}
+Recall that the {\em degrees of freedom}
+of a random vector is defined
+as the dimensionality of its enclosing subspace.
+Since the original dimensionality of the point space is $n$, we have a
+total of $n$ degrees of freedom. 
+%The mean space has dimensionality $dim(\cS_\mu)=1$,
 %the centered variable space has
 %$dim(\cS_{\mX}) = d$, and the error space has $dim(\cS_\epsilon) =
 %n-d-1$, so that we have
-%\begin{align*}
-%    dim(\cS_\mu) + dim(\cS_{\mX}) + dim(\cS_\epsilon) = 1 + d + (n-d-1) = n
-%\end{align*}
+\begin{align*}
+    dim(\cS_\mu) + dim(\cS_{\mX}) + dim(\cS_\epsilon) = 1 + d + (n-d-1) = n
+\end{align*}
+\end{frame}
 %
 %\subsubsection{Population Regression Model}
-%Recall that the regression model posits that for a fixed value $\bx_i =
-%(x_{i1}, x_{i2}, \cdots, x_{id})^T$, 
+\begin{frame}{Population Regression Model}
+%Recall that t
+The regression model posits that %for a fixed value 
+$\bx_i = (x_{i1}, x_{i2}, \cdots, x_{id})^T$ :
 %the true response $y_i$ is
 %given as
-%\begin{align*}
-%y_i = \trueb + \truew_1 \cdot x_{i1} + \ldots + \truew_d \cdot x_{id} + \varepsilon_i
-%\end{align*}
-%where the systematic part of the model $\trueb+ \sum_{j=1}^d \truew_j\cdot x_{ij}$ is fixed, and the
-%error term $\varepsilon_i$ varies randomly, with the
-%assumption that $\varepsilon_i$ follows a normal distribution with mean
-%$\mu= 0$ and variance $\sigma^2$. We also assume that the
+\begin{align*}
+y_i = \trueb + \truew_1 \cdot x_{i1} + \ldots + \truew_d \cdot x_{id} + \varepsilon_i
+\end{align*}
+where the %systematic part of the model $\trueb+ \sum_{j=1}^d \truew_j\cdot x_{ij}$ is fixed, and the
+error term $\varepsilon_i$ varies randomly, with the
+assumption that $\varepsilon_i$ follows a normal distribution with mean
+$\mu= 0$ and variance $\sigma^2$. 
+%	We also assume that the
 %$\varepsilon_i$ values are all independent of each other.
+The distribution of $\bvepsilon$ is therefore given as
+\begin{align*}
+    f(\bvepsilon) = \frac{1}{(\sqrt{2\pi})^n \cdot \sqrt{|\cov|}} \cdot 
+    \exp \lB\{ -\frac{\bvepsilon^T \cov^{-1} \bvepsilon}{2} \rB\} =
+\frac{1}{(\sqrt{2\pi})^n \cdot \sigma^n} \cdot 
+\exp \lB\{ -\frac{\norm{\bvepsilon}^2}{2 \cdot \sigma^2} \rB\}
+\end{align*}
+which follows from the fact that $|\cov| = \det(\cov) = \det(\sigma^2 \bI) =
+\lB(\sigma^2\rB)^n$ and $\cov^{-1} = \frac{1}{\sigma^2} \bI$.
+
+\medskip
+
+
+The density of $\bvepsilon$ is thus a function of its
+squared length $\norm{\bvepsilon}^2$, independent of its angle. 
+
+\medskip
+
+In other words, the vector $\bvepsilon$ is distributed uniformly over
+all angles and is equally likely to point in any direction. 
+
+\end{frame}
+\begin{frame}{Population Regression Model}
+
+It is important to note that the $n-1$ dimensional hypersphere denotes
+the fact that the random vector $\bvepsilon$ can be in any orientation in this
+hypersphere of radius $\norm{\bvepsilon}$.
+
+\medskip
+
+Notice how the population regression model differs from the fitted
+model. 
+The residual error vector $\bepsilon$ is
+orthogonal to the predicted mean response vector $\hmY$, which 
+acts as the estimate for $E[\mY|\mX]$. 
+
+\medskip
+
+On the other hand, in the population regression model, 
+the random error vector $\bvepsilon$ can be in any
+orientation compared to $E[\mY|\mX]$.
+\end{frame}
 %
 % %\begin{figure}[h!]
 % %       \hspace{3in}
@@ -2374,39 +2923,39 @@ Under the null hypothesis we have $\truew=0$, further
 %
 %
 %\begin{figure}[!t]
-%    \vspace{-0.25in}
-%    \hspace{-1.25in}
-%\centerline{
-%\definecolor{mygray}{gray}{0.95}
-%\psset{unit=0.5in,arrowscale=1.5,labelsep=2pt}
-%\psset{viewpoint=30 20 20 rtp2xyz,Decran=100,lightsrc=viewpoint}
-%\begin{pspicture}(-3,-3)(3,3.5)
-%\psSolid[object=parallelepiped,
-%a=0.5,b=2.4,c=0.9,fillcolor=white,opacity=0.2,action=draw*](0.1,0.8,0.2)
-%\psPoint[](0,0,0){O}
-%\psPoint[](0,1.5,0){C}
-%\psline[linewidth=2pt,linecolor=gray]{->}(O)(C)
-%\axesIIID[axisnames={\bone,\cS_{\mX},\cS_\epsilon}](-0.1,-0.1,-0.1)(1.5,2.2,0.8)
-%\psPoint[](0,1.75,0.2){A}
-%\psset{dotsep=0.5pt}
-%\psline[linewidth=1.5pt,linestyle=dotted]{->}(C)(A)
-%\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
-%\psPoint[](0,0.75,-0.01){mC}
+%
+\begin{frame}[fragile]{Population Regression Model}
+\vspace{-0.25in}
+\hspace{-1.25in}
+\centerline{
+\definecolor{mygray}{gray}{0.95}
+\psset{unit=0.5in,arrowscale=1.5,labelsep=2pt}
+\psset{viewpoint=30 20 20 rtp2xyz,Decran=100,lightsrc=viewpoint}
+\begin{pspicture}(-3,-3)(3,3.5)
+\psSolid[object=parallelepiped, a=0.5,b=2.4,c=0.9,fillcolor=white,opacity=0.2,action=draw*](0.1,0.8,0.2)
+\psPoint[](0,0,0){O}
+\psPoint[](0,1.5,0){C}
+\psline[linewidth=2pt,linecolor=gray]{->}(O)(C)
+\axesIIID[axisnames={\bone,\cS_{\mX},\cS_\epsilon}](-0.1,-0.1,-0.1)(1.5,2.2,0.8)
+\psSolid[object=sphere,hollow,linecolor=lightgray,
+   opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
+ngrid=20 20](0,1.5,0)%
+\psPoint[](0,1.75,0.2){A}
+\psset{dotsep=0.5pt}
+\psline[linewidth=1.5pt,linestyle=dotted]{->}(C)(A)
+\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
+\psPoint[](0,0.75,-0.01){mC}
 %\uput[-90](mC){$E[\mY|\mbX]$}
-%\psPoint[](0,0.75,0.1){mA}
-%\uput[90](mA){$\mY$}
-%\psPoint[](0,1.6,0.15){mE}
-%\uput[-90](mE){$\bvepsilon$}
-%\psline[linewidth=1pt,linestyle=dashed]{->}(O)(A)
-%\psSolid[object=sphere,hollow,linecolor=lightgray,
-%    opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%ngrid=20 20](0,1.5,0)%
-%% \psSolid[object=sphere,hollow,linecolor=lightgray,
-%%     opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%% ngrid=20 20](0,0,0)%
-%\end{pspicture}
-%}
-%    \vspace{-0.3in}
+\uput[-90](mC){$E[\mY|\mX]$}
+\psPoint[](0,0.75,0.1){mA}
+\uput[90](mA){$\mY$}
+\psPoint[](0,1.6,0.15){mE}
+\uput[-90](mE){$\bvepsilon$}
+\psline[linewidth=1pt,linestyle=dashed]{->}(O)(A)
+\end{pspicture}
+}
+\vspace{-0.3in}
+\end{frame}
 %% \vspace{0.1in}
 %    \caption{Population regression model. The $n-1$ dimensional
 %        subspace, comprising $\cS_{\mX} + \cS_\epsilon$,
@@ -2482,46 +3031,48 @@ Under the null hypothesis we have $\truew=0$, further
 %orientation compared to $E[\mY|\mbX]$.
 %
 %\subsubsection{Hypothesis Testing}
-%Consider the population regression model
-%\begin{align*}
-%    Y = \mu_Y \cdot \bone + \truew_1 \cdot \mX_1 + \ldots + \truew_d \cdot \mX_d +
-%    \bvepsilon = \mu_Y \cdot \bone + E[\mY|\mbX] + \bvepsilon
-%\end{align*}
+\begin{frame}{Hypothesis Testing}
+Consider the population regression model
+\begin{align*}
+    Y = \mu_Y \cdot \bone + \truew_1 \cdot \mX_1 + \ldots + \truew_d \cdot \mX_d +
+    \bvepsilon = \mu_Y \cdot \bone + E[\mY|\mX] + \bvepsilon
+\end{align*}
 %
-%To test whether $X_1, X_2, \cdots, X_d$ are useful in predicting $Y$, we
-%consider what would happen if all of the regression coefficients were
-%zero, which forms our null hypothesis
-%\begin{align*}
-%H_0\!: & \quad \truew_1 = 0, \truew_2 = 0, \ldots, \truew_d = 0    
-%\end{align*}
-%In this case, we have 
-%\begin{align*}
-%Y = \mu_Y \cdot \bone + \bvepsilon\; \implies Y - \mu_Y\cdot\bone =
-%\bvepsilon\; \implies \mY = \bvepsilon  
-%\end{align*}
+To test whether $X_1, X_2, \cdots, X_d$ are useful in predicting $Y$, we
+consider what would happen if all of the regression coefficients were
+zero, which forms our null hypothesis
+\begin{align*}
+H_0\!: & \quad \truew_1 = 0, \truew_2 = 0, \ldots, \truew_d = 0    
+\end{align*}
+In this case, we have 
+\begin{align*}
+Y = \mu_Y \cdot \bone + \bvepsilon\; \implies Y - \mu_Y\cdot\bone =
+\bvepsilon\; \implies \mY = \bvepsilon  
+\end{align*}
 %Since $\bvepsilon$ is normally distributed with mean $\bzero$ and
-%covariance matrix $\sigma^2\cdot \bI$, under the null hypothesis,
+%covariance matrix $\sigma^2\cdot \bI$, u
+	%Under the null hypothesis,
 %the variation in $\mY$ for a given value of $\bx$ will therefore
 %be centered around the origin $\bzero$.
 %
-%On the other hand, under the alternative hypothesis $H_a$ that at least
-%one of the $\truew_i$ is non-zero, we have
-%\begin{align*}
-%\mY = E[\mY|\mbX] + \bvepsilon 
-%\end{align*}
-%Thus, the variation in
-%$\mY$ is shifted away from the origin $\bzero$ in the direction 
-%$E[\mY|\mbX]$.
+On the other hand, under the alternative hypothesis $H_a$ that at least
+one of the $\truew_i$ is non-zero, we have
+\begin{align*}
+\mY = E[\mY|\mX] + \bvepsilon 
+\end{align*}
+Thus, the variation in
+$\mY$ is shifted away from the origin $\bzero$ in the direction 
+$E[\mY|\mX]$.
 %
-%In practice, we obviously do not know the true value of $E[\mY|\mbX]$,
-%but we can estimate it by projecting the 
-%centered observation vector $\mY$ onto the
-%subspaces
-%$\cS_{\mX}$ and $\cS_\epsilon$, as follows
-%\begin{align*}
-%    \mY = w_1 \cdot \mX_1 + w_2 \cdot \mX_2 + \ldots + w_d \cdot
-%\mX_d + \bepsilon = \hmY  + \bepsilon
-%\end{align*}
+In practice, %we obviously do not know the true value of $E[\mY|\mX]$, but 
+we can estimate $E[\mY|\mX]$ by projecting the 
+$\mY$ onto 
+$\cS_{\mX}$ and $\cS_\epsilon$:
+\begin{align*}
+    \mY = w_1 \cdot \mX_1 + w_2 \cdot \mX_2 + \ldots + w_d \cdot
+\mX_d + \bepsilon = \hmY  + \bepsilon
+\end{align*}
+\end{frame}
 %
 %Now, under the null hypothesis, the true centered response vector is $\mY =
 %\bvepsilon$, and therefore,
@@ -2540,129 +3091,94 @@ Under the null hypothesis we have $\truew=0$, further
 %    \centering
 % \captionsetup[subfloat]{captionskip=30pt}
 %    \vspace{-1in}
-%    \centerline{
+\begin{frame}{Hypothesis Testing} 
+\framesubtitle{Null Hypothesis}
+Under the null hypothesis,
+the variation in $\mY$ for a given value of $\bx$ will therefore
+be centered around the origin $\bzero$.
+
+\vspace*{-2cm}
+
+    \centerline{
 %        \subfloat[Null hypothesis: $\mY = \bvepsilon$]{
 %\label{fig:reg:eval:hypotest_0}
-%        \scalebox{1}{
-%            \psset{labelsep=2pt}
-%    \definecolor{mygray}{gray}{0.95}
-%\psset{unit=0.5in,arrowscale=1.5}
-%\psset{viewpoint=30 20 20 rtp2xyz,Decran=100,lightsrc=viewpoint}
-%\begin{pspicture}(0,-1)(6,5)
-%\psSolid[object=parallelepiped,
-%a=0.5,b=2.4,c=0.9,fillcolor=white,opacity=0.2,action=draw*](0.1,0.8,0.2)
-%\psPoint[](0,0,0){O}
-%\psPoint[](0,1.5,0){C}
-%\axesIIID[axisnames={\bone,\cS_{\mX},\cS_\epsilon}](-0.2,-0.2,-0.2)(1.5,2.2,0.8)
-%\psPoint[](0,0.25,0.2){A}
-%\psPoint[](0,0.25,0){B}
-%\psset{dotsep=0.5pt}
-%\psline[linewidth=1.5pt,linestyle=dashed]{->}(B)(A)
-%\psline[linewidth=1.5pt,linestyle=dotted]{->}(O)(A)
-%\psline[linewidth=2pt,linecolor=gray]{->}(O)(B)
-%\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
-%\psPoint[](0,0.1,-0.01){mC}
-%\uput[-90](mC){$\hmY$}
-%\psPoint[](0,0.125,0.1){mE}
-%\uput[90](mE){$\bvepsilon$}
-%\psPoint[](0,0.3,0.05){mB}
-%\uput[90](mB){$\bepsilon$}
-%%\psSolid[object=sphere,hollow,linecolor=lightgray,
-%%    opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%%ngrid=20 20](0,1.5,0)%
-%\psSolid[object=sphere,hollow,linecolor=lightgray,
-%    opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%ngrid=20 20](0,0,0)%
-%\end{pspicture}
-%% \begin{pspicture}(-1,-2)(3,2.5)
-%%     \axesIIID[axisnames={\bone,\bZ,\bepsilon}](-0.1,-0.1,-0.1)(1.5,0.5,0.75)
-%% % \psSolid[object=parallelepiped,
-%% % a=0.5,b=1,c=1,fillcolor=white,opacity=0.2](-0.1,0.2,-0.01)
-%% \psSolid[object=parallelepiped,
-%% a=0.5,b=1,c=0.8,fillcolor=white,opacity=0.2,action=draw*](-0.05,0.2,0.05)
-%% \psPoint[](0,0,0){O}
-%% \psPoint[](0,0.1,0.3){A}
-%% \psPoint[](0,0.1,0){B}
-%% \psPoint[](0,0.5,0.17){C}
-%% \psset{dotsep=0.5pt}
-%% \psline[linewidth=1.5pt,linestyle=dotted]{->}(O)(A)
-%% \psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
-%% \psline[linewidth=2pt,linecolor=gray]{->}(O)(B)
-%% \psline[linewidth=2pt,linestyle=dashed]{->}(B)(A)
-%% \psline[linewidth=2pt]{->}(O)(C)
-%% \psPoint[](0,0.75,0.05){mC}
-%% \psPoint[](0,0.1,-0.05){mE}
-%% \uput[60](mE){$\bvepsilon$}
-%% % \psPoint[](0,0.75,0.35){mA}
-%% % \uput[90](mA){$Y_{\!c}$}
-%% \psSolid[object=sphere,hollow,linecolor=lightgray,
-%%     opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%% ngrid=20 20](0,0,0)%
-%% \end{pspicture}
-%}}}
+        \scalebox{0.8}{
+            \psset{labelsep=2pt}
+    \definecolor{mygray}{gray}{0.95}
+\psset{unit=0.5in,arrowscale=1.5}
+\psset{viewpoint=30 20 20 rtp2xyz,Decran=100,lightsrc=viewpoint}
+\begin{pspicture}(0,-1)(6,5)
+\psSolid[object=parallelepiped,
+a=0.5,b=2.4,c=0.9,fillcolor=white,opacity=0.2,action=draw*](0.1,0.8,0.2)
+\psPoint[](0,0,0){O}
+\psPoint[](0,1.5,0){C}
+\axesIIID[axisnames={\bone,\cS_{\mX},\cS_\epsilon}](-0.2,-0.2,-0.2)(1.5,2.2,0.8)
+\psSolid[object=sphere,hollow,linecolor=lightgray,
+    opacity=0.15,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
+ngrid=20 20](0,0,0)%
+\psPoint[](0,0.25,0.2){A}
+\psPoint[](0,0.25,0){B}
+\psset{dotsep=0.5pt}
+\psline[linewidth=1.5pt,linestyle=dashed]{->}(B)(A)
+\psline[linewidth=1.5pt,linestyle=dotted]{->}(O)(A)
+\psline[linewidth=2pt,linecolor=gray]{->}(O)(B)
+\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
+\psPoint[](0,0.1,-0.01){mC}
+\uput[-90](mC){$\hmY$}
+\psPoint[](0,0.125,0.1){mE}
+\uput[90](mE){$\bvepsilon$}
+\psPoint[](0,0.3,0.05){mB}
+\uput[90](mB){$\bepsilon$}
+\end{pspicture}
+}}%}
+\end{frame}
 %\vspace{-1in}
-%\centerline{
-%    \subfloat[Alternative hypothesis]{
+\begin{frame}{Hypothesis Testing} 
+\framesubtitle{Alternative Hypothesis}
+Under the alternative hypothesis, we have
+$\mY = E[\mY|\mX] + \bvepsilon$, and so $\hmY$ will be
+relatively much longer compared to $\bepsilon$.
+
+\vspace*{-2cm}
+
+
+\centerline{
+    %\subfloat[Alternative hypothesis]{
 %\label{fig:reg:eval:hypotest_a}
-%        \scalebox{1}{
-%            \psset{labelsep=2pt}
-%    \definecolor{mygray}{gray}{0.95}
-%\psset{unit=0.5in,arrowscale=1.5}
-%\psset{viewpoint=30 20 20 rtp2xyz,Decran=100,lightsrc=viewpoint}
-%\begin{pspicture}(0,-1)(6,5)
-%\psSolid[object=parallelepiped,
-%a=0.5,b=2.4,c=0.9,fillcolor=white,opacity=0.2,action=draw*](0.1,0.8,0.2)
-%\psPoint[](0,0,0){O}
-%\psPoint[](0,1.5,0){C}
-%\psPoint[](0,1.75,0){B}
-%% \psline[linewidth=2pt,linecolor=gray]{->}(O)(C)
-%\axesIIID[axisnames={\bone,\cS_{\mX},\cS_\epsilon}](-0.2,-0.2,-0.2)(1.5,2.2,0.8)
-%\psPoint[](0,1.75,0.2){A}
-%\psset{dotsep=0.5pt}
-%\psline[linewidth=1.5pt,linestyle=dashed]{->}(B)(A)
-%\psline[linewidth=1.5pt,linestyle=dotted]{->}(C)(A)
-%\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
-%\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](C)
-%\psPoint[](0,0.75,-0.01){mC}
-%\uput[-90](mC){$\hmY$}
-%\psPoint[](0,0.75,0.1){mA}
-%\uput[90](mA){$\mY$}
-%\psPoint[](0,1.6,0.15){mE}
-%\uput[-90](mE){$\bvepsilon$}
-%\psPoint[](0,1.8,0.05){mB}
-%\uput[90](mB){$\bepsilon$}
-%\psline[linewidth=2pt,linecolor=gray]{->}(O)(B)
-%\psline[linewidth=1pt,linestyle=dashed]{->}(O)(A)
-%\psSolid[object=sphere,hollow,linecolor=lightgray,
-%    opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%ngrid=20 20](0,1.5,0)%
-%% \psSolid[object=sphere,hollow,linecolor=lightgray,
-%%     opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%% ngrid=20 20](0,0,0)%
-%\end{pspicture}
-%% \begin{pspicture}(1,-1)(6,5)
-%%     \axesIIID[axisnames={\bone,\bZ,\bepsilon}](-0.1,-0.1,-0.1)(0.5,1.75,0.75)
-%% \psSolid[object=parallelepiped,
-%% a=0.5,b=2,c=1,fillcolor=white,opacity=0.2,action=draw*](0.2,1.1,0.6)
-%% \psPoint[](0,0,0){O}
-%% \psPoint[](0,1.5,0.5){C}
-%% \psline[linewidth=2pt]{->}(O)(C)
-%% \psPoint[](0,1.6,0.8){A}
-%% \psset{dotsep=0.5pt}
-%% \psline[linewidth=1.5pt,linestyle=dotted]{->}(C)(A)
-%% \psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
-%% \psPoint[](0,0.75,0.05){mC}
-%% \uput[90](mC){$E[Y_{\!c}|\bZ]$}
-%% \psPoint[](0,0.75,0.35){mA}
-%% \uput[90](mA){$Y_{\!c}$}
-%% \psPoint[](0,1.6,0.55){mE}
-%% \uput[60](mE){$\bvepsilon$}
-%% \psline[linewidth=1pt,linestyle=dashed]{->}(O)(A)
-%% \psSolid[object=sphere,hollow,linecolor=lightgray,
-%%     opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
-%% ngrid=20 20](0,1.5,0.5)%
-%% \end{pspicture}
-%}}}
+        \scalebox{0.8}{
+            \psset{labelsep=2pt}
+    \definecolor{mygray}{gray}{0.95}
+\psset{unit=0.5in,arrowscale=1.5}
+\psset{viewpoint=30 20 20 rtp2xyz,Decran=100,lightsrc=viewpoint}
+\begin{pspicture}(0,-1)(6,5)
+\psSolid[object=parallelepiped,
+a=0.5,b=2.4,c=0.9,fillcolor=white,opacity=0.2,action=draw*](0.1,0.8,0.2)
+\psPoint[](0,0,0){O}
+\psPoint[](0,1.5,0){C}
+\psPoint[](0,1.75,0){B}
+\axesIIID[axisnames={\bone,\cS_{\mX},\cS_\epsilon}](-0.2,-0.2,-0.2)(1.5,2.2,0.8)
+\psSolid[object=sphere,hollow,linecolor=lightgray,
+    opacity=0.75,r=0.3,incolor=white,opacity=0.15,%fillcolor=gray!25,
+ngrid=20 20](0,1.5,0)%
+\psPoint[](0,1.75,0.2){A}
+\psset{dotsep=0.5pt}
+\psline[linewidth=1.5pt,linestyle=dashed]{->}(B)(A)
+\psline[linewidth=1.5pt,linestyle=dotted]{->}(C)(A)
+\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](A)
+\psdot[dotscale=1,fillcolor=lightgray,dotstyle=Bo](C)
+\psPoint[](0,0.75,-0.01){mC}
+\uput[-90](mC){$\hmY$}
+\psPoint[](0,0.75,0.1){mA}
+\uput[90](mA){$\mY$}
+\psPoint[](0,1.6,0.15){mE}
+\uput[-90](mE){$\bvepsilon$}
+\psPoint[](0,1.8,0.05){mB}
+\uput[90](mB){$\bepsilon$}
+\psline[linewidth=2pt,linecolor=gray]{->}(O)(B)
+\psline[linewidth=1pt,linestyle=dashed]{->}(O)(A)
+\end{pspicture}
+}}%}
+\end{frame}
 %    \vspace{0.3in}
 %% \vspace{0.1in}
 %    \caption{Geometric test for regression effect: Null versus alternative
@@ -2670,24 +3186,28 @@ Under the null hypothesis we have $\truew=0$, further
 %\label{fig:reg:eval:hypotest}
 %\end{figure}
 %
-%Given that we expect to see a difference between $\hmY$ under the null
-%and alternative hypotheses, this suggests a geometric test based on the relative lengths of $\hmY$ and
-%$\bepsilon$ (since we do not know the true $E[\mY|\mbX]$ or
+\begin{frame}{Hypothesis Testing}
+Given that we expect to see a difference between $\hmY$ under the null
+and alternative hypotheses, this suggests a test based on the relative lengths of $\hmY$ and
+$\bepsilon$.% (since we do not know the true $E[\mY|\mbX]$ or
 %$\bvepsilon$).
-%However, there is one difficulty;
-%we cannot compare their lengths directly, since $\hmY$
-%lies in a $d$ dimensional space, whereas $\bepsilon$ lies in a $n-d-1$
-%dimensional space. Instead, we can compare their lengths after
-%normalizing by
-%the number of dimensions. Define the mean squared length of per
+
+\medskip
+
+However, %there is one difficulty;
+we cannot compare their lengths directly, since $\hmY$
+lies in a $d$ dimensional space, whereas $\bepsilon$ lies in a $n-d-1$
+dimensional space. Instead, we can compare their lengths after
+normalizing by
+the number of dimensions. %Define the mean squared length of per
 %dimension for the two vectors $\hmY$ and $\bepsilon$, as follows
-%\begin{align*}
-%    M\bigl(\hmY\bigr) & = \frac{\norm[\big]{\hmY}^2}{dim(\cS_{\mX})} = 
-%    \frac{\norm[\big]{\hmY}^2}{d}\\
-%    M(\bepsilon) & = \frac{\norm{\bepsilon}^2}{dim(\cS_\epsilon)} = 
-%   \frac{\norm{\bepsilon}^2}{n-d-1}
-%\end{align*}
-%Thus, the geometric test for the regression effect is the ratio of the
+\begin{align*}
+    M\bigl(\hmY\bigr) & = \frac{\norm{\hmY}^2}{dim(\cS_{\mX})} = 
+	\frac{\norm{\hmY}^2}{d} &
+    M(\bepsilon) & = \frac{\norm{\bepsilon}^2}{dim(\cS_\epsilon)} = 
+   \frac{\norm{\bepsilon}^2}{n-d-1}
+\end{align*}
+Thus, the geometric test for the regression effect is: % the ratio of the
 %normalized mean squared length of $\hmY$ to $\bepsilon$, given as
 %\begin{align*}
 %    \frac{M\bigl(\hmY\bigr)}{M(\bepsilon)} = 
@@ -2698,18 +3218,26 @@ Under the null hypothesis we have $\truew=0$, further
 %$\norm{\bepsilon}^2 = \norm[\big]{Y-\hY}^2 = SSE$, and  therefore, the
 %geometric ratio test is
 %identical to the F-test in \cref{eq:reg:eval:Ftest}, since 
-%\begin{align*}
-%    \frac{M\bigl(\hmY\bigr)}{M(\bepsilon)} = 
-%    \frac{\norm[\big]{\hmY}^2\big/ d}{\norm{\bepsilon}^2 \big/ (n-d-1)}
-%    = \frac{RSS\big/d}{SSE\big/(n-d-1)} = f
-%\end{align*}
-%The geometric approach, illustrated in \cref{fig:reg:eval:hypotest}, makes it clear that if $f \approx 1$ then the
-%null hypothesis holds, and we conclude that $Y$ does not depend on the
-%predictor variables $X_1, X_2, \cdots, X_d$. On the other hand, if $f$
-%is large, with a $\pvalue$ less than the significance level (say,
-%$\alpha=0.01$), then we can reject
-%the null hypothesis and accept the alternative hypothesis that $Y$
-%depends on at least one predictor variable $X_i$.
+\begin{align*}
+    \frac{M\bigl(\hmY\bigr)}{M(\bepsilon)} = 
+    \frac{\norm{\hmY}^2\big/ d}{\norm{\bepsilon}^2 \big/ (n-d-1)}
+    = \frac{RSS\big/d}{SSE\big/(n-d-1)} = f
+\end{align*}
+%The geometric approach, %illustrated in \cref{fig:reg:eval:hypotest}, 
+%makes it clear that i
+If $f \approx 1$ then the
+null hypothesis holds, and %we conclude that 
+$Y$ does not depend on %the predictor variables 
+$X_1, X_2, \cdots, X_d$. 
+
+\medskip
+
+If $f$
+is large, with a $\pvalue < \alpha$ (e.g.,
+$0.01$), then we can reject
+the null hypothesis and accept the alternative hypothesis that $Y$
+depends on at least one $X_i$.
+\end{frame}
 %
 %\section{Further Reading}
 %\label{sec:reg:eval:ref}

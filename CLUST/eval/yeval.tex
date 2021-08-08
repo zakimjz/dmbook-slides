@@ -567,7 +567,7 @@ VI can also be expressed as:
 \end{center}
 \end{frame}
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Pairwise Measures}
 Given clustering $\cC$ and ground-truth partitioning $\cT$, let
@@ -898,6 +898,7 @@ where $\mu_T = \tfrac{\mathit{TP}+\mathit{FN}}{N}$ and $\mu_C =
 \tfrac{\mathit{TP}+\mathit{FP}}{N}$.
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Internal Measures}
 Internal evaluation measures do not have recourse to the ground-truth
@@ -911,10 +912,13 @@ with usually a trade-off in maximizing these two aims.
 The internal measures are based on the $n\times n$ {\em
 distance matrix}, also called the {\em proximity matrix}, of all
 pairwise distances among the $n$ points:
-\begin{align*}
-  \bW = \Bigl\{ \dist(\bx_i, \bx_{j}) \Bigr\}_{i,j=1}^n 
-\end{align*}
-where $\dist(\bx_i, \bx_{j}) = \norm{\bx_i - \bx_{j}}_2$
+
+\begin{align}
+    \tcbhighmath{
+    \bW = \Bigl\{ \norm{\bx_i- \bx_{\!j}} \Bigr\}_{i,j=1}^n}
+  \label{eq:clust:eval:proxW}
+\end{align}
+where $\norm{\bx_i - \bx_{\!j}}$
 is the Euclidean
 distance between $\bx_i, \bx_{j} \in \bD$.
 
@@ -948,7 +952,7 @@ weights are given as
   = \sum_{i=1}^{k-1} \sum_{j > i} W(C_i, C_{j})
 \end{align*}
 
-The number of distinct intracluster and intracluster edges is given as
+The number of distinct intracluster and intercluster edges is given as
 \begin{align*}
   N_{in} &= \sum_{i=1}^k {n_i \choose 2} & 
   N_{out} &= \sum_{i=1}^{k-1} \sum_{j=i+1}^k n_i \cdot n_{j} 
@@ -957,8 +961,12 @@ The number of distinct intracluster and intracluster edges is given as
 
 
 
-\begin{frame}[fragile]{Clusterings as Graphs: Iris (Good Case)}
+\begin{frame}[fragile]{Clusterings as Graphs: Iris}
+\framesubtitle{Only intracluster edges shown.}
 \setcounter{subfigure}{0}
+
+Good clustering.
+
 \begin{figure}
     \centering
     \captionsetup[subfloat]{captionskip=20pt}
@@ -1022,11 +1030,15 @@ The number of distinct intracluster and intracluster edges is given as
         \endpsgraph
     }}
 \end{figure}
-Only intracluster edges shown.
-\end{frame}
+%Only intracluster edges shown.
+%\end{frame}
 
-\begin{frame}[fragile]{Clusterings as Graphs: Iris (Bad Case)}
-\setcounter{subfigure}{0}
+\vspace*{-0.4cm}
+
+Bad clustering.
+
+%\begin{frame}[fragile]{Clusterings as Graphs: Iris (Bad Case)}
+%\setcounter{subfigure}{0}
 \begin{figure}
     \captionsetup[subfloat]{captionskip=20pt}
     \def\pshlabel#1{ {\footnotesize $#1$}}
@@ -1087,7 +1099,6 @@ Only intracluster edges shown.
         \endpsgraph
     }}
 \end{figure}
-Only intracluster edges shown.
 \end{frame}
 
 
@@ -1304,7 +1315,7 @@ A value close to $+1$ indicates a good clustering.
 \end{frame}
 
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Relative Measures: Silhouette Coeff\/{i}cient}
 The silhouette coeff\/{i}cient for each
@@ -1348,7 +1359,7 @@ xAxisLabelPos={c,-0.05},yAxisLabelPos={-20,c}} \psset{xLabels={}}
     \psline{<->}(0,-0.05)(96,-0.05)
     \uput[d](50,-0.05){\scriptsize
     $\begin{array}{c}
-        SC_1=0.706\\
+        SC_1=0.662\\
         n_1=97
       \end{array}$
       }
@@ -1356,7 +1367,7 @@ xAxisLabelPos={c,-0.05},yAxisLabelPos={-20,c}} \psset{xLabels={}}
     \psline{<->}(98,-0.05)(150,-0.05)
     \uput[d](120,-0.05){\scriptsize
       $\begin{array}{c}
-        SC_2=0.662\\
+        SC_2=0.785\\
         n_2=53
       \end{array}$
       }
@@ -1365,6 +1376,12 @@ xAxisLabelPos={c,-0.05},yAxisLabelPos={-20,c}} \psset{xLabels={}}
 \end{figure}
  $k=2$ yields the highest silhouette coeff\/{i}cient, with the two
  clusters essentially well separated.
+  $C_1$ starts out with high $s_i$ values, which gradually drop as we
+  get to border points. $C_2$
+  is even better separated, since it has a higher silhouette coeff\/{i}cient
+  and the pointwise scores are all high, except for the last three
+  points.
+
 \end{frame}
 
 \begin{frame}[fragile]{Iris K-means: Silhouette Coeff\/{i}cient Plot
@@ -1406,6 +1423,11 @@ xAxisLabelPos={c,-0.05},yAxisLabelPos={-20,c}} \psset{xLabels={}}
 \end{psgraph}
 } } }
 \end{figure}
+ $C_1$ from $k=2$ has been split into two
+  clusters for $k=3$, namely $C_1$ and $C_3$. Both of these have many
+  bordering points, whereas $C_2$ is well separated with high silhouette
+  coeff\/{i}cients across all points.
+
 \end{frame}
 
 \begin{frame}[fragile]{Iris K-means: Silhouette Coeff\/{i}cient Plot
@@ -1454,6 +1476,13 @@ xAxisLabelPos={c,-0.05},yAxisLabelPos={-20,c}} \psset{xLabels={}}
 \end{psgraph}
 }}} 
 \end{figure}
+ $C_3$ is the well
+separated cluster, corresponding to $C_2$ (in $k=2$ and $k=3$), and the
+remaining clusters are essentially subclusters of $C_1$ for $k=2$. 
+Cluster $C_1$ also has two
+  points with negative $s_i$ values, indicating that they are
+  probably misclustered.
+
 \end{frame}
 
 
@@ -1602,6 +1631,10 @@ Choose $k$ as follows:
 \readdata{\dataGE}{CLUST/eval/figs/gapstatistic-errs.txt}
 \begin{frame}[fragile]{Gap Statistic: Randomly Generated Data}
 \setcounter{subfigure}{0}
+
+A random sample of $n=150$ points, which does not have any apparent
+cluster structure.
+
 \begin{figure}
 %\begin{figure}[!t]%fig17.5
     \centering
@@ -1650,8 +1683,12 @@ Choose $k$ as follows:
 \end{frame}
 
 
-\begin{frame}[fragile]{Gap Statistic: Intracluster Weights and Gap
-  Values}
+\begin{frame}[fragile]{Gap Statistic: Intracluster Weights and Gap Values}
+
+We generate $t=200$ random datasets, and compute  both the expected and the
+observed (Iris) intracluster weight $\mu_W(k)$, for each value of $k$.  
+The observed $W_{in}^k(\bD)$ values are smaller than the expected values $\mu_W(k)$.
+
 \begin{figure}
 %\begin{figure}[!t]%fig17.5
     \centering
@@ -1721,7 +1758,7 @@ $$gap(3) = 0.679 >
 gap(4)-2\sigma_W(4) = 0.753-2\cdot0.0701 = 0.613$$
 \end{frame}
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Cluster Stability}
 The main idea behind cluster stability is that the clusterings obtained
@@ -1792,11 +1829,19 @@ $k^* \gets \arg\min_k \bigl\{ \mu_d(k) \bigr\}$
 \readdata{\dataCS}{CLUST/eval/figs/stabilityvals.txt}
 \begin{frame}[fragile]{Clustering Stability: Iris Data}
   \framesubtitle{$t=500$ bootstrap samples; best K-means from 100 runs}
+
+Both the Variation of Information and the Fowlkes-Mallows  
+  measures indicate that $k=2$ is the best value. VI
+  indicates the least expected distance between pairs of
+  clusterings, and FM indicates the most
+  expected similarity between clusterings.
+
 \begin{figure}[H]
     \centering
     \def\pshlabel#1{ {\footnotesize #1}}
     \def\psvlabel#1{ {\footnotesize #1}}
 \psset{dotscale=2,fillcolor=lightgray,arrowscale=2}
+\scalebox{0.9}{
 \centerline{
 \begin{pspicture}(-3,-1)(3,5)
 \psset{xAxisLabel=$k$,yAxisLabel=Expected Value,%
@@ -1813,8 +1858,8 @@ xAxisLabelPos={c,-0.15},yAxisLabelPos={-1.5,c}}
 \end{psgraph}
 \end{pspicture}
 }
+}
 \end{figure}
-The best choice is $k=2$.
 \end{frame}
 
 
@@ -1866,13 +1911,22 @@ $g_{j}$, def\/{i}ned as
 The KL divergence is zero only when $f$ and $g_{j}$ are the same
 distributions. Using these divergence values, we can compute how much
 the dataset $\bD$ differs from a random dataset.
+
+\medskip
+
+Its main limitation is that the number of cells
+($b^d$) increases exponentially with the dimensionality, and, with a f\/{i}xed sample size $n$, most
+of the cells will have none or one point, making it hard
+to estimate the divergence. The method is also sensitive to the choice
+of parameter $b$.
 \end{frame}
 
 
 
 \readdata{\dataHtwoD}{CLUST/eval/figs/tendency2dhist.txt}
 \readdata{\dataKLtwoD}{CLUST/eval/figs/kl2d.txt}
-\begin{frame}[fragile]{Spatial Histogram: Iris Data versus Uniform}
+\begin{frame}[fragile]{Spatial Histogram: Iris PCA Data versus Uniform}
+\framesubtitle{Uniform has $n=150$ points}
 \setcounter{subfigure}{0}
 \begin{figure}
 %\begin{figure}[!p]\vspace*{12pt}%fig17.7
@@ -1930,6 +1984,7 @@ the dataset $\bD$ differs from a random dataset.
 \end{frame}
 
 \begin{frame}[fragile]{Spatial Histogram: Empirical PMF}
+\framesubtitle{5 bins results in 25 spatial cells}
 \begin{figure}
   \centering
   \captionsetup[subfloat]{captionskip=35pt}
@@ -1994,7 +2049,7 @@ the dataset $\bD$ differs from a random dataset.
 
   \smallskip
  The mean KL value is
-  $\mu_{\mathit{KL}} = 1.17$, with a standard deviation of $\sigma_{\mathit{KL}}=0.18$.
+  $\mu_{\mathit{KL}} = 1.17$, with a standard deviation of $\sigma_{\mathit{KL}}=0.18$, that is, Iris PCA is clusterable.
 \end{frame}
 
 
@@ -2002,6 +2057,8 @@ the dataset $\bD$ differs from a random dataset.
 We can compare the pairwise point
 distances from $\bD$, with those from the randomly generated
 samples $\bR_i$ from the null distribution. 
+
+\medskip
 
 We create the EPMF from the proximity matrix $\bW$ for $\bD$ by binning the distances into $b$ bins:
 
@@ -2023,8 +2080,11 @@ distribution.
 
 \readdata{\dataHoneD}{CLUST/eval/figs/tendency1dhist.txt}
 \readdata{\dataKLoneD}{CLUST/eval/figs/kl1d.txt}
-\begin{frame}[fragile]{Iris Data: Distance Distribution}
+\begin{frame}[fragile]{Iris PCA Data $\times$ Uniform: Distance Distribution}
 \setcounter{subfigure}{0}
+The distance distribution is obtained by binning the edge weights
+between all pairs of points using $b=25$ bins.
+
 \begin{figure}
   \centering
   \captionsetup[subfloat]{captionskip=30pt}
@@ -2059,7 +2119,15 @@ distribution.
 \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Iris Data: Distance Distribution}
+\begin{frame}[fragile]{Iris PCA Data $\times$ Uniform: Distance Distribution}
+
+We compute the KL divergence from $\bD$ to each $\bR_{\!j}$, over
+ $t=500$ samples. 
+ The mean divergence is
+ $\mu_{\mathit{KL}} = 0.18$, with standard deviation $\sigma_{\mathit{KL}}=0.017$.
+ Even though the Iris dataset
+ has a good clustering tendency, the KL divergence is not very large.
+
 \begin{figure}
   \centering
   \captionsetup[subfloat]{captionskip=30pt}
@@ -2079,6 +2147,10 @@ distribution.
   \end{psgraph}
   }}}
 \end{figure}
+
+We conclude that, at least for the Iris dataset, the distance distribution is
+not as discriminative as the spatial histogram approach for
+clusterability analysis.
 \end{frame}
 
 
@@ -2097,9 +2169,10 @@ denote the $i$th direct subsample.
 Next, we compute the minimum distance
 between each point $\bx_{j} \in \bD_i$ and points in $\bD$
 \begin{align*}
-  \dist_{\min}(\bx_{j}) = \min_{\bx_i \in \bD, \bx_i \ne \bx_{j}}
-  \Bigl\{\dist(\bx_{j}, \bx_i)\Bigr\}
+  \dist_{\min}(\bx_{\!j}) = \min_{\bx_i \in \bD, \bx_i \ne \bx_{\!j}}
+  \Bigl\{\norm{\bx_{\!j}- \bx_i}\Bigr\}
 \end{align*}
+
 We
 also compute the minimum distance $\dist_{\min}(\by_{j})$
 between a point $\by_{j} \in \bR_i$ and
@@ -2122,10 +2195,12 @@ case $\mathit{HS}_i$ tends to 1.
 \psset{arrowscale=2}
 \def\pshlabel#1{ {\footnotesize #1}}
 \def\psvlabel#1{ {\footnotesize #1}}
-\begin{frame}{Iris Data: Hopkins Statistic Distribution}
+\begin{frame}{Iris PCA Data $\times$ Uniform: Hopkins Statistic Distribution}
+\framesubtitle{Number of sample pairs $t=500$, subsample size $m=30$.}
 \begin{figure}
 \begin{center}
   \hspace*{-40pt}
+	\scalebox{0.9}{
     \begin{pspicture}(-3,-1)(3,5)
   \psset{xAxisLabel=Hopkins Statistic,yAxisLabel=Probability,%
   xAxisLabelPos={c,-0.025},yAxisLabelPos={-0.025,c}}
@@ -2136,9 +2211,15 @@ case $\mathit{HS}_i$ tends to 1.
           plotNoMax=2,plotNoX=2,plotNo=2]{\dataHS}
   \end{psgraph}
   \end{pspicture}
+  }
 \end{center}
 \end{figure}
-Number of sample pairs $t=500$, subsample size $m=30$.
-  The mean of the Hopkins statistic is $\mu_{\mathit{HS}} = 0.935$, with a
-  standard deviation of $\sigma_{\mathit{HS}}=0.025$. 
+  The  Hopkins statistic has $\mu_{\mathit{HS}} = 0.935$ and $\sigma_{\mathit{HS}}=0.025$. 
+
+\medskip
+
+Given the high value of the
+  statistic, we conclude that the Iris dataset has a good clustering
+  tendency.
+
 \end{frame}

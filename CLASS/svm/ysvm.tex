@@ -120,32 +120,12 @@ because when $h(\bx_i) < 0$, the class is $-1$, and when $h(\bx_i)
 
 
 \begin{frame}[fragile]{Geometry of a Hyperplane in 2D}
-\begin{figure}%[!t]
-  %h(x) = 2y + 5x - 10 = 0
-%  \centerline{
-    %\psset{unit=0.5in,arrowscale=2,dotscale=2}
-    %\pspicture[](-1,-1)(6,6)
-    %\definecolor{mygray}{gray}{0.9}%
-    %\pspolygon[linecolor=mygray,fillcolor=mygray,fillstyle=solid](-1,-1)(2.4,-1)(-0.4,6)(-1,6) %
-    %\psaxes[]{<->}(0,0)(-1,-1)(6,6)
-    %\psgrid[subgriddiv=1,gridcolor=gray,griddots=7,gridlabels=0](0,0)(-1,-1)(6,6)
-    %\psline[linewidth=2pt]{-}(-0.4,6)(2.4,-1)
-    %\psdot[](3.5,3.5)\uput[45](3.5,3.5){$\bx$}
-    %\psdot[](1,2.5)\uput[225](1,2.5){$\bx_p$}
-    %\psline[linestyle=dashed]{-}(1,2.5)(3.5,3.5)
-    %\psline[linestyle=dashed]{-}(0,0)(1.72,0.69)
-    %\uput[225](0,0){$\bzero$}
-    %\uput[90](2.2,3){$r$}
-    %\uput[90](0.75,0.35){${b \over \|\bw\|}$}
-    %\uput[0]{-65}(0.1,4.5){$h(\bx) = 0$}
-    %\put[0](-1.5,4.5){$h(\bx) < 0$}
-    %\uput[0](1,4.5){$h(\bx) > 0$}
-    %\endpspicture
-  %}
    %h(x) = 2y + 5x - 20 = 0
-  
+\begin{columns}
+\vspace*{-4cm}
+\column{0.5\textwidth}
   \centerline{
-  \scalebox{0.8}{
+  \scalebox{0.6}{
     \psset{unit=0.5in,dotscale=2,arrowscale=2}
     \pspicture[](-1,-1)(6,6)
     \definecolor{mygray}{gray}{0.75}%
@@ -175,7 +155,28 @@ because when $h(\bx_i) < 0$, the class is $-1$, and when $h(\bx_i)
     \endpspicture
   }
   }
-\end{figure}
+%\vspace*{1cm}
+	\mbox{ }
+\column{0.5\textwidth}
+\begin{small}
+\noindent
+$\bp = (p_1, p_2) = (4,0)$, $\bq = (q_1, q_2) = (2,5)$ 
+ $$-\frac{w_1}{w_2}  = {q_2 - p_2 \over q_1 - p_1} = {5-0 \over
+ 2-4} = -{5 \over 2}$$
+Given $(4,0)$, the offset $b$ is:
+\begin{align*}
+  b  = -5 x_1 -2 x_2 = -5 \cdot 4 - 2 \cdot 0 = -20
+\end{align*}
+Given $\bw =  \matr{5\\2}$  and $b=-20$:
+\begin{align*}
+h(\bx) =  \bw^T \bx + b = \matr{5 & 2} \matr{x_1\\x_2} - 20 = 0
+\end{align*}
+\begin{align*}
+\dist = y \; r = -1\; r = {-b \over \| \bw \|}
+= {-(-20) \over \sqrt{29}} = 3.71
+\end{align*}
+\end{small}
+\end{columns}
 \end{frame}
 
 
@@ -237,17 +238,12 @@ Over all points, we have
 \end{frame}
 
 
-
-
-
-
 \begin{frame}{Separating Hyperplane: Margin and Support Vectors}
   \framesubtitle{Shaded points are support vectors}
-\begin{figure}[!t]
-  \centerline{Canonical hyperplane: $h(x) = 5/6x + 2/6y - 20/6 
-  = 0.334x + 0.833y - 3.332$}
-  \centerline{~}
-\scalebox{0.7}{
+\begin{columns}
+\column{0.5\textwidth}
+\hspace*{1cm}
+\scalebox{0.6}{
   \centerline{
     \psset{unit=0.5in,dotscale=2,arrowscale=2}
     \pspicture[](-1,-1)(6,6)
@@ -271,7 +267,28 @@ Over all points, we have
     \endpspicture
   }
 }
-\end{figure}
+\column{0.5\textwidth}
+\begin{small}
+\begin{align*}
+    h(\bx) = \matr{5\\2}^T \bx -20 = 0
+\end{align*}
+Given $\bx^* = (2,2)^T$, $y^*=-1$.
+$$s = {1 \over y^*h(\bx^*)} =
+{1 \over -1 \lB(\matr{5 \\ 2}^T \matr{2 \\ 2} - 20\rB)} = {1
+\over 6}$$
+$$\bw = {1\over 6} \matr{5\\ 2} = \matr{ {5/6} \\ {2/6}} \hspace*{1cm} b = {-20 \over 6}$$
+\begin{align*}
+h(\bx) = \matr{5/6\\ 2/6}^T \bx - 20/6 =
+\matr{0.833\\0.333}^T\bx - 3.33
+\end{align*}
+\begin{align*}
+  \dist^* = {y^* \;h(\bx^*) \over \| \bw \|} =
+  {1 \over
+  \sqrt{ \lB({5\over6}\rB)^2+\lB({2\over6}\rB)^2}}  = {6 \over \sqrt{29}}
+  = 1.114
+\end{align*}
+\end{small}
+\end{columns}
 \end{frame}
 
 
@@ -311,8 +328,8 @@ The new objective function, called the {\em Lagrangian}, then becomes
     \min \; L = {1 \over 2}\|\bw\|^2 - \dsum_{i=1}^n \alpha_i \lB(y_i
   (\bw^T\bx_i + b) - 1\rB)
 \end{align*}
-$L$ should be minimized with respect to $\bw$ and $b$,
-and it should be maximized with respect to $\alpha_i$.
+$L$ should be minimized w.r.t. $\bw$ and $b$,
+and it should be maximized w.r.t. $\alpha_i$.
 
 Taking the derivative of $L$ with respect to
 $\bw$ and $b$, and setting those to zero, we
@@ -430,6 +447,34 @@ $-1$ if its argument is negative.
 
 \begin{frame}{Example Dataset: Separable Case}
 \renewcommand{\arraystretch}{1.1}
+\begin{columns}
+\column{0.5\textwidth}
+\hspace*{1cm}
+\scalebox{0.6}{
+  \centerline{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-1,-1)(6,6)
+    \psaxes[]{<->}(0,0)(-1,-1)(6,6)
+    \psgrid[subgriddiv=1,gridcolor=gray,griddots=10,gridlabels=0](0,0)(-1,-1)(6,6)
+    %\pcline[linewidth=3pt]{-}(1.6,6)(4.4,-1)
+    \naput*[nrot=:U,npos=0.1,labelsep=2pt]{$h(\bx) = 0$}
+    %\psline[linewidth=1.5pt,linestyle=dashed]{-}(2.8,6)(5.6,-1)
+    %\psline[linewidth=1.5pt,linestyle=dashed]{-}(0.4,6)(3.2,-1)
+    \psdots[dotstyle=o](4.5,1.75)(4,3)(3.5,4.25)
+    \psdots[dotstyle=triangle](2,2)(2.5,0.75)
+    %\psline[]{<->}(2,2)(3.035,2.414)
+    %\psline[]{<->}(2.965,2.586)(4,3)
+    %\psline[]{<->}(1.25,6)(4.75,-1)
+    %
+    \psdots[dotstyle=o](5.5,3.5)(4,4)(5,4)(5.5,2.5)(4.9,4.5)
+    \psdots[dotstyle=triangle](0.5,1.5)(1.5,1.5)(1,2.5)(1.25,0.5)
+    %\uput[0]{-65}(1.7,5.5){$h(\bx) = 0$}
+    %\uput[90](2.4,2.2){$1 \over \| \bw \|$}
+    %\uput[90](3.3,2.75){$1 \over \| \bw \|$}
+    \endpspicture
+  }
+}
+\column{0.5\textwidth}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
         \hline
@@ -452,6 +497,7 @@ $-1$ if its argument is negative.
         \hline
     \end{tabular}%}{}
 \end{center}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Optimal Separating Hyperplane}
@@ -516,8 +562,7 @@ The optimal hyperplane is given as follows:
 \end{columns}
 \end{frame}
 
-
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Soft Margin SVM: Linear and Nonseparable Case}
 The assumption that the dataset be perfectly linearly
@@ -679,6 +724,57 @@ $\delta_{ij} = 1$ if and only if $i=j$.
 
 
 \begin{frame}{Example Dataset: Linearly Non-separable Case}
+\begin{columns}
+\column{0.5\textwidth}
+\hspace*{1.5cm}
+\scalebox{0.6}{
+  \centerline{
+    \psset{unit=0.5in,dotscale=2,arrowscale=2}
+    \pspicture[](-1,-1)(6,6)
+    \psaxes[]{<->}(0,0)(-1,-1)(6,6)
+    \psgrid[subgriddiv=1,gridcolor=gray,griddots=10,gridlabels=0](0,0)(-1,-1)(6,6)
+    %\pcline[linewidth=3pt]{-}(1.6,6)(4.4,-1)
+    %\naput*[nrot=:U,npos=0.1,labelsep=1pt]{$h(\bx) = 0$}
+    %\psline[linewidth=1.5pt,linestyle=dashed]{-}(2.8,6)(5.6,-1)
+    %\psline[linewidth=1.5pt,linestyle=dashed]{-}(0.4,6)(3.2,-1)
+    \psdots[dotstyle=o](4,3)(3.5,4.25)(4.5,1.75)(4,2)(2,3)
+    \psdots[dotstyle=triangle](2,2)(2.5,0.75)(3,2)(5,3)
+    %slacks
+    \psset{PointSymbol=none,PointName=none}
+    %\pstGeonode[](4,3){na}
+    %\pstGeonode[](4.5,1.75){nb}
+    %\pstGeonode[](2,3){s1}
+    %\pstProjection[]{na}{nb}{s1}[sp1]
+    %\pstLineAB[]{s1}{sp1}
+    %\pstGeonode[](4,2){s2}
+    %\pstProjection[]{na}{nb}{s2}[sp2]
+    %\pstLineAB[]{s2}{sp2}
+    %\pstGeonode[](2,2){ma}
+    %\pstGeonode[](2.5,0.75){mb}
+    %\pstGeonode[](3,2){s3}
+    %\pstProjection[]{ma}{mb}{s3}[sp3]
+    %\pstLineAB[]{s3}{sp3}
+    %\pstGeonode[](5,3){s4}
+    %\pstProjection[]{ma}{mb}{s4}[sp4]
+    %\pstLineAB[]{s4}{sp4}
+    %
+    \psdots[dotstyle=o](5.5,3.5)(4,4)(5,4)(5.5,2.5)(4.9,4.5)
+    \psdots[dotstyle=triangle](0.5,1.5)(1.5,1.5)(1,2.5)(1.25,0.5)
+    %margin
+    %\pstGeonode[](2.4,4){p1}
+    \vspace{0.2in}
+    %\pstProjection[]{na}{nb}{p1}[pp1]
+    %\pstLineAB[arrows=<->]{p1}{pp1}
+    %\pstProjection[]{ma}{mb}{p1}[pp2]
+    %\pstLineAB[arrows=<->]{p1}{pp2}
+    %\psline[]{<->}(2,2.1)(3,2.5)
+    %\psline[]{<->}(3,2.5)(4,2.9)
+    %\uput[90](1.7,3.8){${1 \over \|\bw\|}$}
+    %\uput[90](2.75,4.2){${1 \over \|\bw\|}$}
+    \endpspicture
+  }
+}
+\column{0.5\textwidth}
   \scriptsize
 \renewcommand{\arraystretch}{1.1}
 \begin{center}
@@ -708,6 +804,7 @@ $\delta_{ij} = 1$ if and only if $i=j$.
 		\hline
     \end{tabular}%}{}
 \end{center}
+\end{columns}
 \end{frame}
 
 
@@ -774,6 +871,7 @@ margin, and thus satisfy $0 < \xi_i < 1$.
 \end{frame}
 
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 
 \begin{frame}{Kernel SVM: Nonlinear Case}
@@ -810,6 +908,10 @@ points into feature space.
 There is no linear classif\/{i}er that can discriminate between the
 points. However, there exists a perfect quadratic classif\/{i}er that can
 separate the two classes.
+
+\begin{center}
+ $\phi(\bx) = (\sqrt{2}x_1, \sqrt{2}x_2, x_1^2, x_2^2, \sqrt{2}x_1x_2)^T$
+\end{center}
 
 \begin{figure}[!t]
 \scalebox{0.7}{
@@ -963,6 +1065,59 @@ of degree $q=2$:
 \end{frame}
 
 
+\begin{frame}{Nonlinear SVM: Inhomogeneous Quadratic Kernel}
+
+    $\phi$ maps $\bx_i$ into feature space as follows:
+    \begin{align*}
+    \phi\lB(\bx = (x_{1},x_{2})^T\rB) = \lB(1, \sqrt{2}x_{1},
+    \sqrt{2}x_{2}, x_{1}^2, x_{2}^2, \sqrt{2}x_{1}x_{2}\rB)^T
+    \end{align*}
+
+ $\bx_1 = (1,2)^T$ is transformed into 
+$$\phi(\bx_i) = \lB(1, \sqrt{2}\cdot1, \sqrt{2}\cdot2, 1^2, 2^2, \sqrt{2}\cdot1\cdot2\rB)^T = (1,1.41, 2.83, 1, 2, 2.83)^T$$
+
+
+Solving $L_{dual}$, we found the following six support vectors:
+    \begin{center}
+    {\tabcolsep12pt\renewcommand{\arraystretch}{1.1}\begin{tabular}{|c||c|c||c|c|}
+        \hline
+        $\bx_i$ & $(x_{i1}, x_{i2})^T$ & $\phi(\bx_i)$ & $y_i$ & $\alpha_i$\\
+        \hline
+          $\bx_1$ & $(1,2)^T$ & $(1,1.41,2.83,1,4,2.83)^T$ & $+1$ & $0.6198$\\
+          $\bx_2$ & $(4,1)^T$ & $(1,5.66,1.41,16,1,5.66)^T$ & $+1$ & $2.069$\\
+          $\bx_3$ & $(6,4.5)^T$ & $(1,8.49,6.36,36,20.25,38.18)^T$ & $+1$ & $3.803$\\
+          $\bx_4$ & $(7,2)^T$ & $(1,9.90,2.83,49,4,19.80)^T$ & $+1$ & $0.3182$\\
+          $\bx_5$ & $(4,4)^T$ & $(1,5.66,5.66,16,16,15.91)^T$ & $-1$ & $2.9598$\\
+          $\bx_6$ & $(6,3)^T$ & $(1,8.49,4.24,36,9,25.46)^T$ & $-1$ & $3.8502$\\
+        \hline
+    \end{tabular}}\vspace*{6pt}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Nonlinear SVM: Inhomogeneous Quadratic Kernel}
+ We compute the weight vector for the hyperplane:
+\begin{align*}
+    \bw & = \dsum_{\alpha_i > 0} \alpha_i y_i \phi(\bx_i)
+    = (0,-1.413,-3.298,0.256,0.82,-0.018)^T
+\end{align*}
+as well as the bias:
+    $$b = -8.841$$
+
+The decision boundary in input space corresponds to an ellipse,
+centered at $(4.046,2.907)$, with axis lengths $2.78$ and $1.55$. 
+
+\medskip
+
+Notice that we explicitly transformed all the points into the feature space just for illustration purposes.
+
+\medskip
+
+The kernel trick allows us to achieve the same goal using only the kernel function.
+
+
+\end{frame}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{SVM Training Algorithms}
 Instead of dealing

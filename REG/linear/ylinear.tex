@@ -29,12 +29,13 @@
 %\index{linear regression!error term}
 
 \begin{frame}{Regression}
-Given a set of attributes or variables $X_1, X_2, \cdots, X_d$, called 
-the {\em predictor}, {\em explanatory}, or {\em independent} variables,
-and given a real-valued attribute of
-interest $Y$, called the {\em response} or {\em dependent} variable,
-the aim of {\em regression} is to predict the
-response variable based on the independent variables. 
+Given  $X_1, X_2, \cdots, X_d$ 
+({\em predictor}, {\em explanatory}, or {\em independent} variables),
+	and given $Y$ ({\em response} or {\em dependent} variable),
+{\em regression} aims to predict $Y$ based on $X$.
+
+\medskip
+
 That is, the goal is to learn a {\em
 regression function} $f$, such that
 \begin{align*}
@@ -44,10 +45,17 @@ where $\bX = (X_1, X_2, \cdots, X_d)^T$ is the multivariate random
 variable comprising the predictor attributes, 
 and $\varepsilon$ is a random {\em error term} that is assumed
 to be independent of $\bX$. 
-In other words, $Y$ is comprised of two
-components, one dependent on the observed predictor attributes, and 
+
+\medskip
+
+$Y$ is comprised of two
+components, one dependent on $X$, and 
 the other, coming from the error term, independent of the predictor
-attributes. The error term encapsulates inherent uncertainty in $Y$, as
+attributes. 
+
+\medskip
+
+The error term encapsulates inherent uncertainty in $Y$, as
 well as, possibly the effect of unobserved, hidden or {\em latent}
 variables.
 \end{frame}
@@ -70,19 +78,24 @@ $\bX$,  that is
     \sum_{i=1}^d \truew_i X_i 
     = \trueb + \truebw^T\bX
 \end{empheq}
-Here, $\trueb$ is the true (unknown) {\em bias} term,
+$\trueb$ is the true (unknown) {\em bias} term,
 %\index{linear regression!bias}
 %\index{linear regression!regression coefficient}
 $\truew_i$ is the true (unknown) {\em regression coefficient} or {\em weight}
 for attribute $X_i$, and $\truebw = (\truew_1, \truew_2, \cdots,
 \truew_d)^T$ is the true $d$-dimensional
-weight vector. Observe that $f$ specifies a hyperplane in $\setR^{d+1}$,
-where
+weight vector. 
+
+\medskip
+
+$f$ specifies a hyperplane in $\setR^{d+1}$, where
 $\truebw$ is the the weight vector that is normal or orthogonal to the hyperplane, 
 and $\trueb$ is the {\em intercept} or offset term.
 %(see %\cref{sec:eda:highdim:hd_objects}). 
-We can see that $f$
-is completely specified by the $d+1$ parameters comprising $\trueb$ and 
+
+\medskip
+
+$f$ is completely specified by the $d+1$ parameters comprising $\trueb$ and 
 $\truew_i$, for $i=1,\cdots,d$.
 \end{frame}
 %
@@ -96,18 +109,18 @@ $\truew_i$, for $i=1,\cdots,d$.
 %denote the vector of estimated weights.
 %Given the estimated bias and weight values, we can predict the response for any
 %given input or test point $\bx = (x_1, x_2, \cdots, x_d)^T$, as follows
-%\begin{align}
+%\begin{align*}
 %    \hy = b + w_1 x_1 + \cdots + w_d x_d = b + \bw^T\bx
-%\end{align}
+%\end{align*}
 %Due to the random error term, 
 %the predicted value $\hy$ will not in general match
 %the observed response $y$ for the given input $\bx$. This is 
 %true even for the training data. 
 %The difference between the observed and predicted response, called the {\em
 %residual error}, is given as
-%\begin{align}
+%\begin{align*}
 %    \epsilon = y - \hy = y - b - \bw^T\bx
-%\end{align}
+%\end{align*}
 %Note that the residual error $\epsilon$ is different from the random
 %statistical error $\varepsilon$, which measures the difference between
 %the observed and the (unknown) true response.
@@ -117,7 +130,10 @@ $\truew_i$, for $i=1,\cdots,d$.
 %
 \begin{frame}{Linear regression}
 A common approach to predicting the bias and regression coefficients is
-to use the method of {\em least squares}. That is, given the training
+to use the method of {\em least squares}. 
+
+\medskip
+Given the training
 data $\bD$ with points $\bx_i$ and response values $y_i$ (for
 $i=1,\cdots,n$), we seek values $b$
 and $\bw$, so as to minimize the sum of squared residual errors (SSE)
@@ -130,99 +146,96 @@ and $\bw$, so as to minimize the sum of squared residual errors (SSE)
     = \sum_{i=1}^n \lB(y_i - b - \bw^T\bx_i \rB)^2
     \label{eq:reg:linear:sse}
 \end{empheq}
-\end{frame}
 %In the following sections, we will estimate the unknown parameters, by first
 %considering the case of a single predictor variable, and then
 %looking at the general case of multiple predictors.
 %
 %\section{Bivariate Regression}
-\begin{frame}{Bivariate Regression}
-Let us first consider the case where the input data $\bD$ comprises a
+In bivariate regression, $\bD$ comprises a
 single predictor attribute, $X = (x_1, x_2, \cdots, x_n)^T$, along with
-the response variable, $Y = (y_1, y_2, \cdots, y_n)^T$.
-Since $f$ is linear, we have
-\begin{align}
+ $Y = (y_1, y_2, \cdots, y_n)^T$:
+\begin{align*}
     \tcbhighmath{
     \hy_i = f(x_i) = b + w \cdot x_i}
     \label{eq:reg:linear:bivariate}
-\end{align}
+\end{align*}
 \end{frame}
 %
 %Thus, we seek the straight line $f(x)$
 %with slope $w$ and intercept $b$ that {\em best fits} the data.
 \begin{frame}{Bivariate Regression}
-The residual error, which is the difference between the predicted value (also called {\em fitted value}) 
-and the observed value of the response
-variable, is given as
-\begin{align}
-    \epsilon_i = y_i - \hy_i
-\end{align}
+The residual error is 
+%\begin{align*}
+$    \epsilon_i = y_i - \hy_i$
+%\end{align*}
 %Note that $\abs{\epsilon_i}$ denotes the vertical distance between the
 %fitted and observed response. 
-The best fitting line minimizes the sum of squared errors
-\begin{align}
+and the best line that minimizes the SSE:
+\begin{align*}
     \tcbhighmath{
     \min_{b, w} SSE  = \sum_{i=1}^n \epsilon_i^2
      = \sum_{i=1}^n (y_i - \hy_i)^2
  =  \sum_{i=1}^n (y_i - b - w \cdot x_i)^2}
- \label{eq:reg:linear:bivar_SSE_obj}
-\end{align}
+ %\label{eq:reg:linear:bivar_SSE_obj}
+\end{align*}
 %
-\end{frame}
-%To solve this objective, we differentiate it with
-%respect to $b$ and set the result to $0$, to obtain
-%\begin{align*}
-%    \frac{\partial}{\partial b} SSE & = -2 \sum_{i=1}^n (y_i - b - w\cdot
-%    x_i) = 0 \notag\\
+%To solve this objective, 
+We differentiate it with
+respect to $b$ and set the result to $0$:
+\begin{align*}
+    \frac{\partial}{\partial b} SSE & = -2 \sum_{i=1}^n (y_i - b - w\cdot
+    x_i) = 0 \notag\\
 %        & \implies \sum_{i=1}^n b = \sum_{i=1}^n y_i - w \sum_{i=1}^n
 %        x_i \notag\\
-%        & \implies b = \frac{1}{n} \sum_{i=1}^n y_i - w \cdot \frac{1}{n}
-%        \sum_{i=1}^n x_i \notag
-%\end{align*}
-\begin{frame}{Bivariate Regression}
+        & \implies b = \frac{1}{n} \sum_{i=1}^n y_i - w \cdot \frac{1}{n}
+        \sum_{i=1}^n x_i \notag
+\end{align*}
 Therefore, we have
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     b = \mu_Y - w \cdot \mu_X}
-    \label{eq:reg:linear:b}
-\end{align}
-where $\mu_Y$ is the sample mean for the response and $\mu_X$ is the
-sample mean for the predictor attribute.
-%Similarly, differentiating with respect to $w$, we obtain
-%\begin{align}
-%    \frac{\partial}{\partial w} SSE 
-%    & = -2 \sum_{i=1}^n x_i (y_i - b - w\cdot x_i) = 0 \notag\\
-%& \implies \sum_{i=1}^n x_i \cdot y_i - b \sum_{i=1}^n x_i  - w \sum_{i=1}^n x_i^2 =
-%0 \label{eq:reg:linear:ww}
-%\intertext{substituting $b$ from \cref{eq:reg:linear:b}, we have}
-%& \implies \sum_{i=1}^n x_i\cdot  y_i - \mu_Y\sum_{i=1}^n x_i + w\cdot \mu_X \sum_{i=1}^n
-%x_i - w \sum_{i=1}^n x_i^2 = 0 \notag\\
+    %\label{eq:reg:linear:b}
+\end{align*}
+%where $\mu_Y$ is the sample mean for the response and $\mu_X$ is the
+%sample mean for the predictor attribute.
+%Similarly, 
+\end{frame}
+
+\begin{frame}{Bivariate Regression}
+Differentiating with respect to $w$, we obtain
+\begin{align*}
+    \frac{\partial}{\partial w} SSE 
+    & = -2 \sum_{i=1}^n x_i (y_i - b - w\cdot x_i) = 0 \notag\\
+& \implies \sum_{i=1}^n x_i \cdot y_i - b \sum_{i=1}^n x_i  - w \sum_{i=1}^n x_i^2 = 0\\ %\label{eq:reg:linear:ww}
+%\intertext{substituting $b$, we have}
+& \implies \sum_{i=1}^n x_i\cdot  y_i - \mu_Y\sum_{i=1}^n x_i + w\cdot \mu_X \sum_{i=1}^n
+x_i - w \sum_{i=1}^n x_i^2 = 0 \notag\\
 %& \implies w \lB(\sum_{i=1}^n x_i^2 - n \cdot \mu_X^2\rB) =
 %\lB(\sum_{i=1}^n x_i\cdot y_i\rB) - n\cdot
 %\mu_X\cdot \mu_Y \notag\\
-%& \implies w = \frac{\sum_{i=1}^n x_i\cdot y_i - n\cdot \mu_X\cdot \mu_Y}{\sum_{i=1}^n
-%    x_i^2 - n\cdot \mu_X^2}
+& \implies w = \frac{\sum_{i=1}^n x_i\cdot y_i - n\cdot \mu_X\cdot \mu_Y}{\sum_{i=1}^n
+    x_i^2 - n\cdot \mu_X^2}
 %\label{eq:reg:linear:w}
-%\end{align}
+\end{align*}
 %
 The regression coefficient $w$ can also be written as
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     w = \frac{\sum_{i=1}^n (x_i - \mu_X)(y_i - \mu_Y)}{\sum_{i=1}^n (x_i
     - \mu_X)^2} = \frac{\sigma_{XY}}{\sigma_X^2} =
 \frac{\ocov(X,Y)}{\var(X)}}
 %\label{eq:reg:linear:w-cov-var}
-\end{align}
-where $\sigma_X^2$ is the variance of $X$ and $\sigma_{XY}$ is the
-covariance between $X$ and $Y$.
+\end{align*}
+%where $\sigma_X^2$ is the variance of $X$ and $\sigma_{XY}$ is the
+%covariance between $X$ and $Y$.
 \end{frame}
 %Noting that the correlation between $X$ and $Y$ is given as
 %$\rho_{XY} = \tfrac{\sigma_{XY}}{\sigma_X \cdot \sigma_Y}$, we can also
 %write $w$ as
-%\begin{align}
+%\begin{align*}
 %    w = \rho_{XY} \frac{\sigma_Y}{\sigma_X}
 %    \label{eq:reg:linear:w_rho_sigma}
-%\end{align}
+%\end{align*}
 %
 %
 %Observe that the fitted
@@ -247,13 +260,39 @@ covariance between $X$ and $Y$.
 %
 %
 \begin{frame}{Bivariate Regression}
+    Given two attributes {\tt petal length} ($X$; the predictor variable) and 
+    {\tt petal width} ($Y$; the response variable) in the
+    Iris dataset ($n=150$). %There are a total of $n=150$ data points.
+\readdata{\dataPLW}{REG/linear/figs/iris-plw.dat}
+\begin{center}
+%\begin{figure}[b!]
+% \vspace{-0.1in}
+    \centering
+\scalebox{0.8}{
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$X$: petal length,yAxisLabel= $Y$: petal width,
+        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.5in,c}}
+    \psgraph[tickstyle=bottom,Dx=1.0,Dy=0.5,Oy=-0.5,subticks=2]{->}(0.0,-0.5)(7.5,3){4in}{2.5in}%
+    \dataplot[plotstyle=dots,showpoints=true]{\dataPLW}
+    %\psdot[dotstyle=*,dotscale=2](3.76,1.20)
+    %\psline[linestyle=dashed](3.76,-0.5)(3.76,1.20)
+    %\psline[linewidth=0.5pt](5.6,1.4)(5.6,1.97)
+    %\psline[linewidth=0.5pt](3,1.1)(3,0.88)
+    %\rput(5.6,1.2){$x_9$}
+    %\rput(5.45,1.6){$\epsilon_9$}
+    %\rput(3,1.3){$x_{35}$}
+    %\rput(2.8,1){$\epsilon_{35}$}
+    %\psplot[plotstyle=line]{0}{7.5}{x 0.4164 mul -0.3665 add}
+    \endpsgraph
+}
+\end{center}
+\end{frame}
+
+\begin{frame}{Bivariate Regression}
 \framesubtitle{Example}
 %\begin{example}[Bivariate Regression]
 %    \label{ex:reg:linear:bivariate}
     %Figure~\ref{fig:reg:linear:irisplw} shows the scatterplot between
-    Given two attributes {\tt petal length} ($X$; the predictor variable) and 
-    {\tt petal width} ($Y$; the response variable) in the
-    Iris dataset ($n=150$). %There are a total of $n=150$ data points.
 
     The mean values for these two variables are
 \begin{small}
@@ -317,7 +356,7 @@ as follows:
 \begin{frame}{Bivariate Regression}
 \framesubtitle{Example}
 
-Scatterplot: {\tt petal length} ($X$) versus {\tt petal
+{\tt petal length} ($X$) versus {\tt petal
 width} ($Y$). Solid circle (black) shows the mean point; residual
 error is shown for two sample points: $x_9$ and $x_{35}$.
 
@@ -357,52 +396,23 @@ error is shown for two sample points: $x_9$ and $x_{35}$.
 %variable, and 
 %$\hY = (\hy_1, \hy_2, \cdots, \hy_n)^T$ the vector of predicted values, then 
 We can express the $n$
-equations, $y_i = b + w \cdot x_i$ for $i=1,2,\cdots,n$, as a single vector equation:
-\begin{align}
+equations, $y_i = b + w \cdot x_i$ for $i=1,2,\cdots,n$, as:
+\begin{align*}
     \hY = b \cdot \bone + w \cdot X
-    \label{eq:reg:linear:hY}
-\end{align}
-where $\bone \in \setR^n$ is the $n$-dimensional vector of all ones.
+    %\label{eq:reg:linear:hY}
+\end{align*}
+where $\bone \in \setR^n$ is the $n$-dimensional vector of 1s.
 %This equation indicates that t
-The predicted vector $\hY$ is a
+$\hY$ is a
 linear combination of $\bone$ and $X$, i.e., it must lie in the column
 space spanned by $\bone$ and $X$, given as $\vspan(\{\bone, X\})$.
+$\bepsilon$ captures the deviation between $Y$ and $\hY$.
 
-\medskip
-
-On the other hand, the response vector $Y$ will not usually lie in the
-same column space. 
-In fact, the residual error vector $\bepsilon = (\epsilon_1,
-\epsilon_2, \cdots, \epsilon_n)^T$ captures the deviation between the
-response and predicted vectors.
-%\begin{align*}
-%    \bepsilon = Y - \hY
-%\end{align*}
-
-\medskip
-
-The geometry of the problem %, shown in \cref{fig:reg:linear:bi_geom_nonorth}, 
-makes it clear that the optimal $\hY$ that minimizes the error is 
-the orthogonal projection of
-$Y$ onto the subspace spanned by $\bone$ and $X$.
-The residual error vector $\bepsilon$ is thus {\em orthogonal} to the subspace spanned by $\bone$
-and $X$, and its squared length (or magnitude) equals the SSE value.
-\end{frame}
-% (see
-%\cref{eq:reg:linear:sse}), since
-%\begin{align*}
-%    \norm{\bepsilon}^2 = \norm{Y-\hY}^2 = \sum_{i=1}^n (y_i - \hy_i)^2 
-%= \sum_{i=1}^n \epsilon_i^2 = SSE
-%\end{align*}
-%
-%
-%\begin{figure}[t!]
-\begin{frame}{Geometry of Regression}
     \centering
-    \vspace{-1.5in}
+    \vspace{-2.5cm}
     \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
     \psset{unit=0.4in}
-    \scalebox{1.05}{%
+    \scalebox{0.70}{%
     \begin{pspicture}(-1.5,-1.5)(4,6)
    \psset{Alpha=81,Beta=17,arrowscale=1.5}
     % \pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
@@ -432,7 +442,81 @@ and $X$, and its squared length (or magnitude) equals the SSE value.
     \pstThreeDPut[origin=rt](5.9,3.9,3.4){$\bepsilon = Y - \hY$}
     \end{pspicture}
 }
+
 \end{frame}
+
+
+
+%On the other hand, the response vector $Y$ will not usually lie in the
+%same column space. 
+%In fact, the residual error vector $\bepsilon = (\epsilon_1,
+%\epsilon_2, \cdots, \epsilon_n)^T$ captures the deviation between the
+%response and predicted vectors.
+%\begin{align*}
+%    \bepsilon = Y - \hY
+%\end{align*}
+
+
+\begin{frame}{Geometry of Bivariate Regression}
+\framesubtitle{Orthogonal decomposition of $X$ into $\mX$ and $\mu_X \cdot    \bone$.}
+
+Even though $\bone$ and $X$ are linearly independent and form a basis for the column space, they need not be orthogonal. 
+
+\medskip
+
+We can create an orthogonal basis by decomposing $X$ into a component along
+$\bone$ and a component orthogonal to $\bone$, $\mX$.
+\begin{align*}
+    X = \mu_X \cdot \bone + (X - \mu_X \cdot \bone) = \mu_X \cdot \bone
+    + \mX
+\end{align*}
+where $\mX = X - \mu_X \cdot \bone$ is the centered attribute
+vector.
+
+
+% (see
+%\cref{eq:reg:linear:sse}), since
+%\begin{align*}
+%    \norm{\bepsilon}^2 = \norm{Y-\hY}^2 = \sum_{i=1}^n (y_i - \hy_i)^2 
+%= \sum_{i=1}^n \epsilon_i^2 = SSE
+%\end{align*}
+%
+%
+%\begin{figure}[t!]
+%    \centering
+%    \vspace{-1.5in}
+%    \psset{nameX={$\bx_n$}, nameY={$\bx_2$}, nameZ={$\bx_1$}}
+%    \psset{unit=0.4in}
+%    \scalebox{0.7}{%
+%    \begin{pspicture}(-1.5,-1.5)(4,6)
+%   \psset{Alpha=81,Beta=17,arrowscale=1.5}
+%    % \pstThreeDCoor[xMin=0, xMax=8, yMin=0, yMax=4,
+%    %     zMin=0, zMax=2, linecolor=black]
+%\psset{IIIDxTicksPlane=xy}
+%    %\psset{dotstyle=Bo,dotscale=2.5,fillcolor=lightgray}
+%    %\pstThreeDDot[drawCoor=false,linecolor=gray](5.9,3.0,4.2)
+%    \pstThreeDCoor[RotZ=-20,xMin=0,xMax=7,yMin=0,yMax=7,zMin=0,zMax=2,
+%    linecolor=gray,linewidth=0.5pt,linestyle=dashed]
+%    \pstThreeDLine[linewidth=2pt,arrows=->](0,0,0)(5.9,3.0,4.2)
+%    %\pstThreeDLine[linewidth=0.5pt,arrows=->](0,0,0)(0,0,2)
+%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(0,4.0,0)
+%    \pstThreeDSquare(-2.5,-1,0)(12,0,0)(0,6,0)
+%    \pstThreeDLine[linestyle=dashed,linecolor=gray,arrows=->,linewidth=1.5pt](5.9,3.0,0)(5.9,3.0,4.2)
+%    \pstThreeDLine[linewidth=2pt,arrows=->,linecolor=gray](0,0,0)(5.9,3.0,0)
+%    %\pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(5.9,1.5,0)
+%    \pstThreeDLine[linewidth=1pt,arrows=->](0,0,0)(8,2.03,0)
+%    \pstThreeDPut[origin=rt](5.9,3.0,4.2){$\quad Y$}
+%    \pstThreeDPut[origin=rt](5.9,3.0,0){$\quad\hY$}
+%    %\pstThreeDPut[origin=c](6.6,1.7,0){$X$}
+%    \pstThreeDPut[origin=c](8.5,2.2,0){$X$}
+%    \pstThreeDPut[origin=r](0,4,0){$\quad \bone$}
+%    \psset{beginAngle=0,endAngle=90}
+%    \pstThreeDEllipse(0,0,0)(1.5,0.375,0)(0,0.75,0)
+%    %\pstThreeDPut[origin=r](1.5,1,0){$\theta$}
+%    \pstPlanePut[plane=xy,planecorr=xyrot](1.5,0.9,0){\scriptsize $\theta$}
+%    \pstThreeDPut[origin=rt](5.9,3.9,3.4){$\bepsilon = Y - \hY$}
+%    \end{pspicture}
+%}
 %    \vspace{0.8in}
 %\caption{Geometry of bivariate regression: non-orthogonal basis. All
 %    the vectors conceptually lie in the $n$-dimensional space spanned by the $n$
@@ -442,14 +526,12 @@ and $X$, and its squared length (or magnitude) equals the SSE value.
 %
 %
 %\begin{figure}[t!]
-%    \vspace{-0.1in}
-\begin{frame}{Geometry of Regression}
-{Orthogonal decomposition of $X$ into $\mX$ and $\mu_X \cdot    \bone$.}
+    \vspace{0.1in}
     \centering
     % \hspace{0.3in}
     \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray}
     \psset{xAxisLabel=$\bone$,yAxisLabel=$\mX$}
-    \scalebox{1.05}{%
+    \scalebox{0.90}{%
     \pspicture(-1,-1.5)(0.5,3.5)
     \psgraph[ticks=none,labels=none]{->}(0,0)(7,3.0){1.75in}{1.25in}%
     %\psaxes[ticks=none]{<->}(0,0)(6,4.5)
@@ -507,11 +589,32 @@ and $X$, and its squared length (or magnitude) equals the SSE value.
 %vector, obtained by subtracting the mean $\mu_X$ from all points.
 %
 %\begin{figure}[t!]
-\begin{frame}{Geometric interpretation of Regression}
+\begin{frame}{Geometry of Regression}
+	
+The optimal $\hY$ that minimizes the error is 
+the orthogonal projection of
+$Y$ onto the subspace spanned by $\bone$ and $X$.
+
+\medskip
+
+
+The residual error vector $\bepsilon$ is thus {\em orthogonal} to the subspace spanned by $\bone$
+and $X$, and its squared length (or magnitude) equals the SSE value.
+
+\medskip
+
+	Summarizing: 
+
+	\medskip
+
+	$\mu_Y = \proj_\bone(Y)$ \hspace*{1cm} $w = \proj_{\mX}(Y)$ \hspace*{1cm} $b = \mu_Y - w \cdot \mu_X$ 
+
+\medskip
+
     \centering
-    \vspace{-1.5in}
+    \vspace{-1.0in}
     \psset{unit=0.4in}
-    \scalebox{1.05}{%
+    \scalebox{0.70}{%
     \begin{pspicture}(-1.5,-1.5)(4,6)
    \psset{Alpha=81,Beta=17,arrowscale=1.5}
     %\psset{nameX={$Z$}, nameY={$\bone$}, nameZ={$~$}}
@@ -560,20 +663,20 @@ and $X$, and its squared length (or magnitude) equals the SSE value.
 %the subspace. We can thus obtain the predicted vector $\hY$ by projecting
 %$Y$ onto $\bone$ and $\mX$, and summing up these two components,
 %as shown in \cref{fig:reg:linear:bi_geom}. That is,
-%\begin{align}
+%\begin{align*}
 %    \hY & = \proj_\bone(Y) \cdot \bone + \proj_{\mX}(Y) \cdot \mX
 %     = \lB(\tfrac{Y^T\bone}{\bone^T\bone} \rB)\bone +
 %     \lB(\tfrac{Y^T\;\mX}{\mX^T\; \mX}\rB) \mX
 %     = \mu_Y \cdot \bone + \lB(\tfrac{Y^T\;\mX}{\mX^T\; \mX}\rB) \mX
 %     \label{eq:reg:linear:hY1}
-%\end{align}
+%\end{align*}
 %
 %On the other hand, from \cref{eq:reg:linear:hY}, we know that
-%\begin{align}
+%\begin{align*}
 %\hY = b \cdot \bone + w \cdot X = b \cdot \bone + w \lB(\mu_X \cdot \bone +
 %\mX\rB) = (b + w \cdot \mu_X) \cdot \bone + w \cdot \mX
 %     \label{eq:reg:linear:hY2}
-%\end{align}
+%\end{align*}
 %Since both \cref{eq:reg:linear:hY1} and \cref{eq:reg:linear:hY2} 
 %are expressions for $\hY$, we can equate them to obtain
 %\begin{align*}
@@ -624,7 +727,7 @@ and $X$, and its squared length (or magnitude) equals the SSE value.
     \end{align*}
     %These values for $b$ and $w$ match those in
     %\cref{ex:reg:linear:bivariate}.
-    Finally, we can compute the SSE value %(see \cref{eq:reg:linear:sse}) 
+    We can compute the SSE value %(see \cref{eq:reg:linear:sse}) 
     as the squared length of the residual error vector
     \begin{align*}
         SSE = \norm{\bepsilon}^2 = \norm{Y - \hY}^2 = (Y - \hY)^T(Y-\hY)
@@ -638,15 +741,18 @@ and $X$, and its squared length (or magnitude) equals the SSE value.
 %\index{multiple regression}
 %\index{regression!multiple regression}
 %\index{linear regression!multiple regression}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 \begin{frame}{Multiple Regression}
-We now consider the more general case called {\em multiple
-    regression}
+
+{\em Multiple regression:}
 %\footnote{We follow the usual terminology and reserve
 %    the term {\em multivariate regression} for the case when there are multiple
 %    response attributes $Y_1, Y_2, \cdots, Y_q$ and multiple predictor
 %    attributes $X_1, X_2, \cdots, X_d$.}
-where we have multiple
-predictor attributes $X_1, X_2, \cdots, X_d$ and a single response
+%where we have 
+multiple predictor attributes $X_1, X_2, \cdots, X_d$ and a single response
 attribute $Y$. 
 %%Let $\bX = (X_1, X_2, \cdots, X_d)^T$
 %%denote the multivariate random variable corresponding to the independent
@@ -660,16 +766,16 @@ corresponding observed response value $y_i$.
 
 \medskip
 
-The vector $Y = (y_1, y_2, \cdots, y_n)^T$ denotes the observed response
-vector.
+%The vector $Y = (y_1, y_2, \cdots, y_n)^T$ denotes the observed response
+%vector.
 %The predicted response value
 %for input $\bx_i$ is
 %given as
-%\begin{align}
+%\begin{align*}
 %    \hy_i = b + w_1 x_{i1} + w_2 x_{i2} + \cdots + w_d x_{id} = b + \bw^T
 %    \bx_i
 %    \label{eq:reg:linear:multiple_w_noaugment}
-%\end{align}
+%\end{align*}
 %where $\bw = (w_1, w_2, \cdots, w_d)^T$ is the weight vector comprising the
 %regression coefficients or weights $w_{\!j}$ along each attribute
 %$X_{\!j}$.
@@ -701,10 +807,10 @@ $(d+1)$ dimensional point $\abx_i$ can be written as
 %augmented weight vector
 %$\abw$. We can compactly write all these $n$ equations as a single matrix
 %equation, given as
-%\begin{align}
+%\begin{align*}
 %    \hY = \abD \abw
 %    \label{eq:reg:linear:multiple_hY}
-%\end{align}
+%\end{align*}
 %where $\abD \in \setR^{n \times (d+1)}$ is the
 %{\em augmented data
 %matrix}, which includes the constant attribute $X_0$ in addition to the
@@ -713,10 +819,9 @@ $(d+1)$ dimensional point $\abx_i$ can be written as
 %\hy_2, \cdots, \hy_n)^T$ is the vector of predicted responses.
 %
 \begin{frame}{Multiple Regression}
-The multiple regression task can now be stated as finding the {\em best fitting hyperplane} defined
-by the weight vector $\abw$ that 
-minimizes the sum of squared errors
-\begin{align}
+The multiple regression task is to find the {\em best fitting hyperplane} defined
+by  $\abw$ that minimizes the SSE:
+\begin{align*}
     \min_{\abw} SSE & = \sum_{i=1}^{n} \epsilon_i^2 =
     \norm{\bepsilon}^2 = \norm{Y - \hY}^2 \notag\\
     & = (Y -\hY)^T (Y - \hY) = Y^T Y - 2 Y^T\; \hY +
@@ -724,7 +829,7 @@ minimizes the sum of squared errors
     & = Y^T Y -2 Y^T (\abD \abw) + (\abD \abw)^T (\abD \abw)\notag\\
     & = Y^T Y - 2 \abw^T (\abD^T Y) + \abw^T (\abD^T \abD) \abw
 %\label{eq:reg:linear:multiple_SSEobj}
-\end{align}
+\end{align*}
 %where we substituted $\hY = \abD \abw$ from
 %\cref{eq:reg:linear:multiple_hY}, and we used the fact that $Y^T
 %(\abD \abw) = (\abD \abw)^T Y = \abw^T (\abD^T Y)$.
@@ -738,11 +843,11 @@ minimizes the sum of squared errors
 %    & \implies (\abD^T \abD) \abw = \abD^T Y
 %\end{align*}
 Therefore, the optimal weight vector is given as
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \abw = (\abD^T \abD)^{-1} \abD^T Y}
 %\label{eq:reg:linear:multiple_w}
-\end{align}
+\end{align*}
 \end{frame}
 %
 %Substituting the optimal value of $\abw$ into
@@ -795,12 +900,18 @@ Therefore, the optimal weight vector is given as
 %
 %\begin{figure}[t!]
 %\vspace*{-0.2in}
+
 \begin{frame}{Multiple Regression}
 \framesubtitle{Example}
+
+Given  
+{\tt sepal length} ($X_1$) and {\tt petal
+    length} ($X_2$) on the response attribute {\tt petal width} ($Y$)
+for the Iris dataset with $n=150$ points, we want to learn the multiple regression. 
+
 \centering
 \psset{unit=0.25in}
 \scalebox{0.95}{%
-%\psset{viewpoint=20 7 7 rtp2xyz,Decran=30}
 \psset{viewpoint=20 10 10 rtp2xyz,Decran=30}
 \psset{lightsrc=viewpoint}
 \psset{incolor=white}
@@ -808,70 +919,22 @@ Therefore, the optimal weight vector is given as
 \psset{fillcolor=white}
 \begin{pspicture}(3,-5)(8,7)
     \axesIIID[axisnames={X_1, X_2, Y}](0,0,0)(9,8,3)
-%\psSolid[object=cube, 
-%    intersectiontype=0,
-%    intersectionplan={[-0.0819 0.45 -1 -0.0139]},
-%    intersectioncolor=(black)]
-% \psSolid[object=plan, 
-%     definition=equation,
-%     args={[0.0819 -0.45 1 0.0139]},
-%     base=0 8.5 0 7.5, 
-%     fillcolor=lightgray,
-%     %plangrid,
-%     action=draw*]
-\psset{linewidth=0.5pt, dotsize=0.3}
-\psset{dotstyle=Bo,fillcolor=gray}
-\input{REG/linear/figs/iris-3d-linesN.tex}
-\psSurface[showAxes=false,ngrid=.2 .2,fillcolor=lightgray,%axesboxed,
-        linewidth=0.5\pslinewidth,
-        color1 = {[rgb]{0 0 0}},
-        color2 = {[rgb]{1 1 1}},
-        hue=(color1) (color2), lightintensity=5,
-    algebraic,Zmin=0,Zmax=3](0,0)(8,7){%
-    (-0.0819*x) + (0.45*y) - 0.0139 }
+\psset{linewidth=0pt, dotsize=0.3}
 \psset{dotstyle=Bo,fillcolor=white}
-\input{REG/linear/figs/iris-3d-linesP.tex}
-% \multido{\nx=1+1}{8}{%
-%         \psPoint(\nx\space,0,0){X1}
-%         \psPoint(\nx\space,-0.1,0){X2}
-%         \psline(X1)(X2)
-%     \uput[l](X2){\scalebox{0.8}{\scriptsize \nx}}}
-% \multido{\ny=1+1}{8}{%
-%         \psPoint(0,\ny\space,0){Y1}
-%         \psPoint(0,\ny\space,0.1){Y2}
-%         \psline(Y1)(Y2)\uput[u](Y2){\scalebox{0.8}{\scriptsize \ny}}}
-% \multido{\nz=1+1}{2}{%
-%         \psPoint(0,0,\nz\space){Z1}
-%         \psPoint(0,-0.1,\nz\space){Z2}
-%         \psline(Z1)(Z2)\uput[l](Z2){\scalebox{0.8}{\scriptsize \nz}}}
+\input{REG/linear/figs/iris-3d-points.tex}
 \end{pspicture}
 }
 \end{frame}
-%\vspace{0.2in}
-%\caption{Multiple regression: {\tt sepal length} ($X_1$) and {\tt petal
-%    length} ($X_2$) with response attribute {\tt petal width} ($Y$).
-%The vertical bars show the residual error for the points. Points in
-%white are above the plane, whereas points in gray are below the plane.}
-%    \label{fig:reg:linear:multi}
-%\end{figure}
-%
-%\begin{example}[Multiple Regression]
+
+
 \begin{frame}{Multiple Regression}
 \framesubtitle{Example}
-    \label{ex:reg:linear:multiple}
+    %\label{ex:reg:linear:multiple}
     %\cref{fig:reg:linear:multi} 
-Figure shows the multiple regression of 
-{\tt sepal length} ($X_1$) and {\tt petal
-    length} ($X_2$) on the response attribute {\tt petal width} ($Y$)
-for the Iris dataset with $n=150$ points. 
-We first add an extra attribute $X_0 = \bone_{150}$, which is a vector
-of all ones in $\setR^{150}$. The augmented dataset $\abD \in
-\setR^{150\times 3}$ comprises $n=150$ points along
-three attributes $X_0$, $X_1$, and $X_2$.
-
-\medskip
-
-Next, we compute the uncentered $3 \times 3$ scatter matrix
+We and $X_0 = \bone_{150}$ and 
+$\abD \in
+\setR^{150\times 3}$.
+We then compute 
 $\abD^T\abD$ and its inverse
 \begin{small}
 \begin{align*}
@@ -895,28 +958,64 @@ We also compute $\abD^T Y$, given as
  868.97}
 \end{align*}
 \end{small}
-\end{frame}
-
-\begin{frame}{Multiple Regression}
-\framesubtitle{Example}
 The augmented weight vector $\abw$ is then given as
+\begin{small}
 \begin{align*}
     \abw = \matr{w_0\\w_1\\w_2} = (\abD^T\abD)^{-1} \cdot (\abD^T Y) = 
     \amatr{r}{-0.014\\ -0.082\\ 0.45}
 \end{align*}
-The bias term is therefore $b=w_0=-0.014$, and
-the fitted model is 
-\begin{align*}
-    \hY = -0.014 -0.082 \cdot X_1 + 0.45\cdot X_2
-\end{align*}
+\end{small}
+Therefore $b=w_0=-0.014$, and
+%the fitted model is 
+$\hY = -0.014 -0.082 \cdot X_1 + 0.45\cdot X_2$
+
 %\cref{fig:reg:linear:multi} 
-Figure shows the fitted hyperplane. It 
-also shows
-the residual error for each point. The white colored points have
-positive residuals (i.e., $\epsilon_i > 0$ or $\hy_i > y_i$), whereas the gray points have negative residual
-values (i.e., $\epsilon_i < 0$ or $\hy_i < y$). The SSE value for the
-model is $6.18$.
 \end{frame}
+
+\begin{frame}{Multiple Regression}
+\framesubtitle{Example}
+Figure shows the fitted hyperplane and 
+the residual error for each point. Positive 
+residuals (i.e., $\epsilon_i > 0$ or $\hy_i > y_i$) are white,
+while negative residuals (i.e., $\epsilon_i < 0$ or $\hy_i < y$) are gray. The SSE value for the
+model is $6.18$.
+
+\centering
+\psset{unit=0.25in}
+\scalebox{0.75}{%
+%\psset{viewpoint=20 7 7 rtp2xyz,Decran=30}
+\psset{viewpoint=20 10 10 rtp2xyz,Decran=30}
+\psset{lightsrc=viewpoint}
+\psset{incolor=white}
+\psset{opacity=0.2}
+\psset{fillcolor=white}
+\begin{pspicture}(3,-5)(8,7)
+    \axesIIID[axisnames={X_1, X_2, Y}](0,0,0)(9,8,3)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{dotstyle=Bo,fillcolor=gray}
+\input{REG/linear/figs/iris-3d-linesN.tex}
+\psSurface[showAxes=false,ngrid=.2 .2,fillcolor=lightgray,%axesboxed,
+        linewidth=0.5\pslinewidth,
+        color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=3](0,0)(8,7){%
+    (-0.0819*x) + (0.45*y) - 0.0139 }
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/linear/figs/iris-3d-linesP.tex}
+\end{pspicture}
+}
+\end{frame}
+%\vspace{0.2in}
+%\caption{Multiple regression: {\tt sepal length} ($X_1$) and {\tt petal
+%    length} ($X_2$) with response attribute {\tt petal width} ($Y$).
+%The vertical bars show the residual error for the points. Points in
+%white are above the plane, whereas points in gray are below the plane.}
+%    \label{fig:reg:linear:multi}
+%\end{figure}
+%
+%\begin{example}[Multiple Regression]
+
 %\label{ex:reg:linear:multiple_basic}
 %\end{example}
 %
@@ -969,7 +1068,7 @@ model is $6.18$.
 %regression coefficients or weights $w_i$ (including the bias term $w_0$). The solution to these
 %simultaneous equations yields the weight vector $\abw = (w_0, w_1, \cdots,
 %w_d)^T$. The $(d+1)$ normal equations are
-%\begin{align}
+%\begin{align*}
 %    \begin{aligned}    
 %    w_0 \cdot X_0^T X_0 + w1 \cdot X_0^T X_1 + \cdots + w_d \cdot X_0^T X_d & = X_0^T Y\\
 %    w_0 \cdot X_1^T X_0 + w1 \cdot X_1^T X_1 + \cdots + w_d \cdot X_1^T X_d & = X_1^T Y\\
@@ -977,10 +1076,10 @@ model is $6.18$.
 %    w_0 \cdot X_d^T X_0 + w1 \cdot X_d^T X_1 + \cdots + w_d \cdot X_d^T X_d & = X_d^T Y
 %    \end{aligned}
 %    \label{eq:reg:linear:multiple_normal_eqs}
-%\end{align}
+%\end{align*}
 %which can be written compactly in matrix notation to solve for $\abw$ as
 %follows
-%\begin{align}
+%\begin{align*}
 %    \matr{
 %        X_0^TX_0 & X_0^TX_1 & \cdots & X_0^T X_d\\
 %        X_1^TX_0 & X_1^TX_1 & \cdots & X_1^T X_d\\
@@ -991,7 +1090,7 @@ model is $6.18$.
 %    (\abD^T \abD) \abw & = \abD^T Y \notag \\
 %    \abw & = (\abD^T\abD)^{-1} (\abD^T Y)
 %    \label{eq:reg:linear:multiple_normal_compact}
-%\end{align}
+%\end{align*}
 %This matches the expression in \cref{eq:reg:linear:multiple_w}.
 %
 %More insight can be obtained by noting that the attribute vectors
@@ -1091,11 +1190,11 @@ model is $6.18$.
 %U_1, \cdots, U_d$ form an orthogonal basis for the column space of $\abD$,
 %we can obtain the predicted response vector as a sum of the
 %projections of $Y$ along each new basis vector, given as
-%\begin{align}
+%\begin{align*}
 %    \hY & = \proj_{U_0}\!(Y) \cdot U_0 + \proj_{U_1}\!(Y) \cdot U_1 
 %    + \cdots + \proj_{U_d}\!(Y) \cdot U_d
 %    \label{eq:reg:linear:multiple_proj_hY}
-%\end{align}
+%\end{align*}
 %
 %\paragraph{Bias Term}
 %The geometric approach makes it easy to derive an expression for the
@@ -1110,7 +1209,7 @@ model is $6.18$.
 %space, comprising the orthogonal complement of the span of $\bone$.
 %
 %From the expression of $\hY$, we have
-%\begin{align}
+%\begin{align*}
 %    \hY & = b \cdot \bone + w_1 \cdot X_1 + w_2 \cdot X_2 + \cdots + w_d 
 %    \cdot X_d \notag\\
 %    & = b \cdot \bone + w_1 \cdot \lB(\mX_{\!1} + \mu_{X_1} \cdot \bone\rB) +
@@ -1118,7 +1217,7 @@ model is $6.18$.
 %    & = \lB(b + w_1 \cdot \mu_{X_1} + \ldots + w_d \cdot \mu_{X_d}\rB)
 %    \cdot \bone + w_1 \cdot \mX_{\!1} + \ldots + w_d \cdot \mX_{\!d}
 %    \label{eq:reg:linear:multiple_hYgeom}
-%\end{align}
+%\end{align*}
 %
 %On the other hand, since $\bone$ is orthogonal to all $\mX_{\!i}$, we can obtain 
 %another
@@ -1127,25 +1226,25 @@ model is $6.18$.
 %Let the new orthogonal basis for these centered attribute vectors be 
 %$\{\mU_0, \mU_1, \cdots, \mU_d\}$, where $\mU_0 = \bone$.
 %Thus, $\hY$ can also be written as
-%\begin{align}
+%\begin{align*}
 %    \hY = \proj_{\mU_0}\!(Y) \cdot \mU_0 + 
 %    \sum_{i=1}^d \proj_{\mU_i}\!(Y) \cdot \mU_i 
 %    = \proj_{\bone}(Y) \cdot \bone + 
 %    \sum_{i=1}^d \proj_{\mU_i}\!(Y) \cdot \mU_i 
 %    \label{eq:reg:linear:multiple_hY2}
-%\end{align}
+%\end{align*}
 %In particular, equating the scalar projections along $\bone$ 
 %in \cref{eq:reg:linear:multiple_hYgeom} and
 %\cref{eq:reg:linear:multiple_hY2}, we
 %get:
-%\begin{align}
+%\begin{align*}
 %    \proj_{\bone}(Y) = \mu_Y & 
 %    = (b + w_1 \cdot \mu_{X_1} + \ldots + w_d \cdot \mu_{X_d}),
 %    \text{ which implies} \notag\\
 %    b & = \mu_Y - w_1 \cdot \mu_{X_1} - \ldots - w_d \cdot \mu_{X_d} = 
 %    \mu_Y - \sum^{n}_{i=1} w_i \cdot \mu_{X_i}
 %     \label{eq:reg:linear:multiple_b}
-%\end{align}
+%\end{align*}
 %where we use the fact that the scalar projection of any attribute vector onto 
 %$\bone$ yields the mean value of that attribute. For example,
 %\begin{align*}
@@ -1153,14 +1252,14 @@ model is $6.18$.
 %    \frac{1}{n}\sum_{i=1}^n y_i = \mu_Y
 %\end{align*}
 %
-%% \begin{align}
+%% \begin{align*}
 %%     w_0 & = \proj_{U_0}(Y) - \sum_{j=1}^d w_{\!j}
 %%     \cdot\proj_{U_0}(X_{\!j}) 
 %%     = \mu_Y - \sum_{j=1}^d w_{\!j} \cdot \mu_{X_{\!j}} \notag\\
 %%     & = \mu_Y - w_1 \cdot \mu_{X_1} - w_2 \cdot \mu_{X_2} 
 %%     - \cdots - w_d \cdot \mu_{X_d}
 %%     \label{eq:reg:linear:multiple_b}
-%% \end{align}
+%% \end{align*}
 %% Here, we used the fact that the projection of any attribute vector onto 
 %% $U_0 = X_0
 %% = \bone$ yields the mean value of that attribute, since
@@ -1173,6 +1272,10 @@ model is $6.18$.
 %
 %
 \begin{frame}{Multiple-Regression Algorithm}
+The algorithm is based on the QR-factorization, which expresses a matrix as a product of two separate matrices, Q (an orthogonal matrix), and R (an upper/right triangular matrix). 
+
+\medskip
+
 \begin{tightalgo}[H]{\textwidth-18pt}
     \SetKwInOut{Algorithm}{\textsc{Multiple-Regression} ($\bD, Y$)}
 \Algorithm{} 
@@ -1187,7 +1290,7 @@ $\bDelta^{-1} \assign
     0 & \frac{1}{\norm{U_1}^2} & \cdots & 0\\
         0 & 0 & \ddots & 0\\
         0 & 0 & \cdots & \frac{1}{\norm{U_d}^2}\\
-    }$ \tcp*[h]{reciprocal squared norms}\;
+    }$ \tcp*[h]{squared norms}\;
 $\bR \bw \assign \bDelta^{-1} \bQ^T Y$ \tcp*[h]{solve for $\bw$ by back-substitution}\;
 $\hY \assign \bQ \bDelta^{-1} \bQ^T Y$\;
 %\caption{Multiple Regression Algorithm}
@@ -1302,12 +1405,16 @@ $\hY \assign \bQ \bDelta^{-1} \bQ^T Y$\;
 %Approach]
 Consider the multiple regression of
 {\tt sepal length} ($X_1$) and {\tt petal
-    length} ($X_2$) on the response attribute {\tt petal width} ($Y$)
+    length} ($X_2$) on {\tt petal width} ($Y$)
 for the Iris dataset with $n=150$ points.
 %, as shown in \cref{fig:reg:linear:multi}.
-The augmented dataset $\abD \in
-\setR^{150\times 3}$ comprises $n=150$ points along
-three attributes $X_0$, $X_1$, and $X_2$, where $X_0 = \bone$.
+
+%The augmented dataset $\abD \in
+%\setR^{150\times 3}$ comprises $n=150$ points along
+%three attributes $X_0$, $X_1$, and $X_2$, where $X_0 = \bone$.
+
+\medskip
+
 The Gram--Schmidt orthogonalization results in the following
 QR-factorization:
 \begin{align*}
@@ -1332,10 +1439,9 @@ QR-factorization:
         0 & 0 & 1
     }}_{\bR} 
 \end{align*}
-Note that $\bQ \in \setR^{150\times 3}$ and therefore we do not show
-the matrix.
-The matrix $\bDelta$, which records the squared norms of the basis vectors, and
-its inverse matrix, is given as
+$\bQ \in \setR^{150\times 3}$ 
+and $\bDelta$, the squared norms of the basis vectors, and
+its inverse are
 \begin{align*}
     \bDelta & = 
     \matr{
@@ -1361,8 +1467,7 @@ We can use back-substitution to solve for $\abw$, as follows
         0 & 0 & 1
     } \matr{w_0\\w_1\\w_2}  = \matr{1.1987\\ 0.7538\\ 0.4499}
 \end{gather*}
-In back-substitution, we start with $w_2$, which is easy to compute from
-the equation above; it is simply
+Back-substitution starts with $w_2$:
 \begin{align*}
     w_2 = 0.4499
 \end{align*}
@@ -1380,16 +1485,16 @@ Finally, $w_0$ can be computed as
 
 \begin{frame}{QR-Factorization and Geometric Approach}
 \framesubtitle{Example}
-Thus, the multiple regression model is given as
-\begin{align}
+The multiple regression model is given as
+\begin{align*}
        \hY & = -0.014 \cdot X_0 -0.082 \cdot X_1 + 0.45 \cdot X_2
-       \label{eq:reg:linear:multiple_sol}
-\end{align}
+       %\label{eq:reg:linear:multiple_sol}
+\end{align*}
 %which matches the model in \cref{ex:reg:linear:multiple}. 
 
 It is also instructive to construct the new basis vectors $U_0, U_1,
 \cdots, U_d$ in terms of
-the original attributes $X_0, X_1, \cdots, X_d$. 
+$X_0, X_1, \cdots, X_d$. 
 Since $\abD = \bQ \bR$, we have $\bQ = \abD \bR^{-1}$.
 The inverse of $\bR$ is also upper-triangular, and is given as
 \begin{align*}
@@ -1399,7 +1504,7 @@ The inverse of $\bR$ is also upper-triangular, and is given as
 0 &   0  &     1
 }
 \end{align*}
-Therefore, we can write $\bQ$ in terms of the original attributes as
+$\bQ$ can be written as:
 \begin{align*}
     \underbrace{
     \matr{
@@ -1431,14 +1536,13 @@ This expression allows us to
       U_1 & = -5.843 \cdot X_0 + X_1\\
       U_2 & = 7.095 \cdot X_0 - 1.858 \cdot X_1 + X_2
 \end{align*}
-The scalar projection of the response vector $Y$ onto each of the new 
-basis vectors yields:
+The scalar projections of $Y$ onto $U_i$ are:
 \begin{align*}
    \proj_{U_0}\!(Y) & = 1.199 &
    \proj_{U_1}\!(Y) & = 0.754 &
    \proj_{U_2}\!(Y) & = 0.45 
 \end{align*}
-Finally, the fitted response vector is given as:
+The fitted response vector $\hY$ is given as:
 \begin{align*}
     \hY & = \proj_{U_0}\!(Y) \cdot U_0 + \proj_{U_1}\!(Y) \cdot U_1 + 
     \proj_{U_2}\!(Y) \cdot U_2\\
@@ -1473,19 +1577,19 @@ gradient algorithm.
 %\index{multiple regression!gradient descent}
 %Consider the SSE objective given in
 %\cref{eq:reg:linear:multiple_SSEobj} (multiplied by 1/2):
-%\begin{align}
+%\begin{align*}
 %    \min_{\abw} SSE = \frac{1}{2} \lB(Y^T Y - 2 \abw^T (\abD^T Y) +
 %    \abw^T (\abD^T \abD) \abw\rB)
 %    \label{eq:reg:linear:multiple_obj_gd}
-%\end{align}
+%\end{align*}
 The gradient of the SSE objective is given as
 \begin{align*}
     \grad_{\abw} = 
     \frac{\partial}{\partial \abw} SSE & = -\abD^T Y + (\abD^T\abD) \abw
 \end{align*}
 %
-Using gradient descent, starting from an initial weight vector estimate
-$\abw^{\;0}$, we can iteratively update $\abw$ as follows
+From an initial weight vector 
+$\abw^{\;0}$, we update $\abw$ as:
 \begin{align*}
     \abw^{\;t+1}  &= \abw^{\;t} - \eta \cdot \grad_{\abw}
     = \abw^{\;t} + \eta \cdot \abD^T(Y - \abD \cdot \abw^{\;t})
@@ -1494,8 +1598,8 @@ where $\abw^{t}$ is the estimate of the weight vector at step $t$.
 %
 %\index{multiple regression!stochastic gradient descent}
 %\index{multiple regression!SGD}
-In stochastic gradient descent (SGD), we update the weight vector by
-considering only one (random) point at each time. 
+We update the weight vector by
+considering only one (random) point at each iteration. 
 %Restricting \cref{eq:reg:linear:multiple_obj_gd} to a single point
 %$\abx_k$ in the training data $\abD$,
 %the gradient at the
@@ -1504,7 +1608,7 @@ considering only one (random) point at each time.
 %    \grad_{\abw}(\abx_k) = -\abx_k y_k + \abx_k \abx_k^T \abw = 
 %    - (y_k - \abx_k^T\abw) \abx_k
 %\end{align*}
-Therefore, the stochastic gradient update rule is given as
+%Therefore, the stochastic gradient update rule is given as
 \begin{align*}
     \abw^{\;t+1}  &= \abw^{\;t} - \eta \cdot \grad_{\abw}(\abx_k)\\
     & = \abw^{\;t} + \eta \cdot (y_k - \abx_k \cdot \abw^{\;t}) \cdot
@@ -1563,18 +1667,23 @@ $\abw^{\;t} \assign $ random vector in $\setR^{d+1}$ \tcp*[h]{initial weight vec
 {\tt sepal length} ($X_1$) and {\tt petal
     length} ($X_2$) on the response attribute {\tt petal width} ($Y$)
 for the Iris dataset with $n=150$ points. 
+
+\medskip
     
     Using
     the exact approach the multiple regression model was given as
     \begin{align*}
         \hY = -0.014 \cdot X_0 -0.082 \cdot X_1 + 0.45 \cdot X_2 \end{align*}
-    Using stochastic gradient descent we obtain the following model with
+    Using SGD we obtain the following model with
     $\eta=0.001$ and $\epsilon=0.0001$:
     \begin{align*}
         \hY = -0.031 \cdot X_0 -0.078 \cdot X_1 + 0.45 \cdot X_2
     \end{align*}
-    The results from the SGD approach as essentially the same as the
+    The results from the SGD approach are essentially the same as the
     exact method, with a slight difference in the bias term.
+
+    \medskip
+
     The SSE value for the exact
     method is 6.179, whereas for SGD it is 6.181.
 \end{frame}
@@ -1588,38 +1697,36 @@ for the Iris dataset with $n=150$ points.
 %\index{L$_2$ regularized regression|see{ridge regression}}
 %\index{L$_2$ regularization!linear regression}
 %\index{L$_2$ regularization}
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 \begin{frame}{Ridge Regression}
-We have seen that for linear regression, the predicted response vector
+For linear regression, 
 $\hY$ lies in the span of the column vectors comprising the augmented 
 data matrix $\abD$. 
 
-
 \medskip
 
-However, often the data is noisy and
-uncertain, and therefore instead of fitting the model to the data
+Often the data is noisy and
+uncertain, and, therefore, instead of fitting the model to the data
 exactly, it may be better to fit a more robust model.
 
-
 \medskip
 
-One way to achieve this is via regularization, where we 
-constrain the solution vector
+Regularization constrains the solution vector
 $\abw$ to have a small norm. 
 
 
 \medskip
 
-In other words, instead of trying to
-simply minimize the squared residual error $\norm{Y - \hY}^2$, we add a
-regularization term involving the squared norm of the weight vector
-($\norm{\abw}^2$) as follows:
+Besides minimizing $\norm{Y - \hY}^2$, we add a
+regularization term ($\norm{\abw}^2$):
 \begin{empheq}[box=\tcbhighmath]{align*}
     \min_{\abw}\;\; J(\abw) = \norm{Y - \hY}^2 + \alpha \cdot \norm{\abw}^2
     = \norm{Y - \abD\abw}^2 + \alpha \cdot \norm{\abw}^2
-    \label{eq:reg:linear:ridgeobj}
+    %\label{eq:reg:linear:ridgeobj}
 \end{empheq}
-Here $\alpha \ge 0$ is a regularization constant that controls the
+$\alpha \ge 0$ controls the
 tradeoff between minimizing the squared
 norm of the weight vector and the squared error. 
 
@@ -1637,9 +1744,9 @@ norm of the weight vector and the squared error.
 %The solve the new regularized objective we differentiate
 %\cref{eq:reg:linear:ridgeobj} 
 
-To solve the equation, we differentiate with respect to $\abw$ and set the results to
+We differentiate w.r.t. $\abw$ and set the results to
 $\bzero$ to obtain
-%\begin{align}
+%\begin{align*}
 %    \frac{\partial}{\partial \abw} J(\abw) & = 
 %    \frac{\partial}{\partial \abw} \lB\{ 
 %    \norm{Y - \abD\abw}^2 + \alpha \cdot \norm{\abw}^2  \rB\} = \bzero \notag\\
@@ -1648,62 +1755,43 @@ $\bzero$ to obtain
 %    \implies & -2\abD^T Y + 2 (\abD^T\abD) \abw + 2\alpha \cdot \abw = \bzero
 %    \label{eq:reg:linear:ridge_w1}\\
 %    \implies & (\abD^T\abD + \alpha\cdot\bI) \abw = \abD^T Y
-%\end{align}
+%\end{align*}
 %Therefore, the optimal solution is
-\begin{align}
+\begin{align*}
    \abw = (\abD^T\abD + \alpha\cdot\bI)^{-1} \abD^T Y
-    \label{eq:reg:linear:ridge_w}
-\end{align}
-where $\bI \in \setR^{(d+1) \times (d+1)}$ is the identity matrix.
-
-\medskip
-
+    %\label{eq:reg:linear:ridge_w}
+\end{align*}
+%where $\bI \in \setR^{(d+1) \times (d+1)}$ is the identity matrix.
 The matrix $(\abD^T\abD + \alpha\cdot\bI)$ is always invertible (or
 non-singular) for
 $\alpha >
-0$ even if $\abD^T\abD$ is not invertible (or singular). This is because if
-$\lambda_i$ is an eigenvalue of $\abD^T\abD$, then $\lambda_i + \alpha$ is an
-eigenvalue of $(\abD^T\abD + \alpha\cdot\bI)$. Since $\abD^T\abD$ is positive
-semi-definite it has non-negative eigenvalues. Thus, even if an
-eigenvalue of $\abD^T\abD$ is zero, e.g., $\lambda_i = 0$, the
-corresponding eigenvalue of $(\abD^T\abD + \alpha\cdot \bI)$ is
-$\lambda_i+\alpha = \alpha > 0$. 
+0$ even if $\abD^T\abD$ is not invertible (or singular). 
 
 \medskip
 
-Regularized regression is also called {\em ridge regression} since we
-add a ``ridge'' along the main diagonal of the $\abD^T\abD$ matrix, i.e.,
-the optimal solution depends on the regularized matrix $(\abD^T\abD +
-\alpha\cdot\bI)$. Another advantage of regularization is that if we
+If
+$\lambda_i$ is an eigenvalue of $\abD^T\abD$, then $\lambda_i + \alpha$ is an
+eigenvalue of $(\abD^T\abD + \alpha\cdot\bI)$. Since $\abD^T\abD$ is positive
+semi-definite it has non-negative eigenvalues. 
+Even if an $\lambda_i = 0$, the
+corresponding eigenvalue of $(\abD^T\abD + \alpha\cdot \bI)$ is
+$\lambda_i+\alpha = \alpha > 0$. 
+\medskip
+
+Regularized regression is called
+{\em ridge regression} because it
+adds a ``ridge'' along the main diagonal of the $\abD^T\abD$ matrix, i.e.,
+the solution depends on $(\abD^T\abD +
+\alpha\cdot\bI)$. 
+
+\medskip
+
+If we
 choose a small positive $\alpha$ we are always guaranteed a solution.
+
 \end{frame}
 %
 %\begin{figure}[t!]
-\begin{frame}{Ridge Regression}
-\framesubtitle{Example}
-    \centering
-\scalebox{0.9}{
-    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
-    \psset{xAxisLabel=$X$: petal length,yAxisLabel= $Y$: petal width,
-        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.5in,c}}
-    \psgraph[tickstyle=bottom,Dx=1.0,Dy=0.5,Oy=-0.5,subticks=2]{->}(0.0,-0.5)(7.5,3){4in}{2.5in}%
-    \dataplot[plotstyle=dots,showpoints=true]{\dataPLW}
-    \psdot[dotstyle=*,dotscale=2](3.76,1.20)
-    %\psline[linestyle=dashed](3.76,-0.5)(3.76,1.20)
-    \psplot[plotstyle=line,linewidth=1pt]{0}{7.5}{x 0.416 mul -0.365
-        add} %a=0
-    \psplot[plotstyle=line,linewidth=1pt,linestyle=dashed]{0}{7.5}{x
-        0.388 mul -0.244 add} %a = 10
-    \psplot[plotstyle=line,linecolor=gray,linewidth=1pt]{0}{7.5}{x 0.328
-        mul -0.021 add} %a=100
-   % \psplot[algebraic,plotstyle=line,linecolor=gray,linewidth=2pt]{0}{7.5}%
-   % {0.214 + 0.0572 * x^2}
-    \rput(7.9,2.9){$\alpha=0$}
-    \rput(7.95,2.7){$\alpha=10$}
-    \rput(8,2.45){$\alpha=100$}
-    \endpsgraph
-}
-\end{frame}
 %\vspace{0.6in}
 %\caption{Scatterplot: {\tt petal length} ($X$) versus {\tt petal
 %width} ($Y$). Ridge regression lines for $\alpha = 0, 10, 100$.}
@@ -1740,13 +1828,34 @@ choose a small positive $\alpha$ we are always guaranteed a solution.
 %
 %\begin{example}[Ridge Regression]
 %    \label{ex:reg:linear:ridge}
+
 \begin{frame}{Ridge Regression}
 \framesubtitle{Example}
-    Figure%~\ref{fig:reg:linear:iris-ridge} 
-shows the scatterplot between
-    the two attributes {\tt petal length} ($X$; the predictor variable) and 
-    {\tt petal width} ($Y$; the response variable) in the
-    Iris dataset. There are a total of $n=150$ data points.
+
+Given  
+{\tt sepal length} ($X_1$) and {\tt petal
+    length} ($X_2$) on the response attribute {\tt petal width} ($Y$)
+for the Iris dataset with $n=150$ points, we want to learn the ridge regression. 
+
+\centering
+\psset{unit=0.25in}
+\scalebox{0.75}{%
+\psset{viewpoint=20 10 10 rtp2xyz,Decran=30}
+\psset{lightsrc=viewpoint}
+\psset{incolor=white}
+\psset{opacity=0.2}
+\psset{fillcolor=white}
+\begin{pspicture}(3,-5)(8,7)
+    \axesIIID[axisnames={X_1, X_2, Y}](0,0,0)(9,8,3)
+\psset{linewidth=0pt, dotsize=0.3}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/linear/figs/iris-3d-points.tex}
+\end{pspicture}
+}
+\end{frame}
+
+\begin{frame}{Ridge Regression}
+\framesubtitle{Example}
     The uncentered scatter matrix is given as
     \begin{align*}
         \abD^T\abD = \matr{
@@ -1772,12 +1881,43 @@ We obtain different lines of best
 \end{small}
     % \enlargethispage{20pt}
     %\cref{fig:reg:linear:iris-ridge} 
-Figure shows these regularized regression
-    lines.
-    We can see that as $\alpha$ increases there is more emphasis on
-    minimizing the squared norm of $\abw$. However, since $\norm{\abw}^2$ is more
+\end{frame}
+
+\begin{frame}{Ridge Regression}
+\framesubtitle{Example}
+    As $\alpha$ increases there is more emphasis on
+    minimizing the squared norm of $\abw$. 
+
+	\medskip
+
+	Since $\norm{\abw}^2$ is more
     constrained as $\alpha$ increases, the fit of the model decreases,
     as seen from the increase in SSE values.
+
+	\medskip
+
+    \centering
+\scalebox{0.7}{
+    \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+    \psset{xAxisLabel=$X$: petal length,yAxisLabel= $Y$: petal width,
+        xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.5in,c}}
+    \psgraph[tickstyle=bottom,Dx=1.0,Dy=0.5,Oy=-0.5,subticks=2]{->}(0.0,-0.5)(7.5,3){4in}{2.5in}%
+    \dataplot[plotstyle=dots,showpoints=true]{\dataPLW}
+    \psdot[dotstyle=*,dotscale=2](3.76,1.20)
+    %\psline[linestyle=dashed](3.76,-0.5)(3.76,1.20)
+    \psplot[plotstyle=line,linewidth=1pt]{0}{7.5}{x 0.416 mul -0.365
+        add} %a=0
+    \psplot[plotstyle=line,linewidth=1pt,linestyle=dashed]{0}{7.5}{x
+        0.388 mul -0.244 add} %a = 10
+    \psplot[plotstyle=line,linecolor=gray,linewidth=1pt]{0}{7.5}{x 0.328
+        mul -0.021 add} %a=100
+   % \psplot[algebraic,plotstyle=line,linecolor=gray,linewidth=2pt]{0}{7.5}%
+   % {0.214 + 0.0572 * x^2}
+    \rput(7.9,2.9){$\alpha=0$}
+    \rput(7.95,2.7){$\alpha=10$}
+    \rput(8,2.45){$\alpha=100$}
+    \endpsgraph
+}
 \end{frame}
 %\end{example}
 %
@@ -1841,20 +1981,21 @@ Figure shows these regularized regression
 
     Often in $L_2$ regularized regression we do not want to penalize the
     bias term $w_0$, since it simply provides the intercept
-    information, and there is no real justification to try to minimize
-    it.
-    To avoid penalizing the bias term, consider the new regularized
-    objective where $\bw = (w_1, w_2, \cdots, w_d)^T$ without $w_0$,
-    given as
-\begin{align}
+    information.
+
+    \medskip
+
+    Consider the new regularized
+    objective where $\bw = (w_1, w_2, \cdots, w_d)^T$ without $w_0$:
+\begin{align*}
     \min_\bw\;\; J(\bw) & = 
     \norm{Y - w_0 \cdot \bone - \bD\bw}^2 + \alpha \cdot
-    \norm{\bw}^2
-    \label{eq:reg:linear:l2_unpenalized_bias}\\
+    \norm{\bw}^2\\
+    %\label{eq:reg:linear:l2_unpenalized_bias}\\
     & = \biggl\lVert Y - w_0 \cdot \bone - \sum_{i=1}^d w_i \cdot
         X_i \biggr\rVert^2 +
     \alpha \cdot \lB( \sum^{d}_{i=1} w_i^2 \rB) \notag
-\end{align}
+\end{align*}
 %    
 %    Recall from \cref{eq:reg:linear:multiple_b} that the bias $w_0 = b$ is given as
 %    \begin{align*}
@@ -1872,19 +2013,22 @@ Figure shows these regularized regression
 %     & = \norm{Y - (\mu_Y - \bmu^T\bw) \cdot \bone - \bD\bw}^2 + \alpha \cdot \norm{\bw}^2\\
 %     & = \norm{(Y - \mu_Y \cdot \bone) - (\bD - \bone \bmu^T)\bw}^2 + \alpha \cdot \norm{\bw}^2
 %    \end{align*}
-
+%
 Therefore, we have
-\begin{align}
+\begin{align*}
     \tcbhighmath{
      \min_\bw\;\; J(\bw) = \norm{\mY - \mbD\;\bw}^2 + \alpha \cdot
  \norm{\bw}^2}
- \label{eq:reg:linear:ridgeobj_unpenalizedbias}
-\end{align}
+ %\label{eq:reg:linear:ridgeobj_unpenalizedbias}
+\end{align*}
     where $\mY = Y - \mu_Y \cdot \bone$ 
-    is the centered response vector, and $\mbD = \bD - \bone \bmu^T$ is the
-    centered data matrix.
-    In other words, we can exclude $w_0$ from the $L_2$ regularization
-    objective by simply centering the response vector and the
+    is the centered $Y$, and $\mbD = \bD - \bone \bmu^T$ is the
+    centered $\bD$.
+
+	\medskip
+
+ We can exclude $w_0$ from the $L_2$ regularization
+    objective by centering the response vector and the
     unaugmented data matrix. 
 \end{frame}
 %
@@ -1948,10 +2092,12 @@ called for in the exact ridge regression solution, %in
 %\cref{eq:reg:linear:ridge_w}, 
 we can employ the stochastic
 gradient descent algorithm.
-Consider the gradient of the regularized objective,
+
+\medskip
+
+The gradient of $\abw$
 % given in \cref{eq:reg:linear:ridge_w1}, 
-multiplied by 1/2 for convenience; we
-get:
+multiplied by 1/2 for convenience is:
 \begin{align*}
     \grad_{\abw} = \frac{\partial}{\partial \abw} J(\abw) = 
      -\abD^T Y + (\abD^T\abD) \abw + \alpha \cdot \abw
@@ -1965,23 +2111,23 @@ Using (batch) gradient descent, we can iteratively compute $\abw$ as follows
 %
 %\index{ridge regression!stochastic gradient descent}
 %\index{ridge regression!SGD}
-In stochastic gradient descent (SGD), we update the weight vector by
-considering only one (random) point at each time. 
+In SGD, we update the weight vector by
+considering only one (random) point at each time: 
 %Restricting \cref{eq:reg:linear:ridge_obj_gd} to a single point
 %$\abx_k$, the gradient at the
 %point $\abx_k$ is given as
-%\begin{align}
+%\begin{align*}
 %    \grad_{\abw}(\abx_k) = -\abx_k y_k + \abx_k \abx_k^T \abw +
 %    \frac{\alpha}{n} \abw = 
 %    - (y_k - \abx_k^T\abw) \abx_k + \frac{\alpha}{n} \abw
 %    \label{eq:reg:linear:ridge_obj_gd}
-%\end{align}
+%\end{align*}
 %Here, we scale the regularization constant 
 %$\alpha$ by dividing it by $n$, the number of
 %points in the training data, 
 %since the original ridge value $\alpha$ is for all the $n$ points,
 %whereas we are now considering only one point at a time.
-Therefore, the stochastic gradient update rule is given as
+%Therefore, the stochastic gradient update rule is given as
 \begin{align*}
     \abw^{\;t+1}  = \abw^{\;t} - \eta \cdot \grad_{\abw}(\abx_k)
      = \lB(1 - \frac{\eta \cdot \alpha}{n}\rB) \abw^{\;t} 
@@ -2060,18 +2206,19 @@ $\abw^{\;t} \assign $ random vector in $\setR^{d+1}$ \tcp*[h]{initial weight vec
 \framesubtitle{Example}
 We apply ridge regression on the Iris dataset ($n=150$), using {\tt
 petal length} ($X$) as the independent attribute, and {\tt petal width}
-($Y$) as the response variable. Using SGD (with $\eta=0.001$ and
+($Y$) as the response variable. 
+
+\medskip
+
+Using SGD (with $\eta=0.001$ and
 $\epsilon=0.0001$) we obtain different lines of best fit for different
 values of the regularization constant $\alpha$:
 %, which essentially match
 %the results from the exact method in \cref{ex:reg:linear:ridge}:
     \begin{align*}
-        \alpha = 0: & \hY = -0.366 + 0.413 \cdot X 
-        & SSE & = 6.37\\
-        \alpha = 10: & \hY = -0.244 + 0.387 \cdot X
-       & SSE & = 6.76 \\
-       \alpha = 100: & \hY = -0.022 + 0.327 \cdot X
-       & SSE & = 10.04
+        \alpha = 0: & \hY = -0.366 + 0.413 \cdot X & SSE_{SGD} & = 6.37 & SSE_{Ridge} & = 6.34 \\
+        \alpha = 10: & \hY = -0.244 + 0.387 \cdot X & SSE_{SGD} & = 6.76  & SSE_{Ridge} & = 6.38 \\
+       \alpha = 100: & \hY = -0.022 + 0.327 \cdot X & SSE_{SGD} & = 10.04 & SSE_{Ridge} & = 8.87 
     \end{align*}
 \end{frame}
 %%These values are essentially the same as those from the exact method in
@@ -2088,9 +2235,11 @@ values of the regularization constant $\alpha$:
 %\index{kernel regression}
 %\index{kernel ridge regression}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 \begin{frame}{Kernel Regression}
 %
-We now consider how to generalize linear regression to the non-linear
+Kernel generalizes linear regression to the non-linear
 case, i.e., finding a non-linear fit to the data to minimize the squared
 error, along with regularization. 
 
@@ -2098,9 +2247,8 @@ error, along with regularization.
 %trick, i.e., we will show that all relevant operations can be carried
 %out via the kernel matrix in input space.
 %
-Let $\phi$ correspond to a mapping from the input space to the feature
-space, so that each point $\phi(\bx_i)$ in feature space is a mapping
-for the input point $\bx_i$. 
+$\phi (\bx_i)$ maps the input point $\bx_i$ to the feature
+space.
 %To avoid explicitly dealing with the bias term, we add the fixed value
 %$1$ as the first element $\phi(\bx_i)$ to obtain the {\em augmented
 %transformed point} $\aphi(\bx_i)^T = \bigl(1\;\; \phi(\bx_i)^T\bigr)$.
@@ -2117,20 +2265,23 @@ for the input point $\bx_i$.
 %Let $Y$ denote the observed response vector.
 %Following \cref{eq:reg:linear:multiple_hY},
 %we model the predicted response as 
-%\begin{align}
+%\begin{align*}
 %    \hY = \abD_\phi \abw \label{eq:reg:linear:kernel_hy}
-%\end{align}
+%\end{align*}
 %where $\abw$ is the augmented weight vector in feature space. The first
 %element of $\abw$ denotes the bias in feature space.
 %
+
+\medskip
+
 For regularized regression, we have to
 solve the following objective in feature space:
 \begin{empheq}[box=\tcbhighmath]{align*}
     \min_{\abw}\;\; J(\abw) = \norm{Y - \hY}^2 + \alpha \cdot \norm{\abw}^2
     = \norm{Y - \abD_\phi\abw}^2 + \alpha \cdot \norm{\abw}^2
-    \label{eq:reg:linear:kernelobj}
+    %\label{eq:reg:linear:kernelobj}
 \end{empheq}
-where $\alpha \ge 0$ is a regularization constant.
+%where $\alpha \ge 0$ is a regularization constant.
 %% Expanding the above objective we obtain
 %% \begin{align*}
 %%     Y^TY - 2 \abw^T (\abD_\phi^TY) + \abw^T
@@ -2140,7 +2291,7 @@ where $\alpha \ge 0$ is a regularization constant.
 %Taking the derivative of $J(\abw)$ with respect to $\abw$ and setting it
 %to the zero vector, we get
 %%Following a derivation similar to that in \cref{eq:reg:linear:ridge_w1}, we have
-%\begin{align}
+%\begin{align*}
 %    \frac{\partial}{\partial \abw} J(\abw) & = 
 %    \frac{\partial}{\partial \abw} \lB\{ 
 %    \norm{Y - \abD_\phi\abw}^2 + \alpha \cdot \norm{\abw}^2  \rB\} = \bzero \notag\\
@@ -2153,7 +2304,7 @@ where $\alpha \ge 0$ is a regularization constant.
 %    \implies & \abw = \abD_\phi^T \lB( \frac{1}{\alpha} \lB(Y - \abD_\phi \abw\rB)\rB) \notag\\
 %    \implies & \abw = \abD_\phi^T \bc = \sum_{i=1}^n c_i \cdot \aphi(\bx_i)
 %    \label{eq:reg:linear:kernel_w}
-%\end{align}
+%\end{align*}
 %where $\bc = (c_1, c_2, \cdots, c_n)^T 
 %= \frac{1}{\alpha} (Y - \abD_\phi \abw)$.
 %\cref{eq:reg:linear:kernel_w} indicates that the weight vector $\abw$ is 
@@ -2167,17 +2318,17 @@ where $\alpha \ge 0$ is a regularization constant.
 %\end{align*}
 %Now, plugging in the form of $\abw$ from \cref{eq:reg:linear:kernel_w}
 %we get
-%\begin{align}
+%\begin{align*}
 %    \alpha \cdot \bc & = Y - \abD_\phi (\abD_\phi^T \bc) \notag\\
 %    (\abD_\phi \abD_\phi^T + \alpha \cdot \bI) \bc & = Y \notag\\
 %    \bc & = (\abD_\phi \abD_\phi^T + \alpha \cdot \bI)^{-1} Y \notag\\
-%\end{align}
+%\end{align*}
 The optimal solution is therefore given as
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     \bc = (\abK + \alpha \cdot \bI)^{-1} Y}
-    \label{eq:reg:linear:kernel_c}
-\end{align}
+    %\label{eq:reg:linear:kernel_c}
+\end{align*}
 where $\bI \in \setR^{n\times n}$ is the $n \times n$ identity matrix,
 and $\abD_\phi \abD_\phi^T$ is the augmented kernel matrix $\abK$.%, since
 %\begin{align*}
@@ -2189,25 +2340,25 @@ and $\abD_\phi \abD_\phi^T$ is the augmented kernel matrix $\abK$.%, since
 
 
 \begin{frame}{Kernel Regression}
-Putting it all together, 
+%Putting it all together, 
 %we can substitute \cref{eq:reg:linear:kernel_c}
 %and \cref{eq:reg:linear:kernel_w} into \cref{eq:reg:linear:kernel_hy} 
 %to 
-we obtain the expression for the
-predicted response
-\begin{align}
+The expression for the
+predicted response is:
+\begin{align*}
     \hY & = \abD_\phi \abw \notag\\
      & = \abD_\phi \abD_\phi^T \bc \notag\\
      & = \lB(\abD_\phi \abD_\phi^T\rB) \lB(\abK + \alpha \cdot \bI\rB)^{-1} Y \notag\\
      & = \abK \lB(\abK + \alpha \cdot \bI\rB)^{-1} Y
-\end{align}
+\end{align*}
 where $\abK (\abK + \alpha \cdot \bI)^{-1}$ is the {\em kernel hat
     matrix}.
 %\index{kernel regression!kernel hat matrix}
 
 \medskip
 
-    Notice that using $\alpha > 0$ ensures that  the inverse always
+    $\alpha > 0$ ensures that  the inverse always
     exists, which is another advantage of using (kernel) ridge
     regression, in addition to the regularization.
 %%MJZ -- what happens when $\alpha=0$.
@@ -2232,7 +2383,7 @@ where $\abK (\abK + \alpha \cdot \bI)^{-1}$ is the {\em kernel hat
 
 \medskip
 
-That is, we compute the vector $\abK_{\bz}$ comprising the augmented
+We compute the vector $\abK_{\bz}$ comprising the augmented
 kernel values of $\bz$ with respect to
 all of the data points in $\bD$,  
 and take its dot product with the mixture
@@ -2266,13 +2417,74 @@ $\hy \assign \bc^T\abK_{\bz}$\;
 %\begin{figure}[b!]
 \begin{frame}{Kernel Regression on Iris}
 \framesubtitle{Example}
+    Consider the nonlinear Iris dataset
+% shown in \cref{fig:reg:linear:iris-kernel}, 
+obtained via a nonlinear
+    transformation of 
+	{\tt sepal length} ($A_1$) and {\tt sepal width} ($A_2$) attributes ($A_2$):
+    \begin{align*}
+	    X &= A_2 & Y &= 0.2A_1^2 + A_2^2 + 0.1A_1A_2
+    \end{align*}
 %\vspace{0.1in}
 \psset{stepFactor=0.4}
 \psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
 \psset{xAxisLabel=$X$,yAxisLabel= $Y$}
 \psset{xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.4in,c}}
 \centerline{
-\scalebox{0.9}{
+\scalebox{0.70}{
+\psgraph[axesstyle=frame,Dx=0.5,Dy=0.5,Ox=-1.5,Oy=-0.5]{->}(-1.5,-0.5)(1.5,1.5){4in}{2.5in}%
+\dataplot[plotstyle=dots,showpoints=true]{\dataI}
+\psset{algebraic}
+\psclip{\psframe[linestyle=none](-1.5,-0.5)(1.5,1.5)}
+%\psplot[plotstyle=line,linecolor=gray,linewidth=1pt]{-1.5}{1.5}{0.168 * x} 
+%\psplot[plotstyle=line,linewidth=1pt]{-0.5}{1.5}{-0.046 + 0.469 * x^2}
+%\psplot[plotstyle=line,linewidth=2pt]{-1.5}{1.5}{-0.086 + 0.0257 * x +
+%    0.922 * x^2}
+%\psplot[plotstyle=line,linewidth=1pt]{-1.5}{1.5}{-0.173 + 0.927 * x^2}
+\endpsclip
+\endpsgraph
+}}
+\end{frame}
+
+\begin{frame}{Kernel Regression on Iris}
+\framesubtitle{Example}
+    We treat $Y$ as the response variable and $X$ is the independent
+    attribute. The points show a clear quadratic (nonlinear)
+    relationship between the them.
+
+	\medskip
+
+    The linear fit is
+    \begin{align*}
+        \hY = 0.168\cdot X
+    \end{align*}
+    Using the quadratic (inhomogeneous) kernel over
+    $X$ comprising constant ($1$), linear ($X$), and quadratic terms ($X^2$),  and $\alpha=0.1$:
+    \begin{align*}
+        \hY = -0.086 + 0.026 \cdot X + 0.922 \cdot X^2
+    \end{align*}
+\end{frame}
+\begin{frame}{Kernel Regression on Iris}
+\framesubtitle{Example}
+The linear (in gray) and quadratic (in black) fit are shown.
+  
+\medskip
+
+The SSE error is $13.82$ for the linear and $4.33$ for the quadratic kernel.
+    
+\medskip
+
+The quadratic kernel (as expected) gives a much better fit to the data. 
+
+\medskip
+
+%\vspace{0.1in}
+\psset{stepFactor=0.4}
+\psset{dotstyle=Bo,dotscale=1.5,fillcolor=lightgray,arrowscale=2,PointName=none}
+\psset{xAxisLabel=$X$,yAxisLabel= $Y$}
+\psset{xAxisLabelPos={c,-0.4in},yAxisLabelPos={-0.4in,c}}
+\centerline{
+\scalebox{0.7}{
 \psgraph[axesstyle=frame,Dx=0.5,Dy=0.5,Ox=-1.5,Oy=-0.5]{->}(-1.5,-0.5)(1.5,1.5){4in}{2.5in}%
 \dataplot[plotstyle=dots,showpoints=true]{\dataI}
 \psset{algebraic}
@@ -2331,47 +2543,6 @@ $\hy \assign \bc^T\abK_{\bz}$\;
 %
 %\begin{example}
 %    \label{ex:reg:linear:kernel}
-\begin{frame}{Kernel Regression on Iris}
-\framesubtitle{Example}
-    Consider the nonlinear Iris dataset shown in figure,
-% shown in \cref{fig:reg:linear:iris-kernel}, 
-obtained via a nonlinear
-    transformation applied to the centered Iris data. In particular, the
-    {\tt sepal length} ($A_1$) and {\tt sepal width} attributes ($A_2$)
-    were transformed as follows:
-    \begin{align*}
-        X &= A_2\\
-        Y &= 0.2A_1^2 + A_2^2 + 0.1A_1A_2
-    \end{align*}
-    We treat $Y$ as the response variable and $X$ is the independent
-    attribute. The points show a clear quadratic (nonlinear)
-    relationship between the them.
-
-    We fit using both a linear and an
-    inhomogeneous quadratic kernel, with 
-    $\alpha=0.1$. The linear fit is
-    \begin{align*}
-        \hY = 0.168\cdot X
-    \end{align*}
-    On the other hand, using the quadratic (inhomogeneous) kernel over
-    $X$ comprising constant ($1$), linear ($X$), and quadratic terms ($X^2$), 
-    yields
-    the fit
-    \begin{align*}
-        \hY = -0.086 + 0.026 \cdot X + 0.922 \cdot X^2
-    \end{align*}
-\end{frame}
-
-\begin{frame}{Kernel Regression on Iris}
-\framesubtitle{Example}
-    The linear (in gray) and quadratic (in black) fit are both shown in
-the figure.
-    %\cref{fig:reg:linear:iris-kernel}. 
-The SSE error, $\norm{Y-\hY}^2$, is
-    $13.82$ for the linear kernel and $4.33$ for the quadratic kernel.
-    It is clear that the quadratic kernel (as expected) gives a much
-    better fit to the data. 
-\end{frame}
 %\end{example}
 %
 %\begin{figure}[b!]
@@ -2379,6 +2550,20 @@ The SSE error, $\norm{Y-\hY}^2$, is
 %\captionsetup[subfloat]{captionskip=2pt}
 \begin{frame}{Kernel ridge regression}
 \framesubtitle{Example}
+
+Consider the Iris principal components dataset, where $X_1$ and $X_2$ denote
+the first two principal components. 
+
+\medskip
+
+The response variable $Y$ is binary,
+with value $1$ corresponding to {\tt Iris-virginica} (points on the
+top right, with $Y$ value 1) and $0$
+corresponding to {\tt Iris-setosa} and {\tt Iris-versicolor} (other
+two groups of points, with $Y$ value $0$).
+
+\vspace*{1cm}
+
 \psset{unit=0.25in}
 \psset{lightsrc=viewpoint}
 \psset{incolor=gray}
@@ -2395,44 +2580,8 @@ The SSE error, $\norm{Y-\hY}^2$, is
 \psset{dotstyle=Bo,fillcolor=white}
 \input{REG/linear/figs/N3Dlinear.tex}
 \psset{showAxes=false, fillcolor=gray}
-    \psSurface[ngrid=.2 .2,incolor=gray,axesboxed=false,
-        linewidth=0.5\pslinewidth,
-        color1 = {[rgb]{0 0 0}},
-        color2 = {[rgb]{1 1 1}},
-        hue=(color1) (color2), lightintensity=5,
-    algebraic,Zmin=0,Zmax=1](-4,-5)(4,4){%
-(0.074*y)-(0.167*x)+0.333 }
-%(0.148*y)-(0.335*x)-0.333 }
 \psset{dotstyle=Bo,fillcolor=white}
 \input{REG/linear/figs/P3Dlinear.tex}
-\end{pspicture}
-}}%}
-\vspace{0.2in}
-\centerline{
-%\subfloat[Inhomogeneous Quadratic Kernel]{ \label{fig:reg:linear:iris-vir:quadratic}
-\scalebox{0.8}{%
-%    \psset{lightintensity=4}
-%\psset{viewpoint=30 -30 20 rtp2xyz,Decran=60}
-%\psset{viewpoint=30 -50 20 rtp2xyz,Decran=60}
-\psset{viewpoint=30 100 10 rtp2xyz,Decran=60}
-%\psset{fillcolor=white}
-\begin{pspicture}(-6,-3)(6,3)
-    \axesIIID[axisnames={X_1, X_2, Y}](-4,-1.5,0)(4.5,5,1.5)
-\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
-\psset{linewidth=0.5pt, dotsize=0.3}
-\psset{dotstyle=Bo,fillcolor=white}
-\input{REG/linear/figs/N3Dquadratic.tex}
-\psset{showAxes=false}
-    \psSurface[ngrid=.2 .2,axesboxed=false,
-        linewidth=0.5\pslinewidth, 
-        color1 = {[rgb]{0 0 0}},
-        color2 = {[rgb]{1 1 1}},
-        hue=(color1) (color2), lightintensity=5,
-    algebraic,Zmin=0,Zmax=1](-3,-2)(4,3){%
-    (0.029*y^2)+(0.1*x*y)+(0.092*x^2)+(-0.186*y)-(0.167*x)-0.03 }
-%    (0.057*y^2)+(0.2*x*y)+(0.184*x^2)+(-0.372*y)-(0.335*x)-1.119 }
-\psset{dotstyle=Bo,fillcolor=white}
-\input{REG/linear/figs/P3Dquadratic.tex}
 \end{pspicture}
 }}%}
 \end{frame}
@@ -2480,34 +2629,91 @@ The SSE error, $\norm{Y-\hY}^2$, is
 %
 %
 %\begin{example}[Kernel Ridge Regression]
-\begin{frame}{Kernel Ridge Regression on Iris}
+
+\begin{frame}{Kernel ridge regression}
 \framesubtitle{Example}
-    Consider the Iris principal components dataset. % shown in
-%    \cref{fig:reg:linear:iris-vir}. 
-Here $X_1$ and $X_2$ denote the
-    first two principal components. The response variable $Y$ is binary,
-    with value $1$ corresponding to {\tt Iris-virginica} (points on the
-    top right, with $Y$ value 1) and $0$
-    corresponding to {\tt Iris-setosa} and {\tt Iris-versicolor} (other
-    two groups of points, with $Y$ value $0$).
-
-    %\cref{fig:reg:linear:iris-vir:linear} 
-
-\medskip
-
 Figure shows the fitted regression
     plane using a linear kernel with ridge value $\alpha=0.01$:
     \begin{align*}
         \hY = 0.333 - 0.167 \cdot X_1 + 0.074 \cdot X_2
     \end{align*}
 
-    %\cref{fig:reg:linear:iris-vir:quadratic} 
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\centerline{
+%\subfloat[Linear Kernel]{ \label{fig:reg:linear:iris-vir:linear}
+    \scalebox{0.8}{%
+\psset{viewpoint=30 100 10 rtp2xyz,Decran=60}
+%\psset{fillcolor=white}
+\begin{pspicture}(-4,-3)(4,3)
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+\axesIIID[axisnames={X_1, X_2, Y}](-4,-1.5,0)(4.5,5,1.5)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/linear/figs/N3Dlinear.tex}
+\psset{showAxes=false, fillcolor=gray}
+    \psSurface[ngrid=.2 .2,incolor=gray,axesboxed=false,
+        linewidth=0.5\pslinewidth,
+        color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-4,-5)(4,4){%
+(0.074*y)-(0.167*x)+0.333 }
+%(0.148*y)-(0.335*x)-0.333 }
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/linear/figs/P3Dlinear.tex}
+\end{pspicture}
+}}%}
+\vspace{0.2in}
+\end{frame}
+
+\begin{frame}{Kernel ridge regression}
+\framesubtitle{Example}
 Figure shows the fitted model
     when we use an inhomogeneous quadratic kernel with $\alpha=0.01$:
     \begin{align*}
         \hY = -0.03 - 0.167 \cdot X_1 - 0.186 \cdot X_2 
         + 0.092 \cdot X_1^2 + 0.1 \cdot X_1 \cdot X_2 + 0.029 \cdot X_2^2
     \end{align*}
+
+	\vspace*{1cm}
+
+\psset{unit=0.25in}
+\psset{lightsrc=viewpoint}
+\psset{incolor=gray}
+\psset{opacity=0.2}
+\centerline{
+%\subfloat[Inhomogeneous Quadratic Kernel]{ \label{fig:reg:linear:iris-vir:quadratic}
+\scalebox{0.8}{%
+%    \psset{lightintensity=4}
+%\psset{viewpoint=30 -30 20 rtp2xyz,Decran=60}
+%\psset{viewpoint=30 -50 20 rtp2xyz,Decran=60}
+\psset{viewpoint=30 100 10 rtp2xyz,Decran=60}
+%\psset{fillcolor=white}
+\begin{pspicture}(-6,-3)(6,3)
+    \axesIIID[axisnames={X_1, X_2, Y}](-4,-1.5,0)(4.5,5,1.5)
+\psSolid[object=parallelepiped,a=8,b=5,c=1.0,action=draw](0,-0.5,0.5)
+\psset{linewidth=0.5pt, dotsize=0.3}
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/linear/figs/N3Dquadratic.tex}
+\psset{showAxes=false}
+    \psSurface[ngrid=.2 .2,axesboxed=false,
+        linewidth=0.5\pslinewidth, 
+        color1 = {[rgb]{0 0 0}},
+        color2 = {[rgb]{1 1 1}},
+        hue=(color1) (color2), lightintensity=5,
+    algebraic,Zmin=0,Zmax=1](-3,-2)(4,3){%
+    (0.029*y^2)+(0.1*x*y)+(0.092*x^2)+(-0.186*y)-(0.167*x)-0.03 }
+%    (0.057*y^2)+(0.2*x*y)+(0.184*x^2)+(-0.372*y)-(0.335*x)-1.119 }
+\psset{dotstyle=Bo,fillcolor=white}
+\input{REG/linear/figs/P3Dquadratic.tex}
+\end{pspicture}
+}}%}
+
+\medskip
+
     The SSE error for the linear model is $15.47$, whereas for the
     quadratic kernel it is $8.44$, indicating a 
     better fit for the training data.
@@ -2525,18 +2731,23 @@ Figure shows the fitted model
 %\index{L$_1$ regularization!linear regression}
 %\index{L$_1$ regularization}
 %
+
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
+
 \begin{frame}{$L_1$ Regression: Lasso}
-The {\em Lasso}, which stands for {\em least absolute selection and shrinkage
-operator}, is a regularization method that aims to sparsify the
+The {\em Lasso} ({\em least absolute selection and shrinkage
+operator}) is a regularization method that aims to sparsify the
 regression weights.
-Instead of using the $L_2$ or Euclidean norm for weight regularization,
+
+\medskip
+
+%Instead of using the $L_2$ or Euclidean norm for weight regularization,
 %as in ridge regression (see
 %\cref{eq:reg:linear:ridgeobj_unpenalizedbias}), 
-the Lasso formulation uses the 
-$L_1$ norm for regularization 
+Lasso uses the $L_1$ norm for regularization:
 \begin{empheq}[box=\tcbhighmath]{align*}
-    \min_\bw\;\; J(\bw) = \frac{1}{2} \cdot \norm[\big]{\mY - \mbD\;\bw}^2 + \alpha \cdot \norm{\bw}_1
-    \label{eq:reg:linear:lasso_obj}
+    \min_\bw\;\; J(\bw) = \frac{1}{2} \cdot ||\mY - \mbD\;\bw||^2 + \alpha \cdot \norm{\bw}_1
+    %\label{eq:reg:linear:lasso_obj}
 \end{empheq}
 where $\alpha \ge 0$ is the regularization constant and 
 $$\norm{\bw}_1 = \sum^{d}_{i=1} \abs{w_i}$$
@@ -2544,8 +2755,8 @@ $$\norm{\bw}_1 = \sum^{d}_{i=1} \abs{w_i}$$
 %factor $\tfrac{1}{2}$ for convenience; it does not change the
 %objective.
 %Furthermore,  
-We assume that the data comprising the $d$ independent attributes
-$X_1$, $X_2$, \ldots, $X_d$, and the response attribute $Y$, have all
+We assume that 
+$X_1$, $X_2$, \ldots, $X_d$ and $Y$ have 
 been centered. %That is, we assume that
 %\begin{align*}
 %    \mbD & = \bD - \bone \cdot \bmu^T\\
@@ -2554,8 +2765,11 @@ been centered. %That is, we assume that
 %where $\bone \in \setR^n$ is the vector of all ones, $\bmu =
 %(\mu_{X_1}, \mu_{X_2}, \cdots, \mu_{X_d})^T$ is the
 %multivariate mean for the data, and $\mu_Y$ is the mean response value.
-One benefit of centering is that we do not have to explicitly deal with the bias term
-$b=w_0$, which is important since we usually do not want to penalize $b$.
+
+\medskip
+
+Centering relieves us from explicitly dealing with the bias term
+$b=w_0$, since we do not want to penalize $b$.
 %Once the regression coefficients have
 %been estimated, we can obtain the bias term %via
 %\cref{eq:reg:linear:multiple_b}, 
@@ -2568,10 +2782,16 @@ $b=w_0$, which is important since we usually do not want to penalize $b$.
 \end{frame}
 
 \begin{frame}{$L_1$ Regression: Lasso}
-The main advantage of using the $L_1$ norm is that it leads to {\em
-sparsity} in the solution vector. That is, whereas ridge regression
-reduces the value of the regression coefficients $w_i$, they may remain
-small but still non-zero. On the other hand, $L_1$ regression can drive
+The usage of the $L_1$ norm leads to {\em
+sparsity} in the solution vector. 
+
+	\medskip
+
+Ridge regression reduces the value of the regression coefficients $w_i$, 
+they may remain small but still non-zero. 
+\medskip
+
+$L_1$ regression can drive
 the coefficients to zero, resulting in a more interpretable model,
 especially when there are many predictor attributes.
 
@@ -2582,13 +2802,16 @@ $\norm{\mY-\mbD\;\bw}^2$ which is convex and differentiable, and the $L_1$
 penalty term 
 $$\alpha \cdot \norm{\bw}_1 = \alpha \sum^{d}_{i=1} \abs{w_i}$$ 
 which is convex but unfortunately non-differentiable at $w_i
-= 0$. This means that we cannot simply compute the gradient and set it
+= 0$. 
+
+\medskip
+
+We cannot simply compute the gradient and set it
 to zero, as we did in the case of ridge regression.
 
 \medskip
 
-However, these kinds of problems can be solved via the generalized
-approach of {\em subgradients}.
+It can be solved via the generalized approach of {\em subgradients}.
 \end{frame}
 %
 %% Given a convex function $f: \setR^d \to \setR$, a vector $\bs \in
@@ -2602,9 +2825,55 @@ approach of {\em subgradients}.
 %\begin{figure}[t!]
 %% \vspace*{-0.1in}
 %    % \vspace{0.2in}
-\begin{frame}{Absolute value function: subgradients}
+\begin{frame}{$L_1$ Regression: Subgradients}
+Consider the absolute value function $f(w) = \abs{w}$.
+    
+\medskip
+
+When $w > 0$, $f'(w) = +1$, and
+    when $w<0$, $f'(w) = -1$. 
+
+\medskip
+
+There is a discontinuity at $w=0$ where the derivative does not exist. 
+    
+\vspace*{0.5cm}
+
     \centering
-    \scalebox{0.9}{%
+    \scalebox{0.75}{%
+    \psset{xAxisLabel=$w$,yAxisLabel=$\abs{w}$,%
+    xAxisLabelPos={c,-0.6},yAxisLabelPos={-0.75,c} }
+    \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
+    \psgraph[Dy=1,Ox=-3,Oy=-2]{->}(-3,-2)(3,3){3in}{2.5in}%
+    %\psline[linewidth=1pt,linecolor=gray](-3,1.5)(3,-1.5)
+    %\psline[linewidth=1pt,linecolor=gray](-3,-0.75)(3,0.75)
+    \psline[linewidth=1pt,linestyle=dotted](0,-2)(0,3)
+    \psline[linewidth=1pt,linestyle=dotted](-3,0)(3,0)
+    \psline[linewidth=2pt](0,0)(3,3)
+    \psline[linewidth=2pt](0,0)(-3,3)
+    %\uput[r](3,-1.5){$m=-0.5$}
+    %\uput[r](3,0.75){$m=0.25$}
+    \endpsgraph
+    }
+\end{frame}
+
+\begin{frame}{$L_1$ Regression: Subgradients}
+
+{\em Subgradients} generalize the notion of a derivative. 
+
+\medskip
+
+For $f(w) = \abs{w}$, the slope $m$ of any line that passes
+    through $w=0$ that remains below or touches the graph of $f$ is
+    called a subgradient of $f$ at $w=0$. 
+
+    %since only lines with slope between $-1$ and $+1$ remain below
+    %or (partially) coincide with the absolute value graph.
+    
+\vspace*{0.3cm}
+
+    \centering
+    \scalebox{0.65}{%
     \psset{xAxisLabel=$w$,yAxisLabel=$\abs{w}$,%
     xAxisLabelPos={c,-0.6},yAxisLabelPos={-0.75,c} }
     \psset{linewidth=1pt,axesstyle=frame,algebraic,plotstyle=curve}
@@ -2630,68 +2899,43 @@ approach of {\em subgradients}.
 %\subsection{Subgradients and Subdifferential}
 %\index{Lasso!subgradient}
 %\index{Lasso!subdifferential}
+
 \begin{frame}{Subgradients and Subdifferential}
-    Consider the absolute value function $f: \setR \to \setR$
-    \begin{align*}
-        f(w) = \abs{w}
-    \end{align*}
-%    which is plotted in \cref{fig:reg:linear:abs} (black line).
-%
-    When $w > 0$, we can see that its derivative is $f'(w) = +1$, and
-    when $w<0$, its derivative is $f'(w) = -1$. On the other hand, there is a
-    discontinuity at $w=0$ where the derivative does not exist. 
-%    
-\medskip
-
-    However, we use the concept of a {\em subgradient} that
-    generalizes the notion of a derivative. For the absolute value
-    function, the slope $m$ of any line that passes
-    through $w=0$ that remains below or touches the graph of $f$ is
-    called a
-    subgradient of $f$ at $w=0$. 
-%\cref{fig:reg:linear:abs} shows two such
-%    subgradients, namely the slopes $m=-0.5$ and $m=0.25$. The 
-%    corresponding lines are shown in gray. 
-
-\medskip
-
 The set of all the
-    subgradients at $w$ is called the {\em subdifferential}, denoted
-    as $\partial\abs{w}$. Thus, the subdifferential at $w=0$ is given
-    as
-    \begin{align*}
-        \partial\abs{w} = [-1,1]
-    \end{align*}
-    since only lines with slope between $-1$ and $+1$ remain below
-    or (partially) coincide with the absolute value graph.
-%
-\end{frame}
+subgradients at $w$ is called the {\em subdifferential}, denoted
+as $\partial\abs{w}$. 
 
-\begin{frame}{Subgradients and Subdifferential}
+\medskip
+
+The subdifferential of $f(w) = \abs{w}$ at $w=0$ is given as $\partial\abs{w} = [-1,1]$.
+
+	\medskip
+
     Considering all the cases, 
-    the subdifferential for the absolute value function is given
-    as:
-    \begin{align}
+    the subdifferential for $f(w) = \abs{w}$ is:
+    \begin{align*}
         \partial\abs{w} & = 
         \begin{cases}
             1 & \text{ iff } w > 0\\
             -1 & \text{ iff } w < 0\\
             [-1,1] & \text{ iff } w = 0\\
         \end{cases}
-        \label{eq:reg:linear:subdifferential_abs}
-    \end{align}
-    We can see that when the derivative exists, the subdifferential is
-    unique and corresponds to the derivative (or gradient), 
-    and when the derivative
-    does not exist the subdifferential corresponds to a set of
-    subgradients. 
+        %\label{eq:reg:linear:subdifferential_abs}
+    \end{align*}
+    When the derivative exists, the subdifferential is
+    unique and corresponds to the derivative (or gradient).
+
+    \medskip
+
+When the derivative does not exist the subdifferential corresponds to a set of
+subgradients. 
 \end{frame}
 %
 %
 %\subsection{Bivariate $L_1$ Regression}
 \begin{frame}{Bivariate $L_1$ Regression}
 %
-We first consider bivariate $L_1$ regression, where we have a
+Consider the bivariate $L_1$ regression, where we have a
 single independent attribute $\mX$ and a response attribute $\mY$ (both  centered). The bivariate regression model is given as
 \begin{align*}
     \hy_i = w \cdot \mx_i
@@ -2703,11 +2947,11 @@ can then be written as
 \begin{empheq}[box=\tcbhighmath]{align*}
     \min_w\; J(w) = \frac{1}{2} \sum^{n}_{i=1} (\my_i - w\cdot \mx_i)^2 +
     \alpha \cdot \abs{w}
-    \label{eq:reg:linear:l1_bivariate}
+    %\label{eq:reg:linear:l1_bivariate}
 \end{empheq}
 We can compute the subdifferential of this objective
 as follows:
-\begin{align}
+\begin{align*}
     \partial J(w) & =  \frac{1}{2} \cdot \sum^{n}_{i=1} 
     2 \cdot (\my_i - w \cdot \mx_i) \cdot (-\mx_i) 
     + \alpha \cdot \partial\abs{w} \notag\\
@@ -2716,7 +2960,7 @@ as follows:
     \partial\abs{w} \notag \\
     & = - \mX^T\mY + w \cdot \norm{\mX}^2 
     + \alpha \cdot \partial\abs{w}
-\end{align}
+\end{align*}
 %
 %We can solve for $w$ by setting the subdifferential to zero; we get
 %\begin{align*}
@@ -2740,53 +2984,39 @@ we have three cases to consider:
 \begin{description}
     
     \item[Case I ($w>0$ and $\partial\abs{w} = 1$):]% In this case we get
-    %\begin{align*}
-     %w &  = \eta \cdot \mX^T \mY - \eta \cdot \alpha
-    %\end{align*}
-$
-        w   = \eta \cdot \mX^T \mY - \eta \cdot \alpha
-$ 
-    Since $w > 0$, this implies 
-    $\eta \cdot \mX^T \mY > \eta \cdot \alpha$ or $\abs[\big]{\eta \cdot
-    \mX^T\mY} > \eta \cdot \alpha$.
+$ w   = \eta \cdot \mX^T \mY - \eta \cdot \alpha $ 
+
+    Since $w > 0$, $\eta \cdot \mX^T \mY > \eta \cdot \alpha$ or $|\eta \cdot \mX^T\mY| > \eta \cdot \alpha$.
 
 \item[Case II ($w<0$ and $\partial\abs{w} = -1$):]% In this case we have
-    %\begin{align*}
-        %w & = \eta \cdot \mX^T \mY + \eta \cdot \alpha
-    %\end{align*}
         $w  = \eta \cdot \mX^T \mY + \eta \cdot \alpha$ 
-    Since $w < 0$, this implies 
+
+    Since $w < 0$, 
     $\eta \cdot \mX^T \mY < - \eta \cdot \alpha$ or 
-    $\abs[\big]{\eta \cdot \mX^T \mY} > \eta \cdot \alpha$.
+    $|\eta \cdot \mX^T \mY | > \eta \cdot \alpha$.
 
 \item[Case III (\text{$w=0$ and $\partial\abs{w} \in [-1,1]$}):]
-    %In this case, we get
-    %\begin{align*}
-        %w & \in\; \lB[\eta \cdot \mX^T \mY - \eta \cdot \alpha, \; 
-        %\eta \cdot \mX^T\mY + \eta \cdot \alpha\rB]
-    %\end{align*}
-$        w  \in\; \lB[\eta \cdot \mX^T \mY - \eta \cdot \alpha, \; 
-        \eta \cdot \mX^T\mY + \eta \cdot \alpha\rB]
-$
-    However, since $w=0$, this implies
-    $\abs[\big]{\eta \cdot \mX^T \mY} \le \eta \cdot \alpha$. 
+$        w  \in\; \lB[\eta \cdot \mX^T \mY - \eta \cdot \alpha, \; \eta \cdot \mX^T\mY + \eta \cdot \alpha\rB] $
+
+    However, since $w=0$,
+    $| \eta \cdot \mX^T \mY | \le \eta \cdot \alpha$. 
 
 \end{description}
 %
 %Let $\tau \ge 0$ be some fixed value. 
 %Define the {\em soft-threshold} function $\cS_\tau: \setR\to\setR$ as follows:
 %\index{Lasso!soft-threshold function}
-%\begin{align}
+%\begin{align*}
 %    \cS_\tau(z) = \sign(z) \cdot \max\Bigl\{ 0, \bigl(\abs{z} - \tau\bigr) \Bigr\}
-%\end{align}
+%\end{align*}
 Then the above three cases can be written compactly as:
-\begin{align}
+\begin{align*}
     \tcbhighmath{
     w = \cS_{\eta \cdot \alpha}(\eta \cdot \mX^T \mY)}
-    \label{eq:reg:linear:l1_bi_optw}
-\end{align}
+    %\label{eq:reg:linear:l1_bi_optw}
+\end{align*}
 with $\tau = \eta \cdot \alpha$, where $w$ is the optimal solution to the
-bivariate $L_1$ regression problem. % in
+problem. % in
 %\cref{eq:reg:linear:l1_bivariate}.
 \end{frame}
 %
@@ -2816,16 +3046,16 @@ bivariate $L_1$ regression problem. % in
 %We rewrite the $L_1$ objective by focusing only on the $w_k$ terms, 
 %and ignoring all terms not involving $w_k$ which are assumed to be
 %fixed:
-%\begin{align}
+%\begin{align*}
 %    \min_{w_k}\;\; J(w_k) & =  
 %    - w_k \cdot \mX_{k}^T\mY + \frac{1}{2} w_k^2 \cdot \norm{\mX_k}^2 +
 %    w_k \cdot 
 %    \sum_{j\ne k}^d w_{\!j} \mX_k^T\mX_{\!j} +
 %     \alpha \cdot \abs{w_k}
 %        \label{eq:reg:linear:lasso_obj_wk}
-%\end{align}
+%\end{align*}
 %
-%% \begin{align}
+%% \begin{align*}
 %%     \min_{w_k}\;\; J(w_k) & =  
 %%     \frac{1}{2} \sum^{n}_{i=1} 
 %%     \Bigl(\my_i - \sum_{j=1}^d w_{\!j} \cdot \mx_{ij} \Bigr)^2 
@@ -2836,7 +3066,7 @@ bivariate $L_1$ regression problem. % in
 %%    \Bigr)^2 
 %%    + \alpha \cdot \sum_{j\ne k}^d \abs{w_{\!j}} + \alpha \cdot \abs{w_k}
 %%     \label{eq:reg:linear:lasso_obj_wk}
-%% \end{align}
+%% \end{align*}
 %% where all terms not involving $w_k$ are assumed to be fixed.
 %
 %Setting the subdifferential of $J(w_k)$ to zero, we get
@@ -2891,7 +3121,7 @@ bivariate $L_1$ regression problem. % in
 %%$\bw_{-k}$ as the previous estimate for all the regression coefficients,
 %%%and $w_k$ as a previous (fixed) estimate as well.
 %%so that
-%%\begin{align}
+%%\begin{align*}
 %%w_k \cdot \norm{\mX_k}^2 & =
 %%\mX_k^T \mY - \mX_k^T
 %%    \bigl(\mbD_{-k}\bw_{-k}\bigr) - \alpha \cdot \partial\abs{w_k}\notag\\
@@ -2899,7 +3129,7 @@ bivariate $L_1$ regression problem. % in
 %%    \bigl(\mbD\;\bw - w_k \cdot \mX_k\bigr) - \alpha \cdot \partial\abs{w_k}\notag\\
 %%& = w_k \cdot \norm{\mX_k}^2 + \mX_k^T \bigl(\mY - \bD\bw\bigr) - \alpha \cdot \partial\abs{w_k}
 %%    \label{eq:reg:linear:lasso_wk_subdiff}
-%%\end{align}
+%%\end{align*}
 %We can interpret the above equation as specifying an iterative solution for
 %$w_k$. In essence, we let the $w_k$ on the left hand side be the new estimate for
 %$w_k$, whereas we treat the $w_k$ on the right hand side as the previous
@@ -2908,7 +3138,7 @@ bivariate $L_1$ regression problem. % in
 %let $\bw^{\;t}$ represent the weight vector at step $t$, with $w_k^t$
 %denoting the estimate for $w_k$ at time $t$. The
 %new estimate for $w_k$ at step $t+1$ is then given as
-%\begin{align}
+%\begin{align*}
 %w_k^{t+1} + \frac{1}{\norm{\mX_k}^2} \cdot \alpha \cdot
 %\partial\abs{w_k^{t+1}} & = 
 %    w_k^t + \frac{1}{\norm{\mX_k}^2} \cdot \mX_k^T \bigl(\mY - \mbD\;\bw^{\;t}\bigr)
@@ -2916,19 +3146,19 @@ bivariate $L_1$ regression problem. % in
 %        w_k^{t+1} + \eta \cdot \alpha \cdot \partial\abs{w_k^{t+1}} & = 
 %        w_k^t + \eta \cdot \mX_k^T \bigl(Y - \mbD\;\bw^{\;t}\bigr)
 %\label{eq:reg:linear:l1_w_update_subdiff}
-%\end{align}
+%\end{align*}
 %where $\eta = 1/\norm{\mX_k}^2 > 0$ is just a scaling constant.
 %Based on the three cases for $w_k^{t+1}$ and 
 %the subdifferential $\partial\abs{w_k^{t+1}}$, 
 %following a similar approach as in the bivariate case
 %[\cref{eq:reg:linear:l1_bi_optw}], the new
 %estimate for $w_k$ can be written compactly as
-%\begin{align}
+%\begin{align*}
 %    \tcbhighmath{
 %w_k^{t+1} = \cS_{\eta \cdot \alpha}\Bigl( w_k^t + 
 %    \eta \cdot \mX_k^T \bigl(\mY - \mbD\;\bw^{\;t}\bigr) \Bigr) }
 %    \label{eq:reg:linear:l1_w_update_cS}
-%\end{align}
+%\end{align*}
 %
 \begin{frame}{$L_1$-Regression Algorithm}
 \begin{tightalgo}[H]{\textwidth-18pt}
@@ -3010,14 +3240,17 @@ $b \assign \mu_Y - \bigl(\bw^{\;t}\bigr)^T\bmu$ \tcp*[h]{compute the bias term}
 %% accuracy, sse 0.9466666666666667 10.1478128947
 %
 %\begin{example}[$L_1$ Regression]
-\begin{frame}{$L_1$ Regression}
+	\begin{frame}[fragile]{$L_1$ Regression}
 \framesubtitle{Example}
     We apply $L_1$ regression to the full Iris dataset with $n=150$
     points, and four independent attributes, namely {\tt sepal-width}
     ($X_1$),
     {\tt sepal-length} ($X_2$), {\tt petal-width} ($X_3$), and {\tt
-    petal-length} ($X_4$). The Iris type attribute comprises the
-    response variable $Y$. 
+    petal-length} ($X_4$). 
+
+	\medskip
+
+The Iris type attribute comprises the response variable $Y$. 
     There are three
     Iris types, namely {\tt Iris-setosa}, {\tt Iris-versicolor}, and
     {\tt Iris-virginica}, which are coded as $0$, $1$ and $2$,
@@ -3025,38 +3258,44 @@ $b \assign \mu_Y - \bigl(\bw^{\;t}\bigr)^T\bmu$ \tcp*[h]{compute the bias term}
 
 \medskip
 
-    The $L_1$ regression estimates for different values of $\alpha$
-    (with $\eta=0.0001$) are
+    The $L_1$ regression for $\alpha$
+    ($\eta=0.0001$) are
     shown below:
-\begin{small}
+\begin{footnotesize}
     \begin{align*}
-        \alpha = 0:\; \hY & = 0.192 -0.109 \cdot X_1 -0.045 \cdot X_2 + 
-        0.226 \cdot X_3 + 0.612 \cdot X_4 & SSE = 6.96\\
-        \alpha = 1:\; \hY & = -0.077 -0.076 \cdot X_1 -0.015 \cdot X_2 + 
-        0.253 \cdot X_3 + 0.516 \cdot X_4 & SSE = 7.09\\
-            \alpha = 5:\; \hY & = -0.553 + 0.0 \cdot X_1  + 0.0 \cdot X_2 + 
-            0.359 \cdot X_3 + 0.170 \cdot X_4 & SSE = 8.82\\
-            \alpha = 10:\; \hY & = -0.575 + 0.0 \cdot X_1  + 0.0 \cdot X_2 + 
-            0.419 \cdot X_3 + 0.0 \cdot X_4 & SSE = 10.15
+        \alpha = 0:\; \hY & = +0.19 -0.11 \cdot X_1 -0.05 \cdot X_2 + 
+	    0.23 \cdot X_3 + 0.61 \cdot X_4 & SSE=6.96 & \quad  \norm{\bw}_1=0.44\\
+        \alpha = 1:\; \hY & = -0.08 -0.08 \cdot X_1 -0.02 \cdot X_2 + 
+	    0.25 \cdot X_3 + 0.52 \cdot X_4 & SSE=7.09 & \quad  \norm{\bw}_1=0.34\\
+            \alpha = 5:\; \hY & = -0.55 + 0.00 \cdot X_1  + 0.00 \cdot X_2 + 
+	    0.36 \cdot X_3 + 0.17 \cdot X_4 & SSE=8.82 & \quad  \norm{\bw}_1=0.16\\
+            \alpha = 10:\; \hY & = -0.58 + 0.00 \cdot X_1  + 0.00 \cdot X_2 + 
+	    0.42 \cdot X_3 + 0.00 \cdot X_4 & SSE=10.15 & \quad  \norm{\bw}_1=0.18
     \end{align*}
-\end{small}
+\end{footnotesize}
+Note the sparsity inducing effect, 
+for $\alpha=5$ and $\alpha=10$, which drives some $w_i$
+to 0. 
 \end{frame}
 
 \begin{frame}{$L_1$ Regression}
 \framesubtitle{Example}
 
-    The $L_1$ norm values for the weight vectors (excluding the bias term) are
-    $0.436$, $0.339$, $0.156$, and $0.176$, respectively. 
-    It is interesting to note the sparsity inducing effect of Lasso, as
-    observed for $\alpha=5$ and $\alpha=10$, which drives some of the
-    regression coefficients to zero. 
+    %The $L_1$ norm values for the weight vectors (excluding the bias term) are
+    %$0.436$, $0.339$, $0.156$, and $0.176$, respectively. 
 
-\medskip
+%\medskip
     
     We can contrast the coefficients for $L_2$ (ridge)
     and $L_1$ (Lasso) regression by comparing models with the same level
     of squared error.
-    For example, for $\alpha=5$, the $L_1$ model has $SSE = 8.82$.
+
+	\medskip
+
+    For $\alpha=5$, the $L_1$ model has $SSE = 8.82$.
+
+	\medskip
+
     We adjust the ridge value in $L_2$ regression, with $\alpha=35$
     resulting in a similar SSE value. 
     The two models are given as follows:
@@ -3068,12 +3307,20 @@ $b \assign \mu_Y - \bigl(\bw^{\;t}\bigr)^T\bmu$ \tcp*[h]{compute the bias term}
         0.316 \cdot X_3 + 0.212 \cdot X_4 & \norm{\bw}_1 = 0.598
     \end{align*}
 \end{small}
-    We can observe that for $L_2$
-    regression the coefficients for $X_1$ and $X_2$ are small, and
+
+$L_2$: 
+    the coefficients for $X_1$ and $X_2$ are small, and
     therefore less important, but 
-    they are not zero. On the other hand, for $L_1$ regression, the
-    coefficients for attributes $X_1$
+    they are not zero. 
+
+	\medskip
+
+ $L_1$: the
+    coefficients for $X_1$
     and $X_2$ are exactly zero, leaving only $X_3$ and $X_4$; 
+
+	\medskip
+
     Lasso can thus act as an automatic feature selection approach.
     
 \end{frame}

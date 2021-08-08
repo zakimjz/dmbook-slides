@@ -64,35 +64,6 @@ is called a {\em noise point} or an outlier.
 \end{frame}
 
 
-\begin{frame}{The DBSCAN Approach}
-\framesubtitle{Reachability and Density-based Cluster}
-
-  A point $\bx$ is {\em directly density reachable}
-from another point $\by$ if $\bx \in N_{\epsilon}(\by)$ and
-$\by$ is a core point. 
-
-\medskip
-A point $\bx$ is {\em density
-    reachable} from $\by$ if there exists a chain of points,
-$\bx_0, \bx_1, \ldots, \bx_l$, such that
-$\bx = \bx_0$ and $\by = \bx_l$, and
-$\bx_i$ is
-directly density reachable from $\bx_{i-1}$ for all $i=1,\ldots,l$.
-In other words,
-there is set of core points leading from $\by$ to $\bx$.
-
-\medskip
-Two points $\bx$ and $\by$ are
-{\em density connected}
-if there exists a core point $\bz$,
-such that both $\bx$ and $\by$ are density reachable from $\bz$.
-
-\medskip
-A {\em density-based cluster} is def\/{i}ned as a maximal set of
-density connected points.
-\end{frame}
-
-
 \begin{frame}[fragile]{Core, Border and Noise Points}
 \begin{figure}[!ht]%fig15.2
   \centerline{
@@ -124,6 +95,34 @@ density connected points.
     \endpspicture
     }}
 \end{figure}
+\end{frame}
+
+\begin{frame}{The DBSCAN Approach}
+\framesubtitle{Reachability and Density-based Cluster}
+
+  A point $\bx$ is {\em directly density reachable}
+from another point $\by$ if $\bx \in N_{\epsilon}(\by)$ and
+$\by$ is a core point. 
+
+\medskip
+A point $\bx$ is {\em density
+    reachable} from $\by$ if there exists a chain of points,
+$\bx_0, \bx_1, \ldots, \bx_l$, such that
+$\bx = \bx_0$ and $\by = \bx_l$, and
+$\bx_i$ is
+directly density reachable from $\bx_{i-1}$ for all $i=1,\ldots,l$.
+In other words,
+there is set of core points leading from $\by$ to $\bx$.
+
+\medskip
+Two points $\bx$ and $\by$ are
+{\em density connected}
+if there exists a core point $\bz$,
+such that both $\bx$ and $\by$ are density reachable from $\bz$.
+
+\medskip
+A {\em density-based cluster} is def\/{i}ned as a maximal set of
+density connected points.
 \end{frame}
 
 
@@ -165,7 +164,7 @@ overall complexity of DBSCAN is $O(n^2)$.
 \newcommand{\dbscan}{\textsc{dbscan}\xspace}
 \newcommand{\getcluster}{\textsc{DensityConnected}\xspace}
 \begin{frame}[fragile]{DBSCAN Algorithm}
-  \scalebox{0.8}{
+  \scalebox{0.9}{
 \begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInput{Algorithm}{\dbscan ($\bD$, $\epsilon$, $\minpts$)}
   \Algorithm{}
@@ -177,7 +176,7 @@ overall complexity of DBSCAN is $O(n^2)$.
         $\mathit{Core} \assign \mathit{Core} \cup \{ \bx_i \}$ \nllabel{alg:clust:den:dbscan:coresB}
       }
   }
-  $k \assign 0$ \tcp{cluster id}\;
+  $k \assign 0$ \tcp{cluster id}
   \ForEach{$\bx_i \in \mathit{Core}$, \textit{such that} $\mathit{id}(\bx_i) = \emptyset$}{
     $k \assign k + 1$\;
     $\mathit{id}(\bx_i) \assign k$ \tcp{assign $\bx_i$ to cluster id $k$}
@@ -194,9 +193,9 @@ overall complexity of DBSCAN is $O(n^2)$.
   \SetKwInput{AlgorithmB}{\getcluster ($\bx$, $k$)}
   \AlgorithmB{}
   \ForEach{$\by \in N_\epsilon(\bx)$}{
-    $\mathit{id}(\by) \assign k$ \tcp{assign $\by$ to cluster id $k$}\;
+    $\mathit{id}(\by) \assign k$ \tcp{assign $\by$ to cluster id $k$}
     \lIf{$\by \in Core$}{
-      \getcluster($\by, k$)\;
+      \getcluster($\by, k$)
     }
   }
 \end{tightalgo}
@@ -266,6 +265,9 @@ overall complexity of DBSCAN is $O(n^2)$.
 
 \begin{frame}[fragile]{DBSCAN Clustering}
 \framesubtitle{Iris Dataset}
+
+There is a trade off between $\epsilon$ and $\minpts$.
+
 \setcounter{subfigure}{0}
 \begin{figure}
 \psset{dotscale=1.5,fillcolor=lightgray,
@@ -313,7 +315,7 @@ overall complexity of DBSCAN is $O(n^2)$.
 \end{figure}
 \end{frame}
 
-
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Kernel Density Estimation}
 
@@ -474,8 +476,7 @@ The discrete
 \framesubtitle{Gaussian Kernel}
 The width $h$ is a parameter that
 denotes the spread or smoothness of the density estimate.
-The discrete kernel function has
-an abrupt influence. 
+The discrete kernel function has abrupt changes. 
 
 \medskip
 Def\/{i}ne a more smooth
@@ -653,11 +654,31 @@ given as
 \begin{frame}{Density Estimation}
 \framesubtitle{Density-based Dataset}
   \framesubtitle{Gaussian kernel, $h=20$}
+\setcounter{subfigure}{0}
 \begin{figure}
+\begin{center}
+\hspace*{-1cm}
+\subfloat[Original Points]{
+\scalebox{0.45}{
+\psset{unit=1in}
+\psset{fillcolor=lightgray}
+\psset{xAxisLabel=$X_1$, yAxisLabel=$X_2$}
+  \hspace*{-60pt}
+  \pspicture[](-2,-0.5)(2,3.5)
+ \psgraph[Ox=0,Oy=20,Dx=100,Dy=75]{->}(0,20)(700,475){4in}{3in}
+      \listplot[plotstyle=dots,dotstyle=Bo,
+           plotNo=1,plotNoMax=2]{\dataT}
+  \endpsgraph
+  \endpspicture
+  }
+}
+\hspace*{-2cm}
+\subfloat[Gaussian Density Estimation]{
 \psset{unit=0.5in}
 \psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
 \psset{lightsrc=viewpoint}
 \defFunction[algebraic]{myfunc}(u,v){u}{v}{((v^2)-(u^2))/4}
+\scalebox{0.55}{
 \begin{pspicture}(-1,-0.5)(7,6)
 %\psSolid[object=surfaceparametree, action=writeobj,
 %  file=CLUST/density/figs/mysurf,
@@ -691,9 +712,11 @@ given as
         \psPoint(0,\iy\space,0){Y2}
         \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
 \end{pspicture}
+	}
+	}
+\end{center}
 \end{figure}
 \end{frame}
-
 
 
 
@@ -726,6 +749,7 @@ with radius $h_\bx$.
 \end{frame}
 
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{DENCLUE Density-based Clustering}
 \framesubtitle{Attractor and Gradient}
@@ -758,9 +782,23 @@ $K(\frac{\bx-\bx_i}{h})$.
 
 
 \begin{frame}{The Gradient Vector}
+
+
+We f\/{i}rst compute the
+direction away from $\bx$ to $\bx_i$, i.e., the vector $(\bx_i - \bx)$. 
+
+Next,
+we scale it using the Gaussian kernel value
+as the weight $K\left(\frac{\bx-\bx_i}{h}\right)$.
+
+$\grad \hf(\bx)$ is the net influence at
+$\bx$, i.e., the weighted sum of the difference vectors.
+
+
 \begin{figure}
 %\begin{figure}[!ht]%fig15.9
   \centerline{
+	  \scalebox{0.8}{
     \psset{yunit=0.5in,xunit=0.5in,arrows=->, arrowscale=2}
     \pspicture[](0,0)(6,4)
     \psaxes{->}(0,0)(0,0)(6,4)
@@ -781,6 +819,7 @@ $K(\frac{\bx-\bx_i}{h})$.
     \psline[linewidth=2pt](1,1)(2,2.75)
     \uput[u](2,2.75){$\grad \hf(\bx)$}
     \endpspicture
+    }
   }
 \end{figure}
 \end{frame}
@@ -813,6 +852,24 @@ mean-shift} update rule:
 where $t$ denotes the current iteration and $\bx_{t+1}$ is the updated value for the current vector $\bx_t$.  
 \end{frame}
 
+\newcommand{\gradientascent}{\textsc{F{i}ndAttractor}\xspace}
+\begin{frame}[fragile]{The DENCLUE Algorithm: Find Attractor}
+\begin{tightalgo}[H]{\textwidth-18pt}
+ \SetKwInput{AlgorithmGA}{\gradientascent ($\bx, \bD, h, \epsilon$)}
+  \AlgorithmGA{}
+  \lnl{alg:clust:den:denclue:FAs}$t \assign 0$\;
+  $\bx_t \assign \bx$\;
+  \Repeat{$\norm{\bx_t - \bx_{t-1}} \le \epsilon$}{%
+    \lnl{alg:clust:den:denclue:DU}
+    $\bx_{t+1} \assign \frac{\sum_{i=1}^n
+      K\lB({\bx_t - \bx_i \over h}\rB) \cdot \bx_t}
+      {\sum_{i=1}^n K\lB({\bx_t - \bx_i \over h}\rB)}$\;
+      $t \assign t+1$\;
+  }
+  \lnl{alg:clust:den:denclue:FAe}\Return{$\bx_t$}
+\end{tightalgo}
+\end{frame}
+
 
 \begin{frame}{DENCLUE: Density-based Cluster}
 A cluster $C \subseteq \bD$, is called a {\em center-def\/{i}ned
@@ -838,7 +895,6 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
 
 
 \newcommand{\denclue}{\textsc{denclue}\xspace}
-\newcommand{\gradientascent}{\textsc{F{i}ndAttractor}\xspace}
 \begin{frame}[fragile]{The DENCLUE Algorithm}
 \begin{tightalgo}[H]{\textwidth-18pt}
   \SetKwInput{Algorithm}{\denclue ($\bD, h, \xi, \epsilon$)}
@@ -865,31 +921,22 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
 \end{tightalgo}
 \end{frame}
 
-\begin{frame}[fragile]{The DENCLUE Algorithm: Find Attractor}
-\begin{tightalgo}[H]{\textwidth-18pt}
- \SetKwInput{AlgorithmGA}{\gradientascent ($\bx, \bD, h, \epsilon$)}
-  \AlgorithmGA{}
-  \lnl{alg:clust:den:denclue:FAs}$t \assign 0$\;
-  $\bx_t \assign \bx$\;
-  \Repeat{$\norm{\bx_t - \bx_{t-1}} \le \epsilon$}{%
-    \lnl{alg:clust:den:denclue:DU}
-    $\bx_{t+1} \assign \frac{\sum_{i=1}^n
-      K\lB({\bx_t - \bx_i \over h}\rB) \cdot \bx_t}
-      {\sum_{i=1}^n K\lB({\bx_t - \bx_i \over h}\rB)}$\;
-      $t \assign t+1$\;
-  }
-  \lnl{alg:clust:den:denclue:FAe}\Return{$\bx_t$}
-\end{tightalgo}
-\end{frame}
-
 
 \begin{frame}{DENCLUE: Iris 2D Data}
+
+Iris 2D dataset comprising the {\tt sepal length}
+  and {\tt sepal width} attributes. 
+
+The results were obtained with
+  $h=0.2$ and $\xi=0.08$, using a Gaussian
+  kernel.
+
 \begin{figure}
-\psset{viewpoint=40 -120 40 rtp2xyz,Decran=50}
+\psset{viewpoint=40 -135 25 rtp2xyz,Decran=50}
 \psset{lightsrc=viewpoint}
 \psset{incolor=white}
 \psset{opacity=0.2}
-\psset{fillcolor=white}
+\psset{fillcolor=gray!10}
 \begin{pspicture}(-1,1)(7,7)
 \psSolid[object=objfile, file=CLUST/density/figs/iris-h0.2surf,
   linewidth=0.01pt,base=3.5 8.5 1.0 5.0]
@@ -923,6 +970,12 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
 
 
 \begin{frame}{DENCLUE: Density-based Dataset}
+Using the parameters $h=10$ and
+  $\xi=9.5 \times 10^{-5}$, with a Gaussian kernel, we obtain eight
+  clusters.
+
+\vspace*{-2cm}
+
 \begin{figure}
 \psset{unit=0.5in}
 \psset{viewpoint=70 90 91 rtp2xyz,Decran=65}
@@ -930,6 +983,7 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
 \psset{incolor=white}
 \psset{opacity=0.15}
 \begin{pspicture}(-1,-0.5)(7,6)
+	\scalebox{0.85}{
 \psset{fillcolor=white}
 \psSolid[object=objfile, file=CLUST/density/figs/t7-4k-h10-xi1.9surf,
   transform={1 1 1.75 scaleOpoint3d},
@@ -956,6 +1010,7 @@ $\bx_1^*, \bx_2^*, \ldots, \bx_m^*$, such that
         \psPoint(-0.2,\iy\space,0){Y1}
         \psPoint(0,\iy\space,0){Y2}
         \psline(Y1)(Y2)\uput[l](Y1){\scriptsize \myy}}
+	}
 \end{pspicture}
 \end{figure}
 \end{frame}

@@ -75,9 +75,9 @@ in the cluster assignment step, each point $\bx_{j} \in \bD$ is
 assigned to the closest mean, which induces a clustering, with
 each cluster $C_i$ comprising points that are closer to $\bmu_i$
 than any other cluster mean. That is, each point $\bx_{j}$ is
-assigned to cluster $C_{j^*}$, where
+assigned to cluster $C_{i^*}$, where
 \begin{align*}
-j^* = \arg \min_{i=1}^k \Bigl\{\norm{\bx_{j} - \bmu_i}^2\Bigr\}
+i^* = \arg \min_{i=1}^k \Bigl\{\norm{\bx_{j} - \bmu_i}^2\Bigr\}
 \end{align*}
 
 \medskip
@@ -106,9 +106,9 @@ Randomly initialize $k$ centroids: $\bmu_1^t, \bmu_2^t, \dots,
     $C_{j} \gets \emptyset \text{ for all } j = 1, \cdots, k$\;
     \tcp{Cluster Assignment Step}
     \ForEach{$\bx_{j} \in \bD$}{
-    $j^* \assign \arg \min_{i} \Bigl\{\norm{\bx_{j} - \bmu_i^t}^2
+    $i^* \assign \arg \min_{i} \Bigl\{\norm{\bx_{j} - \bmu_i^t}^2
     \Bigr\}$  \tcp{Assign $\bx_{j}$ to closest centroid}
-        $C_{j^*} \assign C_{j^*} \cup \{ \bx_{j}\}$\;
+        $C_{i^*} \assign C_{i^*} \cup \{ \bx_{j}\}$\;
     }
     \tcp{Centroid Update Step}
     \ForEach{$i = 1$ to $k$}{
@@ -605,6 +605,11 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
 
 \begin{frame}[fragile]{K-Means or Kernel K-means with Linear Kernel}
 \setcounter{subfigure}{0}
+	
+Using linear kernel $K(\bx_i,\bx_{\!j}) = \bx_i^T\bx_{\!j}$ is equivalent to the K-means algorithm.	
+
+\medskip
+
 \begin{center}
 \begin{figure}
   \captionsetup[subfloat]{captionskip=0.25in}
@@ -615,6 +620,7 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
     \centerline{
     \subfloat[Linear kernel: $t=5$ iterations]{\label{fig:clust:rep:kernelsLinear}
         %\pspicture[](-0.5,1)(13,6.5)
+        \scalebox{0.85}{
         \psgraph[tickstyle=bottom,Oy=1.5]{->}(0,1.5)(13,6.5){4in}{2in}
         \psset{dotstyle=Bsquare,fillcolor=lightgray}
         \input{CLUST/representative/kernel-linear-C1}
@@ -653,6 +659,7 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
         }
         \endpsclip
         \endpsgraph
+	}
     }}
 %    \vspace{0.2in}
 \end{figure}
@@ -661,6 +668,13 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
 
 
 \begin{frame}[fragile]{Kernel K-means: Gaussian Kernel}
+
+Using the Gaussian kernel $K(\bx_i, \bx_{\!j}) = \exp\lB\{
+-\frac{\norm{\bx_{i}-\bx_{\!j}}^2}{2\sigma^2} \rB\}$, with
+${\sigma=1.5}$.
+
+\medskip
+
 \begin{center}
 \begin{figure}
   \captionsetup[subfloat]{captionskip=0.25in}
@@ -668,6 +682,7 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
     \subfloat[Gaussian kernel: $t=4$
     Iterations]{\label{fig:clust:rep:kernelsGaussian}
         %\pspicture[](-0.5,1)(13,6.5)
+        \scalebox{0.85}{
         \psgraph[tickstyle=bottom,Oy=1.5]{->}(0,1.5)(13,6.5){4in}{2in}
         \psset{dotstyle=Bsquare,fillcolor=lightgray}
         \input{CLUST/representative/kernel-gaussian1.5-C1}
@@ -684,11 +699,13 @@ $\cC^t \assign \{ C^t_1, \ldots, C^t_k\}$\tcp{Randomly partition points into $k$
         \psset{fillcolor=black}
         \psframe[](0,1.5)(13,6.5)
         \endpsgraph
+	}
     }}
 \end{figure}
 \end{center}
 \end{frame}
 
+\ifdefined\wox \begin{frame} \titlepage \end{frame} \fi
 
 \begin{frame}{Expectation-Maximization Clustering}
 \framesubtitle{Gaussian Mixture Model}
@@ -729,9 +746,7 @@ is given as a
 \end{align*}
 where the prior probabilities $P(C_i)$ are called the
 {\em mixture parameters}, which must satisfy the condition
-\begin{align*}
-    \sum_{i=1}^k P(C_i) = 1
-\end{align*}
+$\sum_{i=1}^k P(C_i) = 1$.
 
 
 \end{frame}
@@ -1250,18 +1265,30 @@ transform={1 1 6 scaleOpoint3d},algebraic](-4,-1.5)(4,2){
 \end{center}
 \end{frame}
 
-
 \begin{frame}{Iris Principal Components Data}
-\framesubtitle{Full Covariance Matrix}
+\framesubtitle{Full vs. Diagonal Covariance Matrix}
+
+The diagonal assumption
+leads to axis parallel contours for the normal density,
+contrasted with the rotated contours for the full covariance
+matrix.
+
+\medskip
+
+The full matrix yields much better
+clustering, since the full covariance matrix results in 3 wrongly clustered 
+points, whereas the diagonal covariance matrix results in 25.
+
 \setcounter{subfigure}{0}
 \begin{figure}
 \psset{unit=0.5in}
 \psset{dotscale=1.5,fillcolor=lightgray,
         arrowscale=2,PointName=none}
 \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
-\centerline{
+	\hspace*{-2.8cm}
 \subfloat[Full covariance matrix ($t=36$)]{
 \label{fig:clust:rep:iris-em-fulldiag-a}
+	\scalebox{0.55}{
 \begin{pspicture}(-4,-0.5)(4,4.5)
 %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(4,2)
 \psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dy=0.5]{->}(-4.0,-1.5)(4,1.5){4in}{2in}%
@@ -1307,21 +1334,17 @@ transform={1 1 6 scaleOpoint3d},algebraic](-4,-1.5)(4,2){
 \end{psclip}
 \endpsgraph
 \end{pspicture}
-}}
-\end{figure}
-\end{frame}
-
-
-\begin{frame}{Iris Principal Components Data}
-\framesubtitle{Diagonal Covariance Matrix}
-\begin{figure}
+}
+}
+	\hspace*{-5.5cm}
+\subfloat[Diagonal covariance matrix ($t=29$)]{
 \psset{unit=0.5in}
 \psset{dotscale=1.5,fillcolor=lightgray,
         arrowscale=2,PointName=none}
 \psset{xAxisLabel=$X_1$, yAxisLabel= $X_2$}
 \centerline{
-\subfloat[Diagonal covariance matrix ($t=29$)]{
 \label{fig:clust:rep:iris-em-fulldiag-b}
+\scalebox{0.55}{
 \begin{pspicture}(-4,-0.5)(4,4.5)
 %\psaxes[tickstyle=bottom,Dx=1,Ox=-4,Dy=0.5,Oy=-1.5]{->}(-4,-1.5)(4,2)
 \psgraph[tickstyle=bottom,Ox=-4,Oy=-1.5,Dy=0.5]{->}(-4.0,-1.5)(4,1.5){4in}{2in}%
@@ -1352,6 +1375,44 @@ transform={1 1 6 scaleOpoint3d},algebraic](-4,-1.5)(4,2){
 \end{psclip}
 \endpsgraph
 \end{pspicture}
+}
 }}
 \end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]{K-means as Specialization of EM}
+
+K-means can be considered as a special case of the EM algorithm, as follows:
+\begin{align*}
+P(\bx_{\!j}|C_{i}) =
+\begin{cases}
+  1 & \text{if } C_i = \displaystyle \arg\min_{C_a} \lB\{
+    \norm{\bx_{\!j} - \bmu_a}^2\rB\}\\
+  0 & \mbox{otherwise}
+\end{cases}
+\end{align*}
+
+The posterior probability $P(C_i|\bx_{\!j})$ is given as
+\begin{align*}
+P(C_i | \bx_{\!j}) = {P(\bx_{\!j}|C_i)P(C_i) \over
+\sum_{a=1}^k P(\bx_{\!j}|C_a)P(C_a)}
+\end{align*}
+If $P(\bx_{\!j}|C_i) = 0$, then $P(C_i|\bx_{\!j}) = 0$.
+Otherwise, if $P(\bx_{\!j}|C_i) = 1$, then $P(\bx_{\!j} | C_a)=0$ 
+$ \forall a\ne i$, and thus
+$P(C_i|\bx_{\!j}) = {1 \cdot P(C_i) \over 1 \cdot P(C_i)} =
+1$. 
+\begin{align*}
+\tcbhighmath{
+    P(C_i | \bx_{\!j}) =
+    \begin{cases}
+        1 & \text{if } \bx_{\!j} \in C_i, \text{i.e., if }
+        C_i = \displaystyle \arg\min_{C_a} \lB\{ \norm{\bx_{\!j} - \bmu_a}^2\rB\}\\
+        0 & \text{otherwise}
+    \end{cases}
+}
+\end{align*}
+The parameters are $\bmu_i$ and $P(C_i)$ and the covariance matrix is not used.
+
 \end{frame}

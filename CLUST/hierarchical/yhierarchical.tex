@@ -242,7 +242,7 @@ A typical distance between two points is
 %typically computed using 
 the Euclidean distance or $L_2\text{-}norm$
 \begin{align*}
-  \dist(\bx, \by) = \norm{\bx - \by}_2 = \Bigl(\sum_{i=1}^d (x_i -
+  \norm{\bx - \by}_2 = \Bigl(\sum_{i=1}^d (x_i -
 y_i)^2\Bigr)^{1/2}
 \end{align*}
 %The between-cluster distances are obtained as follows.
@@ -253,7 +253,7 @@ The minimum distance between a point in
 $C_i$ and a point in $C_{j}$
 \begin{align*}
 \tcbhighmath{
-  \dist(C_{i},C_{j}) = \min \{\dist(\bx,\by) \mid \bx \in C_{i},
+  \dist(C_{i},C_{j}) = \min \{\norm{\bx - \by} \mid \bx \in C_{i},
   \by \in C_{j}\}
 }
 \end{align*}
@@ -264,7 +264,7 @@ The maximum distance between points
 in the two clusters:
 \begin{align*}
 \tcbhighmath{
-  \dist(C_{i},C_{j}) = \max \{\dist(\bx,\by) \mid \bx \in C_{i},
+  \dist(C_{i},C_{j}) = \max \{\norm{\bx-\by} \mid \bx \in C_{i},
   \by \in C_{j} \}
 }
 \end{align*}
@@ -276,7 +276,7 @@ $C_i$ and $C_{j}$:
 \tcbhighmath{
   \dist(C_{i},C_{j}) = \frac{\sum_{\bx \in C_{i}} \sum_{\by \in
   C_{j}}
-  \dist(\bx,\by)}{n_i \cdot n_{j}}
+  \norm{\bx-\by}}{n_i \cdot n_{j}}
 }
 \end{align*}
 \end{frame}
@@ -290,7 +290,7 @@ is def\/{i}ned as the distance between the means or
 centroids of the two clusters:
 \begin{align*}
 \tcbhighmath{
-\dist(C_{i},C_{j}) = \dist(\bmu_i,\bmu_{j})
+\dist(C_{i},C_{j}) = \norm{\bmu_i-\bmu_{j}}
 }
 \end{align*}
 
@@ -437,6 +437,57 @@ $\frac{n_{j}+n_r}{n_i+n_{j}+n_r}$ &  $\frac{-n_r}{n_i+n_{j}+n_r}$ & 0 \\[2ex]
 \end{center}
 \end{frame}
 
+\begin{frame}{Lance--Williams Formulas for Cluster Proximity}
+
+\textbf{Single link:} Arithmetical trick to find the minimum.
+
+\begin{align*}
+    \dist(C_{ij},C_r) & =
+	\frac{\dist(C_i,C_r)}{2} +
+	\frac{\dist(C_{j},C_r)}{2} -
+	\frac{\bigl|\dist(C_i,C_r)-\dist(C_{j},C_r)\bigr|}{2}
+\end{align*}
+
+\textbf{Complete link:} Arithmetical trick to find the maximum.
+
+\begin{align*}
+    \dist(C_{ij},C_r) & =
+	\frac{\dist(C_i,C_r)}{2} +
+	\frac{\dist(C_{j},C_r)}{2} +
+	\frac{\bigl|\dist(C_i,C_r)-\dist(C_{j},C_r)\bigr|}{2}
+\end{align*}
+
+\textbf{Group average:} Weight the distance by the cluster size.
+
+\begin{align*}
+    \dist(C_{ij},C_r) & =
+	\frac{n_i}{n_i+n_j} \cdot \dist(C_i,C_r) +
+	\frac{n_j}{n_i+n_j} \cdot \dist(C_j,C_r) 
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Lance--Williams Formulas for Cluster Proximity}
+
+\textbf{Mean distance:} The new centroid is in the line defined by $\mu_i$ and $\mu_j$, and its distance to $\mu_r$ has to be adjusted by $\frac{n_i \cdot n_j}{(n_i+n_j)^2}$.
+
+\begin{align*}
+    \dist(C_{ij},C_r) & =
+	\frac{n_i}{n_i+n_j} \cdot \dist(C_i,C_r) +
+	\frac{n_j}{n_i+n_j} \cdot \dist(C_j,C_r) +
+	\frac{-n_i \cdot n_j}{(n_i+n_j)^2} \cdot \dist(C_i,C_{j}) 
+\end{align*}
+
+\textbf{Ward's measure:} The $\Delta SSE$ of the new cluster is a weigthed sum of the $\Delta SSEs$ of the original clusters, adjusted by the fact that $n_r$ was considered twice.
+
+\begin{align*}
+    \dist(C_{ij},C_r) & =
+	\frac{n_i+n_r}{n_i+n_j+n_r} \cdot \dist(C_i,C_r) +
+	\frac{n_j+n_r}{n_i+n_j+n_r} \cdot \dist(C_j,C_r) +
+	\frac{-n_r}{n_i+n_j+n_r} \cdot \dist(C_i,C_{j}) 
+\end{align*}
+
+\end{frame}
 
 \readdata{\dataC}{CLUST/hierarchical/figs/iris-PC-complete-link.txt}
 \begin{frame}{Iris Dataset: Complete Link Clustering}
